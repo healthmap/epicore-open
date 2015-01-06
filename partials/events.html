@@ -1,0 +1,86 @@
+<div ng-include src="'header.html'"></div>
+<div class="container main">
+    <div class="row">
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 wbg">
+        <h4>Request for Information list</h4>
+        <p>
+        <span ng-show="onOpen">Open events&nbsp;|&nbsp;<a href="#/events/closed">Closed events</a></span>
+        <span ng-show="!onOpen"><a href="#/events">Open events</a>&nbsp;|&nbsp;Closed events</span>
+        </p>
+        <!-- view for organizations -->
+        <div ng-show="isOrganization">
+        <table>
+            <tbody>
+                <tr class="black_bg">
+                    <th>Title</th>
+                    <th>Location</th>
+                    <th>Opened Date</th>
+                    <th># Requests Sent</th>
+                    <th># Responses</th>
+                </tr>
+                <tr><th colspan="6">Initiated by you</th></tr>
+                <tr ng-repeat="event in eventsList['yours']">
+                    <td><a href="#/events/{{event.event_id}}">{{event.title}}</a></td>
+                    <td>{{event.location}}</td>
+                    <td>{{event.create_date}}</td>
+                    <td>{{event.num_requests}}</td>
+                    <td>
+                    <span ng-show="event.num_responses > 0"><a href="#/responses/{{event.event_id}}">{{event.num_responses}}</a></span>
+                    <span ng-show="event.num_responses == 0">{{event.num_responses}}</span>
+                    </td>
+                </tr>
+                <tr><th colspan="6">Initiated by your organization ({{userInfo.organization}})</th></tr>
+                <tr ng-repeat="event in eventsList['yourorg']">
+                    <td><a href="#/events/{{event.event_id}}">{{event.title}}</a></td>
+                    <td>{{event.location}}</td>
+                    <td>{{event.create_date}}</td>
+                    <td>{{event.num_requests}}</td>
+                    <td>
+                    <span ng-show="event.num_responses > 0"><a href="#/responses/{{event.event_id}}">{{event.num_responses}}</a></span>
+                    <span ng-show="event.num_responses == 0">{{event.num_responses}}</span>
+                    </td>
+                </tr>
+                <tr><th colspan="6">Initiated by others</th></tr>
+                <tr ng-repeat="event in eventsList['other']">
+                    <td><a href="#/events/{{event.event_id}}">{{event.title}}</a></td>
+                    <td>{{event.location}}</td>
+                    <td>{{event.create_date}}</td>
+                    <td>{{event.num_requests}}</td>
+                    <td>
+                    <span ng-show="event.num_responses > 0"><a href="#/responses/{{event.event_id}}">{{event.num_responses}}</a></span>
+                    <span ng-show="event.num_responses == 0">{{event.num_responses}}</span>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        </div>
+        <!-- view for FETPs -->
+        <div ng-show="!isOrganization">
+        <table>
+            <tbody>
+                <tr class="black_bg">
+                    <th>Title</th>
+                    <th>Location</th>
+                    <th>Date Sent To You</th>
+                    <th>Response</th>
+                </tr>
+                <tr ng-repeat="event in eventsList">
+                    <td><a href="#/events/{{event.event_id}}">{{event.title}}</a></td>
+                    <td>{{event.location}}</td>
+                    <td>
+                        <p ng-repeat="send_date in event.send_dates">
+                        {{send_date}}
+                        </p>
+                    </td>
+                    <td>
+                        <p ng-repeat="(response_id, response_info) in event.response_dates">
+                        <a href="#/response/{{response_id}}">{{response_info}}</a>
+                        </p>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        </div>
+    </div>
+</div>
+</div>

@@ -1,0 +1,32 @@
+<div ng-include src="'header.html'"></div>
+<div class="container main">
+    <div class="row">
+        <div id="form-container" class="col-xs-12 col-sm-9 col-md-7 col-lg-6">
+
+        <div class="intro">
+            <h4>Close Request for Information</h4>
+            <p><strong>NOTE:</strong> Submitting this form will send an email to all FETPs originally contacted for this event.</p>
+            <p>Title: {{eventsList.title}}<br>
+            Location: {{eventsList.location}}</p>
+        </div>
+
+        <!-- CHANGE STATUS FORM (for owner of event) -->
+        <form name="changeStatusForm">
+            <div class="form-group col-xs-12">
+            <p>* Reason for closing request:<br>
+              <input type="radio" name="reason" ng-model="formData.reason" value="1" required> Outbreak has been confirmed from other sources<br>
+              <input type="radio" name="reason" ng-model="formData.reason" value="2" required> Sufficient number of FETP responses<br>
+              <input type="radio" name="reason" ng-model="formData.reason" value="3" required> Insufficient number of FETP responses
+            </p>
+            <label class="sr-only" for="reply">Additional Notes (optional)</label>
+            <textarea ng-model="formData.notes" style="height:100px" class="form-control" name="reply" id="notesfield" placeholder="Additional Notes"></textarea>
+            </div>
+
+            <div class="form-group col-xs-12">
+                <button ng-click="changeRequestStatus(formData, 'Close', changeStatusForm.$valid)" type="submit" class="submit btn btn-default col-xs-12">Close request</button>
+            </div><!-- /input-group -->
+        </form>
+
+        </div>
+    </div><!--row-->
+</div><!--container main-->

@@ -1,0 +1,9 @@
+<div ng-include src="'header.html'"></div>
+    <google-map center="map.center" zoom="map.zoom" draggable="true" options="options" bounds="map.bounds">
+        <markers models="markers" coords="'self'" icon="'icon'" click="'onClick'">
+            <windows show="show">
+                <div ng-non-bindable>{{title}}</div>
+            </windows>
+        </markers>
+    </google-map>
+</div>

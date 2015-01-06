@@ -1,0 +1,20 @@
+<nav class="navbar navbar-default" role="navigation">
+    <div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                <span class="sr-only">Toggle navigation</span>
+                <i class="fa fa-align-justify"></i>
+            </button>
+            <a href="#/home"><span class="title sm">Epicore</span></a>
+        </div>
+
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <ul class="right nav navbar-nav">
+                <li ng-show="{{userInfo.isPromed}}"><a href="http://healthmap.org/promed/admin"><img src="img/promed.png"> Dashboard <i class="fa fa-arrow-circle-right"></i></a>&nbsp;&nbsp;</li>
+                <li ng-show="{{userInfo.isOrganization}}"><a href="#/request" ng-class="getClass('/request')">Request</a></li>
+                <li><a href="#/events" ng-class="getClass('/events')">Review</a></li>
+                <li><a ng-href="#/home" ng-click="userLogout()">Logout [{{userInfo.uname}}]</a></li>
+            </ul>
+        </div><!-- /.navbar-collapse -->
+    </div><!-- /.container -->
+</nav>

@@ -1,0 +1,44 @@
+<div ng-include src="'header.html'"></div>
+<div class="container main">
+    <div class="row">
+        <div id="form-container" class="col-xs-12 col-sm-12 col-md-12 col-lg-12 wbg">
+        <p><i class="fa fa-arrow-circle-left"></i> <a href="#/events">Back to listing</a></p>
+
+        <h4>Request for Information Details</h4>
+
+        <!-- REPLY FORM (for FETPS only who received the event) -->
+        <p>
+        <div ng-show="!isOrganization">
+            <p>Do you have anything to contribute regarding this outbreak?</p>
+            <a href="#/reply/{{id}}" class="nav-button">Yes, respond to this request</a>
+            <a href ng-click="sendResponse({response_permission: '0'})" class="nav-button">No, not at this time</a>
+        </div>
+        <!-- END REPLY FORM -->
+
+        <!-- View responses if any (for orgs only) -->
+        <span ng-show="isOrganization && eventsList.num_responses > 0">
+           <a href="#/responses/{{id}}" class="nav-button">View responses</a>  
+        </span>
+        <!-- END View responses -->
+
+        <!-- OWNER of event gets additional options to close event or send followup email -->
+        <span ng-show="requestOwner">
+           <a href="#/followup/{{id}}" class="nav-button">Send follow-up email</a>  
+           <a href="#/{{changeStatusType}}/{{id}}" class="nav-button">{{changeStatusText}} request</a> 
+        </span>
+        <!-- END CLOSE FORM (for owner of event) -->
+        </p>
+
+        <p><strong>Title:</strong> {{eventsList.title}}<br>
+        <strong>Location:</strong> {{eventsList.location}}</p>
+        <p><strong>Event History:</strong>
+            <ul style="padding-left:20px" ng-repeat="history_item in eventsList.history">
+                <li>{{history_item}}</li>
+            </ul>
+        </p>
+        <p><strong>Description:</strong>
+        <p ng-bind-html="eventsList.html_description"></p>
+
+        </div>
+    </div><!--row-->
+</div><!--container main-->
