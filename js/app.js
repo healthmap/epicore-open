@@ -3,6 +3,7 @@ angular.module('EpicoreApp', [
     'EpicoreApp.controllers',
     'ngCookies',
     'ngRoute',
+    'ngSanitize',
 //    'ngSlider',
     'uiGmapgoogle-maps'
 ]).  
