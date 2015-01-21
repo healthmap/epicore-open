@@ -31,7 +31,7 @@ $response_permission_lu = array(
 
 $reason_lu = array(
     "1" => "Outbreak has been confirmed from other sources",
-    "2" => "Sufficient number of FETP responses",
-    "3" => "Insufficient number of FETP responses"
+    "2" => "Sufficient FETP responses",
+    "3" => "Insufficient FETP responses"
 );
 ?>
