@@ -100,7 +100,7 @@ class UserInfo
         $q = $db->query("SELECT * FROM fetp");
         while($row = $q->fetchRow()) {
             $title = $row['fetp_id'] . ": " . $row['countrycode'];
-            $fetps[] = array("id" => $row['fetp_id'], "latitude" => $row['lat'], "longitude" => $row['lon'], "show" => true, "title" => $title);
+            $fetps[] = array("id" => $row['fetp_id'], "icon" => "img/icon.png", "latitude" => $row['lat'], "longitude" => $row['lon'], "show" => true, "title" => $title);
         }
         return $fetps;
     }

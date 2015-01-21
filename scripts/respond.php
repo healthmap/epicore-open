@@ -27,6 +27,7 @@ if(is_numeric($event_id)) {
         $msg .= "The permission level for this response is:\nMod may " . $response_permission_lu[$dbdata['response_permission']] . "\n\n";
     }
     $msg .= $dbdata['response']. "\n\n";
+    $msg = str_replace("[FETP_ID]", $dbdata['responder_id'], $msg);
 
     // send the response to the person who initiated the event request
     $recipient = $ei->getInitiatorEmail();

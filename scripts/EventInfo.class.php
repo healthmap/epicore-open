@@ -160,13 +160,6 @@ class EventInfo
         return $this->id;
     }
 
-    function updateEventFilterInfo($search_info) 
-    {
-        /* if search_box & search_radius are set, search_countries should be NULL, and vice versa */
-        $this->db->query("UPDATE event SET search_box = ?, search_radius = ?, search_countries = ? WHERE event_id = ?", array($search_info['search_box'], $search_info['search_radius'], $search_info['search_countries'], $this->id));
-        $this->db->commit();
-    }
-
     function buildEmailForEvent($event_info = array(), $type, $custom_text) 
     {
         $event_info = $event_info ? $event_info : self::getInfo();
@@ -185,7 +178,6 @@ class EventInfo
         $emailtext = str_replace("[DESCRIPTION]", $event_info['description'], $emailtext);
         $emailtext = str_replace("[LOCATION]", $event_info['location'], $emailtext);
         $emailtext = str_replace("[CUSTOM_TEXT]", $custom_text, $emailtext);
-        $emailtext = str_replace("[EPICORE_URL]", EPICORE_URL, $emailtext);
         $emailtext = str_replace("[ID]", $this->id, $emailtext);
         return $emailtext;
     }
@@ -257,7 +249,7 @@ class EventInfo
         // insert into the place table if doesn't exist
         $place_id = PlaceInfo::insertLocation($darr['latlon'], $darr['location']);
         // insert into the event table
-        $q = $db->query("INSERT INTO event (place_id, title, description, create_date, requester_id) VALUES (?, ?, ?, ?, ?)", array($place_id, $darr['title'], $darr['description'], date('Y-m-d H:i:s'), $darr['requester_id']));
+        $q = $db->query("INSERT INTO event (place_id, title, description, create_date, requester_id, search_box, search_countries) VALUES (?, ?, ?, ?, ?, ?, ?)", array($place_id, $darr['title'], $darr['description'], date('Y-m-d H:i:s'), $darr['requester_id'], $darr['search_box'], $darr['search_countries']));
         $event_id = $db->getOne("SELECT LAST_INSERT_ID()");
         $db->commit();
         return $event_id;

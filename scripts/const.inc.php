@@ -2,14 +2,15 @@
 define('EMAIL_NOREPLY', 'Epicore Message Bot <mod@healthmap.org>');
 define('LAT_LON_PRECISION', 2);
 define('EPICORE_URL', 'http://epicore.org');
-define('DEFAULT_RADIUS', 250);
+define('DEFAULT_RADIUS', 400); // in km
 
-define('RESPONSE_LINK', "To respond to this message, please visit:\n[EPICORE_URL]/#/fetp/[TOKEN]/[ID]");
-define('EMAIL_TEXT_RFI', "We are writing to request additional information on the event:\n\nTitle: [TITLE]\nLocation: [LOCATION]\n\n[DESCRIPTION]\n\nTo respond to this message, please visit:\n[EPICORE_URL]/#/fetp/[TOKEN]/[ID]");
-define('EMAIL_TEXT_FOLLOWUP', "The following are the details of the original event RFI:\n\nTitle: [TITLE]\nLocation: [LOCATION]\n\n[DESCRIPTION]\n\nTo respond to this message, please visit:\n[EPICORE_URL]/#/fetp/[TOKEN]/[ID]");
-define('EMAIL_TEXT_CLOSED', "The following event RFI has been closed:\n\nTitle: [TITLE]\nLocation: [LOCATION]\n\n[DESCRIPTION]\n\n[CUSTOM_TEXT]\n\nTo view your RFIs, visit:\n[EPICORE_URL]");
-define('EMAIL_TEXT_REOPENED', "The following event RFI has been re-opened:\n\nTitle: [TITLE]\nLocation: [LOCATION]\n\n[DESCRIPTION]\n\n[CUSTOM_TEXT]\n\n".RESPONSE_LINK);
-define('EMAIL_TEXT_RESPONSE', "The following is a response to your request:\n\nTitle: [TITLE]\nLocation: [LOCATION]");
+define('RESPONSE_LINK', "To respond to this message, please visit:\n".EPICORE_URL."/#/fetp/[TOKEN]/[ID]");
+define('EVENT_DETAILS', "Title: [TITLE]\nLocation: [LOCATION]\n\n[DESCRIPTION]");
+define('EMAIL_TEXT_RFI', "The following RFI was sent from the Epicore system:\n\n[CUSTOM_TEXT]".EVENT_DETAILS."\n\n".RESPONSE_LINK);
+define('EMAIL_TEXT_FOLLOWUP', "The following are the details of the original event RFI:\n\n".EVENT_DETAILS."\n\n".RESPONSE_LINK);
+define('EMAIL_TEXT_CLOSED', "The following Epicore RFI has been closed:\n\n".EVENT_DETAILS."\n\n[CUSTOM_TEXT]\n\nTo view your RFIs, visit:\n".EPICORE_URL);
+define('EMAIL_TEXT_REOPENED', "The following Epicore RFI has been re-opened:\n\n".EVENT_DETAILS."\n\n[CUSTOM_TEXT]\n\n".RESPONSE_LINK);
+define('EMAIL_TEXT_RESPONSE', "The following is a response to your Epicore RFI:\n\nTitle: [TITLE]\nLocation: [LOCATION].\n\nTo send a follow-up to this response, please visit:\n".EPICORE_URL."/#/followup/[ID]/[FETP_ID].\n\nTo view all responses to this RFI, please visit:\n".EPICORE_URL."/#/responses/[ID].");
 
 //define('TEPHINET_BASE', 'http://tftephinetdev.devcloud.acquia-sites.com/');
 //define('TEPHINET_BASE', 'http://tftephinettest.devcloud.acquia-sites.com/');

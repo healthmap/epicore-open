@@ -1,4 +1,4 @@
-<?
+<?php
 /* take the input from the Epicore login form and authenticate user */
 $formvars = json_decode(file_get_contents("php://input"));
 
