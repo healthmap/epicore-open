@@ -5,8 +5,14 @@
             <form name="requestForm" ng-controller="requestController">
             <div class="intro">
                 <h4>Request for Information</h4>
-                <p><strong>Step 1 of 3:</strong> Specify Title, Location and Description of Event</p>
+                <p><strong>Step 1 of 3:</strong> Specify the details of the event.  All will be included in the email to the FETPs.</p>
             </div>
+
+            <div class="form-group col-xs-12">
+                <label class="sr-only" for="location">Additional Email Text</label>
+                <textarea class="form-control" style="height:50px" ng-model="formData.additionalText" id="emailfield" placeholder="Personalized Email Text"></textarea>
+            </div>
+
             <div class="form-group col-xs-12">
                 <label class="sr-only" for="posttitle">Event Title</label>
                 <input type="text" class="form-control" ng-model="formData.title" name="title" id="title" placeholder="Event Title" value="" required>

@@ -6,17 +6,23 @@
             <div class="intro">
                 <h4>Request for Information</h4>
                 <p><strong>Step 3 of 3:</strong> Preview & Send RFI</p>
+                <p>The following is what your <strong><span style="color:#c00">{{numFetps}}</span></strong> FETP recipients will receive via email.  If it looks good, press "Send Email".</p>
             </div>
 
             <div class="form-group col-xs-12">
-<!--
-                <label class="sr-only" for="location">Email</label>
-                <textarea class="form-control" style="height:50px" ng-model="emailData.additionalText" id="emailfield" placeholder="Optional Additional Email Text" required></textarea>
--->
-
-                <p>
+            <p>
             <a href="#/request"><i class="fa fa-arrow-circle-left"></i> Edit event details</a>
-            <pre>{{emailText}}</pre></p>
+<pre>
+The following RFI was sent from the Epicore system:
+
+{{formData.additionalText}}
+
+Title: {{formData.title}}
+Location: {{formData.location}}
+
+{{formData.description}}
+</pre>
+            </p>
             </div>
 
                 <div class="form-group col-xs-12">
