@@ -3,8 +3,8 @@ angular.module('EpicoreApp', [
     'EpicoreApp.controllers',
     'ngCookies',
     'ngRoute',
-    'ngSlider',
-    'google-maps'
+//    'ngSlider',
+    'uiGmapgoogle-maps'
 ]).  
 config(function($routeProvider) {
   $routeProvider.
@@ -25,6 +25,7 @@ config(function($routeProvider) {
         when("/responses/:id", {templateUrl: "partials/responses.html", controller: "eventsController"}).
         when("/success/:id", {templateUrl: "partials/success.html", controller: "successController"}).
         when("/about", {templateUrl: "partials/about.html"}).
+        when("/terms", {templateUrl: "partials/terms.html"}).
         when("/fetp/:tid", {templateUrl: "partials/fetp.html"}).
         when("/fetp/:tid/:eid", {templateUrl: "partials/fetp.html"}).
         when("/mod/:tid/:aid", {templateUrl: "partials/mod.html"}).
