@@ -78,8 +78,9 @@ class EventInfo
     }
 
     function changeStatus($status, $requester_id, $notes, $reason) {
-        $initiator_id = $this->db->getOne("SELECT requester_id FROM event WHERE event_id = ?", array($this->id));
-        if($requester_id == $initiator_id) {
+        $initiator_oid = $this->db->getOne("SELECT user.organization_id FROM event, user WHERE event_id = ? AND event.requester_id = user.user_id", array($this->id));
+        $requester_oid = $this->db->getOne("SELECT organization_id FROM user WHERE user_id = ?", array($requester_id));
+        if($requester_oid == $initiator_oid) {
             $notes = strip_tags($notes);
             $this->db->query("INSERT INTO event_notes (event_id, action_date, note, reason, status) VALUES (?,?,?,?,?)", array($this->id, date('Y-m-d H:i:s'), $notes, $reason, $status));
             $this->db->commit();
