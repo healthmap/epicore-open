@@ -3,6 +3,7 @@
  this is called at the end of all 3 pages, so save
  event info and fetp filter info, then send emails
 */
+
 require_once "const.inc.php";
 require_once "EventInfo.class.php";
 require_once "UserInfo.class.php";
@@ -17,6 +18,8 @@ $event_info['description'] = (string)$formvars->description;
 $event_info['requester_id'] = (int)$formvars->uid;
 $event_info['search_countries'] = $formvars->search_countries ? $formvars->search_countries : '';
 $event_info['search_box'] = $formvars->search_box ? $formvars->search_box : '';
+$event_info['create_date'] = date('Y-m-d H:i:s');
+$event_info['personalized_text'] = $formvars->additionalText ? (string)$formvars->additionalText : '';
 
 $event_id = EventInfo::insertEvent($event_info);
 $ei = new EventInfo($event_id);
@@ -25,8 +28,10 @@ $ei = new EventInfo($event_id);
 $fetp_ids = explode(",", $formvars->fetp_ids);
 $tokens = $ei->insertFetpsReceivingEmail($fetp_ids, 0);
 
-$custom_text = $formvars->additionalText ? (string)$formvars->additionalText . "\n\n" : '';
-$orig_emailtext .= $ei->buildEmailForEvent($event_info, 'rfi', $custom_text);
+// reformat the date to look pretty in email
+$event_info['create_date'] = date('n/j/Y H:i', strtotime($event_info['create_date']));
+
+$orig_emailtext = $ei->buildEmailForEvent($event_info, 'rfi', '', 'true');
 
 // now send it to each FETP individually as they each need unique login token id
 require_once "AWSMail.class.php";

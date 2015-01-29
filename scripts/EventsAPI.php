@@ -39,14 +39,9 @@ if(isset($rvars['event_id']) && is_numeric($rvars['event_id'])) {
         $indexed_array = $ei->getResponses();
     } else {
         $indexed_array = $ei->getInfo(); 
-        if($rvars['from'] == "followup") {
-            $indexed_array['followupText'] = $ei->buildEmailForEvent($indexed_array, 'followup'); 
-        } elseif($rvars['from'] == "reply") {
-            $indexed_array['responseText'] = $ei->buildEmailForEvent($indexed_array, 'response'); 
-        } else {
-            $indexed_array['estatus'] = $ei->getEventStatus();
-            $indexed_array['history'] = $ei->getEventHistory();
-        }
+        $indexed_array['emailText'] = $ei->buildEmailForEvent($indexed_array, $rvars['from']); 
+        $indexed_array['estatus'] = $ei->getEventStatus();
+        $indexed_array['history'] = $ei->getEventHistory();
     }
 } else { // get all events
     // status can be "closed" or "open"

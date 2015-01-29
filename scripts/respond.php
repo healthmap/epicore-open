@@ -1,4 +1,4 @@
-<?
+<?php
 /* reply to an RFI */
 $formvars = json_decode(file_get_contents("php://input"));
 require_once "EventInfo.class.php";
@@ -8,6 +8,7 @@ $status = "error";
 $path = "success/4";
 
 $event_id = $formvars->event_id;
+
 if(is_numeric($event_id)) {
     // clean data
     $dbdata['responder_id'] = isset($formvars->anonymous) ? 0 : (int)$formvars->fetp_id;
@@ -17,17 +18,19 @@ if(is_numeric($event_id)) {
     // insert into response table
     $ei = new EventInfo($event_id);
     $event_info = $ei->getInfo();
-    $ei->insertResponse($dbdata);
+    $response_id = $ei->insertResponse($dbdata);
 
     // build the email message
-    $msg = $ei->buildEmailForEvent($event_info, 'response')."\n\n";
+    $msg = $ei->buildEmailForEvent($event_info, 'reply')."\n\n";
     if($dbdata['response_permission'] == 0) {
         $msg .= "FETP indicated he/she had nothing to contribute regarding the outbreak at this time.";
     } else {
         $msg .= "The permission level for this response is:\nMod may " . $response_permission_lu[$dbdata['response_permission']] . "\n\n";
     }
     $msg .= $dbdata['response']. "\n\n";
-    $msg = str_replace("[FETP_ID]", $dbdata['responder_id'], $msg);
+    $msg .= "\n\n" . EMAIL_TEXT_RESPONSE_FOOTER;
+    $msg = str_replace("[EVENT_ID]", $event_id, $msg);
+    $msg = str_replace("[RESPONSE_ID]", $response_id, $msg);
 
     // send the response to the person who initiated the event request
     $recipient = $ei->getInitiatorEmail();
@@ -36,5 +39,7 @@ if(is_numeric($event_id)) {
     $status = "success";
     $path = "success/2";
 }
+
 print json_encode(array('status' => $status, 'path' => $path, 'dbdata' => $dbdata));
+
 ?>

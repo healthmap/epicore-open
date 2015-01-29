@@ -28,7 +28,7 @@ if(is_numeric($user_id) && $user_id > 0) {
     // if it was a ticket with an event id, go directly to the "respond" page
     // if it was a ticket with an alert id, go directly to the "request" page
     if(isset($formvars->event_id) && is_numeric($formvars->event_id)) {
-        $path = "repy/".$formvars->event_id;
+        $path = "events/".$formvars->event_id;
     } elseif (isset($formvars->alert_id) && is_numeric($formvars->alert_id)) {
         $path = "request/".$formvars->alert_id;
     } else {

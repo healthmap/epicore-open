@@ -3,6 +3,15 @@
 send followup to an existing RFI
 */
 $formvars = json_decode(file_get_contents("php://input"));
+
+/*
+// for troubleshooting
+$formvars->additionalText = "text to sue";
+$formvars->uid = 1;
+$formvars->event_id = 54;
+$formvars->response_id = 24;
+*/
+
 require_once "const.inc.php";
 require_once "EventInfo.class.php";
 require_once "UserInfo.class.php";
@@ -28,15 +37,24 @@ if($requester_id != $event_info['requester_id']) {
     }
 }
 
-// if the fetp_ids were passed in, use those
-// they would be passed in from original form request (as array), 
-// or from a follow-up to specific FETP request
-// otherwise get the fetp_ids from database for that event (from a follow-up to all request)
-$fetp_ids = isset($formvars->fetp_ids) && $formvars->fetp_ids != null ? $formvars->fetp_ids : $ei->getFETPRecipients();
-if(!is_array($fetp_ids)) {
-    $fetp_ids = array($fetp_ids);
+// start building the email text
+$custom_text = $formvars->additionalText ? $formvars->additionalText : '';
+
+// if response_id is passed in, get the fetp_id from the response table
+if(isset($formvars->response_id) && is_numeric($formvars->response_id))  {
+    $response_info = EventInfo::getResponse($formvars->response_id);
+    $fetp_ids = array($response_info['responder_id']);
+    $followupText = $ei->buildEmailForEvent($event_info, "followup_specific", $custom_text, 'true');
+    $followupText = str_replace("[RESPONSE_DATE]", $response_info['response_date'], $followupText);
+    $response = $response_info['response'];
+    if($response_info['response_permission']) {
+        $response .= "\n".$response_info['response_permission'];
+    }
+    $followupText = str_replace("[RESPONSE_TEXT]", $response, $followupText);
+} else { // if no respsonse_id (follow-up to all), get fetp_ids from database for that event
+    $fetp_ids = $ei->getFETPRecipients();
+    $followupText = $ei->buildEmailForEvent($event_info, "followup", $custom_text, 'true');
 }
-$fetp_ids = array_unique($fetp_ids);
 
 // save the fetp_ids in the event_fetp table
 if(empty($fetp_ids)) {
@@ -45,21 +63,15 @@ if(empty($fetp_ids)) {
 }
 
 // get this far, good to insert & send
-require_once "EventInfo.class.php";
-$ei = new EventInfo($event_id);
 // return an array of fetp_id => token_id for auto_login
 $tokens = $ei->insertFetpsReceivingEmail($fetp_ids, 1);
-
-$orig_emailtext = $formvars->additionalText ? $formvars->additionalText ."\n\n" : '';
-$orig_emailtext .= $ei->buildEmailForEvent($event_info, 'followup');
 
 // now send it to each FETP individually as they each need unique login token id
 // cc the initiator of the request for testing only
 require_once "AWSMail.class.php";
-//$extra_headers['cc'] = $formvars->recipient;
 $fetp_emails = UserInfo::getFETPEmails($fetp_ids);
 foreach($fetp_emails as $fetp_id => $recipient) {
-    $emailtext = str_replace("[TOKEN]", $tokens[$fetp_id], $orig_emailtext);
+    $emailtext = str_replace("[TOKEN]", $tokens[$fetp_id], $followupText);
     AWSMail::mailfunc($recipient, "Request For Information", $emailtext, EMAIL_NOREPLY);
 }
 
