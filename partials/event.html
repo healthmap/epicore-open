@@ -22,22 +22,24 @@
         <!-- END View responses -->
 
         <!-- OWNER of event gets additional options to close event or send followup email -->
-        <span ng-show="requestOwner">
-           <a href="#/followup/{{id}}" class="nav-button">Send follow-up email</a>  
+        <span ng-show="isAuthorizedToFollowup">
+            <span ng-if="changeStatusText == 'Close'">
+                <a href="#/followup/{{id}}" class="nav-button">Send follow-up email</a>  
+            </span>
            <a href="#/{{changeStatusType}}/{{id}}" class="nav-button">{{changeStatusText}} request</a> 
         </span>
         <!-- END CLOSE FORM (for owner of event) -->
         </p>
 
-        <p><strong>Title:</strong> {{eventsList.title}}<br>
-        <strong>Location:</strong> {{eventsList.location}}</p>
+        <p><pre>{{emailText}}</pre></p>
+
+        <span ng-show="isOrganization">
         <p><strong>Event History:</strong>
             <ul style="padding-left:20px" ng-repeat="history_item in eventsList.history">
                 <li>{{history_item}}</li>
             </ul>
         </p>
-        <p><strong>Description:</strong>
-        <p ng-bind-html="eventsList.html_description"></p>
+        </span>
 
         </div>
     </div><!--row-->

@@ -5,15 +5,14 @@
 
         <div class="intro">
             <h4>Re-Open Request for Informtation</h4>
-            <p><strong>NOTE:</strong> Submitting this form will send an email to all FETPs originally contacted for this event.</p>
-            <p>Title: {{eventsList.title}}<br>
-            Location: {{eventsList.location}}</p>
+            <p>Send the following email to all FETPs originally contacted for this event.</p>
         </div>
 
         <!-- CHANGE STATUS FORM (for owner of event) -->
         <form name="changeStatusForm">
             <div class="form-group col-xs-12">
-                <label class="sr-only" for="reply">* Notes</label>
+                <pre>{{emailText}}</pre><br>
+                <label class="sr-only" for="reply">Notes</label>
                 <textarea ng-model="formData.notes" style="height:300px" class="form-control" name="reply" id="notesfield" placeholder="Reason for re-opening request" required></textarea>
             </div>
 
