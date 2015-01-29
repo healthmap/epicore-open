@@ -74,26 +74,40 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
 
 /* Event(s) controller */
 }).controller('eventsController', function($scope, $routeParams, $cookieStore, $location, $http, eventAPIservice) {
-        //$scope.nameFilter = null;
         $scope.eventsList = [];
         $scope.userInfo = $cookieStore.get('epiUserInfo');
         $scope.id = $routeParams.id ? $routeParams.id : null;
-        $scope.responder_id = $routeParams.responder_id ? $routeParams.responder_id : null;
-        $scope.allFETPs = $routeParams.responder_id ? false : true;
+        $scope.allFETPs = true;
         // if we're on the closed requests page
         $scope.onOpen = $location.path().indexOf("/closed") > 0 ? false : true;
         $scope.anonymous_disabled = false;
+        if(!$scope.formData) {
+            $scope.formData = {};
+        }
 
         eventAPIservice.getEvents($scope.id).success(function (response) {
             $scope.isOrganization = $scope.userInfo.fetp_id > 0 ? false : true;
-            // if the requester of event is the logged in user, or of the same organization, they get different action items
+            // if RFI requester is the logged in user or of same org, they get different action items
             if(response.EventsList != null) {
-                $scope.requestOwner = $scope.userInfo.organization_id == response.EventsList.org_requester_id ? true : false;
+                $scope.isAuthorizedToFollowup = $scope.userInfo.organization_id == response.EventsList.org_requester_id ? true : false;
                 $scope.changeStatusText = response.EventsList.estatus == "C" ? 'Reopen' : 'Close';
                 $scope.changeStatusType = response.EventsList.estatus == "C" ? 'reopen' : 'close';
             }
             $scope.eventsList = response.EventsList;
+            $scope.emailText = response.EventsList.emailText ? response.EventsList.emailText : ''; 
         });
+
+        // this differs from the method in the responseController in that it is a response to ALL FETPs
+        $scope.sendFollowup = function(formData, isValid) {
+            if(isValid) {
+                formData['uid'] = $scope.userInfo.uid;
+                formData['event_id'] = $routeParams.id;
+                $http({ url: 'scripts/sendfollowup.php', method: "POST", data: formData
+                }).success(function (data, status, headers, config) {
+                    $location.path('/success/3');
+                });
+            }
+        }
 
         $scope.changeRequestStatus = function(formData, thestatus, isValid) {
             if(isValid) {
@@ -108,12 +122,8 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
             }
         }
 
-        if(!$scope.formData) {
-            $scope.formData = {};
-        }
-
         $scope.sendResponse = function(formData, isValid) {
-            if(isValid) {
+            if(formData['response_permission'] == 0 || isValid) {
                 // if user has chosen "I have nothing to contribute" button, 
                 // formData comes in as object response_permissions: 0 
                 formData['event_id'] = $routeParams.id
@@ -125,19 +135,6 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
             }
         }
 
-        $scope.sendFollowup = function(formData, isValid) {
-            if(isValid) {
-                // if responder id, send to that person only, otherwise to all in orig request
-                formData['fetp_ids'] = $scope.responder_id;
-                formData['event_id'] = $routeParams.id;
-                formData['uid'] = $scope.userInfo.uid;
-                formData['recipient'] = $scope.userInfo.email;
-                $http({ url: 'scripts/sendfollowup.php', method: "POST", data: formData
-                }).success(function (data, status, headers, config) {
-                    $location.path('/success/3');
-                });
-            }
-        }
 
 /* Request (RFI)
   this is the process to send an RFI. Store all values in window session
@@ -216,6 +213,7 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
     };
 
     $scope.numFetps = $window.sessionStorage.numFetps;
+    $scope.emailText = $window.sessionStorage.emailText;
 
     /* step 2: Filter FETP: calculate the number of users based on check & uncheck */
     if($location.path() == "/request2") {
@@ -294,9 +292,18 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
             });
     }
 
-    /* step 2 submit button - move on to step 3 */
-    $scope.saveFETPs = function(filterData) {
-        $location.path('/request3');
+    /* step 2 submit button - build the email text and move on to step 3 */
+    $scope.buildEmailText = function() {
+        var formData = {};
+        formData['additionalText'] = $window.sessionStorage.additionalText;
+        formData['title'] = $window.sessionStorage.title;
+        formData['location'] = $window.sessionStorage.location;
+        formData['description'] = $window.sessionStorage.description;
+        $http({ url: 'scripts/buildrequest.php', method: "POST", data: formData 
+        }).success(function (respdata, status, headers, config) {
+            $window.sessionStorage.emailText = respdata['emailtext'];
+            $location.path('/request3');
+        });
     }
 
     /* step 3 : save all event RFI data in database and send the request */
@@ -322,19 +329,35 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
             });
         };
 
-}).controller('fetpController', function($scope, $routeParams, $cookieStore, $http) {
+}).controller('responseController', function($scope, $location, $routeParams, $cookieStore, $http) {
         $scope.userInfo = $cookieStore.get('epiUserInfo');
-        $scope.formData = {};
-        $scope.formData.response_id = $routeParams.id;
-        $scope.formData['uid'] = $scope.userInfo.uid;
-        $scope.formData['org_id'] = $scope.userInfo.organization_id;
-        $scope.formData['fetp_id'] = $scope.userInfo.fetp_id;
-        $http({ url: 'scripts/getresponse.php', method: "POST", data: $scope.formData 
-        }).success(function (respdata, status, headers, config) {
-            $scope.isAuthorizedToSee = respdata['status'] == "failed" ? false : true;
-            $scope.isAuthorizedToFollowup = respdata['authorized_to_followup'] ? true : false;
-            $scope.responseObj = respdata;
-        });
+        $scope.allFETPs = false;
+        var formData = {};
+        formData['uid'] = $scope.userInfo.uid;
+        formData['org_id'] = $scope.userInfo.organization_id;
+        formData['fetp_id'] = $scope.userInfo.fetp_id;
+        formData['response_id'] = $routeParams.response_id;
+        formData['frompage'] = $location.path().indexOf("/followup") == 0 ? "followup" : "response";
+        $http({ url: 'scripts/getresponse.php', method: "POST", data: formData 
+            }).success(function (respdata, status, headers, config) {
+                $scope.isAuthorizedToSee = respdata['status'] == "failed" ? false : true;
+                $scope.isAuthorizedToFollowup = respdata['authorized_to_followup'] ? true : false;
+                $scope.emailText = respdata['followupText'] ? respdata['followupText'] : '';
+                $scope.responseObj = respdata;
+            });
+
+        // this differs from the method in the eventsController in that it is a response to a specific FETP
+        $scope.sendFollowup = function(formData, isValid) {
+            if(isValid) {
+                formData['uid'] = $scope.userInfo.uid;
+                formData['event_id'] = $routeParams.id;
+                formData['response_id'] = $routeParams.response_id;
+                $http({ url: 'scripts/sendfollowup.php', method: "POST", data: formData
+                }).success(function (data, status, headers, config) {
+                    $location.path('/success/3');
+                });
+            }
+        }
 
 /* Success controller - for the success page */
 }).controller('successController', function($scope, $routeParams, $cookieStore) {
