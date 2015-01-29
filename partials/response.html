@@ -5,18 +5,11 @@
         <p><i class="fa fa-arrow-circle-left"></i> <a href="#/events">Back to listing</a></p>
         <h4>Request for Information Response</h4>
             <div ng-show="isAuthorizedToFollowup">
-               <a class="nav-button" href="#/followup/{{responseObj.event_id}}/{{responseObj.responder_id}}">Send follow-up email</a><br><br>
+               <a class="nav-button" href="#/followup/{{responseObj.event_id}}/{{responseObj.response_id}}">Send follow-up email</a><br><br>
             </div>
         <div ng-show="isAuthorizedToSee">
-            <p>
-            <strong>Title:</strong> {{responseObj.title}}<br>
-            <strong>Location:</strong> {{responseObj.location}}
-            </p>
-            <p>
-            <strong>Date Replied:</strong> {{responseObj.response_date}}<br>
-            {{responseObj.response_permission}}
-            </p>
-            <p>{{responseObj.response}}</p>
+            <p>The following reply was sent on {{responseObj.response_date}}:
+            <p><pre>{{emailText}}</pre></p>
         </div>
         <div ng-show="!isAuthorizedToSee">
             <p>Sorry, you are not authorized to view this response</p>

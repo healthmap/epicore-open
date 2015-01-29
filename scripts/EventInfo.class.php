@@ -23,6 +23,7 @@ class EventInfo
         $event_info['org_requester_id'] = self::getOrganizationOfRequester();
         $event_info['html_description'] = str_replace("\n", "<br>", $event_info['description']);
         $event_info['num_responses'] = $this->db->getOne("SELECT count(*) FROM response WHERE event_id = ?", array($this->id));
+        $event_info['create_date'] = date('n/j/Y H:i', strtotime($event_info['create_date']));
         return $event_info;
     }
 
@@ -77,8 +78,9 @@ class EventInfo
     }
 
     function changeStatus($status, $requester_id, $notes, $reason) {
-        $initiator_id = $this->db->getOne("SELECT requester_id FROM event WHERE event_id = ?", array($this->id));
-        if($requester_id == $initiator_id) {
+        $initiator_oid = $this->db->getOne("SELECT user.organization_id FROM event, user WHERE event_id = ? AND event.requester_id = user.user_id", array($this->id));
+        $requester_oid = $this->db->getOne("SELECT organization_id FROM user WHERE user_id = ?", array($requester_id));
+        if($requester_oid == $initiator_oid) {
             $notes = strip_tags($notes);
             $this->db->query("INSERT INTO event_notes (event_id, action_date, note, reason, status) VALUES (?,?,?,?,?)", array($this->id, date('Y-m-d H:i:s'), $notes, $reason, $status));
             $this->db->commit();
@@ -93,7 +95,9 @@ class EventInfo
         $response = strip_tags($data_arr['response']);
         $perm = is_numeric($data_arr['response_permission']) && $data_arr['response_permission'] < 5 ? $data_arr['response_permission'] : 0;
         $this->db->query("INSERT INTO response (event_id, response, responder_id, response_date, response_permission) VALUES (?, ?, ?, ?, ?)", array($this->id, $response, $responder_id, date('Y-m-d H:i:s'), $perm));
+        $response_id = $this->db->getOne("SELECT LAST_INSERT_ID()");
         $this->db->commit();
+        return $response_id;
     }
 
     function getResponses() {
@@ -117,7 +121,7 @@ class EventInfo
     }
 
     function getFETPRecipients() {
-        $q = $this->db->query("SELECT fetp_id FROM event_fetp WHERE event_id = ?", array($this->id));
+        $q = $this->db->query("SELECT DISTINCT(fetp_id) FROM event_fetp WHERE event_id = ?", array($this->id));
         while($row = $q->fetchRow()) {
             $fetp_ids[] = $row['fetp_id'];
         }
@@ -160,47 +164,55 @@ class EventInfo
         return $this->id;
     }
 
-    function updateEventFilterInfo($search_info) 
-    {
-        /* if search_box & search_radius are set, search_countries should be NULL, and vice versa */
-        $this->db->query("UPDATE event SET search_box = ?, search_radius = ?, search_countries = ? WHERE event_id = ?", array($search_info['search_box'], $search_info['search_radius'], $search_info['search_countries'], $this->id));
-        $this->db->commit();
-    }
-
-    function buildEmailForEvent($event_info = array(), $type, $custom_text) 
+    function buildEmailForEvent($event_info = array(), $type, $custom_text, $with_link = '') 
     {
         $event_info = $event_info ? $event_info : self::getInfo();
         if($type == "followup") {
             $emailtext = EMAIL_TEXT_FOLLOWUP;
-        } elseif($type == "O") { // Re-open
+        } elseif($type == "followup_specific") {
+            $emailtext = EMAIL_TEXT_FOLLOWUP_SPECIFIC;
+        } elseif($type == "O" || $type == "reopen") { // Re-open
             $emailtext = EMAIL_TEXT_REOPENED;
-        } elseif($type == "C") { // Closed 
+        } elseif($type == "C" || $type == "close") { // Closed 
             $emailtext = EMAIL_TEXT_CLOSED;
-        } elseif($type == "response") {
+        } elseif($type == "reply") {
             $emailtext = EMAIL_TEXT_RESPONSE;
+        } elseif($type == "get_reply") {
+            $emailtext = EMAIL_TEXT_SHOW_RESPONSE;
         } else {
             $emailtext = EMAIL_TEXT_RFI;
         }
+        // don't show the response link in preview modes in forms, only on actual email
+        if($with_link) {
+            $emailtext .= "\n\n".RESPONSE_LINK;
+        }
+        $personalized_text = $event_info['personalized_text']  ? $event_info['personalized_text'] . "\n\n" : '';
+        $emailtext = str_replace("[PERSONALIZED_TEXT]", $personalized_text, $emailtext);
         $emailtext = str_replace("[TITLE]", $event_info['title'], $emailtext);
+        $emailtext = str_replace("[EVENT_DATE]", $event_info['create_date'], $emailtext);
         $emailtext = str_replace("[DESCRIPTION]", $event_info['description'], $emailtext);
         $emailtext = str_replace("[LOCATION]", $event_info['location'], $emailtext);
+        $custom_text = $custom_text ? "\n\n".$custom_text."\n\n" : '';
         $emailtext = str_replace("[CUSTOM_TEXT]", $custom_text, $emailtext);
-        $emailtext = str_replace("[EPICORE_URL]", EPICORE_URL, $emailtext);
-        $emailtext = str_replace("[ID]", $this->id, $emailtext);
+        if(isset($this)) {
+            $emailtext = str_replace("[EVENT_ID]", $this->id, $emailtext);
+        }
         return $emailtext;
     }
 
     static function getResponse($response_id) {
         global $response_permission_lu;
         $db = getDB();
-        $response_info = $db->getRow("SELECT response_id, responder_id, response, response_date, event.event_id, event.title, event.requester_id AS event_requester_id, response_permission, place.name AS location FROM event, response, place WHERE response_id = ? AND response.event_id = event.event_id AND event.place_id = place.place_id", array($response_id));
+        $response_info = $db->getRow("SELECT response_id, responder_id, response, response_date, event.event_id, event.title, event.description, event.create_date, event.requester_id AS event_requester_id, response_permission, place.name AS location FROM event, response, place WHERE response_id = ? AND response.event_id = event.event_id AND event.place_id = place.place_id", array($response_id));
         if(empty($response_info)) {
             return 0;
         }
         $response_info['response_date'] = date('n/j/Y H:i', strtotime($response_info['response_date'])); 
+        $response_info['event_date'] = date('n/j/Y H:i', strtotime($response_info['create_date'])); 
         // response perm of 0 means the FETP responded that he/she had no response
         if($response_info['response_permission'] == 0) {
-            $response_info['response_permission'] = $response_permission_lu[0];
+            $response_info['response_permission'] = '';
+            $response_info['response'] = $response_permission_lu[0];
         } else {
             $response_info['response_permission'] = 'Permission level: ' . $response_permission_lu[$response_info['response_permission']];
         }
@@ -256,8 +268,11 @@ class EventInfo
         }
         // insert into the place table if doesn't exist
         $place_id = PlaceInfo::insertLocation($darr['latlon'], $darr['location']);
+
+        $create_date = $darr['create_date'] ? $darr['create_date'] : date('Y-m-d H:i:s');
+
         // insert into the event table
-        $q = $db->query("INSERT INTO event (place_id, title, description, create_date, requester_id) VALUES (?, ?, ?, ?, ?)", array($place_id, $darr['title'], $darr['description'], date('Y-m-d H:i:s'), $darr['requester_id']));
+        $q = $db->query("INSERT INTO event (place_id, title, description, personalized_text, create_date, requester_id, search_box, search_countries) VALUES (?, ?, ?, ?, ?, ?, ?, ?)", array($place_id, $darr['title'], $darr['description'], $darr['personalized_text'], $create_date, $darr['requester_id'], $darr['search_box'], $darr['search_countries']));
         $event_id = $db->getOne("SELECT LAST_INSERT_ID()");
         $db->commit();
         return $event_id;

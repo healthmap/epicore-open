@@ -9,8 +9,16 @@
             </div>
 
             <div class="form-group col-xs-12">
-            <div class="radio"><label><input type="radio" name="filtertype" ng-value="radius" ng-click="recalcUsers(formData, 'radius');" ng-checked="radiussel">FETPs whose location is {{formData.radiusValue}} miles from {{locname}}:</label></div>
-                <input ng-model="formData.radiusValue" type="text" id="radiusSlider" slider options="options" />
+            <div class="radio"><label><input type="radio" name="filtertype" ng-value="radius" ng-click="recalcUsers(formData, 'radius');" ng-checked="radiussel">FETPs within the bounding box (surrounding the event location '{{formData.location}}'):</label></div>
+    <ui-gmap-google-map center="map.center" zoom="map.zoom" draggable="true" options="options" bounds="map.bounds">
+        <ui-gmap-rectangle bounds="rectangle.bounds" stroke="rectangle.stroke" visible="true" fill="rectangle.fill" fit="false" editable="true" draggable="true" events="eventsRectangle">
+        </ui-gmap-rectangle>
+        <ui-gmap-markers models="markers" coords="'self'" icon="'icon'" click="'onClick'">
+            <windows show="show">
+                <div ng-non-bindable>{{title}}</div>
+            </windows>
+        </ui-gmap-markers>
+    </ui-gmap-google-map>
             </div>
 
             <div class="form-group col-xs-12">
@@ -299,8 +307,8 @@
 -->
 
             <div class="form-group col-xs-12">
-                <br><p>Sending request to <strong><span style="color:#c00">{{userList.sending}}</span></strong> FETPs</p>
-                <button type="submit" ng-click="saveFETPs(formData)" ng-disabled="submitDisabled" class="submit btn btn-default col-xs-12">Step 3: Review & Send <i class="fa fa-arrow-circle-right"></i></button>
+                <br><p>Sending request to <strong><span style="color:#c00">{{numFetps}}</span></strong> FETPs</p>
+                <button type="submit" ng-click="buildEmailText(formData)" ng-disabled="submitDisabled" class="submit btn btn-default col-xs-12">Step 3: Review & Send <i class="fa fa-arrow-circle-right"></i></button>
             </div>
             
             </form>

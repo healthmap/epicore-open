@@ -14,6 +14,7 @@ if(is_numeric($event_id) && is_numeric($user_id)) {
     // reason is one of the radio button choices on the close event form
     $reason = isset($formvars->reason) && is_numeric($formvars->reason) ? $formvars->reason : '';
     $return_val = $ei->changeStatus($thestatus, $user_id, $formvars->notes, $reason);
+    $response_link = '';
     if($return_val == 1) {
          $status = "success"; 
         // now send the notes to all orig FETPs specifying status change
@@ -26,12 +27,14 @@ if(is_numeric($event_id) && is_numeric($user_id)) {
             $custom_text = "The reason for re-opening is: ";
             // the second argument is "2" for the follow-up field, indicating a re-open request
             $tokens = $ei->insertFetpsReceivingEmail($fetp_ids, 2);
+            // include a link to respond only if the event is re-opened
+            $response_link = 'true';
         } else {
             $custom_text = "The reason for the closure is: ";
             $custom_text .= $reason_lu[$reason] ? "\n".$reason_lu[$reason]."\n" : "";
         }
         $custom_text .= "\n\n".$formvars->notes;
-        $orig_emailtext .= $ei->buildEmailForEvent($event_info, $thestatus, $custom_text);
+        $orig_emailtext .= $ei->buildEmailForEvent($event_info, $thestatus, $custom_text, $response_link);
         foreach($fetp_emails as $fetp_id => $recipient) {
             $emailtext = str_replace("[TOKEN]", $tokens[$fetp_id], $orig_emailtext);
             AWSMail::mailfunc($recipient, "Status Change: Request For Information", $emailtext, EMAIL_NOREPLY);

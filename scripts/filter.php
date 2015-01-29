@@ -18,11 +18,15 @@ if($formvars->filtertype == "country") {
     $calledfrom = "country";
 } else {
     $calledfrom = "radius";
-    // get FETP info: first get the bounding box from lat/lon
-    require_once "PlaceInfo.class.php";
-    list($lat,$lon) = split(",", (string)$formvars->latlon);
-    $radius = (int)$formvars->radius ? (int)$formvars->radius : DEFAULT_RADIUS;
-    $bbox = PlaceInfo::getBoundingBox($lat, $lon, $radius);
+    if(!isset($formvars->bbox)) {
+        // get FETP info: first get the bounding box from lat/lon
+        require_once "PlaceInfo.class.php";
+        list($lat,$lon) = split(",", (string)$formvars->latlon);
+        $radius = (int)$formvars->radius ? (int)$formvars->radius : DEFAULT_RADIUS;
+        $bbox = PlaceInfo::getBoundingBox($lat, $lon, $radius);
+    } else {
+        $bbox = $formvars->bbox;
+    }
     // get the FETPs in that bounding box
     $userinfo = UserInfo::getFETPsInLocation('radius', $bbox);
 }

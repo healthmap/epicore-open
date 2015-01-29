@@ -2,14 +2,20 @@
 define('EMAIL_NOREPLY', 'Epicore Message Bot <mod@healthmap.org>');
 define('LAT_LON_PRECISION', 2);
 define('EPICORE_URL', 'http://epicore.org');
-define('DEFAULT_RADIUS', 250);
+define('DEFAULT_RADIUS', 400); // in km
 
-define('RESPONSE_LINK', "To respond to this message, please visit:\n[EPICORE_URL]/#/fetp/[TOKEN]/[ID]");
-define('EMAIL_TEXT_RFI', "We are writing to request additional information on the event:\n\nTitle: [TITLE]\nLocation: [LOCATION]\n\n[DESCRIPTION]\n\nTo respond to this message, please visit:\n[EPICORE_URL]/#/fetp/[TOKEN]/[ID]");
-define('EMAIL_TEXT_FOLLOWUP', "The following are the details of the original event RFI:\n\nTitle: [TITLE]\nLocation: [LOCATION]\n\n[DESCRIPTION]\n\nTo respond to this message, please visit:\n[EPICORE_URL]/#/fetp/[TOKEN]/[ID]");
-define('EMAIL_TEXT_CLOSED', "The following event RFI has been closed:\n\nTitle: [TITLE]\nLocation: [LOCATION]\n\n[DESCRIPTION]\n\n[CUSTOM_TEXT]\n\nTo view your RFIs, visit:\n[EPICORE_URL]");
-define('EMAIL_TEXT_REOPENED', "The following event RFI has been re-opened:\n\nTitle: [TITLE]\nLocation: [LOCATION]\n\n[DESCRIPTION]\n\n[CUSTOM_TEXT]\n\n".RESPONSE_LINK);
-define('EMAIL_TEXT_RESPONSE', "The following is a response to your request:\n\nTitle: [TITLE]\nLocation: [LOCATION]");
+define('EVENT_DETAILS', "\n\n[PERSONALIZED_TEXT]Date: [EVENT_DATE]\nTitle: [TITLE]\nLocation: [LOCATION]\n\n[DESCRIPTION]");
+
+define('EMAIL_TEXT_RFI', "The following RFI was sent from the Epicore system:".EVENT_DETAILS);
+define('EMAIL_TEXT_FOLLOWUP', "The following follow-up RFI was sent from the Epicore system.[CUSTOM_TEXT] The original event details are:".EVENT_DETAILS);
+define('EMAIL_TEXT_FOLLOWUP_SPECIFIC', "The following follow-up RFI was sent from the Epicore system.[CUSTOM_TEXT] It is in response to your reply from [RESPONSE_DATE]:\n\n[RESPONSE_TEXT]\n\n\nThe original event details are:".EVENT_DETAILS);
+define('EMAIL_TEXT_CLOSED', "The following Epicore RFI has been closed:".EVENT_DETAILS."[CUSTOM_TEXT]");
+define('EMAIL_TEXT_REOPENED', "The following Epicore RFI has been re-opened:".EVENT_DETAILS."[CUSTOM_TEXT]");
+define('EMAIL_TEXT_RESPONSE', "The following is a response to your Epicore RFI:".EVENT_DETAILS);
+define('EMAIL_TEXT_SHOW_RESPONSE', "The following is a response to your Epicore RFI:\n\n[RESPONSE_INFO]\n\nThe original event details are:".EVENT_DETAILS);
+
+define('EMAIL_TEXT_RESPONSE_FOOTER', "To send a follow-up to this response, please visit:\n".EPICORE_URL."/#/followup/[EVENT_ID]/[RESPONSE_ID].\n\nTo view all responses to this RFI, please visit:\n".EPICORE_URL."/#/responses/[EVENT_ID].");
+define('RESPONSE_LINK', "To respond to this message, please visit:\n".EPICORE_URL."/#/fetp/[TOKEN]/[EVENT_ID]");
 
 //define('TEPHINET_BASE', 'http://tftephinetdev.devcloud.acquia-sites.com/');
 //define('TEPHINET_BASE', 'http://tftephinettest.devcloud.acquia-sites.com/');
@@ -30,7 +36,7 @@ $response_permission_lu = array(
 
 $reason_lu = array(
     "1" => "Outbreak has been confirmed from other sources",
-    "2" => "Sufficient number of FETP responses",
-    "3" => "Insufficient number of FETP responses"
+    "2" => "Sufficient FETP responses",
+    "3" => "Insufficient FETP responses"
 );
 ?>

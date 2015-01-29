@@ -8,9 +8,9 @@
             <h4>Request for Information Reply</h4>
         </div>
 
-        <form>
+        <form name="sendResponseForm">
             <div class="form-group col-xs-12">
-                <pre>{{eventsList.responseText}}</pre>
+                <pre>{{eventsList.emailText}}</pre>
                 <br>
                 <label class="sr-only" for="reply">Reply</label>
                 <textarea ng-model="formData.reply" style="height:300px" class="form-control" name="reply" id="replyfield" placeholder="Response Email Text" required></textarea>
@@ -34,7 +34,7 @@
             -->
 
             <div class="form-group col-xs-12">
-                <button ng-click="sendResponse(formData)" type="submit" class="submit btn btn-default col-xs-12">Submit</button>
+                <button ng-click="sendResponse(formData, sendResponseForm.$valid)" type="submit" class="submit btn btn-default col-xs-12">Submit</button>
             </div><!-- /input-group -->
         </form>
 

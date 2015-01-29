@@ -30,9 +30,9 @@ class PlaceInfo
         return $place_id;
     }
 
-    static function getBoundingBox($lat,$lon,$distance) {
+    static function getBoundingBox($lat,$lon,$distance,$unit='km') {
 
-        $radius = 3963.1; // of earth in miles
+        $radius = isset($unit) && $unit == "miles" ? 3963.1 : 6378.1; // of earth in miles and then km
 
         // bearings
         $due_north = deg2rad(0);
