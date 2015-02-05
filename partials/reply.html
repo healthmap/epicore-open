@@ -6,12 +6,14 @@
 
         <div class="intro">
             <h4>Request for Information Reply</h4>
+            <p>
+            Title: {{eventsList.title}}<br>
+            Date: {{eventsList.create_date}}
+            </p>
         </div>
 
         <form name="sendResponseForm">
             <div class="form-group col-xs-12">
-                <pre>{{eventsList.emailText}}</pre>
-                <br>
                 <label class="sr-only" for="reply">Reply</label>
                 <textarea ng-model="formData.reply" style="height:300px" class="form-control" name="reply" id="replyfield" placeholder="Response Email Text" required></textarea>
             </div>

@@ -10,7 +10,11 @@
 <div ng-show="isAuthorizedToFollowup">
         <div class="intro">
             <h4>Request for Information Follow-up</h4>
-            <p>Sending email to 
+            <p>
+            Title: {{eventsList.title}}<br>
+            Date: {{eventsList.create_date}}
+            </p>
+            <p>Send email to 
             <span ng-show="allFETPs">all FETPs originally contacted for this request.</span>
             <span ng-show="!allFETPs">the chosen FETP only.</span></p>
         </div>
@@ -20,8 +24,6 @@
         <div class="form-group col-xs-12">
             <label class="sr-only" for="location">Email Text</label>
             <textarea class="form-control" style="height:100px" ng-model="emailData.additionalText" id="emailfield" placeholder="Follow-up Email Text" required></textarea>
-
-            <p><pre>{{emailText}}</pre></p>
 
         </div>
 

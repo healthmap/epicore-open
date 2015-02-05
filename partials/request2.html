@@ -1,11 +1,12 @@
 <div ng-include src="'header.html'"></div>
 <div class="container main">
     <div class="row">
-        <div id="form-container" class="col-xs-12 col-sm-9 col-md-7 col-lg-6">
+        <div id="form-container" class="col-xs-12 col-sm-12 col-md-12 col-lg-12 wbg">
             <form ng-controller="requestController">
             <div class="intro">
                 <h4>Request for Information</h4>
-                <p><strong>Step 2 of 3:</strong> Narrow FETP recipients by:</p>
+                <p><strong>Step 2 of 3:</strong> Filter FETP recipients by country or bounding box
+                (currently <strong><span style="color:#c00">{{numFetps}}</span></strong> FETPs)</p>
             </div>
 
             <div class="form-group col-xs-12">
@@ -24,7 +25,7 @@
             <div class="form-group col-xs-12">
             <br>
             <div class="radio"><label><input type="radio" name="filtertype" ng-value="country" ng-click="recalcUsers(formData, 'country');" ng-checked="!radiussel">FETPs in the country or countries:<br><span class="smtext">* hold down ctrl key (windows) or command key (mac) to select multiple</span></label></div>
-                    <select ng-change="recalcUsers(formData, 'country');" ng-model="formData.countries" id="countries" name="countries" multiple>
+                    <select class="form-control" ng-change="recalcUsers(formData, 'country');" ng-model="formData.countries" id="countries" name="countries" multiple>
 <!-- 
 <option value="AF">Afghanistan</option> 
 <option value="AX">Åland Islands</option>
@@ -307,7 +308,7 @@
 -->
 
             <div class="form-group col-xs-12">
-                <br><p>Sending request to <strong><span style="color:#c00">{{numFetps}}</span></strong> FETPs</p>
+                <p>Sending request to <strong><span style="color:#c00">{{numFetps}}</span></strong> FETPs</p>
                 <button type="submit" ng-click="buildEmailText(formData)" ng-disabled="submitDisabled" class="submit btn btn-default col-xs-12">Step 3: Review & Send <i class="fa fa-arrow-circle-right"></i></button>
             </div>
             

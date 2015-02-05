@@ -8,8 +8,7 @@
                <a class="nav-button" href="#/followup/{{responseObj.event_id}}/{{responseObj.response_id}}">Send follow-up email</a><br><br>
             </div>
         <div ng-show="isAuthorizedToSee">
-            <p>The following reply was sent on {{responseObj.response_date}}:
-            <p><pre>{{emailText}}</pre></p>
+            <iframe width="900" height="400" ng-src="{{filePreview}}"></iframe>
         </div>
         <div ng-show="!isAuthorizedToSee">
             <p>Sorry, you are not authorized to view this response</p>

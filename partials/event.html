@@ -4,8 +4,7 @@
         <div id="form-container" class="col-xs-12 col-sm-12 col-md-12 col-lg-12 wbg">
         <p><i class="fa fa-arrow-circle-left"></i> <a href="#/events">Back to listing</a></p>
 
-        <h4>Request for Information Details</h4>
-
+        <h4>Request For Information Details</h4>
         <!-- REPLY FORM (for FETPS only who received the event) -->
         <p>
         <div ng-show="!isOrganization">
@@ -31,7 +30,7 @@
         <!-- END CLOSE FORM (for owner of event) -->
         </p>
 
-        <p><pre>{{emailText}}</pre></p>
+        <iframe width="900" height="400" ng-src="{{filePreview}}"></iframe>
 
         <span ng-show="isOrganization">
         <p><strong>Event History:</strong>
