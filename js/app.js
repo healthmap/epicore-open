@@ -4,7 +4,6 @@ angular.module('EpicoreApp', [
     'ngCookies',
     'ngRoute',
     'ngSanitize',
-//    'ngSlider',
     'uiGmapgoogle-maps'
 ]).  
 config(function($routeProvider) {
@@ -17,7 +16,7 @@ config(function($routeProvider) {
         when("/close/:id", {templateUrl: "partials/close.html", controller: "eventsController"}).
         when("/reopen/:id", {templateUrl: "partials/reopen.html", controller: "eventsController"}).
         when("/followup/:id", {templateUrl: "partials/followup.html", controller: "eventsController"}).
-        when("/followup/:id/:response_id", {templateUrl: "partials/followup.html", controller: "responseController"}).
+        when("/followup/:id/:response_id", {templateUrl: "partials/followup.html", controller: "eventsController"}).
         when("/response/:response_id", {templateUrl: "partials/response.html", controller: "responseController"}).
         when("/request", {templateUrl: "partials/request.html"}).
         when("/request/:alertid", {templateUrl: "partials/request.html"}).
@@ -27,8 +26,8 @@ config(function($routeProvider) {
         when("/success/:id", {templateUrl: "partials/success.html", controller: "successController"}).
         when("/about", {templateUrl: "partials/about.html"}).
         when("/terms", {templateUrl: "partials/terms.html"}).
-        when("/fetp/:tid", {templateUrl: "partials/fetp.html"}).
-        when("/fetp/:tid/:eid", {templateUrl: "partials/fetp.html"}).
+        when("/fetp", {templateUrl: "partials/fetp.html"}).
+        when("/fetp/:eid", {templateUrl: "partials/fetp.html"}).
         when("/mod/:tid/:aid", {templateUrl: "partials/mod.html"}).
         when("/home", {templateUrl: "partials/home.html"}).
         otherwise({redirectTo: '/home'});
