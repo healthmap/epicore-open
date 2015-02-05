@@ -333,7 +333,6 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
             formData['title'] = $window.sessionStorage.title;
             formData['description'] = $window.sessionStorage.description;
             formData['additionalText'] = $window.sessionStorage.additionalText;
-            formData['tempfile'] = $window.sessionStorage.filePreview;
             $http({ url: 'scripts/sendrequest.php', method: "POST", data: formData 
             }).success(function (respdata, status, headers, config) {
                 // empty out the form values since you've submitted so they aren't prefilled next time
@@ -355,7 +354,6 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
                 $scope.isAuthorizedToFollowup = respdata['authorized_to_followup'] ? true : false;
                 $scope.filePreview = respdata['filePreview'] ? respdata['filePreview'] : '';
                 $scope.responseObj = respdata;
-console.log(respdata);
             });
 
 

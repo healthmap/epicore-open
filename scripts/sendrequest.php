@@ -11,14 +11,6 @@ require_once "AWSMail.class.php";
 
 $formvars = json_decode(file_get_contents("php://input"));
 
-// email tempfile must be passed in
-if(isset($formvars->tempfile) && file_exists("../".$formvars->tempfile)) {
-    $orig_emailtext = file_get_contents("../".$formvars->tempfile);
-} else {
-    print json_encode(array('status' => 'error', 'reason' => 'email template not found'));
-    exit;
-}
-
 // store the event info in event table
 $event_info['latlon'] = (string)$formvars->latlon;
 $event_info['location'] = (string)$formvars->location;
@@ -38,7 +30,8 @@ $fetp_ids = explode(",", $formvars->fetp_ids);
 $tokens = $ei->insertFetpsReceivingEmail($fetp_ids, 0);
 $fetp_emails = UserInfo::getFETPEmails($fetp_ids);
 $extra_headers['text_or_html'] = "html";
-$emailtext = str_replace("[EVENT_ID]", $event_id, $orig_emailtext);
+
+$emailtext = $ei->buildEmailForEvent($event_info, 'rfi', '', 'text');
 
 foreach($fetp_emails as $fetp_id => $recipient) {
     $recipient = trim($recipient);
