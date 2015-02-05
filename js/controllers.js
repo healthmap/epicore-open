@@ -2,6 +2,8 @@ angular.module('EpicoreApp.controllers', []).
 
 /* User - includes Login & Logout */
 controller('userController', function($rootScope, $routeParams, $scope, $route, $cookies, $cookieStore, $location, $http) {
+        var querystr = $location.search() ? $location.search() : '';
+
         /* get the active state of page you're on */
         $scope.getClass = function(path) {
             if(path == $location.path()) {
@@ -22,7 +24,11 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
             // came in from fetp log in, no formdata passed, get ticket id and (optional) event_id from URL
             if(typeof(formData) == "undefined") {
                 var formData = {};
-                formData['ticket_id'] = $routeParams.tid ? $routeParams.tid : null;
+                if(typeof(querystr['t']) != "undefined") {
+                    formData['ticket_id'] = querystr['t'];
+                } else if ($routeParams.tid) {
+                    formData['ticket_id'] = $routeParams.tid;
+                }
                 // if it's a mod, may be coming in with ticket and alert id to auto-fill a request
                 formData['alert_id'] = $routeParams.aid ? $routeParams.aid : null;
                 // if it's an fetp, may be coming in with ticket and event id for which they will respond
@@ -40,8 +46,8 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
                     var isPromed = data['uinfo']['organization_id'] == 4 ? true : false;
                     $cookieStore.put('epiUserInfo', {'uid':data['uinfo']['user_id'], 'isPromed':isPromed, 'isOrganization':$rootScope.isOrganization, 'organization_id':data['uinfo']['organization_id'], 'organization':data['uinfo']['orgname'], 'fetp_id':data['uinfo']['fetp_id'], 'email':data['uinfo']['email'], 'uname':data['uinfo']['username']});
                     $rootScope.error_message = 'false';
-                    var querystr = $location.search() ? $location.search() : '';
-                    var redirpath = querystr['redir'] ? querystr['redir'] : '/'+data['path'];
+                    //var querystr = $location.search() ? $location.search() : '';
+                    var redirpath = typeof(querystr['redir']) != "undefined" ? querystr['redir'] : '/'+data['path'];
                     $location.path(redirpath);
                 } else {
                     $rootScope.error_message = 'true';
@@ -77,7 +83,7 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
         $scope.eventsList = [];
         $scope.userInfo = $cookieStore.get('epiUserInfo');
         $scope.id = $routeParams.id ? $routeParams.id : null;
-        $scope.allFETPs = true;
+        $scope.allFETPs = $routeParams.response_id ? false : true;
         // if we're on the closed requests page
         $scope.onOpen = $location.path().indexOf("/closed") > 0 ? false : true;
         $scope.anonymous_disabled = false;
@@ -94,14 +100,16 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
                 $scope.changeStatusType = response.EventsList.estatus == "C" ? 'reopen' : 'close';
             }
             $scope.eventsList = response.EventsList;
-            $scope.emailText = response.EventsList.emailText ? response.EventsList.emailText : ''; 
+            $scope.filePreview = response.EventsList.filePreview ? response.EventsList.filePreview : ''; 
         });
 
-        // this differs from the method in the responseController in that it is a response to ALL FETPs
         $scope.sendFollowup = function(formData, isValid) {
             if(isValid) {
                 formData['uid'] = $scope.userInfo.uid;
                 formData['event_id'] = $routeParams.id;
+                if($routeParams.response_id) {
+                    formData['response_id'] = $routeParams.response_id;
+                }
                 $http({ url: 'scripts/sendfollowup.php', method: "POST", data: formData
                 }).success(function (data, status, headers, config) {
                     $location.path('/success/3');
@@ -128,7 +136,7 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
                 // formData comes in as object response_permissions: 0 
                 formData['event_id'] = $routeParams.id
                 formData['fetp_id'] = $scope.userInfo.fetp_id;
-                $http({ url: 'scripts/respond.php', method: "POST", data: formData
+                $http({ url: 'scripts/sendresponse.php', method: "POST", data: formData
                 }).success(function (data, status, headers, config) {
                     $location.path('/'+data['path']);
                 });
@@ -213,7 +221,7 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
     };
 
     $scope.numFetps = $window.sessionStorage.numFetps;
-    $scope.emailText = $window.sessionStorage.emailText;
+    $scope.filePreview = $window.sessionStorage.filePreview;
 
     /* step 2: Filter FETP: calculate the number of users based on check & uncheck */
     if($location.path() == "/request2") {
@@ -299,9 +307,13 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
         formData['title'] = $window.sessionStorage.title;
         formData['location'] = $window.sessionStorage.location;
         formData['description'] = $window.sessionStorage.description;
+        // overwrite the old file preview if it exists
+        if(typeof($window.sessionStorage.filePreview) != "undefined") {
+            formData['file_preview'] = $window.sessionStorage.filePreview;
+        }
         $http({ url: 'scripts/buildrequest.php', method: "POST", data: formData 
         }).success(function (respdata, status, headers, config) {
-            $window.sessionStorage.emailText = respdata['emailtext'];
+            $window.sessionStorage.filePreview = respdata['file_preview'];
             $location.path('/request3');
         });
     }
@@ -321,6 +333,7 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
             formData['title'] = $window.sessionStorage.title;
             formData['description'] = $window.sessionStorage.description;
             formData['additionalText'] = $window.sessionStorage.additionalText;
+            formData['tempfile'] = $window.sessionStorage.filePreview;
             $http({ url: 'scripts/sendrequest.php', method: "POST", data: formData 
             }).success(function (respdata, status, headers, config) {
                 // empty out the form values since you've submitted so they aren't prefilled next time
@@ -331,33 +344,20 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
 
 }).controller('responseController', function($scope, $location, $routeParams, $cookieStore, $http) {
         $scope.userInfo = $cookieStore.get('epiUserInfo');
-        $scope.allFETPs = false;
         var formData = {};
         formData['uid'] = $scope.userInfo.uid;
         formData['org_id'] = $scope.userInfo.organization_id;
         formData['fetp_id'] = $scope.userInfo.fetp_id;
         formData['response_id'] = $routeParams.response_id;
-        formData['frompage'] = $location.path().indexOf("/followup") == 0 ? "followup" : "response";
         $http({ url: 'scripts/getresponse.php', method: "POST", data: formData 
             }).success(function (respdata, status, headers, config) {
                 $scope.isAuthorizedToSee = respdata['status'] == "failed" ? false : true;
                 $scope.isAuthorizedToFollowup = respdata['authorized_to_followup'] ? true : false;
-                $scope.emailText = respdata['followupText'] ? respdata['followupText'] : '';
+                $scope.filePreview = respdata['filePreview'] ? respdata['filePreview'] : '';
                 $scope.responseObj = respdata;
+console.log(respdata);
             });
 
-        // this differs from the method in the eventsController in that it is a response to a specific FETP
-        $scope.sendFollowup = function(formData, isValid) {
-            if(isValid) {
-                formData['uid'] = $scope.userInfo.uid;
-                formData['event_id'] = $routeParams.id;
-                formData['response_id'] = $routeParams.response_id;
-                $http({ url: 'scripts/sendfollowup.php', method: "POST", data: formData
-                }).success(function (data, status, headers, config) {
-                    $location.path('/success/3');
-                });
-            }
-        }
 
 /* Success controller - for the success page */
 }).controller('successController', function($scope, $routeParams, $cookieStore) {
