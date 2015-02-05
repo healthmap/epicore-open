@@ -164,40 +164,64 @@ class EventInfo
         return $this->id;
     }
 
-    function buildEmailForEvent($event_info = array(), $type, $custom_text, $with_link = '') 
+    function buildEmailForEvent($event_info = array(), $type, $custom_vars = array(), $return_type = 'text')
     {
+        // if event id is passed in, just pull the email text from the RFI preview, if there is one
+        if(isset($this) && file_exists("../".EMAILPREVIEWS."$type/".$this->id.".html")) {
+            $file_preview = EMAILPREVIEWS . "$type/".$this->id.".html";
+            return $file_preview;
+        }
+    
         $event_info = $event_info ? $event_info : self::getInfo();
-        if($type == "followup") {
-            $emailtext = EMAIL_TEXT_FOLLOWUP;
-        } elseif($type == "followup_specific") {
-            $emailtext = EMAIL_TEXT_FOLLOWUP_SPECIFIC;
-        } elseif($type == "O" || $type == "reopen") { // Re-open
-            $emailtext = EMAIL_TEXT_REOPENED;
-        } elseif($type == "C" || $type == "close") { // Closed 
-            $emailtext = EMAIL_TEXT_CLOSED;
-        } elseif($type == "reply") {
-            $emailtext = EMAIL_TEXT_RESPONSE;
-        } elseif($type == "get_reply") {
-            $emailtext = EMAIL_TEXT_SHOW_RESPONSE;
-        } else {
-            $emailtext = EMAIL_TEXT_RFI;
+        $file_type = $return_type  == "file" ? $type."_file" : $type;
+        $emailtext = file_get_contents("../emailtemplates/$file_type.html");
+
+        // for the description and personalized text, replace newlines with <p> for formatting        
+        $personalized_text = $description = '';
+        // first protect <url> from being stripped - this is a ProMED convention for urls
+        $desc = preg_replace('/\<http(.*?)\>/smi', '&lt;http${1}>', $event_info['description']);
+        // then strip all other html tags 
+        $desc = strip_tags($desc);
+        $desc = preg_replace('/&lt;http(.*?)>/smi', '<a href="http${1}">http${1}</a>', $desc);
+        foreach (explode("\n", $desc) as $dline) {
+            if (trim($dline)) {
+                $description .= '<p style="margin:12px 0;">' . $dline . '</p>';
+            }
         }
-        // don't show the response link in preview modes in forms, only on actual email
-        if($with_link) {
-            $emailtext .= "\n\n".RESPONSE_LINK;
+        if($event_info['personalized_text']) {
+            foreach (explode("\n", $event_info['personalized_text']) as $ptline) {
+                if (trim($ptline)) {
+                    $personalized_text .= '<p style="margin:12px 0;">' . $ptline . '</p>';
+                }
+            }
         }
-        $personalized_text = $event_info['personalized_text']  ? $event_info['personalized_text'] . "\n\n" : '';
+
+        // standard event substitutions
         $emailtext = str_replace("[PERSONALIZED_TEXT]", $personalized_text, $emailtext);
         $emailtext = str_replace("[TITLE]", $event_info['title'], $emailtext);
         $emailtext = str_replace("[EVENT_DATE]", $event_info['create_date'], $emailtext);
-        $emailtext = str_replace("[DESCRIPTION]", $event_info['description'], $emailtext);
+        $emailtext = str_replace("[DESCRIPTION]", $description, $emailtext);
         $emailtext = str_replace("[LOCATION]", $event_info['location'], $emailtext);
-        $custom_text = $custom_text ? "\n\n".$custom_text."\n\n" : '';
-        $emailtext = str_replace("[CUSTOM_TEXT]", $custom_text, $emailtext);
+        $emailtext = str_replace("[EPICORE_URL]", EPICORE_URL, $emailtext);
+   
+        // custom var substitutions 
+        foreach($custom_vars as $varname => $varval) {
+            $emailtext = str_replace("[$varname]", $varval, $emailtext);
+        }
+
         if(isset($this)) {
             $emailtext = str_replace("[EVENT_ID]", $this->id, $emailtext);
         }
-        return $emailtext;
+
+        if($return_type == "text") {
+            return $emailtext;
+        } else {
+            // save the email contents in the temp directory for reference- if one is passed in, overwrite it
+            $filename = isset($this) ? $this->id : date('YmdHis');
+            $file_preview = EMAILPREVIEWS . "$type/$filename" . ".html";
+            file_put_contents("../$file_preview", $emailtext);
+            return $file_preview;
+        }
     }
 
     static function getResponse($response_id) {
@@ -214,7 +238,7 @@ class EventInfo
             $response_info['response_permission'] = '';
             $response_info['response'] = $response_permission_lu[0];
         } else {
-            $response_info['response_permission'] = 'Permission level: ' . $response_permission_lu[$response_info['response_permission']];
+            $response_info['response_permission'] = $response_permission_lu[$response_info['response_permission']];
         }
         return $response_info;
     }

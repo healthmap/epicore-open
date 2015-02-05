@@ -34,7 +34,7 @@ if($returnval->user) {
     $ticket = md5(uniqid(rand(), true));
     $db->query("INSERT INTO ticket (fetp_id, val, exp) VALUES (?, ?, ?)", array($returnval->user, $ticket, date('Y-m-d H:i:s', strtotime("+10 days"))));
     $db->commit();
-    header("Location: ../#/fetp/$ticket");
+    header("Location: ../#/fetp/?t=$ticket");
 } else {
     header("Location: ../#/home");
 }

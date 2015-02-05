@@ -7,8 +7,17 @@
 require_once "const.inc.php";
 require_once "EventInfo.class.php";
 require_once "UserInfo.class.php";
+require_once "AWSMail.class.php";
 
 $formvars = json_decode(file_get_contents("php://input"));
+
+// email tempfile must be passed in
+if(isset($formvars->tempfile) && file_exists("../".$formvars->tempfile)) {
+    $orig_emailtext = file_get_contents("../".$formvars->tempfile);
+} else {
+    print json_encode(array('status' => 'error', 'reason' => 'email template not found'));
+    exit;
+}
 
 // store the event info in event table
 $event_info['latlon'] = (string)$formvars->latlon;
@@ -24,21 +33,17 @@ $event_info['personalized_text'] = $formvars->additionalText ? (string)$formvars
 $event_id = EventInfo::insertEvent($event_info);
 $ei = new EventInfo($event_id);
 
-// return an array of fetp_id => token_id for auto_login
+// now send it to each FETP individually as they each need unique login token id
 $fetp_ids = explode(",", $formvars->fetp_ids);
 $tokens = $ei->insertFetpsReceivingEmail($fetp_ids, 0);
-
-// reformat the date to look pretty in email
-$event_info['create_date'] = date('n/j/Y H:i', strtotime($event_info['create_date']));
-
-$orig_emailtext = $ei->buildEmailForEvent($event_info, 'rfi', '', 'true');
-
-// now send it to each FETP individually as they each need unique login token id
-require_once "AWSMail.class.php";
 $fetp_emails = UserInfo::getFETPEmails($fetp_ids);
+$extra_headers['text_or_html'] = "html";
+$emailtext = str_replace("[EVENT_ID]", $event_id, $orig_emailtext);
+
 foreach($fetp_emails as $fetp_id => $recipient) {
-    $emailtext = str_replace("[TOKEN]", $tokens[$fetp_id], $orig_emailtext);
-    AWSMail::mailfunc($recipient, "Request For Information", $emailtext, EMAIL_NOREPLY);
+    $recipient = trim($recipient);
+    $custom_emailtext = trim(str_replace("[TOKEN]", $tokens[$fetp_id], $emailtext));
+    $aws_resp = AWSMail::mailfunc($recipient, "Request For Information", $custom_emailtext, EMAIL_NOREPLY, $extra_headers);
 }
 
 print json_encode(array('status' => 'success', 'fetps' => $fetp_ids));

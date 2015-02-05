@@ -21,28 +21,14 @@ if(!is_numeric($response_id) || (!is_numeric($uid) && !is_numeric($fetp_id))) {
 $response_info = EventInfo::getResponse($response_id);
 $ei = new EventInfo($response_info['event_id']);
 $event_info = $ei->getInfo();
-$followupText = $ei->buildEmailForEvent($event_info, 'get_reply');
-$response_emailtext .= $response_info['response'];
-if($response_info['response_permission']) {
-    $response_emailtext .= "\n\n" . $response_info['response_permission'];
-}
-$response_emailtext .= "\n";
-
-$response_info['followupText'] = str_replace("[RESPONSE_INFO]", $response_emailtext, $followupText);
+$custom_vars['RESPONSE_PERMISSION'] = $response_info['response_permission']; 
+$custom_vars['RESPONSE_TEXT'] = $response_info['response'];
+$response_info['filePreview'] = $ei->buildEmailForEvent($event_info, 'response', $custom_vars, 'file');
 
 if($uid) { // MOD
-    if($formvars->frompage == "followup") {
-        $followupText = $ei->buildEmailForEvent($event_info, 'followup_specific');
-        $followupText = str_replace("[RESPONSE_DATE]", $response_info['response_date'], $followupText);
-        $response = $response_info['response'];
-        if($response_info['response_permission']) {
-            $response .= "\n\n".$response_info['response_permission'];
-        }
-        $response_info['followupText'] = str_replace("[RESPONSE_TEXT]", $response, $followupText);
-    }
     $org_of_event = $ei->getOrganizationOfRequester();
     // if mod is from the same organization who created the event, then they have perm to follow-up
-    if($formvars->org_id == $org_of_event && $response_info['responder_id'] > 0) {
+    if($event_info['status'] != "C" && $formvars->org_id == $org_of_event && $response_info['responder_id'] > 0) {
         $response_info['authorized_to_followup'] = 1;
     }
     print json_encode($response_info);

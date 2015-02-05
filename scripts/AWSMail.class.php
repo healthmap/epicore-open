@@ -6,6 +6,7 @@ AWSMail::mailfunc('susan.aman@childrens.harvard.edu','test subject','this is a t
 */
 
 require_once "/usr/share/php/AWSSDKforPHP/sdk.class.php";
+require_once "db.function.php";
 
 class AWSMail
 {
@@ -29,7 +30,15 @@ class AWSMail
                 $email_type => $msg
             )
         );
+   
+        // log the request in the email log
+        $db = getDB();
+        $db->query("INSERT INTO emaillog (emailaddr, send_date, subject, content) VALUES (?, ?, ?, ?)", array($to[0], date('Y-m-d H:i:s'), $subject, $msg));
+        $db->commit();
+ 
+        return $response;
     }
+
 }
 
 ?>

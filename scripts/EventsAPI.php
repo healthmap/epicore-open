@@ -39,9 +39,9 @@ if(isset($rvars['event_id']) && is_numeric($rvars['event_id'])) {
         $indexed_array = $ei->getResponses();
     } else {
         $indexed_array = $ei->getInfo(); 
-        $indexed_array['emailText'] = $ei->buildEmailForEvent($indexed_array, $rvars['from']); 
+        $indexed_array['filePreview'] = $ei->buildEmailForEvent($indexed_array, 'rfi', '', 'file'); 
         $indexed_array['estatus'] = $ei->getEventStatus();
-        $indexed_array['history'] = $ei->getEventHistory();
+        $indexed_array['history'] = array_unique($ei->getEventHistory());
     }
 } else { // get all events
     // status can be "closed" or "open"

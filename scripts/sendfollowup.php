@@ -4,14 +4,6 @@ send followup to an existing RFI
 */
 $formvars = json_decode(file_get_contents("php://input"));
 
-/*
-// for troubleshooting
-$formvars->additionalText = "text to sue";
-$formvars->uid = 1;
-$formvars->event_id = 54;
-$formvars->response_id = 24;
-*/
-
 require_once "const.inc.php";
 require_once "EventInfo.class.php";
 require_once "UserInfo.class.php";
@@ -38,22 +30,19 @@ if($requester_id != $event_info['requester_id']) {
 }
 
 // start building the email text
-$custom_text = $formvars->additionalText ? $formvars->additionalText : '';
+$custom_vars['NOTES'] = $formvars->additionalText ? $formvars->additionalText : '';
 
 // if response_id is passed in, get the fetp_id from the response table
 if(isset($formvars->response_id) && is_numeric($formvars->response_id))  {
     $response_info = EventInfo::getResponse($formvars->response_id);
     $fetp_ids = array($response_info['responder_id']);
-    $followupText = $ei->buildEmailForEvent($event_info, "followup_specific", $custom_text, 'true');
-    $followupText = str_replace("[RESPONSE_DATE]", $response_info['response_date'], $followupText);
-    $response = $response_info['response'];
-    if($response_info['response_permission']) {
-        $response .= "\n".$response_info['response_permission'];
-    }
-    $followupText = str_replace("[RESPONSE_TEXT]", $response, $followupText);
+    $custom_vars['RESPONSE_DATE'] = $response_info['response_date'];
+    $custom_vars['RESPONSE_PERMISSION'] = $response_info['response_permission'];
+    $custom_vars['RESPONSE_TEXT'] = $response_info['response'];
+    $followupText = $ei->buildEmailForEvent($event_info, "followup-specific", $custom_vars, 'text');
 } else { // if no respsonse_id (follow-up to all), get fetp_ids from database for that event
     $fetp_ids = $ei->getFETPRecipients();
-    $followupText = $ei->buildEmailForEvent($event_info, "followup", $custom_text, 'true');
+    $followupText = $ei->buildEmailForEvent($event_info, "followup", $custom_vars, 'text');
 }
 
 // save the fetp_ids in the event_fetp table
@@ -70,9 +59,12 @@ $tokens = $ei->insertFetpsReceivingEmail($fetp_ids, 1);
 // cc the initiator of the request for testing only
 require_once "AWSMail.class.php";
 $fetp_emails = UserInfo::getFETPEmails($fetp_ids);
+$extra_headers['text_or_html'] = "html";
+
+
 foreach($fetp_emails as $fetp_id => $recipient) {
-    $emailtext = str_replace("[TOKEN]", $tokens[$fetp_id], $followupText);
-    AWSMail::mailfunc($recipient, "Request For Information", $emailtext, EMAIL_NOREPLY);
+    $emailtext = trim(str_replace("[TOKEN]", $tokens[$fetp_id], $followupText));
+    $retval = AWSMail::mailfunc($recipient, "Request For Information", $emailtext, EMAIL_NOREPLY, $extra_headers);
 }
 
 print json_encode(array('status' => 'success', 'fetps' => $fetp_ids));

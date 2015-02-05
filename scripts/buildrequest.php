@@ -1,7 +1,10 @@
 <?
-/* process the Epicore RFI form 
+/* 
+ Sue Aman 1/2015
+ process the Epicore RFI form 
  this is called upon the second form submission
- takes event info and builds the email text for display on step 3
+ takes event info and builds the email html template
+ makes it a temporary html file so it can be served as an iframe in step 3
 */
 require_once "const.inc.php";
 require_once "EventInfo.class.php";
@@ -15,8 +18,13 @@ $event_info['description'] = (string)$formvars->description;
 $event_info['create_date'] = date('n/j/Y H:i');
 $event_info['personalized_text'] = (string)$formvars->additionalText;
 
-$emailtext = EventInfo::buildEmailForEvent($event_info, 'rfi');
+// if a file preview already exists, get rid of it
+if(isset($formvars->file_preview) && file_exists("../".$formvars->file_preview)) {
+    $filepreview = "../" . $formvars->file_preview;
+    system("unlink $filepreview");
+}
 
-print json_encode(array('status' => 'success', 'emailtext' => $emailtext));
+$file_preview = EventInfo::buildEmailForEvent($event_info, 'rfi', '', 'file');
 
+print json_encode(array('status' => 'success', 'file_preview' => $file_preview));
 ?>
