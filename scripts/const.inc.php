@@ -1,4 +1,4 @@
-<?
+<?php
 define('EMAIL_NOREPLY', 'mod@healthmap.org');
 define('LAT_LON_PRECISION', 2);
 define('EPICORE_URL', 'http://epicore.org');
