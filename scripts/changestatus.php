@@ -1,4 +1,4 @@
-<?
+<?php
 /* reply to an RFI */
 $formvars = json_decode(file_get_contents("php://input"));
 require_once "EventInfo.class.php";

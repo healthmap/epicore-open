@@ -1,4 +1,4 @@
-<?
+<?php
 /* 
  Sue Aman 1/2015
  process the Epicore RFI form 

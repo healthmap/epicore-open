@@ -1,4 +1,4 @@
-<?
+<?php
 /*
 Return information about an event, or get all events
 required param: auth

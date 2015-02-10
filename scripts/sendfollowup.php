@@ -1,4 +1,4 @@
-<?
+<?php
 /* 
 send followup to an existing RFI
 */

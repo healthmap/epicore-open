@@ -1,4 +1,4 @@
-<?
+<?php
 /* 
 Epicore authorize with Tephinet 
 This page gets hit by Tephinet when the user authorizes the request

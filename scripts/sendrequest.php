@@ -1,4 +1,4 @@
-<?
+<?php
 /* process the Epicore RFI form 
  this is called at the end of all 3 pages, so save
  event info and fetp filter info, then send emails

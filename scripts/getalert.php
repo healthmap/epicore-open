@@ -1,4 +1,4 @@
-<?
+<?php
 /*
 * Sue Aman 13 June, 2014
 * get alert by alert id

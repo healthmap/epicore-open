@@ -1,4 +1,4 @@
-<?
+<?php
 /*
 example usage:
 require_once "AWSMail.class.php";

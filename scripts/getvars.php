@@ -1,4 +1,4 @@
-<?
+<?php
 /* sets some global constants for use in Angular */
 
 require_once "const.inc.php";

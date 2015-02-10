@@ -1,4 +1,4 @@
-<?
+<?php
 /* process the Epicore RFI form 
 - part of step 2 : filters FETPs chosen
 */

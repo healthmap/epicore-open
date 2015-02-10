@@ -1,5 +1,4 @@
-<?
-exit;
+<?php
 // expire the cookie if there is one
 if(isset($_COOKIE['Epicore'])) {
     $domain = ($_SERVER['HTTP_HOST'] != 'localhost') ? $_SERVER['HTTP_HOST'] : false;
