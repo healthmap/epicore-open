@@ -167,7 +167,7 @@ class EventInfo
     function buildEmailForEvent($event_info = array(), $type, $custom_vars = array(), $return_type = 'text')
     {
         // if event id is passed in, just pull the email text from the RFI preview, if there is one
-        if(isset($this) && file_exists("../".EMAILPREVIEWS."$type/".$this->id.".html")) {
+        if($return_type == "file" && isset($this) && file_exists("../".EMAILPREVIEWS."$type/".$this->id.".html")) {
             $file_preview = EMAILPREVIEWS . "$type/".$this->id.".html";
             return $file_preview;
         }
