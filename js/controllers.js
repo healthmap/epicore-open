@@ -1,7 +1,7 @@
 angular.module('EpicoreApp.controllers', []).
 
 /* User - includes Login & Logout */
-controller('userController', function($rootScope, $routeParams, $scope, $route, $cookies, $cookieStore, $location, $http) {
+controller('userController', function($rootScope, $routeParams, $scope, $route, $cookies, $cookieStore, $location, $http, $window) {
         var querystr = $location.search() ? $location.search() : '';
 
         /* get the active state of page you're on */
@@ -60,6 +60,7 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
         /* log out */
         $scope.userLogout = function() {
             $cookieStore.remove('epiUserInfo');
+            $window.sessionStorage.clear();
         }
         /* get user cookie info */
         $rootScope.userInfo = $cookieStore.get('epiUserInfo');
@@ -163,7 +164,8 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
 
     // if there's an alertid passed in, get the info to prepopulate the fields
     $scope.alertid = $routeParams.alertid;
-    if($scope.alertid && $window.sessionStorage.length == 0) {
+    if($scope.alertid && ($scope.alertid !== $window.sessionStorage.alertid)) {
+        $window.sessionStorage.alertid = $scope.alertid;
         var alertData = {};
         alertData['alert_id'] = $scope.alertid;
         $http({ url: 'scripts/getalert.php', method: "POST", data: alertData
@@ -177,6 +179,7 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
                 $window.sessionStorage.additionalText = '';
             });
     }
+
 
     /* step 1: save the event information in session variable, and 
     filter FETPs for next screen based on location chosen */
