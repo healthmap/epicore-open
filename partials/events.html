@@ -16,6 +16,7 @@
                     <th>Location</th>
                     <th>Opened Date</th>
                     <th># Requests Sent</th>
+                    <th># Followups Sent <br> & Dates</th>
                     <th># Responses</th>
                 </tr>
                 <tr><th colspan="6">Initiated by you</th></tr>
@@ -35,6 +36,13 @@
                     <td>{{event.location}}</td>
                     <td>{{event.create_date}}</td>
                     <td>{{event.num_requests}}</td>
+                    <td>
+                        {{event.num_followups}}<br>
+                        <ul style="padding-left:20px" ng-repeat="fdate in event.followup_dates">
+                            <li>{{fdate.send_date}}</li>
+                        </ul>
+
+                    </td>
                     <td>
                     <span ng-show="event.num_responses > 0"><a href="#/responses/{{event.event_id}}">{{event.num_responses}}</a></span>
                     <span ng-show="event.num_responses == 0">{{event.num_responses}}</span>
