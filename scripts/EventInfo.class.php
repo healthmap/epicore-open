@@ -262,9 +262,13 @@ class EventInfo
             }
             // get the number of requests sent for that event
             $row['num_responses'] = $db->getOne("SELECT count(*) FROM response WHERE event_id = ?", array($row['event_id']));
-            $row['num_requests'] = $db->getOne("SELECT count(*) FROM event_fetp WHERE event_id = ?", array($row['event_id']));
-            $row['num_followups'] = $db->getOne("SELECT count(*) FROM event_fetp WHERE event_id = ? AND followup=1", array($row['event_id']));
-            $row['followup_dates'] = $db->getAll("SELECT send_date FROM event_fetp WHERE event_id = ? AND followup=1", array($row['event_id']));
+            $get_followups = $db->query("SELECT send_date,followup FROM event_fetp WHERE event_id = ?", array($row['event_id']));
+            while($gfrow = $get_followups->fetchRow()) {
+                $num_followups[$gfrow['followup']][] = $gfrow['send_date'];
+            }
+            foreach($num_followups as $followupnum => $datearr) {
+                $row['num_followups'][] = array('date' => $datearr[0], 'num' => count($datearr));
+            }
             $row['create_date'] = date('n/j/Y H:i', strtotime($row['create_date']));
             if($uid == $row['requester_id']) {
                 $events['yours'][] = $row;
