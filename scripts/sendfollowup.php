@@ -53,14 +53,14 @@ if(empty($fetp_ids)) {
 
 // get this far, good to insert & send
 // return an array of fetp_id => token_id for auto_login
-$tokens = $ei->insertFetpsReceivingEmail($fetp_ids, 1);
+$nextFollowup = $ei->getNextFollowup();
+$tokens = $ei->insertFetpsReceivingEmail($fetp_ids, $nextFollowup);
 
 // now send it to each FETP individually as they each need unique login token id
 // cc the initiator of the request for testing only
 require_once "AWSMail.class.php";
 $fetp_emails = UserInfo::getFETPEmails($fetp_ids);
 $extra_headers['text_or_html'] = "html";
-
 
 foreach($fetp_emails as $fetp_id => $recipient) {
     $emailtext = trim(str_replace("[TOKEN]", $tokens[$fetp_id], $followupText));
