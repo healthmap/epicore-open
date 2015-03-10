@@ -42,8 +42,6 @@ class EventInfo
 
         $open_date = $this->db->getOne("SELECT create_date FROM event WHERE event_id = ?", array($this->id));
 
-        $history[strtotime($open_date)] = "event opened";
-
         $q = $this->db->query("SELECT action_date,note,status FROM event_notes WHERE event_id = ? ORDER BY action_date", array($this->id));
         while($row = $q->fetchRow()) {
             $note = $row['note'] ? " (Note: ".$row['note'].")" : '';
@@ -51,12 +49,28 @@ class EventInfo
         }
 
         // get any followups sent
-        $fuq = $this->db->query("SELECT send_date, fetp_id FROM event_fetp WHERE event_id = ? AND followup = 1", array($this->id));
+        $fuq = $this->db->query("SELECT send_date, fetp_id, followup FROM event_fetp WHERE event_id = ?", array($this->id));
+
+        $fnum = -1;
+        $numfetps[] = 0;
+        $numfetps[strtotime($open_date)] = 0;
+        $ts = 0;
         while($furow = $fuq->fetchRow()) {
-            $ts = strtotime($furow['send_date']);
-            $numfetps[$ts]++;
-            $history[$ts] = "sent followup to ".$numfetps[$ts]." FETPs";
+            if ($furow['followup'] == 0){
+                $numfetps[strtotime($open_date)]++;
+            }
+            elseif ($fnum != $furow['followup']) {
+                $fnum = $furow['followup'];
+                $ts = strtotime($furow['send_date']);
+                $numfetps[$ts] = 1;
+            }
+            else {
+                $numfetps[$ts]++;
+            }
+            if ($ts !=0)
+                $history[$ts] = "sent followup to " . $numfetps[$ts] . " FETPs";
         }
+        $history[strtotime($open_date)] = "event opened, sent followup to " . $numfetps[strtotime($open_date)] . " FETPs";
 
         ksort($history);
 
@@ -130,7 +144,7 @@ class EventInfo
 
     function insertFetpsReceivingEmail($fetp_arr, $followup)
     {
-        $followup = $followup ? $followup : '0';
+        $followup = $followup ? $followup : $this->getNextFollowup();
         $send_date = date('Y-m-d H:i:s');
         foreach($fetp_arr as $fetp_id) {
             if(is_numeric($fetp_id)) {
@@ -144,6 +158,10 @@ class EventInfo
             }
         }
         return $tokens;
+    }
+
+    function getNextFollowup(){
+        return $this->db->getOne("SELECT MAX(followup) FROM event_fetp WHERE event_id= ?", array($this->id)) + 1;  // increment followup
     }
 
     function updateEvent($data_arr)

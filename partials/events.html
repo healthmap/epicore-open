@@ -35,14 +35,10 @@
                 <tr ng-repeat="event in eventsList['yourorg']">
                     <td><a href="#/events/{{event.event_id}}">{{event.title}}</a></td>
                     <td>{{event.location}}</td>
-                    <td>{{event.create_date}}</td>
-                    <td>{{event.num_requests}}</td>
                     <td>
-                        {{event.num_followups}}<br>
-                        <ul style="padding-left:20px" ng-repeat="fdate in event.followup_dates">
-                            <li>{{fdate.send_date}}</li>
-                        </ul>
-
+                    <span ng-repeat="followup in event.num_followups">
+                    {{followup.date}} ({{followup.num}})<br>
+                    </span>
                     </td>
                     <td>
                     <span ng-show="event.num_responses > 0"><a href="#/responses/{{event.event_id}}">{{event.num_responses}}</a></span>
@@ -53,8 +49,11 @@
                 <tr ng-repeat="event in eventsList['other']">
                     <td><a href="#/events/{{event.event_id}}">{{event.title}}</a></td>
                     <td>{{event.location}}</td>
-                    <td>{{event.create_date}}</td>
-                    <td>{{event.num_requests}}</td>
+                    <td>
+                    <span ng-repeat="followup in event.num_followups">
+                    {{followup.date}} ({{followup.num}})<br>
+                    </span>
+                    </td>
                     <td>
                     <span ng-show="event.num_responses > 0"><a href="#/responses/{{event.event_id}}">{{event.num_responses}}</a></span>
                     <span ng-show="event.num_responses == 0">{{event.num_responses}}</span>
