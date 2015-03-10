@@ -155,5 +155,18 @@ class UserInfo
         $email_addresses = json_decode($result);
         return $email_addresses;
     }
+
+    /* use the webservice on tephinet to get FETP-eligible ids and location info */
+    static function getFETPEligible()
+    {
+        // call to tephinet webservice
+        require_once "GetURL.class.php";
+        $url = TEPHINET_BASE . 'epicore/getfetps';
+        $gurl = GetURL::getInstance();
+        $fields_string = 'consumer_key='.TEPHINET_CONSUMER_KEY;
+        $result = $gurl->post($url, $fields_string);
+        $fetpinfo = json_decode($result);
+        return $fetpinfo;
+    }
 }
 ?>
