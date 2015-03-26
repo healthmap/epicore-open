@@ -51,10 +51,15 @@ if(empty($fetp_ids)) {
     exit;
 }
 
+// save new followup info in database
+$followup_info['text'] = $custom_vars['NOTES'];
+$followup_info['requester_id'] = $requester_id;
+$followup_info['event_id'] = $event_id;
+$followup_id = EventInfo::insertFollowup($followup_info);
+
 // get this far, good to insert & send
 // return an array of fetp_id => token_id for auto_login
-$nextFollowup = $ei->getNextFollowup();
-$tokens = $ei->insertFetpsReceivingEmail($fetp_ids, $nextFollowup);
+$tokens = $ei->insertFetpsReceivingEmail($fetp_ids, $followup_id);
 
 // now send it to each FETP individually as they each need unique login token id
 // cc the initiator of the request for testing only
@@ -63,7 +68,24 @@ $fetp_emails = UserInfo::getFETPEmails($fetp_ids);
 $extra_headers['text_or_html'] = "html";
 
 foreach($fetp_emails as $fetp_id => $recipient) {
-    $emailtext = trim(str_replace("[TOKEN]", $tokens[$fetp_id], $followupText));
+    // get fetp messages
+    $messages = $ei->getFetpMessages($fetp_id, $event_id);
+    $history = '';
+    // style message history for email
+    $counter =0;
+    foreach ($messages as $message) {
+        if ($counter > 0) {  // skip first (current ) message
+            $mtype = $message['type'];
+            $mtext = $message['text'];
+            $mdatetime = $message['date'];
+            $history .= "<div style='background-color: #fff;padding:24px;color:#666;border: 1px solid #B4FEF7;'>";
+            $history .= "<p style='margin:12px 0;'>$mtype,  $mdatetime <br></p>$mtext</div><br>";
+        }
+        $counter++;
+    }
+
+    $emailtext = trim(str_replace("[EVENT_HISTORY]", $history, $followupText));
+    $emailtext = trim(str_replace("[TOKEN]", $tokens[$fetp_id], $emailtext));
     $retval = AWSMail::mailfunc($recipient, "Request For Information", $emailtext, EMAIL_NOREPLY, $extra_headers);
 }
 

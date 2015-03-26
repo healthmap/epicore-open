@@ -15,29 +15,85 @@
         <!-- END REPLY FORM -->
 
         <!-- View responses if any (for orgs only) -->
-        <span ng-show="isOrganization && eventsList.num_responses > 0">
-           <a href="#/responses/{{id}}" class="nav-button">View responses</a>  
-        </span>
+
+
         <!-- END View responses -->
 
         <!-- OWNER of event gets additional options to close event or send followup email -->
         <span ng-show="isAuthorizedToFollowup">
             <span ng-if="changeStatusText == 'Close'">
-                <a href="#/followup/{{id}}" class="nav-button">Send follow-up email</a>  
+                <a href="#/followup/{{id}}" class="nav-button">Send follow-up email to all fetps</a>
             </span>
            <a href="#/{{changeStatusType}}/{{id}}" class="nav-button">{{changeStatusText}} request</a> 
         </span>
         <!-- END CLOSE FORM (for owner of event) -->
         </p>
 
-        <iframe width="900" height="400" ng-src="{{filePreview}}"></iframe>
+        <!--<iframe width="900" height="400" ng-src="{{filePreview}}"></iframe>-->
 
         <span ng-show="isOrganization">
-        <p><strong>Event History:</strong>
-            <ul style="padding-left:20px" ng-repeat="history_item in eventsList.history">
-                <li>{{history_item}}</li>
-            </ul>
-        </p>
+            <h4>Event message history: </h4>
+                <!--for {{userInfo.uname}}, user id: {{userInfo.uid}}, {{userInfo.organization}}, org_id: {{userInfo.organization_id}}, event id: {{id}}-->
+
+            <div style="padding-left:20px" ng-repeat="history_item in eventsList.history">
+                <div>
+                    <button class="btn btn-xs" ng-click="isCollapsed = !isCollapsed">
+                        <i class="fa fa-arrow-circle-right"></i>
+                    </button>
+                    <span ng-if="history_item.type == 'Moderator Response'">
+                       <span ng-if="history_item.fetp_count > 1">
+                           <span ng-if="(history_item.person_id == userInfo.uid) || (history_item.organization_id == userInfo.organization_id)">
+                                {{history_item.person}} sent followup to all FETPs, {{history_item.date}}
+                           </span>
+                           <span ng-if="(history_item.organization_id != userInfo.organization_id)">
+                                followup sent to all FETPs, {{history_item.date}}
+                           </span>
+                        </span>
+                        <span ng-if="history_item.fetp_count == 1">
+                            <span ng-if="(history_item.person_id == userInfo.uid) || (history_item.organization_id == userInfo.organization_id)">
+                                {{history_item.person}} sent followup to 1 FETP, {{history_item.date}}
+                            </span>
+                            <span ng-if="(history_item.organization_id != userInfo.organization_id)">
+                                followup sent to 1 FETP, {{history_item.date}}
+                            </span>
+                        </span>
+                    </span>
+                    <span ng-if="history_item.type == 'FETP Response'">
+                        {{history_item.type}}, {{history_item.date}}
+                    </span>
+                    <a ng-if="(history_item.type == 'FETP Response') && (history_item.organization_id == userInfo.organization_id) " class="btn-default" href="#/followup/{{id}}/{{history_item.response_id}}">
+                        <i class="fa fa-reply"> Reply</i>
+                    </a>
+
+                    <span ng-if="(history_item.type == 'Event Request') && (history_item.organization_id == userInfo.organization_id)">
+                        {{history_item.person}} sent original event request, {{history_item.date}}
+                    </span>
+                    <span ng-if="(history_item.type == 'Event Request') && (history_item.organization_id != userInfo.organization_id)">
+                        original event request sent, {{history_item.date}}
+                    </span>
+
+                    <span ng-if="(history_item.type == 'Event Notes') && (history_item.organization_id == userInfo.organization_id)">
+                        {{history_item.person}} {{history_item.status}} event request, {{history_item.date}}
+                    </span>
+                    <span ng-if="(history_item.type == 'Event Notes') && (history_item.organization_id != userInfo.organization_id)">
+                        {{history_item.status}} event request, {{history_item.date}}
+                    </span>
+
+                </div>
+                <div ng-show="isCollapsed">
+                    <br>
+                    <div style='background-color: #fff;padding:24px;color:#666;border: 1px solid #B4FEF7;'>
+                        <div ng-if="history_item.type == 'Event Request'">
+                            <strong>Title:</strong> {{history_item.title}}<br>
+                            <strong>Location:</strong> {{history_item.location}}
+                            <p><br>{{history_item.personalized_text}}</p>
+                        </div>
+                        <p>{{history_item.text}}</p>
+                    </div>
+                </div>
+
+                <br>
+            </div>
         </span>
 
         </div>

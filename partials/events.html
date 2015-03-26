@@ -7,33 +7,39 @@
         <span ng-show="onOpen">Open events&nbsp;|&nbsp;<a href="#/events/closed">Closed events</a></span>
         <span ng-show="!onOpen"><a href="#/events">Open events</a>&nbsp;|&nbsp;Closed events</span>
         </p>
-        <!-- view for organizations -->
-        <div ng-show="isOrganization">
+
+            <i class="fa fa-search"></i> <input ng-model="query"> <br> <br>
+            <!--<pre>Sorting predicate = {{predicate}}; reverse = {{reverse}}</pre>-->
+
+            <!-- view for organizations -->
+        <div ng-show="isOrganization" ng-init="predicate='person'">
         <table>
             <tbody>
                 <tr class="black_bg">
-                    <th>Title</th>
-                    <th>Location</th>
+                    <th><a href="" ng-click="predicate = 'title'; reverse=!reverse">Title</a></th>
+                    <th><a href="" ng-click="predicate = 'person'; reverse=!reverse">Moderator</a></th>
+                    <th><a href="" ng-click="predicate = 'location'; reverse=!reverse">Location</a></th>
                     <th>Requests Sent<br>Date (# FETP recipients)</th>
                     <th># Responses</th>
                 </tr>
                 <tr><th colspan="6">Initiated by you</th></tr>
-                <tr ng-repeat="event in eventsList['yours']">
+                <tr ng-repeat="event in eventsList['yours'] | filter:query | orderBy:predicate:reverse" >
                     <td><a href="#/events/{{event.event_id}}">{{event.title}}</a></td>
+                    <td>{{event.person}}</td>
                     <td>{{event.location}}</td>
                     <td>
                     <span ng-repeat="followup in event.num_followups">
-                    {{followup.date}} ({{followup.num}})<br>
+                        {{followup.date}} ({{followup.num}}) <br>
                     </span>
                     </td>
                     <td>
-                    <span ng-show="event.num_responses > 0"><a href="#/responses/{{event.event_id}}">{{event.num_responses}}</a></span>
-                    <span ng-show="event.num_responses == 0">{{event.num_responses}}</span>
+                        <span>{{event.num_responses}}</span>
                     </td>
                 </tr>
                 <tr><th colspan="6">Initiated by your organization ({{userInfo.organization}})</th></tr>
-                <tr ng-repeat="event in eventsList['yourorg']">
+                <tr ng-repeat="event in eventsList['yourorg'] | filter:query | orderBy:predicate:reverse">
                     <td><a href="#/events/{{event.event_id}}">{{event.title}}</a></td>
+                    <td>{{event.person}}</td>
                     <td>{{event.location}}</td>
                     <td>
                     <span ng-repeat="followup in event.num_followups">
@@ -41,13 +47,13 @@
                     </span>
                     </td>
                     <td>
-                    <span ng-show="event.num_responses > 0"><a href="#/responses/{{event.event_id}}">{{event.num_responses}}</a></span>
-                    <span ng-show="event.num_responses == 0">{{event.num_responses}}</span>
+                        <span>{{event.num_responses}}</span>
                     </td>
                 </tr>
                 <tr><th colspan="6">Initiated by others</th></tr>
-                <tr ng-repeat="event in eventsList['other']">
+                <tr ng-repeat="event in eventsList['other'] | filter:query">
                     <td><a href="#/events/{{event.event_id}}">{{event.title}}</a></td>
+                    <td></td>
                     <td>{{event.location}}</td>
                     <td>
                     <span ng-repeat="followup in event.num_followups">
@@ -55,8 +61,7 @@
                     </span>
                     </td>
                     <td>
-                    <span ng-show="event.num_responses > 0"><a href="#/responses/{{event.event_id}}">{{event.num_responses}}</a></span>
-                    <span ng-show="event.num_responses == 0">{{event.num_responses}}</span>
+                        <span>{{event.num_responses}}</span>
                     </td>
                 </tr>
             </tbody>

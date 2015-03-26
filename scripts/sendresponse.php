@@ -30,9 +30,24 @@ if(is_numeric($event_id)) {
 
     // send the response to the person who initiated the event request
     $recipient = $ei->getInitiatorEmail();
+
+    // get fetp messages
+    $fetp_id = $dbdata['responder_id'];
+    $messages = $ei->getFetpMessages($fetp_id, $event_id);
+    $history = '';
+    // style message history for email
+    foreach ($messages as $message) {
+        $mtype = $message['type'];
+        $mtext = $message['text'];
+        $mdatetime = $message['date'];
+        $history .= "<div style='background-color: #fff;padding:24px;color:#666;border: 1px solid #B4FEF7;'>";
+        $history .= "<p style='margin:12px 0;'>$mtype,  $mdatetime <br></p>$mtext</div><br>";
+    }
+
+    $emailtext = trim(str_replace("[EVENT_HISTORY]", $history, $msg));
     $extra_headers['text_or_html'] = "html";
     require_once "AWSMail.class.php";
-    AWSMail::mailfunc($recipient, "FETP response", $msg, EMAIL_NOREPLY, $extra_headers);
+    AWSMail::mailfunc($recipient, "FETP response", $emailtext, EMAIL_NOREPLY, $extra_headers);
     $status = "success";
     $path = "success/2";
 }

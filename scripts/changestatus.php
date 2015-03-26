@@ -33,6 +33,26 @@ if(is_numeric($event_id) && is_numeric($user_id)) {
         $emailtext = $ei->buildEmailForEvent($event_info, $status_type, $custom_vars, 'text');
         $extra_headers['text_or_html'] = "html";
         foreach($fetp_emails as $fetp_id => $recipient) {
+
+            // get fetp messages
+            $messages = $ei->getFetpMessages($fetp_id, $event_id);
+            $history = '';
+            // style message history for email
+            $counter =0;
+            foreach ($messages as $message) {
+                if ($counter > 0) {  // skip first (current ) message
+                    $mtype = $message['type'];
+                    if($mtype == "Event Notes")
+                        $mtype = "Event " . $message['status'];
+                    $mtext = $message['text'];
+                    $mdatetime = $message['date'];
+                    $history .= "<div style='background-color: #fff;padding:24px;color:#666;border: 1px solid #B4FEF7;'>";
+                    $history .= "<p style='margin:12px 0;'>$mtype,  $mdatetime <br></p>$mtext</div><br>";
+                }
+                $counter++;
+            }
+
+            $emailtext = trim(str_replace("[EVENT_HISTORY]", $history, $emailtext));
             $custom_emailtext = trim(str_replace("[TOKEN]", $tokens[$fetp_id], $emailtext));
             AWSMail::mailfunc($recipient, "An Epicore RFI has been $status_type", $custom_emailtext, EMAIL_NOREPLY, $extra_headers);
         }
