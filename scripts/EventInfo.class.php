@@ -120,6 +120,26 @@ class EventInfo
         }
     }
 
+    function getFollowupEmail() {
+        //get followup moderators for the event
+        $moderators = $this->db->getAll("select distinct hmu_id, user_id, email, organization_id from followup, user
+                                          where requester_id=user_id and event_id = ?", array($this->id));
+
+        $i=0;
+        foreach ($moderators as $moderator) {
+            if ($moderator['email']){
+                $to[$i++]= $moderator['email'];
+            }
+            else{// get it from the healthmap db
+                $hmdb = getDB('hm');
+                $to[$i++] = $hmdb->getOne("SELECT email FROM hmu WHERE hmu_id = ?", array($moderator['hmu_id']));
+            }
+        }
+
+        return $to;
+
+    }
+
     function changeStatus($status, $requester_id, $notes, $reason) {
         $initiator_oid = $this->db->getOne("SELECT user.organization_id FROM event, user WHERE event_id = ? AND event.requester_id = user.user_id", array($this->id));
         $requester_oid = $this->db->getOne("SELECT organization_id FROM user WHERE user_id = ?", array($requester_id));

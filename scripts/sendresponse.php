@@ -31,6 +31,9 @@ if(is_numeric($event_id)) {
     // send the response to the person who initiated the event request
     $recipient = $ei->getInitiatorEmail();
 
+    // get all moderators that sent followups for the event
+    //$moderators = $ei->getFollowupEmail();
+
     // get fetp messages
     $fetp_id = $dbdata['responder_id'];
     $messages = $ei->getFetpMessages($fetp_id, $event_id);
