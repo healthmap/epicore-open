@@ -397,35 +397,40 @@ class EventInfo
         // get followups sent to fetp(s), and responses from fetp(s)
         $db = getDB();
         if ($fetp_id) { //  get followup sent to single fetp
-            $followups = $db->getAll("SELECT text, action_date, requester_id, count(fetp_id) as fetp_count FROM followup f, event_fetp fe WHERE f.event_id=fe.event_id
+            $followups = $db->getAll("SELECT text, action_date, requester_id, fetp_id, f.followup_id, count(fetp_id) as fetp_count FROM followup f, event_fetp fe WHERE f.event_id=fe.event_id
                         AND f.followup_id=fe.followup_id AND f.event_id = ? AND fetp_id = ?  GROUP BY text ORDER BY action_date", array($event_id, $fetp_id));
             // get fetp response from single fetp
-            $responses = $db->getAll("SELECT response, responder_id, response_date from response WHERE event_id = ? AND responder_id = ?
+            $responses = $db->getAll("SELECT response, responder_id, response_date, response_permission from response WHERE event_id = ? AND responder_id = ?
                                   ORDER BY response_date", array($event_id, $fetp_id));
         }
         else{   // get followups sent to all fetps
-            $followups = $db->getAll("SELECT text, action_date, requester_id, count(fetp_id) as fetp_count FROM followup f, event_fetp fe WHERE f.event_id=fe.event_id
+            $followups = $db->getAll("SELECT text, action_date, requester_id, fetp_id, f.followup_id, count(fetp_id) as fetp_count FROM followup f, event_fetp fe WHERE f.event_id=fe.event_id
                         AND f.followup_id=fe.followup_id AND f.event_id = ? GROUP BY text ORDER BY action_date", array($event_id));
             // get fetp responses from all fetps
-            $responses = $db->getAll("SELECT response, response_id, responder_id, response_date from response WHERE event_id = ?
+            $responses = $db->getAll("SELECT response, response_id, responder_id, response_date, response_permission from response WHERE event_id = ?
                                   ORDER BY response_date", array($event_id));
         }
 
         // get event notes
         global $status_lu;
+        global $response_permission_lu;
+
         $enotes =  $this->db->getAll("SELECT action_date,note,status,requester_id FROM event_notes WHERE event_id = ? ORDER BY action_date", array($event_id));
 
         // get info of person for the event
         $event_person = $this->getEventPerson($event_id);
 
-        // save all followups (sent to fetp from moderator) and responses (from fetp(s)) in a message array
+        // save all followups, responses, and event notes in a message array
         $i = 0;
         foreach ($followups as $followup ){
             $followup_person =$this->getFollowupPerson($event_id, $followup['requester_id']);
 
             $messages[$i]['text'] = $followup['text'];
             $messages[$i]['fetp_count'] = $followup['fetp_count'];
+            $messages[$i]['fetp_id'] = $followup['fetp_id'];
             $messages[$i]['type'] = 'Moderator Response';
+            $messages[$i]['requester_id'] = $followup['requester_id'];
+            $messages[$i]['followup_id'] = $followup['followup_id'];
             $messages[$i]['person'] = $followup_person['name'];
             $messages[$i]['person_id'] = $followup_person['user_id'];
             $messages[$i]['organization_id'] = $followup_person['organization_id'];
@@ -433,6 +438,9 @@ class EventInfo
         }
         foreach ($responses as $response ){
             $messages[$i]['text'] = $response['response'];
+            if ($response['response_permission'] == "0")
+                $messages[$i]['text'] = $response_permission_lu["0"];;
+            $messages[$i]['permission'] = $response['response_permission'];
             $messages[$i]['type'] = 'FETP Response';
             $messages[$i]['response_id'] = $response['response_id'];
             $messages[$i]['fetp_id'] = $response['responder_id'];

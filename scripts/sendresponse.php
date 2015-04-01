@@ -36,12 +36,18 @@ if(is_numeric($event_id)) {
     $messages = $ei->getFetpMessages($fetp_id, $event_id);
     $history = '';
     // style message history for email
+    $counter =0;
     foreach ($messages as $message) {
-        $mtype = $message['type'];
-        $mtext = $message['text'];
-        $mdatetime = $message['date'];
-        $history .= "<div style='background-color: #fff;padding:24px;color:#666;border: 1px solid #B4FEF7;'>";
-        $history .= "<p style='margin:12px 0;'>$mtype,  $mdatetime <br></p>$mtext</div><br>";
+        if ($counter > 0) {  // skip first (current ) message
+            $mtype = $message['type'];
+            if ($message['type'] == 'Event Notes')
+                $mtype = $message['status'] . " event request";
+            $mtext = $message['text'];
+            $mdatetime = $message['date'];
+            $history .= "<div style='background-color: #fff;padding:24px;color:#666;border: 1px solid #B4FEF7;'>";
+            $history .= "<p style='margin:12px 0;'>$mtype,  $mdatetime <br></p>$mtext</div><br>";
+        }
+        $counter++;
     }
 
     $emailtext = trim(str_replace("[EVENT_HISTORY]", $history, $msg));
