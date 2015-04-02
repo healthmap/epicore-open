@@ -30,17 +30,14 @@
         </p>
 
         <!--<iframe width="900" height="400" ng-src="{{filePreview}}"></iframe>-->
-
+	<br>
         <span ng-show="isOrganization">
-            <h4>Event message history: </h4>
+            <h4>Event message history</h4>
                 <!--for {{userInfo.uname}}, user id: {{userInfo.uid}}, {{userInfo.organization}}, org_id: {{userInfo.organization_id}}, event id: {{id}}-->
 
-            <div style="padding-left:20px" ng-repeat="history_item in eventsList.history">
+            <div ng-repeat="history_item in eventsList.history" class="event-item">
                 <div>
-                    <button class="btn btn-xs" ng-click="isCollapsed = !isCollapsed">
-                        <i class="fa fa-arrow-circle-right"></i>
-                    </button>
-                    <span ng-if="history_item.type == 'Moderator Response'">
+                    <a href="" ng-click="isCollapsed = !isCollapsed"><i class="fa fa-plus-square-o"></i></a><span ng-if="history_item.type == 'Moderator Response'">
                        <span ng-if="history_item.fetp_count > 1">
                            <span ng-if="(history_item.person_id == userInfo.uid) || (history_item.organization_id == userInfo.organization_id)">
                                 {{history_item.person}} sent followup to all FETPs, {{history_item.date}}
@@ -61,9 +58,6 @@
                     <span ng-if="history_item.type == 'FETP Response'">
                         {{history_item.type}}, {{history_item.date}}
                     </span>
-                    <a ng-if="(history_item.type == 'FETP Response') && (history_item.organization_id == userInfo.organization_id) " class="btn-default" href="#/followup/{{id}}/{{history_item.response_id}}">
-                        <i class="fa fa-reply"> Reply</i>
-                    </a>
 
                     <span ng-if="(history_item.type == 'Event Request') && (history_item.organization_id == userInfo.organization_id)">
                         {{history_item.person}} sent original event request, {{history_item.date}}
@@ -78,21 +72,18 @@
                     <span ng-if="(history_item.type == 'Event Notes') && (history_item.organization_id != userInfo.organization_id)">
                         {{history_item.status}} event request, {{history_item.date}}
                     </span>
+                    <a ng-if="(history_item.type == 'FETP Response') && (history_item.organization_id == userInfo.organization_id) " class="nav-button" href="#/followup/{{id}}/{{history_item.response_id}}">Reply</a>
 
                 </div>
-                <div ng-show="isCollapsed">
-                    <br>
-                    <div style='background-color: #fff;padding:24px;color:#666;border: 1px solid #B4FEF7;'>
+                <div ng-show="isCollapsed" class="showresponse">
                         <div ng-if="history_item.type == 'Event Request'">
                             <strong>Title:</strong> {{history_item.title}}<br>
                             <strong>Location:</strong> {{history_item.location}}
                             <p><br>{{history_item.personalized_text}}</p>
                         </div>
                         <p>{{history_item.text}}</p>
-                    </div>
                 </div>
 
-                <br>
             </div>
         </span>
 
