@@ -76,6 +76,8 @@ foreach($fetp_emails as $fetp_id => $recipient) {
     foreach ($messages as $message) {
         if ($counter > 0) {  // skip first (current ) message
             $mtype = $message['type'];
+            if ($message['type'] == 'Event Notes')
+                $mtype = $message['status'] . "event request";
             $mtext = $message['text'];
             $mdatetime = $message['date'];
             $history .= "<div style='background-color: #fff;padding:24px;color:#666;border: 1px solid #B4FEF7;'>";

@@ -9,7 +9,6 @@
         </p>
 
             <i class="fa fa-search"></i> <input ng-model="query"> <br> <br>
-            <!--<pre>Sorting predicate = {{predicate}}; reverse = {{reverse}}</pre>-->
 
             <!-- view for organizations -->
         <div ng-show="isOrganization" ng-init="predicate='person'">
@@ -75,7 +74,7 @@
                     <th>Title</th>
                     <th>Location</th>
                     <th>Date Sent To You</th>
-                    <th>Response</th>
+                    <th>Response Date</th>
                 </tr>
                 <tr ng-repeat="event in eventsList">
                     <td><a href="#/events/{{event.event_id}}">{{event.title}}</a></td>
@@ -87,7 +86,8 @@
                     </td>
                     <td>
                         <p ng-repeat="(response_id, response_info) in event.response_dates">
-                        <a href="#/response/{{response_id}}">{{response_info}}</a>
+                            {{response_info}}
+                        <!--<a href="#/response/{{response_id}}">{{response_info}}</a>-->
                         </p>
                     </td>
                 </tr>
