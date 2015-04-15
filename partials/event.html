@@ -32,62 +32,62 @@
             <div class="event-item" ng-repeat="history_item in eventsList.history">
             
                 <!-- Followup messages from Moderator to FETP -->
-                <span ng-if="history_item.type == 'Moderator Response'">
-                    <span ng-if="history_item.fetp_count > 1">
+                <div ng-if="history_item.type == 'Moderator Response'">
+                    <div ng-if="history_item.fetp_count > 1">
                         <!-- Followup messages for all FETPs in same organization (Moderator only)-->
-                        <span ng-if="(history_item.person_id == userInfo.uid) || (history_item.organization_id == userInfo.organization_id)">
+                        <div class="show-message" ng-if="(history_item.person_id == userInfo.uid) || (history_item.organization_id == userInfo.organization_id)">
                             <a href="" ng-click="isCollapsed = !isCollapsed"><i class="fa fa-plus-square-o"></i></a>
                             {{history_item.person}} sent followup to all FETPs, {{history_item.date}}
                             <div class="show-response" ng-show="isCollapsed">
                                 <p>{{history_item.text}}</p>
                             </div>
-                        </span>
+                        </div>
              
                         <!-- Followup messages for all FETPs not in same organization (Moderator or FETP) -->
-                        <span ng-if="(history_item.organization_id != userInfo.organization_id)">
-                            <a href="#" ng-click="isCollapsed = !isCollapsed"><i class="fa fa-plus-square-o"></i></a>
+                        <div class="show-message" ng-if="(history_item.organization_id != userInfo.organization_id)">
+                            <a href="" ng-click="isCollapsed = !isCollapsed"><i class="fa fa-plus-square-o"></i></a>
                             followup sent to all FETPs, {{history_item.date}}
-                            <a ng-if="userInfo.fetp_id" class="nav-button" href="#/reply/{{id}}">Reply</a>
+                            <!--<a ng-if="userInfo.fetp_id" class="nav-button" href="#/reply/{{id}}">Reply</a>-->
                             <div class="show-response" ng-show="isCollapsed">
                                 <p>{{history_item.text}}</p>
                             </div>
-                        </span>
-                    </span>
+                        </div>
+                    </div>
 
-                    <span ng-if="history_item.fetp_count == 1">
+                    <div ng-if="history_item.fetp_count == 1">
                         <!-- Followup messages for one FETP in same organization (Moderator only)-->
-                        <span ng-if="(history_item.person_id == userInfo.uid) || (history_item.organization_id == userInfo.organization_id)">
+                        <div  class="show-message" ng-if="(history_item.person_id == userInfo.uid) || (history_item.organization_id == userInfo.organization_id)">
 			                <a href="" ng-click="isCollapsed = !isCollapsed"><i class="fa fa-plus-square-o"></i></a>                        
                             {{history_item.person}} sent followup to 1 FETP, {{history_item.date}}
                             <div class="show-response" ng-show="isCollapsed">
                                 <p>{{history_item.text}}</p>
                             </div>
-                        </span>
+                        </div>
 
                         <!-- Followup messages for one FETP not in same organization (Moderator or FETP)-->
-                        <span ng-if="(history_item.organization_id != userInfo.organization_id) && userInfo.uid || (history_item.fetp_id == userInfo.fetp_id)">
+                        <div  class="show-message" ng-if="(history_item.organization_id != userInfo.organization_id) && userInfo.uid || (history_item.fetp_id == userInfo.fetp_id)">
                             <a href="" ng-click="isCollapsed = !isCollapsed"><i class="fa fa-plus-square-o"></i></a>
                             followup sent to FETP, {{history_item.date}}
-                            <a ng-if="userInfo.fetp_id" class="nav-button" href="#/reply/{{id}}">Reply</a>
+                            <!--<a ng-if="userInfo.fetp_id" class="nav-button" href="#/reply/{{id}}">Reply</a>-->
                             <div class="show-response" ng-show="isCollapsed">
                                 <p>{{history_item.text}}</p>
                             </div>
-                        </span>
-                    </span>
-                </span>
+                        </div>
+                    </div>
+                </div>
 
                 <!-- FETP Response Messages (Moderator or FETP)-->
-                <span ng-if="(history_item.type == 'FETP Response') && (userInfo.uid || (history_item.fetp_id == userInfo.fetp_id))">
+                <div  class="show-message" ng-if="(history_item.type == 'FETP Response') && (userInfo.uid || (history_item.fetp_id == userInfo.fetp_id))">
                      <a href="" ng-click="isCollapsed = !isCollapsed"><i class="fa fa-plus-square-o"></i></a>
                     {{history_item.type}}, {{history_item.date}}
                     <a ng-if="(history_item.organization_id == userInfo.organization_id) " class="nav-button" href="#/followup/{{id}}/{{history_item.response_id}}">Reply</a>
                     <div class="show-response" ng-show="isCollapsed">
 				        <p>{{history_item.text}}</p>
                     </div>
-                </span>
+                </div>
 
                 <!-- Original Event Request Message in same organization (Moderator or FETP)-->
-                <span ng-if="(history_item.type == 'Event Request') && (history_item.organization_id == userInfo.organization_id)">
+                <div  class="show-message" ng-if="(history_item.type == 'Event Request') && (history_item.organization_id == userInfo.organization_id)">
                     <a href="" ng-click="isCollapsed = !isCollapsed"><i class="fa fa-plus-square-o"></i></a>
                     {{history_item.person}} sent original event request, {{history_item.date}}
                     <div class="show-response" ng-show="isCollapsed">
@@ -96,10 +96,10 @@
                         <p>{{history_item.personalized_text}}</p>
                         <p>{{history_item.text}}</p>
                     </div>
-                </span>
+                </div>
 
                 <!-- Original Event Request Message not in same organization (Moderator)-->
-                <span ng-if="(history_item.type == 'Event Request') && (history_item.organization_id != userInfo.organization_id)">
+                <div  class="show-message" ng-if="(history_item.type == 'Event Request') && (history_item.organization_id != userInfo.organization_id)">
                     <a href="" ng-click="isCollapsed = !isCollapsed"><i class="fa fa-plus-square-o"></i></a>
                     original event request sent, {{history_item.date}}
                     <div class="show-response" ng-show="isCollapsed">
@@ -108,25 +108,25 @@
                         <p>{{history_item.personalized_text}}</p>
                         <p>{{history_item.text}}</p>
                     </div>
-                </span>
+                </div>
 
                 <!-- Event open/closed status message in same organization message (Moderator) -->
-                <span ng-if="(history_item.type == 'Event Notes') && (history_item.organization_id == userInfo.organization_id)">
+                <div  class="show-message" ng-if="(history_item.type == 'Event Notes') && (history_item.organization_id == userInfo.organization_id)">
                     <a href="" ng-click="isCollapsed = !isCollapsed"><i class="fa fa-plus-square-o"></i></a>    
                 {{history_item.person}} {{history_item.status}} event request, {{history_item.date}}
                     <div class="show-response" ng-show="isCollapsed">
                         <p>{{history_item.text}}</p>
                     </div>
-                </span>
+                </div>
 
                 <!-- Event open/closed status message not in same organization message (Moderator or FETP)-->
-                <span ng-if="(history_item.type == 'Event Notes') && (history_item.organization_id != userInfo.organization_id)">
+                <div  class="show-message" ng-if="(history_item.type == 'Event Notes') && (history_item.organization_id != userInfo.organization_id)">
                     <a href="" ng-click="isCollapsed = !isCollapsed"><i class="fa fa-plus-square-o"></i></a> 
                     {{history_item.status}} event request, {{history_item.date}}
                     <div class="show-response" ng-show="isCollapsed">
                         <p>{{history_item.text}}</p>
                     </div>
-                </span>
+                </div>
 
         </div><!--event-item-->
     </div>
