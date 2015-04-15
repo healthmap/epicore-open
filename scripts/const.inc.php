@@ -11,6 +11,8 @@ define('EMAILPREVIEWS', 'emailtemplates/temp/');
 define('TEPHINET_BASE', 'http://www.tephinet.org/');
 define('TEPHINET_CONSUMER_KEY', 'EJL7rbQR3YTQXPb8ku6zEQbmRSXzLRtd');
 define('TEPHINET_CONSUMER_SECRET', 'Nr8TTVMoAvm4X86jjzbp65aE7kTmR2WN');
+define('EMAIL_PROIN', 'promed@promedmail.org');
+define('PROMED_ID', 4);
 
 $status_lu = array('O' => 're-opened', 'C' => 'closed');
 

@@ -128,11 +128,15 @@ class EventInfo
         $i=0;
         foreach ($moderators as $moderator) {
             if ($moderator['email']){
-                $to[$i++]= $moderator['email'];
+                $to[$i]['email']= $moderator['email'];
+                $to[$i]['name']= 'not from healtmap';
+                $to[$i++]['organization_id']= $moderator['organization_id'];
             }
             else{// get it from the healthmap db
                 $hmdb = getDB('hm');
-                $to[$i++] = $hmdb->getOne("SELECT email FROM hmu WHERE hmu_id = ?", array($moderator['hmu_id']));
+                $to[$i]['email'] = $hmdb->getOne("SELECT email FROM hmu WHERE hmu_id = ?", array($moderator['hmu_id']));
+                $to[$i]['name'] = $hmdb->getOne("SELECT name FROM hmu WHERE hmu_id = ?", array($moderator['hmu_id']));
+                $to[$i++]['organization_id'] = 1;
             }
         }
 
@@ -493,14 +497,17 @@ class EventInfo
 
         // get hmu_id for event
         $db = getDB();
-        $row = $db->getRow("select hmu_id, user_id, organization_id from event, user where requester_id=user_id and (event_id=?)", array($event_id));
+        $row = $db->getRow("select hmu_id, user_id, organization_id, email from event, user where requester_id=user_id and (event_id=?)", array($event_id));
         $hmu_id = $row['hmu_id'];
 
         // get user from hmu_id in hm database
         $db = getDB('hm');
-        $user = $db->getRow(" select name, username from hmu where hmu_id='$hmu_id'");
+        $user = $db->getRow(" select name, username, email from hmu where hmu_id='$hmu_id'");
         $user['user_id'] = $row['user_id'];
         $user['organization_id'] = $row['organization_id'];
+        if ($row['email']) {
+            $user['email'] = $row['email'];
+        }
         return $user;
     }
 
@@ -509,15 +516,18 @@ class EventInfo
 
         // get hmu_id for event
         $db = getDB();
-        $row = $db->getRow("select distinct hmu_id, user_id, organization_id from followup, user where requester_id=user_id
+        $row = $db->getRow("select distinct hmu_id, user_id, organization_id, email from followup, user where requester_id=user_id
                             and event_id=? and requester_id= ?", array($event_id, $requester_id));
         $hmu_id = $row['hmu_id'];
 
         // get user from hmu_id in hm database
         $db = getDB('hm');
-        $user = $db->getRow(" select name, username from hmu where hmu_id='$hmu_id'");
+        $user = $db->getRow(" select name, username, email from hmu where hmu_id='$hmu_id'");
         $user['user_id'] = $row['user_id'];
         $user['organization_id'] = $row['organization_id'];
+        if ($row['email']) {
+            $user['email'] = $row['email'];
+        }
         return $user;
     }
 
@@ -526,15 +536,18 @@ class EventInfo
 
         // get hmu_id for event
         $db = getDB();
-        $row = $db->getRow("select distinct hmu_id, user_id, organization_id from event_notes, user where requester_id=user_id
+        $row = $db->getRow("select distinct hmu_id, user_id, organization_id, email from event_notes, user where requester_id=user_id
                             and event_id=? and requester_id= ?", array($event_id, $requester_id));
         $hmu_id = $row['hmu_id'];
 
         // get user from hmu_id in hm database
         $db = getDB('hm');
-        $user = $db->getRow(" select name, username from hmu where hmu_id='$hmu_id'");
+        $user = $db->getRow(" select name, username, email from hmu where hmu_id='$hmu_id'");
         $user['user_id'] = $row['user_id'];
         $user['organization_id'] = $row['organization_id'];
+        if ($row['email']) {
+            $user['email'] = $row['email'];
+        }
         return $user;
     }
 }
