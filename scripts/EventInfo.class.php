@@ -42,8 +42,6 @@ class EventInfo
     }
 
     function getEventHistory() {
-
-
         // get all event messages
         $messages =  $this->getFetpMessages(null, $this->id);
 
@@ -63,51 +61,6 @@ class EventInfo
         $messages[$size]['organization_id'] = $event_info['org_requester_id'];
 
         return $messages;
-
-        //////////////////////// old get Event History
-/*        global $status_lu;
-
-        $open_date = $this->db->getOne("SELECT create_date FROM event WHERE event_id = ?", array($this->id));
-
-        $q = $this->db->query("SELECT action_date,note,status FROM event_notes WHERE event_id = ? ORDER BY action_date", array($this->id));
-        while($row = $q->fetchRow()) {
-            $note = $row['note'] ? " (Note: ".$row['note'].")" : '';
-            $history[strtotime($row['action_date'])] = "event " . $status_lu[$row['status']] . $note;
-        }
-
-        // get any followups sent
-        $fuq = $this->db->query("SELECT send_date, fetp_id, followup_id FROM event_fetp WHERE event_id = ?", array($this->id));
-
-        $fnum = -1;
-        $numfetps[] = 0;
-        $numfetps[strtotime($open_date)] = 0;
-        $ts = 0;
-        while($furow = $fuq->fetchRow()) {
-            if ($furow['followup_id'] == 0){
-                $numfetps[strtotime($open_date)]++;
-            }
-            elseif ($fnum != $furow['followup_id']) {
-                $fnum = $furow['followup_id'];
-                $ts = strtotime($furow['send_date']);
-                $numfetps[$ts] = 1;
-            }
-            else {
-                $numfetps[$ts]++;
-            }
-            if ($ts !=0)
-                $history[$ts] = "sent followup to " . $numfetps[$ts] . " FETPs";
-        }
-        $history[strtotime($open_date)] = "event opened, sent request to " . $numfetps[strtotime($open_date)] . " FETPs";
-
-        ksort($history);
-
-        foreach($history as $ts => $desc) {
-            $history_arr[] = date('n/j/Y H:i', $ts) . ": ".$desc;
-        }
-
-        return $history_arr;
-*/
-
     }
 
     function getInitiatorEmail() {
@@ -490,6 +443,62 @@ class EventInfo
         });
 
         return $messages;
+    }
+
+    function getEventHistoryFETP($fetp_id, $event_id){
+        // get fetp messages
+        $messages = $this->getFetpMessages($fetp_id, $event_id);
+        $history = '';
+        // style message history for email
+        $counter =0;
+        foreach ($messages as $message) {
+            if ($counter > 0) {  // skip first (current ) message
+                $mtype = $message['type'];
+                if ($message['type'] == 'Event Notes')
+                    $mtype = $message['status'] . " event request";
+                if ($message['type'] == 'FETP Response')
+                    $mtype = "Your response";
+                if ($message['type'] == 'Moderator Response') {
+                    if ($message['fetp_count'] > 1)
+                        $mtype = "followup sent to all FETPs";
+                    else
+                        $mtype = "followup sent to you";
+                }
+                $mtext = $message['text'];
+                $mdatetime = $message['date'];
+                $history .= "<div style='background-color: #fff;padding:24px;color:#666;border: 1px solid #B4FEF7;'>";
+                $history .= "<p style='margin:12px 0;'>$mtype,  $mdatetime <br></p>$mtext</div><br>";
+            }
+            $counter++;
+        }
+        return $history;
+    }
+
+    function getEventHistoryAll($event_id){
+        //get all fetp messages
+        $messages = $this->getFetpMessages(null, $event_id);
+        $history = '';
+        // style message history for email
+        $counter =0;
+        foreach ($messages as $message) {
+            if ($counter > 0) {  // skip first (current ) message
+                $mtype = $message['type'];
+                if ($message['type'] == 'Event Notes')
+                    $mtype = $message['person'] . " ". $message['status'] . " event request";
+                if ($message['type'] == 'Moderator Response'){
+                    if ($message['fetp_count'] > 1)
+                        $mtype = $message['person'] . " sent followup to all FETPs";
+                    else
+                        $mtype = $message['person'] . " sent followup to 1 FETP";
+                }
+                $mtext = $message['text'];
+                $mdatetime = $message['date'];
+                $history .= "<div style='background-color: #fff;padding:24px;color:#666;border: 1px solid #B4FEF7;'>";
+                $history .= "<p style='margin:12px 0;'>$mtype,  $mdatetime <br></p>$mtext</div><br>";
+            }
+            $counter++;
+        }
+        return $history;
     }
 
     // get name, hmu_id, user_id, and org id of person who generated the event
