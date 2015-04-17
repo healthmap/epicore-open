@@ -285,7 +285,7 @@ class EventInfo
 
             // get the number of requests sent for that event
             $row['num_responses'] = $db->getOne("SELECT count(*) FROM response WHERE event_id = ?", array($row['event_id']));
-            $get_followups = $db->query("SELECT send_date,followup_id FROM event_fetp WHERE event_id = ?", array($row['event_id']));
+            $get_followups = $db->query("SELECT send_date,followup_id FROM event_fetp WHERE event_id = ? ORDER BY send_date DESC", array($row['event_id']));
             $ftext = $db->query("SELECT text,followup_id from followup WHERE event_id = ?", array($row['event_id']));
             while($gftext = $ftext->fetchRow()){
                 $text[$gftext['followup_id']] = $gftext['text'];
