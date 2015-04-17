@@ -56,7 +56,7 @@ if(is_numeric($event_id) && is_numeric($user_id)) {
             array_push($tolist, $initiator);
         }
         foreach ($fmoderators as $fmoderator){
-            if (($fmoderator['email'] != $moderator['email']))
+            if (($fmoderator['email'] != $moderator['email']) && ($fmoderator['email'] != $initiator))
                 array_push($tolist, $fmoderator['email']);
         }
 

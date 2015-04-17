@@ -91,7 +91,7 @@ if ($moderator['email'] !=$initiator){
     array_push($tolist, $initiator);
 }
 foreach ($fmoderators as $fmoderator){
-    if (($fmoderator['email'] != $moderator['email']))
+    if (($fmoderator['email'] != $moderator['email']) && ($fmoderator['email'] != $initiator))
         array_push($tolist, $fmoderator['email']);
 }
 
