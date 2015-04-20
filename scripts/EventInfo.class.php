@@ -228,6 +228,8 @@ class EventInfo
    
         // custom var substitutions 
         foreach($custom_vars as $varname => $varval) {
+            if (($varname == 'RESPONSE_TEXT') || ($varname == 'NOTES'))
+                $varval = "<pre>$varval</pre>";
             $emailtext = str_replace("[$varname]", $varval, $emailtext);
         }
 
@@ -467,7 +469,7 @@ class EventInfo
                 $mtext = $message['text'];
                 $mdatetime = $message['date'];
                 $history .= "<div style='background-color: #fff;padding:24px;color:#666;border: 1px solid #B4FEF7;'>";
-                $history .= "<p style='margin:12px 0;'>$mtype,  $mdatetime <br></p>$mtext</div><br>";
+                $history .= "<p style='margin:12px 0;'>$mtype,  $mdatetime <br></p><pre>$mtext</pre></div><br>";
             }
             $counter++;
         }
