@@ -21,8 +21,8 @@
                     <th>Requests Sent<br>Date (# FETP recipients)</th>
                     <th># Responses</th>
                 </tr>
-                <tr><th colspan="6">Initiated by you</th></tr>
-                <tr ng-repeat="event in eventsList['yours'] | filter:query | orderBy:predicate:reverse" >
+                <tr><th colspan="6"><a href="" ng-click="isCollapsed1 = !isCollapsed1"><i class="fa fa-plus-square-o"></i></a> Initiated by you</th></tr>
+                <tr ng-show="!isCollapsed1" ng-repeat="event in eventsList['yours'] | filter:query | orderBy:predicate:reverse" >
                     <td><a href="#/events/{{event.event_id}}">{{event.title}}</a></td>
                     <td>{{event.person}}</td>
                     <td>{{event.location}}</td>
@@ -35,8 +35,8 @@
                         <span>{{event.num_responses}}</span>
                     </td>
                 </tr>
-                <tr><th colspan="6">Initiated by your organization ({{userInfo.organization}})</th></tr>
-                <tr ng-repeat="event in eventsList['yourorg'] | filter:query | orderBy:predicate:reverse">
+                <tr><th colspan="6"><a href="" ng-click="isCollapsed2 = !isCollapsed2"><i class="fa fa-plus-square-o"></i></a> Initiated by your organization ({{userInfo.organization}})</th></tr>
+                <tr ng-show="!isCollapsed2" ng-repeat="event in eventsList['yourorg'] | filter:query | orderBy:predicate:reverse">
                     <td><a href="#/events/{{event.event_id}}">{{event.title}}</a></td>
                     <td>{{event.person}}</td>
                     <td>{{event.location}}</td>
@@ -49,8 +49,8 @@
                         <span>{{event.num_responses}}</span>
                     </td>
                 </tr>
-                <tr><th colspan="6">Initiated by others</th></tr>
-                <tr ng-repeat="event in eventsList['other'] | filter:query">
+                <tr><th colspan="6"><a href="" ng-click="isCollapsed3 = !isCollapsed3"><i class="fa fa-plus-square-o"></i></a> Initiated by others</th></tr>
+                <tr ng-show="!isCollapsed3" ng-repeat="event in eventsList['other'] | filter:query">
                     <td><a href="#/events/{{event.event_id}}">{{event.title}}</a></td>
                     <td></td>
                     <td>{{event.location}}</td>

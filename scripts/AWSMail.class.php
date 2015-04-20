@@ -14,8 +14,8 @@ class AWSMail
     	$email = new AmazonSES();
 	    $text_or_html = isset($extra_headers['text_or_html']) ? ucfirst(strtolower($extra_headers['text_or_html'])) : 'Text';
 	    $email_type = 'Body.' . $text_or_html . '.Data';
-    	$to = is_array($to) ? $to : explode(",", $to);
-	    $toaddresses = array('ToAddresses' => $to);
+        $to = is_array($to) ? $to : explode(",", $to);
+        $toaddresses = array('ToAddresses' => $to);
 	    if(isset($extra_headers['cc'])) {
 	        $toaddresses['CcAddresses'] = is_array($extra_headers['cc']) ? $extra_headers['cc'] : explode(",", $extra_headers['cc']);
 	    }

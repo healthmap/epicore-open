@@ -460,9 +460,9 @@ class EventInfo
                     $mtype = "Your response";
                 if ($message['type'] == 'Moderator Response') {
                     if ($message['fetp_count'] > 1)
-                        $mtype = "followup sent to all FETPs";
+                        $mtype = "Followup sent to all FETPs";
                     else
-                        $mtype = "followup sent to you";
+                        $mtype = "Followup sent to you";
                 }
                 $mtext = $message['text'];
                 $mdatetime = $message['date'];
