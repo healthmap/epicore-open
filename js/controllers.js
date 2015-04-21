@@ -101,7 +101,7 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
                 $scope.changeStatusType = response.EventsList.estatus == "C" ? 'reopen' : 'close';
             }
             $scope.eventsList = response.EventsList;
-            $scope.filePreview = response.EventsList.filePreview ? response.EventsList.filePreview : ''; 
+            $scope.filePreview = response.EventsList.filePreview ? response.EventsList.filePreview : '';
         });
 
         $scope.sendFollowup = function(formData, isValid) {
@@ -372,4 +372,11 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
         $scope.id = $routeParams.id;
         $scope.messageResponse = {};
         $scope.messageResponse.text = messages[$scope.id];
-    });
+
+        /* filter for trusted HTML */
+    }).filter('to_trusted', ['$sce', function($sce){
+        return function(text) {
+            return $sce.trustAsHtml(text);
+        };
+    }]);
+

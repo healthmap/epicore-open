@@ -52,7 +52,7 @@ class EventInfo
         // add event request to messages
         $size = count($messages);
         $messages[$size]['date'] = date('n/j/Y H:i', strtotime($event_info['create_date']));
-        $messages[$size]['text'] = $event_info['description'];
+        $messages[$size]['text'] = nl2br($event_info['description']);
         $messages[$size]['personalized_text'] = $event_info['personalized_text'];
         $messages[$size]['type'] = 'Event Request';
         $messages[$size]['title'] = $event_info['title'];
@@ -229,7 +229,7 @@ class EventInfo
         // custom var substitutions 
         foreach($custom_vars as $varname => $varval) {
             if (($varname == 'RESPONSE_TEXT') || ($varname == 'NOTES'))
-                $varval = "<pre>$varval</pre>";
+                $varval = nl2br($varval); //"<pre>$varval</pre>";
             $emailtext = str_replace("[$varname]", $varval, $emailtext);
         }
 
@@ -246,6 +246,15 @@ class EventInfo
             file_put_contents("../$file_preview", $emailtext);
             return $file_preview;
         }
+    }
+    function nl2p($text){
+        $description = '';
+        foreach (explode("\n", $text) as $dline) {
+            if (trim($dline)) {
+                $description .= '<p>' . $dline . '</p>';
+            }
+        }
+        return $description;
     }
 
     static function getResponse($response_id) {
@@ -404,7 +413,7 @@ class EventInfo
         foreach ($followups as $followup ){
             $followup_person =$this->getFollowupPerson($event_id, $followup['requester_id']);
 
-            $messages[$i]['text'] = $followup['text'];
+            $messages[$i]['text'] = nl2br($followup['text']);
             $messages[$i]['fetp_count'] = $followup['fetp_count'];
             $messages[$i]['fetp_id'] = $followup['fetp_id'];
             $messages[$i]['type'] = 'Moderator Response';
@@ -416,7 +425,7 @@ class EventInfo
             $messages[$i++]['date'] = date('n/j/Y H:i', strtotime($followup['action_date']));
         }
         foreach ($responses as $response ){
-            $messages[$i]['text'] = $response['response'];
+            $messages[$i]['text'] = nl2br($response['response']);
             if ($response['response_permission'] == "0")
                 $messages[$i]['text'] = $response_permission_lu["0"];;
             $messages[$i]['permission'] = $response['response_permission'];
@@ -430,7 +439,7 @@ class EventInfo
         foreach ($enotes as $enote){
             $status_person =$this->getStatusPerson($event_id, $enote['requester_id']);
 
-            $messages[$i]['text'] = $enote['note'];
+            $messages[$i]['text'] = nl2br($enote['note']);
             $messages[$i]['status'] = $status_lu[$enote['status']];
             $messages[$i]['type'] = 'Event Notes';
             $messages[$i]['date'] = date('n/j/Y H:i', strtotime($enote['action_date']));
@@ -469,7 +478,7 @@ class EventInfo
                 $mtext = $message['text'];
                 $mdatetime = $message['date'];
                 $history .= "<div style='background-color: #fff;padding:24px;color:#666;border: 1px solid #B4FEF7;'>";
-                $history .= "<p style='margin:12px 0;'>$mtype,  $mdatetime <br></p><pre>$mtext</pre></div><br>";
+                $history .= "<p style='margin:12px 0;'>$mtype,  $mdatetime <br></p>$mtext</div><br>";
             }
             $counter++;
         }
@@ -496,7 +505,7 @@ class EventInfo
                 $mtext = $message['text'];
                 $mdatetime = $message['date'];
                 $history .= "<div style='background-color: #fff;padding:24px;color:#666;border: 1px solid #B4FEF7;'>";
-                $history .= "<p style='margin:12px 0;'>$mtype,  $mdatetime <br></p><pre>$mtext</pre></div><br>";
+                $history .= "<p style='margin:12px 0;'>$mtype,  $mdatetime <br></p>$mtext</div><br>";
             }
             $counter++;
         }

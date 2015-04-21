@@ -28,7 +28,17 @@
 <div class="row">
     <div class="col-xs-12 wbg">
         <!-- Show Event History Messages -->
-        <h4>Event message history</h4>
+
+        <div class="event-item" ng-repeat="history_item in eventsList.history">
+            <!-- Original Event Request Message in same organization (Moderator or FETP)-->
+            <div ng-if="(history_item.type == 'Event Request')">
+                    <h4><b>Title:</b> {{history_item.title}}<br>
+                        <b>Location:</b> {{history_item.location}}<br>
+                        <b>Date:</b> {{history_item.date}}</h4>
+            </div>
+        </div>
+
+        <h5>Event message history</h5>
             <div class="event-item" ng-repeat="history_item in eventsList.history">
             
                 <!-- Followup messages from Moderator to FETP -->
@@ -39,7 +49,7 @@
                             <a href="" ng-click="isCollapsed = !isCollapsed"><i class="fa fa-plus-square-o"></i></a>
                             {{history_item.person}} sent followup to all FETPs, {{history_item.date}}
                             <div class="show-response" ng-show="isCollapsed">
-                                <p><pre>{{history_item.text}}</pre></p>
+                                <p ng-bind-html="history_item.text | to_trusted"></p>
                             </div>
                         </div>
              
@@ -49,7 +59,7 @@
                             followup sent to all FETPs, {{history_item.date}}
                             <!--<a ng-if="userInfo.fetp_id" class="nav-button" href="#/reply/{{id}}">Reply</a>-->
                             <div class="show-response" ng-show="isCollapsed">
-                                <p><pre>{{history_item.text}}</pre></p>
+                                <p ng-bind-html="history_item.text | to_trusted"></p>
                             </div>
                         </div>
                     </div>
@@ -60,49 +70,41 @@
 			                <a href="" ng-click="isCollapsed = !isCollapsed"><i class="fa fa-plus-square-o"></i></a>                        
                             {{history_item.person}} sent followup to 1 FETP, {{history_item.date}}
                             <div class="show-response" ng-show="isCollapsed">
-                                <p><pre>{{history_item.text}}</pre></p>
+                                <p ng-bind-html="history_item.text | to_trusted"></p>
                             </div>
                         </div>
 
                         <!-- Followup messages for one FETP not in same organization (Moderator only)-->
                         <div  class="show-message" ng-if="(history_item.organization_id != userInfo.organization_id) && userInfo.uid)">
                             <a href="" ng-click="isCollapsed = !isCollapsed"><i class="fa fa-plus-square-o"></i></a>
-                            followup sent to 1 FETP, {{history_item.date}}
+                            followup sent to FETP, {{history_item.date}}
                             <!--<a ng-if="userInfo.fetp_id" class="nav-button" href="#/reply/{{id}}">Reply</a>-->
                             <div class="show-response" ng-show="isCollapsed">
-                                <p><pre>{{history_item.text}}</pre></p>
+                                <p ng-bind-html="history_item.text | to_trusted"></p>
                             </div>
                         </div>
                         <!-- Followup messages for one FETP (FETP only)-->
                         <div  class="show-message" ng-if="(history_item.fetp_id == userInfo.fetp_id)">
                             <a href="" ng-click="isCollapsed = !isCollapsed"><i class="fa fa-plus-square-o"></i></a>
-                            followup sent to you, {{history_item.date}}
+                            followup sent to You, {{history_item.date}}
                             <!--<a ng-if="userInfo.fetp_id" class="nav-button" href="#/reply/{{id}}">Reply</a>-->
                             <div class="show-response" ng-show="isCollapsed">
-                                <p><pre>{{history_item.text}}</pre></p>
+                                <p ng-bind-html="history_item.text | to_trusted"></p>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- FETP Response Messages (Moderator)-->
-                <div  class="show-message" ng-if="(history_item.type == 'FETP Response') && (userInfo.uid)">
+                <!-- FETP Response Messages (Moderator or FETP)-->
+                <div  class="show-message" ng-if="(history_item.type == 'FETP Response') && (userInfo.uid || (history_item.fetp_id == userInfo.fetp_id))">
                      <a href="" ng-click="isCollapsed = !isCollapsed"><i class="fa fa-plus-square-o"></i></a>
                     {{history_item.type}}, {{history_item.date}}
                     <a ng-if="(history_item.organization_id == userInfo.organization_id) " class="nav-button" href="#/followup/{{id}}/{{history_item.response_id}}">Reply</a>
                     <div class="show-response" ng-show="isCollapsed">
-				        <p><pre>{{history_item.text}}</pre></p>
+				        <p ng-bind-html="history_item.text | to_trusted"></p>
                     </div>
                 </div>
-                <!-- FETP Response Messages (FETP)-->
-                <div  class="show-message" ng-if="(history_item.type == 'FETP Response') && (history_item.fetp_id == userInfo.fetp_id)">
-                    <a href="" ng-click="isCollapsed = !isCollapsed"><i class="fa fa-plus-square-o"></i></a>
-                    Your Response, {{history_item.date}}
-                    <a ng-if="(history_item.organization_id == userInfo.organization_id) " class="nav-button" href="#/followup/{{id}}/{{history_item.response_id}}">Reply</a>
-                    <div class="show-response" ng-show="isCollapsed">
-                        <p><pre>{{history_item.text}}</pre></p>
-                    </div>
-                </div>
+
 
                 <!-- Original Event Request Message in same organization (Moderator or FETP)-->
                 <div  class="show-message" ng-if="(history_item.type == 'Event Request') && (history_item.organization_id == userInfo.organization_id)">
@@ -111,8 +113,8 @@
                     <div class="show-response" ng-show="isCollapsed">
                         <p><strong>Title:</strong> {{history_item.title}}<br>
                         <strong>Location:</strong> {{history_item.location}}</p>
-                        <p>{{history_item.personalized_text}}</p>
-                        <p><pre>{{history_item.text}}</pre></p>
+                        <p ng-bind-html="history_item.personalized_text | to_trusted"></p>
+                        <p ng-bind-html="history_item.text | to_trusted"></p>
                     </div>
                 </div>
 
@@ -123,8 +125,8 @@
                     <div class="show-response" ng-show="isCollapsed">
                         <p><strong>Title:</strong> {{history_item.title}}<br>
                         <strong>Location:</strong> {{history_item.location}}</p>
-                        <p>{{history_item.personalized_text}}</p>
-                        <p><pre>{{history_item.text}}</pre></p>
+                        <p ng-bind-html="history_item.personalized_text | to_trusted"></p>
+                        <p ng-bind-html="history_item.text | to_trusted"></p>
                     </div>
                 </div>
 
@@ -133,7 +135,7 @@
                     <a href="" ng-click="isCollapsed = !isCollapsed"><i class="fa fa-plus-square-o"></i></a>    
                 {{history_item.person}} {{history_item.status}} event request, {{history_item.date}}
                     <div class="show-response" ng-show="isCollapsed">
-                        <p><pre>{{history_item.text}}</pre></p>
+                        <p ng-bind-html="history_item.text | to_trusted"></p>
                     </div>
                 </div>
 
@@ -142,7 +144,7 @@
                     <a href="" ng-click="isCollapsed = !isCollapsed"><i class="fa fa-plus-square-o"></i></a> 
                     {{history_item.status}} event request, {{history_item.date}}
                     <div class="show-response" ng-show="isCollapsed">
-                        <p><pre>{{history_item.text}}</pre></p>
+                        <p ng-bind-html="history_item.text | to_trusted"></p>
                     </div>
                 </div>
 
