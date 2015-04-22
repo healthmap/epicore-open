@@ -99,7 +99,12 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
                 $scope.isAuthorizedToFollowup = $scope.userInfo.organization_id == response.EventsList.org_requester_id ? true : false;
                 $scope.changeStatusText = response.EventsList.estatus == "C" ? 'Reopen' : 'Close';
                 $scope.changeStatusType = response.EventsList.estatus == "C" ? 'reopen' : 'close';
+                $scope.isAuthorizedFETP = false;
+                if (response.EventsList.fetp_ids != null && response.EventsList.fetp_ids.indexOf($scope.userInfo.fetp_id) != -1) {
+                    $scope.isAuthorizedFETP = true;
+                }
             }
+
             $scope.eventsList = response.EventsList;
             $scope.filePreview = response.EventsList.filePreview ? response.EventsList.filePreview : '';
         });
