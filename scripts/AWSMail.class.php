@@ -33,8 +33,11 @@ class AWSMail
    
         // log the request in the email log
         $db = getDB();
-        $db->query("INSERT INTO emaillog (emailaddr, send_date, subject, content) VALUES (?, ?, ?, ?)", array($to[0], date('Y-m-d H:i:s'), $subject, $msg));
-        $db->commit();
+        foreach($extra_headers['user_ids'] as $uid) {
+            $db->query("INSERT INTO emaillog (user_id, send_date, subject, content) VALUES (?, ?, ?, ?)", array($uid, date('Y-m-d H:i:s'), $subject, $msg));
+            $db->commit();
+        }
+
  
         return $response;
     }

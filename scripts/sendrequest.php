@@ -35,6 +35,8 @@ $emailtext = $ei->buildEmailForEvent($event_info, 'rfi', '', 'text');
 $proin_emailtext = $ei->buildEmailForEvent($event_info, 'rfi_proin', '', 'text');
 
 foreach($fetp_emails as $fetp_id => $recipient) {
+    $idlist[0] = $fetp_id;
+    $extra_headers['user_ids'] = $idlist;
     $recipient = trim($recipient);
     $custom_emailtext = trim(str_replace("[TOKEN]", $tokens[$fetp_id], $emailtext));
     $aws_resp = AWSMail::mailfunc($recipient, "EPICORE Request For Information", $custom_emailtext, EMAIL_NOREPLY, $extra_headers);

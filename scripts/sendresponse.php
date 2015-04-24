@@ -35,12 +35,15 @@ if(is_numeric($event_id)) {
     // get all moderators that sent followups for the event
     $moderators = $ei->getFollowupEmail();
 
-    // make email to: list
-    $tolist[0] = $initiator;
+    // make email to: list, and id list
+    $tolist[0] = $initiator['email'];
+    $idlist[0] = $initiator['user_id'];
     $i = 1;
     foreach ($moderators as $moderator){
-        if ($moderator['email'] != $initiator)
-            $tolist[$i++] = $moderator['email'];
+        if ($moderator['email'] != $initiator['email']) {
+            $tolist[$i] = $moderator['email'];
+            $idlist[$i++] = $moderator['user_id'];
+        }
     }
 
     //get all fetp messages
@@ -58,6 +61,7 @@ if(is_numeric($event_id)) {
         array_push($tolist, EMAIL_PROIN);
 
     }
+    $extra_headers['user_ids'] = $idlist;
     AWSMail::mailfunc($tolist, "EPICORE FETP response", $emailtext, EMAIL_NOREPLY, $extra_headers);
 
     $status = "success";

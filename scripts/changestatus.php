@@ -33,6 +33,8 @@ if(is_numeric($event_id) && is_numeric($user_id)) {
         $emailtext_event = $ei->buildEmailForEvent($event_info, $status_type, $custom_vars, 'text');
         $extra_headers['text_or_html'] = "html";
         foreach($fetp_emails as $fetp_id => $recipient) {
+            $idlist[0] = $fetp_id;
+            $extra_headers['user_ids'] = $idlist;
             $history = $ei->getEventHistoryFETP($fetp_id, $event_id);
             $emailtext = trim(str_replace("[PRO_IN]", '', $emailtext_event));
             $next_emailtext = trim(str_replace("[EVENT_HISTORY]", $history, $emailtext));
@@ -43,8 +45,10 @@ if(is_numeric($event_id) && is_numeric($user_id)) {
         // send email to all moderators for the event /////////////////////
         //get all fetp messages
         $history = $ei->getEventHistoryAll($event_id);
-        // make email to: list
+        // make email to: list, and id list
         $tolist = array();
+        $idlist = array();
+
         // get moderator that initiated the event request
         $initiator = $ei->getInitiatorEmail();
         // get all moderators that sent followups for the event
@@ -52,12 +56,15 @@ if(is_numeric($event_id) && is_numeric($user_id)) {
         // get moderator that changed the event status
         $moderator = $ei->getStatusPerson($event_id, $user_id);
 
-        if ($moderator['email'] !=$initiator){
-            array_push($tolist, $initiator);
+        if ($moderator['email'] !=$initiator['email']){
+            array_push($tolist, $initiator['email']);
+            array_push($idlist, $initiator['user_id']);
         }
         foreach ($fmoderators as $fmoderator){
-            if (($fmoderator['email'] != $moderator['email']) && ($fmoderator['email'] != $initiator))
+            if (($fmoderator['email'] != $moderator['email']) && ($fmoderator['email'] != $initiator['email'])) {
                 array_push($tolist, $fmoderator['email']);
+                array_push($idlist, $fmoderator['user_id']);
+            }
         }
 
         // send a modified copy to PRO-IN for ProMed moderators only
@@ -78,6 +85,7 @@ if(is_numeric($event_id) && is_numeric($user_id)) {
             $modfetp = "Moderator: $name ($email) $status_type an RFI";
             $emailtext = trim(str_replace("[EVENT_HISTORY]", $history, $emailtext_event));
             $custom_emailtext_mods = trim(str_replace("[PRO_IN]", $modfetp, $emailtext));
+            $extra_headers['user_ids'] = $idlist;
             AWSMail::mailfunc($tolist, "An EPICORE RFI has been $status_type", $custom_emailtext_mods, EMAIL_NOREPLY, $extra_headers);
         }
 

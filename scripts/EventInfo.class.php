@@ -64,13 +64,15 @@ class EventInfo
     }
 
     function getInitiatorEmail() {
-        $user_info = $this->db->getRow("SELECT user.email, user.hmu_id FROM user, event WHERE event_id = ? AND event.requester_id = user.user_id", array($this->id));
+        $user_info = $this->db->getRow("SELECT user.email, user.hmu_id, user.user_id FROM user, event WHERE event_id = ? AND event.requester_id = user.user_id", array($this->id));
+        $initiator['user_id'] = $user_info['user_id'];
         if($user_info['email']) {
-            return $user_info['email'];
+            $initiator['email'] = $user_info['email'];
         } else { // get it from the healthmap db
              $hmdb = getDB('hm');
-             return $hmdb->getOne("SELECT email FROM hmu WHERE hmu_id = ?", array($user_info['hmu_id']));
+             $initiator['email'] = $hmdb->getOne("SELECT email FROM hmu WHERE hmu_id = ?", array($user_info['hmu_id']));
         }
+        return $initiator;
     }
 
     function getFollowupEmail() {
@@ -80,6 +82,7 @@ class EventInfo
 
         $i=0;
         foreach ($moderators as $moderator) {
+            $to[$i]['user_id'] = $moderator['user_id'];
             if ($moderator['email']){
                 $to[$i]['email']= $moderator['email'];
                 $to[$i]['name']= 'not from healtmap';
