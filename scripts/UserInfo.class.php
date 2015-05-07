@@ -42,10 +42,14 @@ class UserInfo
                 $requests[$row['event_id']]['send_dates'][] = date('n/j/Y H:i', strtotime($row['send_date']));
                 
                 // get the FETPs responses to that event
-                $respq = $this->db->query("SELECT response_id, response_date FROM response WHERE responder_id = ? AND event_id = ? ORDER BY response_date", array($this->id, $row['event_id']));
+                $response_dates = [];
+                $respq = $this->db->query("SELECT response_id, response_date FROM response WHERE responder_id = ? AND event_id = ? ORDER BY response_date DESC", array($this->id, $row['event_id']));
                 while($resprow = $respq->fetchRow()) {
-                    $requests[$row['event_id']]['response_dates'][$resprow['response_id']] = date('n/j/Y H:i', strtotime($resprow['response_date']));
+                    $response_dates[] = date('n/j/Y H:i', strtotime($resprow['response_date']));
+                    //$requests[$row['event_id']]['response_dates'][$resprow['response_id']] = date('n/j/Y H:i', strtotime($resprow['response_date']));
                 }
+
+                $requests[$row['event_id']]['response_dates'] = $response_dates;
             }
         }
         return $requests;

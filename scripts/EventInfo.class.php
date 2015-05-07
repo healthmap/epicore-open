@@ -42,8 +42,6 @@ class EventInfo
     }
 
     function getEventHistory() {
-
-
         // get all event messages
         $messages =  $this->getFetpMessages(null, $this->id);
 
@@ -54,7 +52,7 @@ class EventInfo
         // add event request to messages
         $size = count($messages);
         $messages[$size]['date'] = date('n/j/Y H:i', strtotime($event_info['create_date']));
-        $messages[$size]['text'] = $event_info['description'];
+        $messages[$size]['text'] = nl2br($event_info['description']);
         $messages[$size]['personalized_text'] = $event_info['personalized_text'];
         $messages[$size]['type'] = 'Event Request';
         $messages[$size]['title'] = $event_info['title'];
@@ -63,61 +61,18 @@ class EventInfo
         $messages[$size]['organization_id'] = $event_info['org_requester_id'];
 
         return $messages;
-
-        //////////////////////// old get Event History
-/*        global $status_lu;
-
-        $open_date = $this->db->getOne("SELECT create_date FROM event WHERE event_id = ?", array($this->id));
-
-        $q = $this->db->query("SELECT action_date,note,status FROM event_notes WHERE event_id = ? ORDER BY action_date", array($this->id));
-        while($row = $q->fetchRow()) {
-            $note = $row['note'] ? " (Note: ".$row['note'].")" : '';
-            $history[strtotime($row['action_date'])] = "event " . $status_lu[$row['status']] . $note;
-        }
-
-        // get any followups sent
-        $fuq = $this->db->query("SELECT send_date, fetp_id, followup_id FROM event_fetp WHERE event_id = ?", array($this->id));
-
-        $fnum = -1;
-        $numfetps[] = 0;
-        $numfetps[strtotime($open_date)] = 0;
-        $ts = 0;
-        while($furow = $fuq->fetchRow()) {
-            if ($furow['followup_id'] == 0){
-                $numfetps[strtotime($open_date)]++;
-            }
-            elseif ($fnum != $furow['followup_id']) {
-                $fnum = $furow['followup_id'];
-                $ts = strtotime($furow['send_date']);
-                $numfetps[$ts] = 1;
-            }
-            else {
-                $numfetps[$ts]++;
-            }
-            if ($ts !=0)
-                $history[$ts] = "sent followup to " . $numfetps[$ts] . " FETPs";
-        }
-        $history[strtotime($open_date)] = "event opened, sent request to " . $numfetps[strtotime($open_date)] . " FETPs";
-
-        ksort($history);
-
-        foreach($history as $ts => $desc) {
-            $history_arr[] = date('n/j/Y H:i', $ts) . ": ".$desc;
-        }
-
-        return $history_arr;
-*/
-
     }
 
     function getInitiatorEmail() {
-        $user_info = $this->db->getRow("SELECT user.email, user.hmu_id FROM user, event WHERE event_id = ? AND event.requester_id = user.user_id", array($this->id));
+        $user_info = $this->db->getRow("SELECT user.email, user.hmu_id, user.user_id FROM user, event WHERE event_id = ? AND event.requester_id = user.user_id", array($this->id));
+        $initiator['user_id'] = $user_info['user_id'];
         if($user_info['email']) {
-            return $user_info['email'];
+            $initiator['email'] = $user_info['email'];
         } else { // get it from the healthmap db
              $hmdb = getDB('hm');
-             return $hmdb->getOne("SELECT email FROM hmu WHERE hmu_id = ?", array($user_info['hmu_id']));
+             $initiator['email'] = $hmdb->getOne("SELECT email FROM hmu WHERE hmu_id = ?", array($user_info['hmu_id']));
         }
+        return $initiator;
     }
 
     function getFollowupEmail() {
@@ -127,12 +82,17 @@ class EventInfo
 
         $i=0;
         foreach ($moderators as $moderator) {
+            $to[$i]['user_id'] = $moderator['user_id'];
             if ($moderator['email']){
-                $to[$i++]= $moderator['email'];
+                $to[$i]['email']= $moderator['email'];
+                $to[$i]['name']= 'not from healtmap';
+                $to[$i++]['organization_id']= $moderator['organization_id'];
             }
             else{// get it from the healthmap db
                 $hmdb = getDB('hm');
-                $to[$i++] = $hmdb->getOne("SELECT email FROM hmu WHERE hmu_id = ?", array($moderator['hmu_id']));
+                $to[$i]['email'] = $hmdb->getOne("SELECT email FROM hmu WHERE hmu_id = ?", array($moderator['hmu_id']));
+                $to[$i]['name'] = $hmdb->getOne("SELECT name FROM hmu WHERE hmu_id = ?", array($moderator['hmu_id']));
+                $to[$i++]['organization_id'] = 1;
             }
         }
 
@@ -271,6 +231,8 @@ class EventInfo
    
         // custom var substitutions 
         foreach($custom_vars as $varname => $varval) {
+            if (($varname == 'RESPONSE_TEXT') || ($varname == 'NOTES'))
+                $varval = nl2br($varval); //"<pre>$varval</pre>";
             $emailtext = str_replace("[$varname]", $varval, $emailtext);
         }
 
@@ -287,6 +249,15 @@ class EventInfo
             file_put_contents("../$file_preview", $emailtext);
             return $file_preview;
         }
+    }
+    function nl2p($text){
+        $description = '';
+        foreach (explode("\n", $text) as $dline) {
+            if (trim($dline)) {
+                $description .= '<p>' . $dline . '</p>';
+            }
+        }
+        return $description;
     }
 
     static function getResponse($response_id) {
@@ -328,7 +299,7 @@ class EventInfo
 
             // get the number of requests sent for that event
             $row['num_responses'] = $db->getOne("SELECT count(*) FROM response WHERE event_id = ?", array($row['event_id']));
-            $get_followups = $db->query("SELECT send_date,followup_id FROM event_fetp WHERE event_id = ?", array($row['event_id']));
+            $get_followups = $db->query("SELECT send_date,followup_id FROM event_fetp WHERE event_id = ? ORDER BY send_date DESC", array($row['event_id']));
             $ftext = $db->query("SELECT text,followup_id from followup WHERE event_id = ?", array($row['event_id']));
             while($gftext = $ftext->fetchRow()){
                 $text[$gftext['followup_id']] = $gftext['text'];
@@ -445,7 +416,7 @@ class EventInfo
         foreach ($followups as $followup ){
             $followup_person =$this->getFollowupPerson($event_id, $followup['requester_id']);
 
-            $messages[$i]['text'] = $followup['text'];
+            $messages[$i]['text'] = nl2br($followup['text']);
             $messages[$i]['fetp_count'] = $followup['fetp_count'];
             $messages[$i]['fetp_id'] = $followup['fetp_id'];
             $messages[$i]['type'] = 'Moderator Response';
@@ -457,7 +428,7 @@ class EventInfo
             $messages[$i++]['date'] = date('n/j/Y H:i', strtotime($followup['action_date']));
         }
         foreach ($responses as $response ){
-            $messages[$i]['text'] = $response['response'];
+            $messages[$i]['text'] = nl2br($response['response']);
             if ($response['response_permission'] == "0")
                 $messages[$i]['text'] = $response_permission_lu["0"];;
             $messages[$i]['permission'] = $response['response_permission'];
@@ -471,7 +442,7 @@ class EventInfo
         foreach ($enotes as $enote){
             $status_person =$this->getStatusPerson($event_id, $enote['requester_id']);
 
-            $messages[$i]['text'] = $enote['note'];
+            $messages[$i]['text'] = nl2br($enote['note']);
             $messages[$i]['status'] = $status_lu[$enote['status']];
             $messages[$i]['type'] = 'Event Notes';
             $messages[$i]['date'] = date('n/j/Y H:i', strtotime($enote['action_date']));
@@ -488,19 +459,78 @@ class EventInfo
         return $messages;
     }
 
+    function getEventHistoryFETP($fetp_id, $event_id){
+        // get fetp messages
+        $messages = $this->getFetpMessages($fetp_id, $event_id);
+        $history = '';
+        // style message history for email
+        $counter =0;
+        foreach ($messages as $message) {
+            if ($counter > 0) {  // skip first (current ) message
+                $mtype = $message['type'];
+                if ($message['type'] == 'Event Notes')
+                    $mtype = $message['status'] . " event request";
+                if ($message['type'] == 'FETP Response')
+                    $mtype = "Your response";
+                if ($message['type'] == 'Moderator Response') {
+                    if ($message['fetp_count'] > 1)
+                        $mtype = "Followup sent to all FETPs";
+                    else
+                        $mtype = "Followup sent to you";
+                }
+                $mtext = $message['text'];
+                $mdatetime = $message['date'];
+                $history .= "<div style='background-color: #fff;padding:24px;color:#666;border: 1px solid #B4FEF7;'>";
+                $history .= "<p style='margin:12px 0;'>$mtype,  $mdatetime <br></p>$mtext</div><br>";
+            }
+            $counter++;
+        }
+        return $history;
+    }
+
+    function getEventHistoryAll($event_id){
+        //get all fetp messages
+        $messages = $this->getFetpMessages(null, $event_id);
+        $history = '';
+        // style message history for email
+        $counter =0;
+        foreach ($messages as $message) {
+            if ($counter > 0) {  // skip first (current ) message
+                $mtype = $message['type'];
+                if ($message['type'] == 'Event Notes')
+                    $mtype = $message['person'] . " ". $message['status'] . " event request";
+                if ($message['type'] == 'Moderator Response'){
+                    if ($message['fetp_count'] > 1)
+                        $mtype = $message['person'] . " sent followup to all FETPs";
+                    else
+                        $mtype = $message['person'] . " sent followup to 1 FETP";
+                }
+                $mtext = $message['text'];
+                $mdatetime = $message['date'];
+                $history .= "<div style='background-color: #fff;padding:24px;color:#666;border: 1px solid #B4FEF7;'>";
+                $history .= "<p style='margin:12px 0;'>$mtype,  $mdatetime <br></p>$mtext</div><br>";
+            }
+            $counter++;
+        }
+        return $history;
+    }
+
     // get name, hmu_id, user_id, and org id of person who generated the event
     function getEventPerson($event_id){
 
         // get hmu_id for event
         $db = getDB();
-        $row = $db->getRow("select hmu_id, user_id, organization_id from event, user where requester_id=user_id and (event_id=?)", array($event_id));
+        $row = $db->getRow("select hmu_id, user_id, organization_id, email from event, user where requester_id=user_id and (event_id=?)", array($event_id));
         $hmu_id = $row['hmu_id'];
 
         // get user from hmu_id in hm database
         $db = getDB('hm');
-        $user = $db->getRow(" select name, username from hmu where hmu_id='$hmu_id'");
+        $user = $db->getRow(" select name, username, email from hmu where hmu_id='$hmu_id'");
         $user['user_id'] = $row['user_id'];
         $user['organization_id'] = $row['organization_id'];
+        if ($row['email']) {
+            $user['email'] = $row['email'];
+        }
         return $user;
     }
 
@@ -509,15 +539,18 @@ class EventInfo
 
         // get hmu_id for event
         $db = getDB();
-        $row = $db->getRow("select distinct hmu_id, user_id, organization_id from followup, user where requester_id=user_id
+        $row = $db->getRow("select distinct hmu_id, user_id, organization_id, email from followup, user where requester_id=user_id
                             and event_id=? and requester_id= ?", array($event_id, $requester_id));
         $hmu_id = $row['hmu_id'];
 
         // get user from hmu_id in hm database
         $db = getDB('hm');
-        $user = $db->getRow(" select name, username from hmu where hmu_id='$hmu_id'");
+        $user = $db->getRow(" select name, username, email from hmu where hmu_id='$hmu_id'");
         $user['user_id'] = $row['user_id'];
         $user['organization_id'] = $row['organization_id'];
+        if ($row['email']) {
+            $user['email'] = $row['email'];
+        }
         return $user;
     }
 
@@ -526,15 +559,18 @@ class EventInfo
 
         // get hmu_id for event
         $db = getDB();
-        $row = $db->getRow("select distinct hmu_id, user_id, organization_id from event_notes, user where requester_id=user_id
+        $row = $db->getRow("select distinct hmu_id, user_id, organization_id, email from event_notes, user where requester_id=user_id
                             and event_id=? and requester_id= ?", array($event_id, $requester_id));
         $hmu_id = $row['hmu_id'];
 
         // get user from hmu_id in hm database
         $db = getDB('hm');
-        $user = $db->getRow(" select name, username from hmu where hmu_id='$hmu_id'");
+        $user = $db->getRow(" select name, username, email from hmu where hmu_id='$hmu_id'");
         $user['user_id'] = $row['user_id'];
         $user['organization_id'] = $row['organization_id'];
+        if ($row['email']) {
+            $user['email'] = $row['email'];
+        }
         return $user;
     }
 }

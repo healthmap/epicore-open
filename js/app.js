@@ -17,12 +17,10 @@ config(function($routeProvider) {
         when("/reopen/:id", {templateUrl: "partials/reopen.html", controller: "eventsController"}).
         when("/followup/:id", {templateUrl: "partials/followup.html", controller: "eventsController"}).
         when("/followup/:id/:response_id", {templateUrl: "partials/followup.html", controller: "eventsController"}).
-        when("/response/:response_id", {templateUrl: "partials/response.html", controller: "responseController"}).
         when("/request", {templateUrl: "partials/request.html"}).
         when("/request/:alertid", {templateUrl: "partials/request.html"}).
         when("/request2", {templateUrl: "partials/request2.html"}).
         when("/request3", {templateUrl: "partials/request3.html"}).
-        when("/responses/:id", {templateUrl: "partials/responses.html", controller: "eventsController"}).
         when("/success/:id", {templateUrl: "partials/success.html", controller: "successController"}).
         when("/about", {templateUrl: "partials/about.html"}).
         when("/terms", {templateUrl: "partials/terms.html"}).

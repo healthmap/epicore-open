@@ -14,8 +14,8 @@ class AWSMail
     	$email = new AmazonSES();
 	    $text_or_html = isset($extra_headers['text_or_html']) ? ucfirst(strtolower($extra_headers['text_or_html'])) : 'Text';
 	    $email_type = 'Body.' . $text_or_html . '.Data';
-    	$to = is_array($to) ? $to : explode(",", $to);
-	    $toaddresses = array('ToAddresses' => $to);
+        $to = is_array($to) ? $to : explode(",", $to);
+        $toaddresses = array('ToAddresses' => $to);
 	    if(isset($extra_headers['cc'])) {
 	        $toaddresses['CcAddresses'] = is_array($extra_headers['cc']) ? $extra_headers['cc'] : explode(",", $extra_headers['cc']);
 	    }
@@ -33,8 +33,11 @@ class AWSMail
    
         // log the request in the email log
         $db = getDB();
-        $db->query("INSERT INTO emaillog (emailaddr, send_date, subject, content) VALUES (?, ?, ?, ?)", array($to[0], date('Y-m-d H:i:s'), $subject, $msg));
-        $db->commit();
+        foreach($extra_headers['user_ids'] as $uid) {
+            $db->query("INSERT INTO emaillog (user_id, send_date, subject, content) VALUES (?, ?, ?, ?)", array($uid, date('Y-m-d H:i:s'), $subject, $msg));
+            $db->commit();
+        }
+
  
         return $response;
     }

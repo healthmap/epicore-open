@@ -20,8 +20,9 @@ $event_info = $ei->getInfo();
 
 // make sure the person trying to send the email was the originator of the request
 // or from the same organization
+$roid =0 ;
 if($requester_id != $event_info['requester_id']) {
-    $rui = new UserInfo($requester_id);
+    $rui = new UserInfo($requester_id,null);
     $roid = $rui->getOrganizationId();
     if($event_info['org_requester_id'] != $roid) {
         print json_encode(array('status' => 'failed', 'reason' => 'unauthorized', 'requester' => $requester_id, 'owner' => $event_info['requester_id']));
@@ -40,9 +41,11 @@ if(isset($formvars->response_id) && is_numeric($formvars->response_id))  {
     $custom_vars['RESPONSE_PERMISSION'] = $response_info['response_permission'];
     $custom_vars['RESPONSE_TEXT'] = $response_info['response'];
     $followupText = $ei->buildEmailForEvent($event_info, "followup-specific", $custom_vars, 'text');
+    $followupText_proin = $ei->buildEmailForEvent($event_info, "followup-specific_proin", $custom_vars, 'text');
 } else { // if no respsonse_id (follow-up to all), get fetp_ids from database for that event
     $fetp_ids = $ei->getFETPRecipients();
     $followupText = $ei->buildEmailForEvent($event_info, "followup", $custom_vars, 'text');
+    $followupText_proin = $ei->buildEmailForEvent($event_info, "followup_proin", $custom_vars, 'text');
 }
 
 // save the fetp_ids in the event_fetp table
@@ -62,33 +65,59 @@ $followup_id = EventInfo::insertFollowup($followup_info);
 $tokens = $ei->insertFetpsReceivingEmail($fetp_ids, $followup_id);
 
 // now send it to each FETP individually as they each need unique login token id
-// cc the initiator of the request for testing only
 require_once "AWSMail.class.php";
 $fetp_emails = UserInfo::getFETPEmails($fetp_ids);
 $extra_headers['text_or_html'] = "html";
-
 foreach($fetp_emails as $fetp_id => $recipient) {
-    // get fetp messages
-    $messages = $ei->getFetpMessages($fetp_id, $event_id);
-    $history = '';
-    // style message history for email
-    $counter =0;
-    foreach ($messages as $message) {
-        if ($counter > 0) {  // skip first (current ) message
-            $mtype = $message['type'];
-            if ($message['type'] == 'Event Notes')
-                $mtype = $message['status'] . "event request";
-            $mtext = $message['text'];
-            $mdatetime = $message['date'];
-            $history .= "<div style='background-color: #fff;padding:24px;color:#666;border: 1px solid #B4FEF7;'>";
-            $history .= "<p style='margin:12px 0;'>$mtype,  $mdatetime <br></p>$mtext</div><br>";
-        }
-        $counter++;
-    }
-
+    $idlist[0] = $fetp_id;
+    $extra_headers['user_ids'] = $idlist;
+    $history = $ei->getEventHistoryFETP($fetp_id, $event_id);
     $emailtext = trim(str_replace("[EVENT_HISTORY]", $history, $followupText));
     $emailtext = trim(str_replace("[TOKEN]", $tokens[$fetp_id], $emailtext));
-    $retval = AWSMail::mailfunc($recipient, "Request For Information", $emailtext, EMAIL_NOREPLY, $extra_headers);
+    $retval = AWSMail::mailfunc($recipient, "EPICORE Request For Information", $emailtext, EMAIL_NOREPLY, $extra_headers);
+}
+
+// send email to all moderators for the event /////////////////////
+//get all fetp messages
+$history = $ei->getEventHistoryAll($event_id);
+// make email to: list, and id list
+$tolist = array();
+$idlist = array();
+
+// get the person who initiated the event request
+$initiator = $ei->getInitiatorEmail();
+// get all moderators that sent followups for the event
+$fmoderators = $ei->getFollowupEmail();
+
+
+// get followup moderator
+$moderator = $ei->getFollowupPerson($event_id, $requester_id);
+
+if ($moderator['email'] !=$initiator['email']){
+    array_push($tolist, $initiator['email']);
+    array_push($idlist, $initiator['user_id']);
+}
+foreach ($fmoderators as $fmoderator){
+    if (($fmoderator['email'] != $moderator['email']) && ($fmoderator['email'] != $initiator['email'])) {
+        array_push($tolist, $fmoderator['email']);
+        array_push($idlist, $fmoderator['user_id']);
+    }
+}
+
+// send a modified copy to PRO-IN for ProMed moderators only
+if ($moderator['organization_id'] == PROMED_ID){
+    array_push($tolist, EMAIL_PROIN);
+}
+
+// send email
+if (!empty($tolist)) {
+    $name = $moderator['name'];
+    $email = $moderator['email'];
+    $modfetp = "Moderator: $name ($email) sent a followup to an RFI";
+    $proin_emailtext = trim(str_replace("[EVENT_HISTORY]", $history, $followupText_proin));
+    $custom_emailtext_proin = trim(str_replace("[PRO_IN]", $modfetp, $proin_emailtext));
+    $extra_headers['user_ids'] = $idlist;
+    $retval = AWSMail::mailfunc($tolist, "EPICORE Request For Information", $custom_emailtext_proin, EMAIL_NOREPLY, $extra_headers);
 }
 
 print json_encode(array('status' => 'success', 'fetps' => $fetp_ids));

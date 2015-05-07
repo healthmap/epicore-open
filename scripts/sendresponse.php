@@ -3,6 +3,7 @@
 $formvars = json_decode(file_get_contents("php://input"));
 require_once "EventInfo.class.php";
 require_once "const.inc.php";
+require_once "UserInfo.class.php";
 
 $status = "error";
 $path = "success/4";
@@ -28,35 +29,41 @@ if(is_numeric($event_id)) {
 
     $msg = $ei->buildEmailForEvent($event_info, 'response', $custom_vars, 'text');
 
-    // send the response to the person who initiated the event request
-    $recipient = $ei->getInitiatorEmail();
+    // get the person who initiated the event request
+    $initiator = $ei->getInitiatorEmail();
 
     // get all moderators that sent followups for the event
-    //$moderators = $ei->getFollowupEmail();
+    $moderators = $ei->getFollowupEmail();
 
-    // get fetp messages
-    $fetp_id = $dbdata['responder_id'];
-    $messages = $ei->getFetpMessages($fetp_id, $event_id);
-    $history = '';
-    // style message history for email
-    $counter =0;
-    foreach ($messages as $message) {
-        if ($counter > 0) {  // skip first (current ) message
-            $mtype = $message['type'];
-            if ($message['type'] == 'Event Notes')
-                $mtype = $message['status'] . " event request";
-            $mtext = $message['text'];
-            $mdatetime = $message['date'];
-            $history .= "<div style='background-color: #fff;padding:24px;color:#666;border: 1px solid #B4FEF7;'>";
-            $history .= "<p style='margin:12px 0;'>$mtype,  $mdatetime <br></p>$mtext</div><br>";
+    // make email to: list, and id list
+    $tolist[0] = $initiator['email'];
+    $idlist[0] = $initiator['user_id'];
+    $i = 1;
+    foreach ($moderators as $moderator){
+        if ($moderator['email'] != $initiator['email']) {
+            $tolist[$i] = $moderator['email'];
+            $idlist[$i++] = $moderator['user_id'];
         }
-        $counter++;
     }
 
+    //get all fetp messages
+    $history = $ei->getEventHistoryAll($event_id);
+
+    // send email to all moderators
     $emailtext = trim(str_replace("[EVENT_HISTORY]", $history, $msg));
     $extra_headers['text_or_html'] = "html";
     require_once "AWSMail.class.php";
-    AWSMail::mailfunc($recipient, "FETP response", $emailtext, EMAIL_NOREPLY, $extra_headers);
+
+    // get event moderator info
+    $emoderator = $ei->getEventPerson($event_id);
+    // send a modified copy to pro-in for ProMED event moderator only
+    if ($emoderator['organization_id'] == PROMED_ID){
+        array_push($tolist, EMAIL_PROIN);
+
+    }
+    $extra_headers['user_ids'] = $idlist;
+    AWSMail::mailfunc($tolist, "EPICORE FETP response", $emailtext, EMAIL_NOREPLY, $extra_headers);
+
     $status = "success";
     $path = "success/2";
 }
