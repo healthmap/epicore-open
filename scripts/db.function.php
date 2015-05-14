@@ -12,7 +12,7 @@ function getDB($which = '')
     static $db;
     if(!is_object($db)) {
         $opts = parse_ini_file(dirname(__FILE__) . '/da.ini.php', true);
-        $which = $which ? $which : 'epicore_db';
+        $which = $which ? $which : 'epicore_test';
         $dsn = $opts[$which];
         $db =& DB::connect($dsn);
         $db->connection->set_charset("utf8");
