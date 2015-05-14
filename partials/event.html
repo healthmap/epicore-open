@@ -157,7 +157,8 @@
     </div>
 </div><!--row-->
 
-    <div class="row" ng-show="!isAuthorizedFETP && !isOrganization || !eventsList.event_id" >
+    <div class="row" ng-hide="(isAuthorizedFETP || (isOrganization && eventsList.event_id)) || isAuthorizedFETP == null || isOrganization == null">
+    <!--<div class="row" ng-show="!isAuthorizedFETP && !isOrganization || !eventsList.event_id" >-->
         <div class="col-xs-12 wbg" >
             <p>You are not authorized to view this event.</p>
         </div>

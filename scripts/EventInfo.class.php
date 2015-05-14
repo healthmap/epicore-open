@@ -370,8 +370,8 @@ class EventInfo
         $action_date = $darr['action_date'] ? $darr['action_date'] : date('Y-m-d H:i:s');
 
         // insert into the followup table
-        $q = $db->query("INSERT INTO followup (text, requester_id, action_date, event_id) VALUES (?, ?, ?, ?)",
-                        array($darr['text'], $darr['requester_id'], $action_date, $darr['event_id']));
+        $q = $db->query("INSERT INTO followup (text, requester_id, action_date, event_id, response_id) VALUES (?, ?, ?, ?, ?)",
+                        array($darr['text'], $darr['requester_id'], $action_date, $darr['event_id'], $darr['response_id']));
         $followup_id = $db->getOne("SELECT LAST_INSERT_ID()");
         $db->commit();
         return $followup_id;

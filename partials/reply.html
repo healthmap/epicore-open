@@ -43,7 +43,7 @@
         </div>
     </div><!--row-->
 
-    <div class="row" ng-show="!isAuthorizedFETP">
+    <div class="row" ng-if="!isAuthorizedFETP && isAuthorizedFETP !=null">
         <div class="col-xs-12 wbg" >
             <p>You are not authorized to reply to this event.</p>
         </div>
