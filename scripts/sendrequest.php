@@ -21,6 +21,7 @@ $event_info['search_countries'] = $formvars->search_countries ? $formvars->searc
 $event_info['search_box'] = $formvars->search_box ? $formvars->search_box : '';
 $event_info['create_date'] = date('Y-m-d H:i:s');
 $event_info['personalized_text'] = $formvars->additionalText ? (string)$formvars->additionalText : '';
+$event_info['alert_id'] = (int)$formvars->alert_id;
 
 $event_id = EventInfo::insertEvent($event_info);
 $ei = new EventInfo($event_id);

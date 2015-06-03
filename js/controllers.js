@@ -341,6 +341,7 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
             formData['title'] = $window.sessionStorage.title;
             formData['description'] = $window.sessionStorage.description;
             formData['additionalText'] = $window.sessionStorage.additionalText;
+            formData['alert_id'] = $window.sessionStorage.alertid;
             $http({ url: 'scripts/sendrequest.php', method: "POST", data: formData 
             }).success(function (respdata, status, headers, config) {
                 // empty out the form values since you've submitted so they aren't prefilled next time
