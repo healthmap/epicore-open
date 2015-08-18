@@ -9,32 +9,29 @@
             </p>
             The EpiCore project is funded by Skoll Global Threats and is a collaboration between Tephinet, ProMED-Mail, and HealthMap. 
             </p>
-            <p>
-            For more information about EpiCore, contact info@epicore.org. 
-            </p>
-            <!--
-            <form role="form" method="post" action="signup.php">
-            <p class="intro">Sign up below if you're interested in learning more about our new verification system.</p>
+	    <h1>Want to join EpiCore?</h1>
+	    <!--
+            <p>For more information about EpiCore, contact info@epicore.org or complete the form below to join our low-volume mailing list. </p>-->
+            <form role="form">
             <div class="form-group col-xs-12">
                 <label class="sr-only" for="age">Your First Name</label>
-                <input type="text" class="form-control" name="firstname" id="firstname" placeholder="Your First Name" required>
+                <input type="text" class="form-control" ng-model="uservals.firstname" id="firstname" placeholder="Your First Name" required>
             </div>
             
             <div class="form-group col-xs-12">
                 <label class="sr-only" for="lastname">Your Last Name</label>
-                <input type="text" class="form-control" name="lastname" id="lastname" placeholder="Your Last Name" required>
+                <input type="text" class="form-control" ng-model="uservals.lastname" id="lastname" placeholder="Your Last Name" required>
             </div>
             
             <div class="form-group col-xs-12">
                 <label class="sr-only" for="email">Your Email</label>
-                <input type="email" class="form-control" name="email" id="email" placeholder="Your Email" required>
+                <input type="email" class="form-control" ng-model="uservals.email" id="email" placeholder="Your Email" required>
             </div>
             
                 <div class="form-group col-xs-12">
-                    <button type="submit" class="submit btn btn-default col-xs-12">Submit</button>
+                    <button type="submit" ng-click="signup(uservals)" class="submit btn btn-default col-xs-12">Submit</button>
                 </div>
             </form>
-            -->
         </div><!--col-->
     </div><!--row-->
 </div><!--container-->
