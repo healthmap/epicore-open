@@ -98,25 +98,12 @@ class UserInfo
         return $db->getRow("SELECT fetp_id FROM ticket WHERE val = ? AND exp > now()", array($ticket_id));
     }
 
-    static function getFETPs()
-    {
-        $db = getDB();
-        $q = $db->query("SELECT * FROM fetp");
-        while($row = $q->fetchRow()) {
-            $title = $row['fetp_id'] . ": " . $row['countrycode'];
-            $fetps[] = array("id" => $row['fetp_id'], "icon" => "img/icon.png", "latitude" => $row['lat'], "longitude" => $row['lon'], "show" => true, "title" => $title);
-        }
-        return $fetps;
-    }
-
     /* filtertype is countries or radius; filterval is either array of country codes or array of bounding box values */
     static function getFETPsInLocation($filtertype, $filterval)
     {
         /* WEBSERVICE ------------
-        require_once "GetURL.class.php";
-        $webservice = TEPHINET_BASE . 'epicore/getusersinbox' . join(",", $bbox) . "/" . TEPHINET_CONSUMER_KEY;
-        $gurl = GetURL::getInstance();
-        return $gurl->get($webservice);
+        for tephinet, we could call the function getFETPEligible 
+        and pass POST param countrycode OR boundingbox (lat1,lat2,lon1,lon2)
         ------------------- END WEBSERVICE */
 
         $db = getDB();
@@ -139,20 +126,16 @@ class UserInfo
     /* use the webservice on tephinet to get email addresses for an array of ids */
     static function getFETPEmails($fetp_ids)
     {
-        $db = getDB();
-        $q = $db->query("SELECT fetp_id FROM fetp");
-        while($row = $q->fetchRow()) {
-            $eligible_fetp_ids[] = $row['fetp_id'];
-        }
         // call to tephinet webservice
         require_once "GetURL.class.php";
         $url = TEPHINET_BASE . 'epicore/getemails';
         $gurl = GetURL::getInstance();
         $fields_string = 'consumer_key='.TEPHINET_CONSUMER_KEY;
         foreach($fetp_ids as $id) {
-            // make sure the user is an eligible fetp in our db
-            if(in_array($id, $eligible_fetp_ids)) {
-                $fields_string .= '&ids[]='.$id;
+            // get the tephinet ID from the fetp table
+            if(is_numeric($id)) {
+                $tephinet_id = $db->getOne("SELECT tephinet_id FROM fetp WHERE fetp_id = ?", $id);
+                $fields_string .= '&ids[]='.$tephinet_id;
             }
         }
         $result = $gurl->post($url, $fields_string);
@@ -170,7 +153,44 @@ class UserInfo
         $fields_string = 'consumer_key='.TEPHINET_CONSUMER_KEY;
         $result = $gurl->post($url, $fields_string);
         $fetpinfo = json_decode($result);
+        $db = getDB();
+        $mapping = array('lat' => 'latitude','lon' => 'longitude','countrycode' => 'country');
+        foreach($fetpinfo as $fetpobj) {
+            if(is_numeric($fetpobj->uid)) {
+                $fetpinfo = $db->getRow("SELECT * FROM fetp WHERE tephinet_id = ?", array($fetpobj->uid));
+                // already in our table, need to update
+                if($fetpinfo) {
+                    foreach($mapping as $epicore_field => $tephinet_field) {
+                        $tephinet_value = $tephinet_field == "country" ? strtoupper($fetpobj->$tephinet_field) : $fetpobj->$tephinet_field;
+                        $epicore_value = $fetpinfo[$epicore_field];
+                        if($epicore_value != $tephinet_value) {
+                            $db->query("UPDATE fetp SET $epicore_field = ? WHERE tephinet_id = ?", array($tephinet_value, $fetpobj->uid));
+                            $db->query("INSERT INTO editlog (old_val,new_val,tablename,fieldname,change_date) VALUES (?,?,?,?,?)", array($epicore_value, $tephinet_value, 'fetp', $epicore_field, date('Y-m-d H:i:s')));
+                        }
+                    }
+                } else { // insert
+                    $db->query("INSERT INTO fetp (lat,lon,countrycode,tephinet_id) VALUES (?,?,?,?)", array($fetpobj->latitude,$fetpobj->longitude,strtoupper($fetpobj->country),$fetpobj->uid));
+                }
+                $db->commit();
+            }
+        }
         return $fetpinfo;
     }
+
+    static function joinMaillist($pvals)
+    {
+        $db = getDB();
+        $user_id = $db->getOne("SELECT maillist_id FROM maillist WHERE email = ?", array($pvals['email']));
+        if(!$user_id) { // insert if not
+            $key_vals = join(",", array_keys($pvals));
+            $qmarks = join(",", array_fill(0, count($pvals), '?'));
+            $qvals = array_values($pvals);
+            $db->query("INSERT INTO maillist ($key_vals) VALUES ($qmarks)", $qvals);
+            $user_id = $db->getOne("SELECT LAST_INSERT_ID()");
+            $db->commit();
+        }
+        return $user_id;
+    }
+
 }
 ?>
