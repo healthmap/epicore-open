@@ -13,6 +13,14 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
             }
         }
 
+        $scope.signup = function(uservals) {
+            $http({ url: 'scripts/signup.php', method: "POST", data: uservals 
+                }).success(function (data, status, headers, config) {
+                    console.log(data);
+                    $location.path('/home');
+            });
+        }
+
         /* set some global variables for Tephinet integration */
         $http({ url: 'scripts/getvars.php', method: "POST"
             }).success(function (data, status, headers, config) {
