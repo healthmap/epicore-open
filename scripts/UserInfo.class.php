@@ -177,6 +177,7 @@ class UserInfo
         return $fetpinfo;
     }
 
+    // returns user id if a new user is inserted and false if the user already exists.
     static function joinMaillist($pvals)
     {
         $db = getDB();
@@ -188,8 +189,11 @@ class UserInfo
             $db->query("INSERT INTO maillist ($key_vals) VALUES ($qmarks)", $qvals);
             $user_id = $db->getOne("SELECT LAST_INSERT_ID()");
             $db->commit();
+            return $user_id;
         }
-        return $user_id;
+        else
+            return false;
+
     }
 
 }

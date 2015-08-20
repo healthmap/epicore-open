@@ -14,10 +14,19 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
         }
 
         $scope.signup = function(uservals) {
-            $http({ url: 'scripts/signup.php', method: "POST", data: uservals 
-                }).success(function (data, status, headers, config) {
-                    console.log(data);
-                    $location.path('/home');
+            $http({ url: 'scripts/signup.php', method: "POST", data: uservals
+            }).success(function (data, status, headers, config) {
+                if(data['status'] == "success") {
+                    $scope.signup_message = "<p>Thank you for your interest in EpiCore!</p>  " +
+                    "<p>We are excited you are considering becoming one of the select health professionals who will shape the future of disease detection!</p>" +
+                    "<p>We have received your information and will contact you in September, as soon as the application process begins.</p> " +
+                    "<p>In the meantime, will will continue to update our website – please check back in for the most up-to-date information.</p>";
+                }
+                else {
+                    $scope.signup_message = 'Sign-up failed.  Someone has already signed up with the entered email address.';
+                }
+                $location.path('/home');
+
             });
         }
 
