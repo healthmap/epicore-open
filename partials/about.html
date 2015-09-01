@@ -7,14 +7,14 @@
             <p>
             EpiCore is a digital platform that facilitates communication about a potential infectious disease outbreak between public health disease/outbreak surveillance professionals and epidemiologists on the ground, in the area of the rumored outbreak.  The goal of providing this direct channel of communication is to expedite early identification of an outbreak.
             </p>
-            The EpiCore project is funded by Skoll Global Threats and is a collaboration between Tephinet, ProMED-Mail, and HealthMap. 
+            The EpiCore project is a collaboration between Skoll Global Threats Fund, Tephinet, ProMED-Mail, and HealthMap.
             </p>
 	    <h1>Want to join EpiCore?</h1>
 	    <!--
             <p>For more information about EpiCore, contact info@epicore.org or complete the form below to join our low-volume mailing list. </p>-->
             <form role="form">
             <div class="form-group col-xs-12">
-                <label class="sr-only" for="age">Your First Name</label>
+                <label class="sr-only" for="firstname">Your First Name</label>
                 <input type="text" class="form-control" ng-model="uservals.firstname" id="firstname" placeholder="Your First Name" required>
             </div>
             
@@ -27,11 +27,19 @@
                 <label class="sr-only" for="email">Your Email</label>
                 <input type="email" class="form-control" ng-model="uservals.email" id="email" placeholder="Your Email" required>
             </div>
+
+                <div class="form-group col-xs-12">
+                    <label class="sr-only" for="email">Country</label>
+                    <input type="text" class="form-control" ng-model="uservals.country" id="country" placeholder="Your Country" required>
+                </div>
             
                 <div class="form-group col-xs-12">
                     <button type="submit" ng-click="signup(uservals)" class="submit btn btn-default col-xs-12">Submit</button>
                 </div>
             </form>
+            <div>
+                <p class="intro" id="signup_message" ><strong ng-bind-html="signup_message" ></strong></p>
+            </div>
         </div><!--col-->
     </div><!--row-->
 </div><!--container-->

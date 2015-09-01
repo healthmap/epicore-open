@@ -4,6 +4,7 @@ $formvars = json_decode(file_get_contents("php://input"));
 $pvals['email'] = strip_tags($formvars->email);
 $pvals['firstname'] = strip_tags($formvars->firstname);
 $pvals['lastname'] = strip_tags($formvars->lastname);
+$pvals['country'] = strip_tags($formvars->country);
 
 // exit if no email
 if(!$pvals['email']) {
