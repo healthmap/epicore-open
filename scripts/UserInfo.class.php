@@ -143,7 +143,9 @@ class UserInfo
         return $email_addresses;
     }
 
-    /* use the webservice on tephinet to get FETP-eligible ids and location info */
+    /* use the webservice on tephinet to get FETP-eligible ids and location info 
+        compare the info to the fetp table in epicore and update as needed
+    */
     static function getFETPEligible()
     {
         // call to tephinet webservice
@@ -155,25 +157,41 @@ class UserInfo
         $fetpinfo = json_decode($result);
         $db = getDB();
         $mapping = array('lat' => 'latitude','lon' => 'longitude','countrycode' => 'country');
+        $existq = $db->query("SELECT * FROM fetp WHERE tephinet_id is NOT NULL");
+        while($existr = $existq->fetchRow()) {
+            $existids[$existr['tephinet_id']] = $existr;
+        }
         foreach($fetpinfo as $fetpobj) {
             if(is_numeric($fetpobj->uid)) {
-                $fetpinfo = $db->getRow("SELECT * FROM fetp WHERE tephinet_id = ?", array($fetpobj->uid));
-                // already in our table, need to update
-                if($fetpinfo) {
+                // already in our table, may need to update info
+                if($existids[$fetpobj->uid]) {
+                    if($existids[$fetpobj->uid]['active'] == 'N') {
+                        $db->query("UPDATE fetp SET active = 'Y' WHERE tephinet_id = ?", array($fetpobj->uid));
+                    }
                     foreach($mapping as $epicore_field => $tephinet_field) {
                         $tephinet_value = $tephinet_field == "country" ? strtoupper($fetpobj->$tephinet_field) : $fetpobj->$tephinet_field;
-                        $epicore_value = $fetpinfo[$epicore_field];
-                        if($epicore_value != $tephinet_value) {
+                        $epicore_value = $existids[$fetpobj->uid][$epicore_field];
+                        $t_compare_val = $epicore_field == "lat" || $epicore_field == "lon" ? round($tephinet_value, 2) : $tephinet_value;
+                        $e_compare_val = $epicore_field == "lat" || $epicore_field == "lon" ? round($epicore_value, 2) : $epicore_value;
+                        // rounding b/c of weirdness with precision
+                        if($e_compare_val != $t_compare_val) {
                             $db->query("UPDATE fetp SET $epicore_field = ? WHERE tephinet_id = ?", array($tephinet_value, $fetpobj->uid));
                             $db->query("INSERT INTO editlog (old_val,new_val,tablename,fieldname,change_date) VALUES (?,?,?,?,?)", array($epicore_value, $tephinet_value, 'fetp', $epicore_field, date('Y-m-d H:i:s')));
                         }
                     }
+                    unset($existids[$fetpobj->uid]);
                 } else { // insert
                     $db->query("INSERT INTO fetp (lat,lon,countrycode,tephinet_id) VALUES (?,?,?,?)", array($fetpobj->latitude,$fetpobj->longitude,strtoupper($fetpobj->country),$fetpobj->uid));
                 }
-                $db->commit();
             }
         }
+        // anything that's left over from original db needs to be set to inactive b/c not eligible on tephinet anymore
+        foreach($existids as $tid => $fetpvals) {
+            if($fetpvals['active'] == 'Y') {
+                $db->query("UPDATE fetp SET active='N' WHERE tephinet_id = ?", array($tid));
+            }
+        }
+        $db->commit();
         return $fetpinfo;
     }
 
