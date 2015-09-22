@@ -19,11 +19,16 @@ if(isset($formvars->ticket_id) && $formvars->usertype == "fetp") { // ticket sys
         $dbdata['password'] = strip_tags($formvars->password); 
         $uinfo = UserInfo::authenticateUser($dbdata);
     }
-    $user_id = $uinfo['user_id'];
+    $user_id = isset($uinfo['fetp_id']) ? $uinfo['fetp_id'] : $uinfo['user_id'];
 }
 
 // make sure it's a valid user id (or fetp id)
 if(is_numeric($user_id) && $user_id > 0) {
+    // if it was a mod who successfully logged in, let's now repopulate the fetp table with latest eligible tephinet ids
+    //if(isset($uinfo['organization_id']) && $uinfo['organization_id'] > 0) {
+    //    $ui = new UserInfo($user_id);
+    //    $ui->getFETPEligible();
+    //}
     $status = "success";
     // if it was a ticket with an event id, go directly to the "respond" page
     // if it was a ticket with an alert id, go directly to the "request" page
