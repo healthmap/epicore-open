@@ -42,17 +42,22 @@ class UserInfo
                 $requests[$row['event_id']]['send_dates'][] = date('n/j/Y H:i', strtotime($row['send_date']));
                 
                 // get the FETPs responses to that event
-                $response_dates = [];
                 $respq = $this->db->query("SELECT response_id, response_date FROM response WHERE responder_id = ? AND event_id = ? ORDER BY response_date DESC", array($this->id, $row['event_id']));
+                $response_dates = [];
                 while($resprow = $respq->fetchRow()) {
-                    $response_dates[] = date('n/j/Y H:i', strtotime($resprow['response_date']));
+                    array_push($response_dates, date('n/j/Y H:i', strtotime($resprow['response_date'])));
                     //$requests[$row['event_id']]['response_dates'][$resprow['response_id']] = date('n/j/Y H:i', strtotime($resprow['response_date']));
                 }
-
-                $requests[$row['event_id']]['response_dates'] = $response_dates;
+                $requests[$row['event_id']]['response_dates'] = array_unique($response_dates);
             }
         }
         return $requests;
+    }
+
+    static function createPassword($password = '') {
+        $password = $password ? $password : substr(md5(rand().rand()), 0, 8);
+        $pword_hash = create_hash($password);
+        return array($password, $pword_hash);
     }
 
     static function authenticateUser($dbdata) 
@@ -64,15 +69,25 @@ class UserInfo
         $resp = validate_password($dbdata['password'], $user['pword_hash']);
         $db = getDB();
         if($resp) {
-            $epicore_info = $db->getRow("SELECT user.*, organization.name AS orgname FROM user LEFT JOIN organization ON user.organization_id = organization.organization_id WHERE hmu_id = ?", array($user['hmu_id']));
-            $user['user_id'] = $epicore_info['user_id'];
-            $user['organization_id'] = $epicore_info['organization_id'];
-            $user['orgname'] = $epicore_info['orgname'];
-            unset($user['pword_hash']);
-            return $user;
-        } else { // try the epicore database
-            $pword_hash = hash('sha256', $dbdata['password']);
-            return $db->getRow("SELECT user.*, organization.name AS orgname FROM user LEFT JOIN organization ON user.organization_id = organization.organization_id WHERE email = ? AND pword_hash = ?", array($email, $pword_hash));
+            $uinfo = $db->getRow("SELECT user.user_id, user.hmu_id, user.organization_id, organization.name AS orgname FROM user LEFT JOIN organization ON user.organization_id = organization.organization_id WHERE hmu_id = ?", array($user['hmu_id']));
+            $uinfo['username'] = $user['username'];
+            $uinfo['email'] = $user['email'];
+            return $uinfo;
+        } else { 
+            // first try the MOD user table.  If none, try the FETP user table.
+            $uinfo = $db->getRow("SELECT user.*, organization.name AS orgname FROM user LEFT JOIN organization ON user.organization_id = organization.organization_id WHERE email = ?", array($email));
+            if(!$uinfo['user_id']) {
+                $uinfo = $db->getRow("SELECT fetp_id, pword_hash, lat, lon, countrycode, active FROM fetp WHERE email = ?", array($email));
+                $uinfo['username'] = "FETP ".$uinfo['fetp_id'];
+            }
+            if($uinfo['user_id'] || $uinfo['fetp_id']) {
+                $resp = validate_password($dbdata['password'], $uinfo['pword_hash']);
+                if($resp) {
+                    unset($uinfo['pword_hash']);
+                    return $uinfo;
+                }
+            }
+            return 0;
         }
     }
 
@@ -123,9 +138,16 @@ class UserInfo
         return array($userlist, $send_ids);
     }
 
-    /* use the webservice on tephinet to get email addresses for an array of ids */
+    /* 
+    if it's a non-Tephinet FETP, get the email from epicore db, otherwise
+    use the webservice on tephinet to get email addresses for an array of ids 
+    */
     static function getFETPEmails($fetp_ids)
     {
+        // pull all fetp_id/emails from our db
+        $db = getDB();
+        $email_hash = $db->getAssoc("SELECT fetp_id, email FROM fetp WHERE active='Y' AND email is NOT NULL");
+        
         // call to tephinet webservice
         require_once "GetURL.class.php";
         $url = TEPHINET_BASE . 'epicore/getemails';
@@ -133,14 +155,18 @@ class UserInfo
         $fields_string = 'consumer_key='.TEPHINET_CONSUMER_KEY;
         foreach($fetp_ids as $id) {
             // get the tephinet ID from the fetp table
-            if(is_numeric($id)) {
+            if(is_numeric($id) && !isset($email_hash[$id])) {
                 $tephinet_id = $db->getOne("SELECT tephinet_id FROM fetp WHERE fetp_id = ?", $id);
+                $fetp_lu[$tephinet_id] = $id;
                 $fields_string .= '&ids[]='.$tephinet_id;
             }
         }
         $result = $gurl->post($url, $fields_string);
         $email_addresses = json_decode($result);
-        return $email_addresses;
+        foreach($email_addresses as $tephinet_obj) {
+            $email_hash[$fetp_lu[$tephinet_obj->uid]] = $tephinet_obj->mail;
+        }
+        return $email_hash;
     }
 
     /* use the webservice on tephinet to get FETP-eligible ids and location info 
