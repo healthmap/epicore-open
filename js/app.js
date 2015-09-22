@@ -27,6 +27,7 @@ config(function($routeProvider) {
         when("/fetp", {templateUrl: "partials/fetp.html"}).
         when("/fetp/:eid", {templateUrl: "partials/fetp.html"}).
         when("/mod/:tid/:aid", {templateUrl: "partials/mod.html"}).
-        when("/home", {templateUrl: "partials/about.html"}).
+        when("/home", {templateUrl: "partials/home.html"}).
+        when("/welcome", {templateUrl: "partials/welcome.html"}).
         otherwise({redirectTo: '/home'});
     });

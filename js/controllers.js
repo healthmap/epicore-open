@@ -63,8 +63,12 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
                     var isPromed = data['uinfo']['organization_id'] == 4 ? true : false;
                     $cookieStore.put('epiUserInfo', {'uid':data['uinfo']['user_id'], 'isPromed':isPromed, 'isOrganization':$rootScope.isOrganization, 'organization_id':data['uinfo']['organization_id'], 'organization':data['uinfo']['orgname'], 'fetp_id':data['uinfo']['fetp_id'], 'email':data['uinfo']['email'], 'uname':data['uinfo']['username']});
                     $rootScope.error_message = 'false';
-                    //var querystr = $location.search() ? $location.search() : '';
-                    var redirpath = typeof(querystr['redir']) != "undefined" ? querystr['redir'] : '/'+data['path'];
+                    // FETPs that aren't activated yet don't get review page
+                    if(data['uinfo']['fetp_id'] && data['uinfo']['active'] == 'N') {
+                        var redirpath = '/welcome';
+                    } else {
+                        var redirpath = typeof(querystr['redir']) != "undefined" ? querystr['redir'] : '/'+data['path'];
+                    }
                     $location.path(redirpath);
                 } else {
                     $rootScope.error_message = 'true';
@@ -80,7 +84,7 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
             $window.sessionStorage.clear();
         }
         /* get user cookie info */
-        $rootScope.userInfo = $cookieStore.get('epiUserInfo');
+        $scope.userInfo = $rootScope.userInfo = $cookieStore.get('epiUserInfo');
 
 }).controller('mapController', function($scope, $http) {
         $scope.map = { center: { latitude: 15, longitude: 18 }, zoom: 3 }
