@@ -35,7 +35,8 @@ config(function($routeProvider) {
       //when("/home", {templateUrl: "partials/about.html"}).
       //when("/home", {templateUrl: "partials/application.html"}).
 
-      when("/home", {templateUrl: "partials/home.html"}).
-      when("/welcome", {templateUrl: "partials/welcome.html"}).
-      otherwise({redirectTo: '/home'});
+        when("/home", {templateUrl: "partials/home.html"}).
+        when("/welcome", {templateUrl: "partials/welcome.html"}).
+        otherwise({redirectTo: '/home'});
+
     });
