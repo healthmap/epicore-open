@@ -8,6 +8,7 @@
  */
 require_once 'db.function.php';
 $db = getDB();
+$approvedate = date('Y-m-d H:i:s', strtotime('now'));
 
 // approve applicant
 $approve_id = null;

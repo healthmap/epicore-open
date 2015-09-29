@@ -247,6 +247,7 @@ class UserInfo
         $key_vals = join(",", array_keys($pvals));
         $qmarks = join(",", array_fill(0, count($pvals), '?'));
         $qvals = array_values($pvals);
+        $applydate = date('Y-m-d H:i:s', strtotime('now'));
         if(!$user_id) { // insert if not
             $db->query("INSERT INTO maillist ($key_vals) VALUES ($qmarks)", $qvals);
             $user_id = $db->getOne("SELECT LAST_INSERT_ID()");
@@ -261,7 +262,7 @@ class UserInfo
                         biotechnology=?, pharmacy=?, publichealth=?, disease_surv=?, informatics=?, biostatistics=?, other_knowledge=?,
                         other_knowledge_type=?, training=?, fetp_training=?, tephinet_news=?, health_exp=?, job_title=?, organization=?,
                         sector=?, health_org=?, health_org_university=?, health_org_doh=?, health_org_clinic=?, health_org_other=?,
-                        info_accurate=?, rfi_agreement=?
+                        info_accurate=?, rfi_agreement=?, apply_date='$applydate'
                         WHERE email = ?",
                 array($pvals['firstname'], $pvals['lastname'], $pvals['country'], $pvals['city'], $pvals['bachelors'], $pvals['gradstudent'], $pvals['masters'],
                     $pvals['medical'],  $pvals['doctorate'], $pvals['otherdegree'], $pvals['bachelors_type'], $pvals['gradstudent_type'],$pvals['masters_type'], $pvals['medical_type'],
