@@ -196,5 +196,44 @@ class UserInfo
 
     }
 
+    // returns user id if a new user is inserted, or true if the user already exists and was updated
+    static function applyMaillist($pvals)
+    {
+        $db = getDB();
+        $user_id = $db->getOne("SELECT maillist_id FROM maillist WHERE email = ?", array($pvals['email']));
+        $key_vals = join(",", array_keys($pvals));
+        $qmarks = join(",", array_fill(0, count($pvals), '?'));
+        $qvals = array_values($pvals);
+        if(!$user_id) { // insert if not
+            $db->query("INSERT INTO maillist ($key_vals) VALUES ($qmarks)", $qvals);
+            $user_id = $db->getOne("SELECT LAST_INSERT_ID()");
+            $db->commit();
+            return $user_id;
+        }
+        else{
+            $db->query("UPDATE maillist SET firstname = ?, lastname = ?, country=?, city=?, bachelors=?, gradstudent=?, masters=?,
+                        medical=?, doctorate=?, otherdegree=?,bachelors_type=?, gradstudent_type=?, masters_type=?, medical_type=?,
+                        otherdegree_type=?, doctorate_type=?, universities=?, clinical_med_adult=?, clinical_med_pediatric=?,
+                        clinical_med_vet=?, research=?, microbiology=?, virology=?, parasitology=?, vaccinology=?, epidemiology=?,
+                        biotechnology=?, pharmacy=?, publichealth=?, disease_surv=?, informatics=?, biostatistics=?, other_knowledge=?,
+                        other_knowledge_type=?, training=?, fetp_training=?, tephinet_news=?, health_exp=?, job_title=?, organization=?,
+                        sector=?, health_org=?, health_org_university=?, health_org_doh=?, health_org_clinic=?, health_org_other=?,
+                        info_accurate=?, rfi_agreement=?
+                        WHERE email = ?",
+                array($pvals['firstname'], $pvals['lastname'], $pvals['country'], $pvals['city'], $pvals['bachelors'], $pvals['gradstudent'], $pvals['masters'],
+                    $pvals['medical'],  $pvals['doctorate'], $pvals['otherdegree'], $pvals['bachelors_type'], $pvals['gradstudent_type'],$pvals['masters_type'], $pvals['medical_type'],
+                    $pvals['otherdegree_type'], $pvals['doctorate_type'], $pvals['universities'], $pvals['clinical_med_adult'], $pvals['clinical_med_pediatric'],
+                    $pvals['clinical_med_vet'], $pvals['research'], $pvals['microbiology'], $pvals['virology'], $pvals['parasitology'],
+                    $pvals['vaccinology'], $pvals['epidemiology'], $pvals['biotechnology'], $pvals['pharmacy'], $pvals['publichealth'], $pvals['disease_surv'],
+                    $pvals['informatics'], $pvals['biostatistics'], $pvals['other_knowledge'], $pvals['other_knowledge_type'],  $pvals['training'], $pvals['fetp_training'],
+                    $pvals['tephinet_news'], $pvals['health_exp'], $pvals['job_title'], $pvals['organization'],
+                    $pvals['sector'], $pvals['health_org'], $pvals['health_org_university'], $pvals['health_org_doh'], $pvals['health_org_clinic'], $pvals['health_org_other'],
+                    $pvals['info_accurate'], $pvals['rfi_agreement'],
+                    $pvals['email']));
+            $db->commit();
+            return true;
+        }
+    }
+
 }
 ?>

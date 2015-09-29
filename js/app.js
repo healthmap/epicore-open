@@ -27,6 +27,15 @@ config(function($routeProvider) {
         when("/fetp", {templateUrl: "partials/fetp.html"}).
         when("/fetp/:eid", {templateUrl: "partials/fetp.html"}).
         when("/mod/:tid/:aid", {templateUrl: "partials/mod.html"}).
-        when("/home", {templateUrl: "partials/about.html"}).
-        otherwise({redirectTo: '/home'});
+        when("/application", {templateUrl: "partials/application.html"}).
+
+      //when("/approval", {templateUrl: "partials/approval.html", controller: "approvalController"}).
+      //when("/home", {templateUrl: "partials/approval.html", controller: "approvalController"}).
+
+      //when("/home", {templateUrl: "partials/about.html"}).
+      //when("/home", {templateUrl: "partials/application.html"}).
+
+      when("/home", {templateUrl: "partials/home.html"}).
+      when("/welcome", {templateUrl: "partials/welcome.html"}).
+      otherwise({redirectTo: '/home'});
     });

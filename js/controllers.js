@@ -19,7 +19,8 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
                 if(data['status'] == "success") {
                     $scope.signup_message = "<p>Thank you for your interest in EpiCore!</p>  " +
                     "<p>We are excited you are considering becoming one of the select health professionals who will shape the future of disease detection!</p>" +
-                    "<p>We have received your information and will contact you in September, as soon as the application process begins.</p> " +
+                    //"<p>We have received your information and will contact you in September, as soon as the application process begins.</p> " +
+                    "<p>We have received your application and will contact you uppon approval.</p> " +
                     "<p>In the meantime, will will continue to update our website – please check back in for the most up-to-date information.</p>";
                 }
                 else {
@@ -396,10 +397,28 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
         $scope.messageResponse = {};
         $scope.messageResponse.text = messages[$scope.id];
 
+    }).controller('approvalController', function($scope, $http, $location) {
+        var data = {};
+            $http({ url: 'scripts/approval.php', method: "POST", data: data
+            }).success(function (respdata, status, headers, config) {
+                $scope.applicants = respdata;
+            });
+
+        $scope.approveApplicant = function(maillist_id){
+
+            data = {maillist_id: maillist_id};
+            $http({ url: 'scripts/approval.php', method: "POST", data: data
+            }).success(function (respdata, status, headers, config) {
+                $scope.applicants = respdata;
+                $location.path('/approval');
+            });
+        };
+
         /* filter for trusted HTML */
     }).filter('to_trusted', ['$sce', function($sce){
         return function(text) {
             return $sce.trustAsHtml(text);
         };
+
     }]);
 
