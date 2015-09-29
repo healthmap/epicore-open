@@ -1,0 +1,27 @@
+<div class="container">
+    <a href="#/home"><span class="title">Epicore</span></a>
+</div>
+<div class="container main">
+    <div class="row">
+        <div class="col-xs-12 wbg" ng-controller="approvalController">
+            <h3>Applicant Approval</h3>
+            <table class='table table-hover table-bordered'>
+                <tr>
+                    <th>name</th>
+                    <th>email</th>
+                    <th>country</th>
+                    <th>Status</th>
+                    <th></th>
+                </tr>
+                <tr ng-repeat="applicant in applicants">
+                    <td>{{applicant.firstname}} {{applicant.lastname}}</td>
+                    <td>{{applicant.email}}</td>
+                    <td>{{applicant.country}}</td>
+                    <td>{{applicant.status}}</td>
+                    <td><button type="button" ng-click="approveApplicant(applicant.maillist_id)">Approve</button></td>
+                </tr>
+            </table>
+
+        </div><!--col-->
+    </div><!--row-->
+</div><!--container-->
