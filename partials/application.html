@@ -3,13 +3,15 @@
 </div>
 <div class="container main">
     <div class="row">
-        <div id="form-container" class="col-xs-8">
+        <div id="form-container" class="col-xs-12 col-sm-12 col-md-12 col-lg-12 wbg">
             <h1>EpiCore Application Form</h1>
             <p>Please fill out the fields below to apply to become a member of EpiCore. <br>
                 Select members will shape the future of disease detection by helping to find outbreaks faster.</p>
 
             <form role="form">
+
                 <h3>Contact Information</h3>
+
                 <div class="form-group">
                     <label class="sr-only" for="firstname">Your First Name</label>
                     <input type="text" class="form-control" ng-model="uservals.firstname" id="firstname" placeholder="Your First Name" required>
@@ -31,119 +33,169 @@
                 </div>
 
 
-                <div class="form-group ">
+                <div class="form-group">
                     <label class="sr-only" for="city">City</label>
                     <input type="text" class="form-control" ng-model="uservals.city" id="city" placeholder="Your City" required>
                 </div>
 
 
                 <h3>Credentials</h3>
+
                 <h5>Acedemic Degrees (Please select all that apply and name your degree and field) </h5>
-                <div class="form-group">
-                    <label> <input type="checkbox" ng-model="uservals.bachelors" ng-click="show1 = 1"><span> Bachelor’s Degree (BA, BS, AB, etc.) </span></label>
-                    <input type="text" class="" ng-model = "uservals.bachelors_type" ng-show="show1 == 1" required>
-                </div>
-                <div class="form-group">
-                    <label> <input type="checkbox" ng-model="uservals.gradstudent" ng-click="show2 = 1"><span> Current Graduate Student </span></label>
-                    <input type="text" class="" ng-model = "uservals.gradstudent_type" ng-show="show2 == 1" required>
-                </div>
-                <div class="form-group">
-                    <label> <input type="checkbox" ng-model="uservals.masters" ng-click="show3 = 1"><span> Master’s Degree (MS, MPH, MA, etc.)  </span></label>
-                    <input type="text" class="" ng-model = "uservals.masters_type" ng-show="show3 == 1" required>
-                </div>
-                <div class="form-group">
-                    <label> <input type="checkbox" ng-model="uservals.medical" ng-click="show4 = 1"><span> Medical or Veterinary School Degree (MD, DVM, etc.)  </span></label>
-                    <input type="text" class="" ng-model = "uservals.medical_type" ng-show="show4 == 1" required>
-                </div>
-                <div class="form-group">
-                    <label> <input type="checkbox" ng-model="uservals.otherdegree" ng-click="show5 = 1"><span> Other Professional School Degree (JD, DDC, etc.)  </span></label>
-                    <input type="text" class="" ng-model = "uservals.otherdegree_type" ng-show="show5 == 1" required>
-                </div>
-                <div class="form-group">
-                    <label> <input type="checkbox" ng-model="uservals.doctorate" ng-click="show6 = 1"><span> Doctorate Degree (PhD, DrPH, ScD, etc.)    </span></label>
-                    <input type="text" class="" ng-model = "uservals.doctorate_type" ng-show="show6 == 1" required>
+
+                <div class="row">
+                    <div class="form-group col-md-12">
+
+                    <div class="checkbox"> 
+                        <label> <input type="checkbox" ng-model="uservals.bachelors"> Bachelor’s Degree (BA, BS, AB, etc.)
+                        <input type="text" class="form-control" ng-model = "uservals.bachelors_type" ng-show="uservals.bachelors" required> </label>
+                    </div>
+
+                    <div class="checkbox"> 
+                        <label> <input type="checkbox" ng-model="uservals.gradstudent"> Current Graduate Student 
+                        <input type="text" class="form-control" ng-model = "uservals.gradstudent_type" ng-show="uservals.gradstudent" required> </label>
+                    </div>
+
+                    <div class="checkbox"> 
+                        <label> <input type="checkbox" ng-model="uservals.masters"> Master’s Degree (MS, MPH, MA, etc.)
+                        <input type="text" class="form-control" ng-model = "uservals.masters_type" ng-show="uservals.masters" required> </label>
+                    </div>
+
+                    <div class="checkbox"> 
+                        <label> <input type="checkbox" ng-model="uservals.medical"> Medical or Veterinary School Degree (MD, DVM, etc.)
+                        <input type="text" class="form-control" ng-model = "uservals.medical_type" ng-show="uservals.medical" required> </label>
+                    </div>
+
+                    <div class="checkbox"> 
+                        <label> <input type="checkbox" ng-model="uservals.otherdegree"> Other Professional School Degree (JD, DDC, etc.)
+                        <input type="text" class="form-control" ng-model = "uservals.otherdegree_type" ng-show="uservals.otherdegree" required> </label>
+                    </div>
+
+                    <div class="checkbox"> 
+                        <label> <input type="checkbox" ng-model="uservals.doctorate"> Doctorate Degree (PhD, DrPH, ScD, etc.)
+                        <input type="text" class="form-control" ng-model = "uservals.doctorate_type" ng-show="uservals.doctorate" required> </label>
+                    </div>
+
+                    </div>
                 </div>
 
-                <h4>University/universities where you obtained your degree(s)</h4>
-                <div class="form-group col-xs-12">
-                    <label class="sr-only" for="universities">University</label>
-                    <input type="text" class="form-control" ng-model="uservals.universities" id="universities" placeholder="University/universities" required>
+
+                <div class="row">
+                    <div class="form-group col-md-12">
+                    <h5>University/universities where you obtained your degree(s)</h5>
+                        <label class="sr-only" for="universities">University</label>
+                        <input type="text" class="form-control" ng-model="uservals.universities" id="universities" placeholder="University/universities" required>
+                    </div>
                 </div>
 
-                <h4>Basic Knowledge (Please select all that apply)</h4>
-                <div class="form-group">
-                    <label> <input type="checkbox" ng-model="uservals.clinical_med_adult" ><span> Clinical Medicine – Adult </span></label>
-                </div>
-                <div class="form-group">
-                    <label> <input type="checkbox" ng-model="uservals.clinical_med_pediatric" ><span> Clinical Medicine – Pediatric</span></label>
-                </div>
-                <div class="form-group">
-                    <label> <input type="checkbox" ng-model="uservals.clinical_med_vet" ><span> Clinical Medicine – Veterinary</span></label>
-                </div>
-                <div class="form-group">
-                    <label> <input type="checkbox" ng-model="uservals.research" ><span> Research</span></label>
-                </div>
-                <div class="form-group">
-                    <label> <input type="checkbox" ng-model="uservals.microbiology" ><span> Microbiology</span></label>
-                </div>
-                <div class="form-group">
-                    <label> <input type="checkbox" ng-model="uservals.virology" ><span> Virology</span></label>
-                </div>
-                <div class="form-group">
-                    <label> <input type="checkbox" ng-model="uservals.parasitology" ><span> Parasitology</span></label>
-                </div>
-                <div class="form-group">
-                    <label> <input type="checkbox" ng-model="uservals.vaccinology" ><span> Vaccinology</span></label>
-                </div>
-                <div class="form-group">
-                    <label> <input type="checkbox" ng-model="uservals.epidemiology" ><span> Epidemiology</span></label>
-                </div>
-                <div class="form-group">
-                    <label> <input type="checkbox" ng-model="uservals.biotechnology" ><span> Biotechnology</span></label>
-                </div>
-                <div class="form-group">
-                    <label> <input type="checkbox" ng-model="uservals.pharmacy" ><span> Pharmacy (Drug Development)</span></label>
-                </div>
-                <div class="form-group">
-                    <label> <input type="checkbox" ng-model="uservals.publichealth" ><span> Public Health</span></label>
-                </div>
-                <div class="form-group">
-                    <label> <input type="checkbox" ng-model="uservals.disease_surv" ><span> Disease Surveillance</span></label>
-                </div>
-                <div class="form-group">
-                    <label> <input type="checkbox" ng-model="uservals.informatics" ><span> Informatics</span></label>
-                </div>
-                <div class="form-group">
-                    <label> <input type="checkbox" ng-model="uservals.biostatistics" ><span> Biostatistics</span></label>
+                <div class="row">
+                    <div class="form-group col-md-12">
+                    <h5>Basic Knowledge (Please select all that apply)</h5>
+
+                    <div class="checkbox">
+                        <label> <input type="checkbox" ng-model="uservals.clinical_med_adult"> Clinical Medicine – Adult</label>
+                    </div>
+
+                    <div class="checkbox">
+                        <label> <input type="checkbox" ng-model="uservals.clinical_med_pediatric"> Clinical Medicine – Pediatric</label>
+                    </div>
+
+                    <div class="checkbox">
+                        <label> <input type="checkbox" ng-model="uservals.clinical_med_vet"> Clinical Medicine – Veterinary</label>
+                    </div>
+
+                    <div class="checkbox">
+                        <label> <input type="checkbox" ng-model="uservals.research"> Research</label>
+                    </div>
+
+                    <div class="checkbox">
+                        <label> <input type="checkbox" ng-model="uservals.microbiology"> Microbiology</label>
+                    </div>
+
+                    <div class="checkbox">
+                        <label> <input type="checkbox" ng-model="uservals.virology"> Virology</label>
+                    </div>
+
+                    <div class="checkbox">
+                        <label> <input type="checkbox" ng-model="uservals.parasitology"> Parasitology</label>
+                    </div>
+
+                    <div class="checkbox">
+                        <label> <input type="checkbox" ng-model="uservals.vaccinology"> Vaccinology</label>
+                    </div>
+
+                    <div class="checkbox">
+                        <label> <input type="checkbox" ng-model="uservals.epidemiology"> Epidemiology</label>
+                    </div>
+
+                    <div class="checkbox">
+                        <label> <input type="checkbox" ng-model="uservals.biotechnology"> Biotechnology</label>
+                    </div>
+
+                    <div class="checkbox">
+                        <label> <input type="checkbox" ng-model="uservals.pharmacy"> Pharmacy (Drug Development)</label>
+                    </div>
+
+                    <div class="checkbox">
+                        <label> <input type="checkbox" ng-model="uservals.publichealth"> Public Health</label>
+                    </div>
+
+                    <div class="checkbox">
+                        <label> <input type="checkbox" ng-model="uservals.disease_surv"> Disease Surveillance</label>
+                    </div>
+
+                    <div class="checkbox">
+                        <label> <input type="checkbox" ng-model="uservals.informatics"> Informatics</label>
+                    </div>
+
+                    <div class="checkbox">
+                        <label> <input type="checkbox" ng-model="uservals.biostatistics"> Biostatistics</label>
+                    </div>
+
+                    <div class="checkbox">
+                        <label> <input type="checkbox" ng-model="uservals.other_knowledge"> Other</label>
+                        <input type="text" class="form-control" ng-model="uservals.other_knowledge_type" ng-show="uservals.other_knowledge" required>
+                    </div>
+
+                    </div>
                 </div>
 
-                <div class="form-group">
-                    <label> <input type="checkbox" ng-model="uservals.other_knowledge" ng-click="show7 = 1"><span> Other</span></label>
-                    <input type="text" class="" ng-model = "uservals.other_knowledge_type" ng-show="show7 == 1" required>
+                <div class="row">
+                    <div class="form-group col-md-12">
+                    <h5>Have you successfully completed a field epidemiology training program? </h5>
+                        <label class="radio-inline"> <input type="radio" ng-model="uservals.training" value="yes"> Yes</label>
+                        <label class="radio-inline"> <input type="radio" ng-model="uservals.training" value="no"> No</label>
+                        <input type="text" class="form-control" id="training" ng-model = "uservals.fetp_training" ng-show="uservals.training == 'yes'" placeholder="What FETP program and where?" required>
+                    </div>
                 </div>
 
-                <h4>Have you successfully completed a field epidemiology training program? </h4>
-                <div class="form-group">
-                    <label> <input type="radio" ng-model="uservals.training" ng-click="show8 = 1" value="yes"><span> Yes</span></label>
-                    <label> <input type="radio" ng-model="uservals.training" ng-click="show8 = 0" value="no"><span> No</span></label>
-                </div>
-                <div class="form-group ">
-                    <input type="text" class="form-control" id="training" ng-model = "uservals.fetp_training" ng-show="show8 == 1" placeholder="What FETP program and where?" required>
-                </div>
-
-                <div class="form-group" ng-show="show8 == 1">
-                    <p>Would you like to receive the TEPHINET newsletter?</p>
-                    <label> <input type="radio" ng-model="uservals.tephinet_news" value="yes"><span> Yes</span></label>
-                    <label> <input type="radio" ng-model="uservals.tephinet_news" value="no"><span> No</span></label>
+                <div class="row" ng-show="uservals.training == 'yes'">
+                    <div class="form-group col-md-12">
+                    <h5>Would you like to receive the TEPHINET newsletter?</h5>
+                        <label class="radio-inline"> <input type="radio" ng-model="uservals.tephinet_news" value="yes"> Yes</label>
+                        <label class="radio-inline"> <input type="radio" ng-model="uservals.tephinet_news" value="no"> No</label>
+                    </div>
                 </div>
 
-                <h4>How many years of experience do you have in human and/or animal health?</h4>
-                <div class="form-group">
-                    <label> <input type="radio" ng-model="uservals.health_exp" value="A"><span> No experience</span></label> <br>
-                    <label> <input type="radio" ng-model="uservals.health_exp" value="B"><span> Less than 3 years</span></label> <br>
-                    <label> <input type="radio" ng-model="uservals.health_exp" value="C"><span> 3-5 years</span></label> <br>
-                    <label> <input type="radio" ng-model="uservals.health_exp" value="D"><span> 5-10 years</span></label> <br>
-                    <label> <input type="radio" ng-model="uservals.health_exp" value="E"><span> More than 10 years</span></label>
+                <div class="row">
+                    <div class="form-group col-md-12">
+                    <h5>How many years of experience do you have in human and/or animal health?</h5>
+                    <div class="radio">
+                        <label> <input type="radio" ng-model="uservals.health_exp" value="A"> No experience</label>
+                    </div>
+                    <div class="radio">
+                        <label> <input type="radio" ng-model="uservals.health_exp" value="B"> Less than 3 years</label>
+                    </div>
+                    <div class="radio">
+                        <label> <input type="radio" ng-model="uservals.health_exp" value="C"> 3-5 years</label>
+                    </div>
+                    <div class="radio">
+                        <label> <input type="radio" ng-model="uservals.health_exp" value="D"> 5-10 years</label>
+                    </div>
+                    <div class="radio">
+                        <label> <input type="radio" ng-model="uservals.health_exp" value="E"> More than 10 years</label>
+                    </div>
+                    </div>
                 </div>
 
                 <div class="form-group">
@@ -154,40 +206,51 @@
                     <input type="text" class="form-control" ng-model="uservals.organization" placeholder="Current organization" required>
                 </div>
 
-                <p>Sector: (Please select one)<p>
-                <div class="form-group">
-                    <label> <input type="radio" ng-model="uservals.sector" value="G"><span> Governmental</span></label> <br>
-                    <label> <input type="radio" ng-model="uservals.sector" value="N"><span> Nongovernmental / Nonprofit </span></label> <br>
-                    <label> <input type="radio" ng-model="uservals.sector" value="P"><span> Private / For-Profit</span></label> <br>
+                <div class="row">
+                    <div class="form-group col-md-12">
+                        <h5>Sector: (Please select one)</h5>
+                        <div class="radio"> 
+                            <label><input type="radio" ng-model="uservals.sector" value="G"> Governmental</label>
+                        </div>
+                        <div class="radio"> 
+                            <label> <input type="radio" ng-model="uservals.sector" value="N"> Nongovernmental / Nonprofit </label>
+                        </div>
+                        <div class="radio"> 
+                            <label> <input type="radio" ng-model="uservals.sector" value="P"> Private / For-Profit</label>
+                        </div>
+                    </div>
                 </div>
 
-                <h4>Specifically, does the organization you work with fall under any of the following categories?  </h4>
-                <div class="form-group">
-                    <label> <input type="radio" ng-model="uservals.health_org" ng-click="show9 = 1" value="yes"><span> Yes</span></label>
-                    <label> <input type="radio" ng-model="uservals.health_org" ng-click="show9 = 0" value="no"><span> No</span></label>
-                </div>
-                <div class="form-group">
-                    <p>(Please select all that apply)</p>
-                    <label> <input type="checkbox" ng-model="uservals.health_org_university" ><span> University or any academic or research institution</span></label>
-                </div>
-                <div class="form-group" >
-                    <label> <input type="checkbox" ng-model="uservals.health_org_doh" ><span> Ministry / Department of Health</span></label>
-                </div>
-                <div class="form-group" >
-                    <label> <input type="checkbox" ng-model="uservals.health_org_clinic" ><span> Medical clinic</span></label>
-                </div>
-                <div class="form-group" >
-                    <label> <input type="checkbox" ng-model="uservals.health_org_other" ><span> Other health-related organizations, including nonprofit, nongovernmental or private sector organizations</span></label>
-                </div>
-
-                <h4>I attest that all the information provided in this form is true and accurate to the best of my abilities.   </h4>
-                <div class="form-group">
-                    <label> <input type="checkbox" ng-model="uservals.info_accurate" required><span> Agree</span></label>
+                <div class="row">
+                    <div class="form-group col-lg-12">
+                    <h5>Specifically, does the organization you work with fall under any of the following categories? (Please select all that apply)</h5>
+                        <div class="checkbox-block"> 
+                            <label><input type="checkbox" ng-model="uservals.health_org_university" > University or any academic or research institution</label>
+                        </div>
+                        <div class="checkbox-block"> 
+                            <label> <input type="checkbox" ng-model="uservals.health_org_doh"> Ministry / Department of Health</label>
+                        </div>
+                        <div class="checkbox-block"> 
+                            <label> <input type="checkbox" ng-model="uservals.health_org_clinic"> Medical clinic</label>
+                        </div>
+                        <div class="checkbox-block"> 
+                            <label> <input type="checkbox" ng-model="uservals.health_org_other"> Other health-related organizations, including nonprofit, nongovernmental or private sector organizations</label>
+                        </div>
+                    </div>
                 </div>
 
-                <h4>By submitting this application, I understand that if approved and after being trained, I become a member of the select EpiCore team that aims to collectively find outbreaks faster by responding to any request for information (RFI) in my area as best I can. </h4>
-                <div class="form-group">
-                    <label> <input type="checkbox" ng-model="uservals.rfi_agreement" required><span> Agree</span></label>
+                <div class="row">
+                    <div class="form-group col-md-12">
+                    <h5>I attest that all the information provided in this form is true and accurate to the best of my abilities.</h5>
+                        <label class="checkbox-inline"> <input type="checkbox" ng-model="uservals.info_accurate" required> Agree</label>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="form-group col-md-12">
+                    <h5>By submitting this application, I understand that if approved and after being trained, I become a member of the select EpiCore team that aims to collectively find outbreaks faster by responding to any request for information (RFI) in my area as best I can. </h5>
+                    <label class="checkbox-inline"> <input type="checkbox" ng-model="uservals.rfi_agreement" required> Agree</label>
+                    </div>
                 </div>
 
                 <div class="form-group col-xs-12">
