@@ -2,94 +2,101 @@ angular.module('EpicoreApp.controllers', []).
 
 /* User - includes Login & Logout */
 controller('userController', function($rootScope, $routeParams, $scope, $route, $cookies, $cookieStore, $location, $http, $window) {
-        var querystr = $location.search() ? $location.search() : '';
 
-        /* get the active state of page you're on */
-        $scope.getClass = function(path) {
-            if(path == $location.path()) {
-                return "active";
+    $scope.isRouteLoading = false;
+    var querystr = $location.search() ? $location.search() : '';
+
+    /* get the active state of page you're on */
+    $scope.getClass = function(path) {
+        if(path == $location.path()) {
+            return "active";
+        } else {
+            return "";
+        }
+    }
+
+    $scope.go = function(path) {
+        $location.path(path);
+    }
+
+    $scope.signup = function(uservals, isValid) {
+        if(!isValid) {
+            return false;
+        }
+        $http({ url: 'scripts/signup.php', method: "POST", data: uservals
+        }).success(function (data, status, headers, config) {
+            if(data['status'] == "success") {
+                if(data['exists'] == 1) {
+                    $scope.signup_message = 'Your email address is already in the applicant system.';
+                } else {
+                    $location.path('/application_confirm');
+                }
             } else {
-                return "";
+                $scope.signup_message = 'Sign-up failed.';  
             }
-        }
-
-        $scope.go = function(path) {
-            $location.path(path);
-        }
-
-        $scope.signup = function(uservals, isValid) {
-            if(!isValid) {
-                return false;
-            }
-            $http({ url: 'scripts/signup.php', method: "POST", data: uservals
-            }).success(function (data, status, headers, config) {
-                if(data['status'] == "success") {
-                    if(data['exists'] == 1) {
-                        $scope.signup_message = 'Your email address is already in the applicant system.';
-                    } else {
-                        $location.path('/application_confirm');
-                    }
-                } else {
-                    $scope.signup_message = 'Sign-up failed.';  
-                }
-            });
-        }
-
-        /* set some global variables for Tephinet integration */
-        $http({ url: 'scripts/getvars.php', method: "POST"
-            }).success(function (data, status, headers, config) {
-            $rootScope.tephinetBase = data['tephinet_base'];
         });
+    }
 
-        /* log in */
-        $scope.userLogin = function(formData) {
-            // came in from fetp log in, no formdata passed, get ticket id and (optional) event_id from URL
-            if(typeof(formData) == "undefined") {
-                var formData = {};
-                if(typeof(querystr['t']) != "undefined") {
-                    formData['ticket_id'] = querystr['t'];
-                } else if ($routeParams.tid) {
-                    formData['ticket_id'] = $routeParams.tid;
-                }
-                // if it's a mod, may be coming in with ticket and alert id to auto-fill a request
-                formData['alert_id'] = $routeParams.aid ? $routeParams.aid : null;
-                // if it's an fetp, may be coming in with ticket and event id for which they will respond
-                formData['event_id'] = $routeParams.eid ? $routeParams.eid : null;
-                formData['usertype'] = $location.path().indexOf("/fetp") == 0 ? 'fetp' : '';
-            } 
-            if(!formData['ticket_id'] && !formData['alert_id'] && !formData['event_id'] && !$scope.loginForm.$valid) {
-                return;
+    /* set some global variables for Tephinet integration */
+    $http({ url: 'scripts/getvars.php', method: "POST"
+        }).success(function (data, status, headers, config) {
+        $rootScope.tephinetBase = data['tephinet_base'];
+    });
+
+    /* log in */
+    $scope.userLogin = function(formData) {
+        $scope.isRouteLoading = true;
+        // came in from fetp log in, no formdata passed, get ticket id and (optional) event_id from URL
+        if(typeof(formData) == "undefined") {
+            var formData = {};
+            if(typeof(querystr['t']) != "undefined") {
+                formData['ticket_id'] = querystr['t'];
+            } else if ($routeParams.tid) {
+                formData['ticket_id'] = $routeParams.tid;
             }
-            $http({ url: 'scripts/login.php', method: "POST", data: formData
-            }).success(function (data, status, headers, config) {
-                if(data['status'] == "success") {
-                    // determines if user is an organization or FETP
-                    $rootScope.isOrganization = data['uinfo']['organization_id'] > 0 ? true : false;
-                    var isPromed = data['uinfo']['organization_id'] == 4 ? true : false;
-                    $cookieStore.put('epiUserInfo', {'uid':data['uinfo']['user_id'], 'isPromed':isPromed, 'isOrganization':$rootScope.isOrganization, 'organization_id':data['uinfo']['organization_id'], 'organization':data['uinfo']['orgname'], 'fetp_id':data['uinfo']['fetp_id'], 'email':data['uinfo']['email'], 'uname':data['uinfo']['username']});
-                    $rootScope.error_message = 'false';
-                    // FETPs that aren't activated yet don't get review page
-                    if(data['uinfo']['fetp_id'] && data['uinfo']['active'] == 'N') {
-                        var redirpath = '/welcome';
-                    } else {
-                        var redirpath = typeof(querystr['redir']) != "undefined" ? querystr['redir'] : '/'+data['path'];
-                    }
-                    $location.path(redirpath);
+            // if it's a mod, may be coming in with ticket and alert id to auto-fill a request
+            formData['alert_id'] = $routeParams.aid ? $routeParams.aid : null;
+            // if it's an fetp, may be coming in with ticket and event id for which they will respond
+            formData['event_id'] = $routeParams.eid ? $routeParams.eid : null;
+            formData['usertype'] = $location.path().indexOf("/fetp") == 0 ? 'fetp' : '';
+        } 
+        if(!formData['ticket_id'] && !formData['alert_id'] && !formData['event_id'] && !$scope.loginForm.$valid) {
+            return;
+        }
+        $http({ url: 'scripts/login.php', method: "POST", data: formData
+        }).success(function (data, status, headers, config) {
+            if(data['status'] == "success") {
+                // determines if user is an organization or FETP
+                $rootScope.isOrganization = data['uinfo']['organization_id'] > 0 ? true : false;
+                var isPromed = data['uinfo']['organization_id'] == 4 ? true : false;
+                var isActive = typeof(data['uinfo']['active']) != "undefined" ? data['uinfo']['active'] : 'Y';
+                $cookieStore.put('epiUserInfo', {'uid':data['uinfo']['user_id'], 'isPromed':isPromed, 'isOrganization':$rootScope.isOrganization, 'organization_id':data['uinfo']['organization_id'], 'organization':data['uinfo']['orgname'], 'fetp_id':data['uinfo']['fetp_id'], 'email':data['uinfo']['email'], 'uname':data['uinfo']['username'], 'active':isActive});
+                $rootScope.error_message = 'false';
+                // FETPs that aren't activated yet don't get review page
+                if(data['uinfo']['fetp_id'] && data['uinfo']['active'] == 'N') {
+                    var redirpath = '/welcome';
                 } else {
-                    $rootScope.error_message = 'true';
-                    $route.reload();
+                    var redirpath = typeof(querystr['redir']) != "undefined" ? querystr['redir'] : '/'+data['path'];
                 }
-            }).error(function (data, status, headers, config) {
-                console.log(status);
-            });
-        }
-        /* log out */
-        $scope.userLogout = function() {
-            $cookieStore.remove('epiUserInfo');
-            $window.sessionStorage.clear();
-        }
-        /* get user cookie info */
-        $scope.userInfo = $rootScope.userInfo = $cookieStore.get('epiUserInfo');
+                $scope.isRouteLoading = false;
+                $location.path(redirpath);
+            } else {
+                $scope.isRouteLoading = false;
+                $rootScope.error_message = 'true';
+                $route.reload();
+            }
+        }).error(function (data, status, headers, config) {
+            $scope.isRouteLoading = false;
+            console.log(status);
+        });
+    }
+    /* log out */
+    $scope.userLogout = function() {
+        $cookieStore.remove('epiUserInfo');
+        $window.sessionStorage.clear();
+    }
+    /* get user cookie info */
+    $scope.userInfo = $rootScope.userInfo = $cookieStore.get('epiUserInfo');
 
 }).controller('mapController', function($scope, $http) {
         $scope.map = { center: { latitude: 15, longitude: 18 }, zoom: 3 }
@@ -105,6 +112,9 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
             }
         });
 
+/* FETP controller */
+}).controller('fetpController', function($scope, $cookieStore) {
+        $scope.userInfo = $cookieStore.get('epiUserInfo');
 /* Event(s) controller */
 }).controller('eventsController', function($scope, $routeParams, $cookieStore, $location, $http, eventAPIservice) {
         $scope.eventsList = [];
