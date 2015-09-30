@@ -1,41 +1,45 @@
+<div ng-include src="'header_nologin.html'"></div>
+<!--
 <div class="container">
     <a href="#/home"><span class="title">Epicore</span></a>
 </div>
-
+-->
 <div class="container main">
-<div class="row">
-    <div id="form-container" class="col-sm-9 col-md-7 col-lg-6">
-        <form name="loginForm" ng-controller="userController">
-         <p class="intro">With the spread of new technologies and the availability of <em>Big Data</em>, public health professionals have new opportunities to find and verify outbreaks faster. Epicore volunteers will help verify early signals of outbreaks and thereby improve public health responses.</p> 
-         <p class="intro" id="error_message" ng-show="{{error_message}}"><strong>Authentication failed.</strong></p>
+    <div class="row">
+        <div id="form-container" class="col-xs-12 col-sm-12 col-md-12 col-lg-12 wbg">
+            <h1>What is EpiCore?</h1>
 
-			<div class="form-group col-xs-12">
-                <label class="sr-only" for="username">Email Address</label>
-                <input type="text" class="form-control" ng-model="formData.username" name="username" id="username" placeholder="Email Address" required>
-            </div>
-            
-			<div class="form-group col-xs-12">
-                <label class="sr-only" for="password">Password</label>
-                <input type="password" class="form-control" ng-model="formData.password" name="password" id="password" placeholder="Password" required>
-            </div>
-            
-			<div class="checkbox form-group">
-                <label><input type="checkbox" name="agree" ng-model="formData.agree" required> I agree to Epicore's <a href="#/terms">Terms of Participation</a></label>.
-            </div>
-            
-			<div class="form-group col-xs-12">
-                <button ng-click="userLogin(formData)" type="submit" class="submit btn btn-default col-xs-12">Login</button>
-            </div><!-- /input-group -->
-       </form>
-    
-            <p class="intro"><small><a href="{{tephinetBase}}epicore/oauth_request/EJL7rbQR3YTQXPb8ku6zEQbmRSXzLRtd/Nr8TTVMoAvm4X86jjzbp65aE7kTmR2WN">Log in with your Tephinet account <i class="fa fa-arrow-circle-right"></i></a><br>
-			<a href="#/about">Learn more about the EpiCore project <i class="fa fa-arrow-circle-right"></i></a></small></p>
-  </div><!--form-container-->
+            <p>EpiCore is a partnership organization for collective global epidemic intelligence that aims to speed the recognition and validation of outbreaks of emerging infectious diseases in order to facilitate rapid responses.</p>
 
-</div><!--row-->
-</div><!--container main-->
+            <p>A partnership between the Skoll Global Threats Funds, HealthMap, ProMED-mail and TEPHINET, EpiCore leverages the skills and knowledge of epidemiologically trained health professionals around the world to verify disease outbreaks faster than the traditional process while creating a community of practice for online training and resource sharing.</p>
 
-<script>
-    // form validation
-    $("form").validate();
-</script>
+            <h4>What are the responsibilities of an EpiCore user?</h4>
+            
+            <p>EpiCore users are volunteers who respond to occasional “Requests for Information” or “RFIs” sent via e-mail whenever they could contribute.</p>
+
+            <p>These “requests for information” or “RFIs” are sent by a team of emerging disease specialists trained to recognize outbreaks of public health significance, often based on informal sources that require further verification/validation. These specialists send RFIs targeted to the geographic area of a reported outbreak and provide additional information to help establish the nature of the outbreak. As an EpiCore user, you will receive RFIs pertaining to your geographical location, and can communicate with the emerging disease specialists to help verify an outbreak. You are not expected to actively investigate outbreaks, but only to use your local knowledge and other resources easily available to you. Additionally, you will have the option to respond to RFIs anonymously.</p>
+
+            <h4>How will the EpiCore project help?</h4>
+
+            <p>The EpiCore project aims to speed the recognition and validation of outbreaks of emerging infectious diseases and facilitate rapid response. By leveraging public health professionals around the world, EpiCore works to verify disease outbreaks faster than the traditional process.</p>
+
+            <h4>Who can apply? </h4>
+
+            <p>We are looking for health professionals with formal education and training in health and knowledge of basic principles of epidemiology and infectious disease or related fields (visit our website for more information). You can now sign up online to be notified when the application process is launched.</p>
+
+            <h4>What should I expect after I apply?</h4>
+
+            <p>Currently, we are collecting contact information from interested professionals.</p>
+
+            <p>In preparation for the October 2015 launch of EpiCore, we will contact interested individuals and start accepting applications. Each application will be evaluated and those who meet the minimum requirements will be notified of their acceptance.  Shortly after you are accepted, you will receive a brief, specialized on-line training on innovative surveillance, a key contributor to global 21st century disease detection efforts, and the use of the epicore.org platform.</p>
+        
+            <p>After successfully completing the training, you will become a member of the EpiCore community and receive RFIs to verify disease outbreaks in your geographic area.</p>
+
+            <h4>Questions?</h4> 
+            <p>Contact us at info@epicore.org.</p>
+
+            <h4>You could be one of the global health professionals who will help shape the future of disease detection! <button type="submit" class="submit btn btn-default col-xs-12" ng-click="go('/application')">Sign Up Now!</button></h4>
+
+        </div><!--col-->
+    </div><!--row-->
+</div><!--container-->
