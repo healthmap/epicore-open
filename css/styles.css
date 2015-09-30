@@ -31,7 +31,8 @@ body{font-family:'Open Sans',sans-serif;font-weight:400;color:#666}
 #footer{padding:24px 0}
 #footer .container{padding:0}
 .container.main{margin-top:24px}
-h1,h2,h3,h4,h5,h6{margin-bottom:24px;font-weight:600;font-family:'Open Sans',sans-serif;color:#002e3e}
+h1,h2,h3,h4{margin-bottom:24px;font-weight:600;font-family:'Open Sans',sans-serif;color:#002e3e}
+h5,h6{margin-bottom:10px;font-weight:600;font-family:'Open Sans',sans-serif;color:#002e3e}
 .smtext{font-size:.75em}
 .title{font-size:3.125em;line-height:1.44em;color:#fff;text-transform:uppercase;margin:48px 0 0 -15px;display:block;font-weight:400}
 .title.sm{font-size:1.5em;line-height:1em;margin:0 0 0 -15px}
@@ -64,6 +65,8 @@ strong{font-weight:600}
 .pac-container{z-index:1050 !important}
 .input-group-addon{padding:6px 12px;font-size:16px;font-weight:normal;line-height:1.5em;color:#555;text-align:center;background-color:#eee;border:1px solid #ccc;border-radius:2px}
 .checkbox{float:left;width:50%}
+.checkbox-block{width:100%}
+.checkbox-block label{font-weight:normal}
 .radio+.radio,.checkbox+.checkbox{margin-top:0}
 form[name="loginForm"] .checkbox{width:100%}
 .radio,.checkbox{padding-left:33px;margin:0 0 6px 0}
