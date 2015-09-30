@@ -1,24 +1,83 @@
 <div class="container">
-    <a href="#/home"><span class="title">Epicore</span></a>
+    <span class="title">Epicore</span>
 </div>
 <div class="container main">
     <div class="row">
         <div class="col-xs-12 wbg" ng-controller="approvalController">
-            <h3>Applicant Approval</h3>
+            <h3>Application Approval</h3>
             <table class='table table-hover table-bordered'>
                 <tr>
-                    <th>name</th>
-                    <th>email</th>
-                    <th>country</th>
+                    <th>Name</th>
+                    <th>Country</th>
+                    <th>City</th>
                     <th>Status</th>
-                    <th></th>
+                    <th>Set Status</th>
                 </tr>
                 <tr ng-repeat="applicant in applicants">
-                    <td>{{applicant.firstname}} {{applicant.lastname}}</td>
-                    <td>{{applicant.email}}</td>
+                    <td>{{applicant.firstname}} {{applicant.lastname}}
+                        <a href="" ng-click="isCollapsed1 = !isCollapsed1"><i class="fa fa-plus-square-o"></i></a>
+                        <ul ng-show="isCollapsed1">
+                            <li>application date: {{applicant.apply_date}}</li>
+                            <li>approval date: {{applicant.approve_date}}</li>
+                            <li>email: {{applicant.email}}</li>
+                            <li>Job tite: {{applicant.job_title}}</li>
+                            <li>Organization: {{applicant.organization}}</li>
+                            <li>Sector:
+                                <span ng_show="applicant.sector == 'G'">Governmental</span>
+                                <span ng_show="applicant.sector == 'N'">Nongovernmental / Nonprofit </span>
+                                <span ng_show="applicant.sector == 'P'">Private / For-Profit</span>
+                            </li>
+                            <li >Organization Category:
+                                <span ng_show="applicant.health_org_university">University or any academic or research institution</span>
+                                <span ng_show="applicant.health_org_doh">Ministry / Department of Health</span>
+                                <span ng_show="applicant.health_org_clinic">Medical clinic</span>
+                                <span ng_show="applicant.health_org_other">Other health-related organizations</span>
+                            </li>
+                            <li>Degrees:
+                                <span ng-show="applicant.bachelors_type">{{applicant.bachelors_type}}, </span>
+                                <span ng-show="applicant.gradstudent_type">{{applicant.gradstudent_type}}, </span>
+                                <span ng-show="applicant.masters_type">{{applicant.masters_type}}, </span>
+                                <span ng-show="applicant.medical_type">{{applicant.medical_type}}, </span>
+                                <span ng-show="applicant.doctorate_type">{{applicant.doctorate_type}}, </span>
+                                <span ng-show="applicant.otherdegree_type">{{applicant.otherdegree_type}}</span>
+
+                            <li>Universities: {{applicant.universities}}</li>
+                            <li>Basic Knowledge:
+                                <span ng-show="applicant.clinical_med_adult">Clinical Medicine – Adult</span>
+                                <span ng-show="applicant.clinical_med_pediatric">Clinical Medicine – Pediatric</span>
+                                <span ng-show="applicant.clinical_med_vet">Clinical Medicine – Vet</span>
+                                <span ng-show="applicant.research">Research</span>
+                                <span ng-show="applicant.microbiology">microbiology</span>
+                                <span ng-show="applicant.virology">virology</span>
+                                <span ng-show="applicant.parasitology">parasitology</span>
+                                <span ng-show="applicant.vaccinology">vaccinology</span>
+                                <span ng-show="applicant.epidemiology">epidemiology</span>
+                                <span ng-show="applicant.biotechnology">biotechnology</span>
+                                <span ng-show="applicant.pharmacy">pharmacy</span>
+                                <span ng-show="applicant.publichealth">public health</span>
+                                <span ng-show="applicant.disease_surv">disease surveillance</span>
+                                <span ng-show="applicant.informatics">informatics</span>
+                                <span ng-show="applicant.biostatistics">biostatistics</span>
+                                <span ng-show="applicant.other_knowledge">{{applicant.other_knowledge_type}}</span>
+                            </li>
+                            <li>FETP Training:
+                                <span ng_show="applicant.training == 0">none</span>
+                                <span ng_show="applicant.fetp_training">{{applicant.fetp_training}}</span>
+                            </li>
+                            <li>Years of Experience:
+                                <span ng_show="applicant.health_exp == 'A'">none</span>
+                                <span ng_show="applicant.health_exp == 'B'">less than 3 years</span>
+                                <span ng_show="applicant.health_exp == 'C'">3-5 years</span>
+                                <span ng_show="applicant.health_exp == 'D'">5-10 years</span>
+                                <span ng_show="applicant.health_exp == 'E'">More than 10 years</span>
+                            </li>
+                        </ul>
+                    </td>
                     <td>{{applicant.country}}</td>
+                    <td>{{applicant.city}}</td>
                     <td>{{applicant.status}}</td>
-                    <td><button type="button" ng-click="approveApplicant(applicant.maillist_id)">Approve</button></td>
+                    <td ng-show="applicant.status =='Pending'"><button type="button" ng-click="approveApplicant(applicant.maillist_id,'unsubscribe')">Unsubscribed</button></td>
+                    <td ng-show="applicant.status !='Pending'"><button type="button" ng-click="approveApplicant(applicant.maillist_id,'pending')">Pending</button></td>
                 </tr>
             </table>
 
