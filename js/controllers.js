@@ -401,20 +401,18 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
         $scope.messageResponse = {};
         $scope.messageResponse.text = messages[$scope.id];
 
-    }).controller('approvalController', function($scope, $http, $location) {
+    }).controller('approvalController', function($scope, $http) {
         var data = {};
             $http({ url: 'scripts/approval.php', method: "POST", data: data
             }).success(function (respdata, status, headers, config) {
                 $scope.applicants = respdata;
             });
 
-        $scope.approveApplicant = function(maillist_id){
-
-            data = {maillist_id: maillist_id};
+        $scope.approveApplicant = function(maillist_id, action){
+            data = {maillist_id: maillist_id, action:action};
             $http({ url: 'scripts/approval.php', method: "POST", data: data
             }).success(function (respdata, status, headers, config) {
                 $scope.applicants = respdata;
-                $location.path('/approval');
             });
         };
 
