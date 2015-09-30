@@ -3,39 +3,39 @@
 </div>
 <div class="container main">
     <div class="row">
-        <div id="form-container" class="col-xs-12 col-sm-12 col-md-12 col-lg-12 wbg">
+        <div name="form-container" class="col-xs-12 col-sm-12 col-md-12 col-lg-12 wbg">
             <h1>EpiCore Application Form</h1>
             <p>Please fill out the fields below to apply to become a member of EpiCore. <br>
                 Select members will shape the future of disease detection by helping to find outbreaks faster.</p>
 
-            <form role="form">
+            <form name="applyForm" role="form">
 
                 <h3>Contact Information</h3>
 
                 <div class="form-group">
                     <label class="sr-only" for="firstname">Your First Name</label>
-                    <input type="text" class="form-control" ng-model="uservals.firstname" id="firstname" placeholder="Your First Name" required>
+                    <input type="text" class="form-control" ng-model="uservals.firstname" name="firstname" placeholder="Your First Name" required>
                 </div>
 
                 <div class="form-group">
                     <label class="sr-only" for="lastname">Your Last Name</label>
-                    <input type="text" class="form-control" ng-model="uservals.lastname" id="lastname" placeholder="Your Last Name" required>
+                    <input type="text" class="form-control" ng-model="uservals.lastname" name="lastname" placeholder="Your Last Name" required>
                 </div>
 
                 <div class="form-group">
                     <label class="sr-only" for="email">Primary Email</label>
-                    <input type="email" class="form-control" ng-model="uservals.email" id="email" placeholder="Your Email" required>
+                    <input type="email" class="form-control" ng-model="uservals.email" name="email" placeholder="Your Email" required>
                 </div>
 
                 <div class="form-group">
                     <label class="sr-only" for="country">Country</label>
-                    <input type="text" class="form-control" ng-model="uservals.country" id="country" placeholder="Your Country" required>
+                    <input type="text" class="form-control" ng-model="uservals.country" name="country" placeholder="Your Country" required>
                 </div>
 
 
                 <div class="form-group">
                     <label class="sr-only" for="city">City</label>
-                    <input type="text" class="form-control" ng-model="uservals.city" id="city" placeholder="Your City" required>
+                    <input type="text" class="form-control" ng-model="uservals.city" name="city" placeholder="Your City" required>
                 </div>
 
 
@@ -48,32 +48,32 @@
 
                     <div class="checkbox"> 
                         <label> <input type="checkbox" ng-model="uservals.bachelors"> Bachelor’s Degree (BA, BS, AB, etc.)
-                        <input type="text" class="form-control" ng-model = "uservals.bachelors_type" ng-show="uservals.bachelors" required> </label>
+                        <input type="text" class="form-control" ng-model = "uservals.bachelors_type" ng-if="uservals.bachelors" required> </label>
                     </div>
 
                     <div class="checkbox"> 
                         <label> <input type="checkbox" ng-model="uservals.gradstudent"> Current Graduate Student 
-                        <input type="text" class="form-control" ng-model = "uservals.gradstudent_type" ng-show="uservals.gradstudent" required> </label>
+                        <input type="text" class="form-control" ng-model = "uservals.gradstudent_type" ng-if="uservals.gradstudent" required> </label>
                     </div>
 
                     <div class="checkbox"> 
                         <label> <input type="checkbox" ng-model="uservals.masters"> Master’s Degree (MS, MPH, MA, etc.)
-                        <input type="text" class="form-control" ng-model = "uservals.masters_type" ng-show="uservals.masters" required> </label>
+                        <input type="text" class="form-control" ng-model = "uservals.masters_type" ng-if="uservals.masters" required> </label>
                     </div>
 
                     <div class="checkbox"> 
                         <label> <input type="checkbox" ng-model="uservals.medical"> Medical or Veterinary School Degree (MD, DVM, etc.)
-                        <input type="text" class="form-control" ng-model = "uservals.medical_type" ng-show="uservals.medical" required> </label>
+                        <input type="text" class="form-control" ng-model = "uservals.medical_type" ng-if="uservals.medical" required> </label>
                     </div>
 
                     <div class="checkbox"> 
                         <label> <input type="checkbox" ng-model="uservals.otherdegree"> Other Professional School Degree (JD, DDC, etc.)
-                        <input type="text" class="form-control" ng-model = "uservals.otherdegree_type" ng-show="uservals.otherdegree" required> </label>
+                        <input type="text" class="form-control" ng-model = "uservals.otherdegree_type" ng-if="uservals.otherdegree" required> </label>
                     </div>
 
                     <div class="checkbox"> 
                         <label> <input type="checkbox" ng-model="uservals.doctorate"> Doctorate Degree (PhD, DrPH, ScD, etc.)
-                        <input type="text" class="form-control" ng-model = "uservals.doctorate_type" ng-show="uservals.doctorate" required> </label>
+                        <input type="text" class="form-control" ng-model = "uservals.doctorate_type" ng-if="uservals.doctorate" required> </label>
                     </div>
 
                     </div>
@@ -84,7 +84,7 @@
                     <div class="form-group col-md-12">
                     <h5>University/universities where you obtained your degree(s)</h5>
                         <label class="sr-only" for="universities">University</label>
-                        <input type="text" class="form-control" ng-model="uservals.universities" id="universities" placeholder="University/universities" required>
+                        <input type="text" class="form-control" ng-model="uservals.universities" name="universities" placeholder="University/universities" required>
                     </div>
                 </div>
 
@@ -153,8 +153,8 @@
                     </div>
 
                     <div class="checkbox">
-                        <label> <input type="checkbox" ng-model="uservals.other_knowledge"> Other</label>
-                        <input type="text" class="form-control" ng-model="uservals.other_knowledge_type" ng-show="uservals.other_knowledge" required>
+                        <label> <input type="checkbox" name="other_knowledge" ng-model="uservals.other_knowledge"> Other</label>
+                        <input type="text" class="form-control" ng-model="uservals.other_knowledge_type" ng-if="uservals.other_knowledge" required>
                     </div>
 
                     </div>
@@ -163,17 +163,17 @@
                 <div class="row">
                     <div class="form-group col-md-12">
                     <h5>Have you successfully completed a field epidemiology training program? </h5>
-                        <label class="radio-inline"> <input type="radio" ng-model="uservals.training" value="yes"> Yes</label>
-                        <label class="radio-inline"> <input type="radio" ng-model="uservals.training" value="no"> No</label>
-                        <input type="text" class="form-control" id="training" ng-model = "uservals.fetp_training" ng-show="uservals.training == 'yes'" placeholder="What FETP program and where?" required>
+                        <label class="radio-inline"> <input type="radio" ng-model="uservals.training" value="1"> Yes</label>
+                        <label class="radio-inline"> <input type="radio" ng-model="uservals.training" value="0"> No</label>
+                        <input type="text" class="form-control" name="training" ng-model = "uservals.fetp_training" ng-if="uservals.training" placeholder="What FETP program and where?" required>
                     </div>
                 </div>
 
-                <div class="row" ng-show="uservals.training == 'yes'">
+                <div class="row" ng-show="uservals.training">
                     <div class="form-group col-md-12">
                     <h5>Would you like to receive the TEPHINET newsletter?</h5>
-                        <label class="radio-inline"> <input type="radio" ng-model="uservals.tephinet_news" value="yes"> Yes</label>
-                        <label class="radio-inline"> <input type="radio" ng-model="uservals.tephinet_news" value="no"> No</label>
+                        <label class="radio-inline"> <input type="radio" ng-model="uservals.tephinet_news" value="1"> Yes</label>
+                        <label class="radio-inline"> <input type="radio" ng-model="uservals.tephinet_news" value="0"> No</label>
                     </div>
                 </div>
 
@@ -199,11 +199,11 @@
                 </div>
 
                 <div class="form-group">
-                    <input type="text" class="form-control" ng-model="uservals.job_title" placeholder="Current job title / position" required>
+                    <input type="text" class="form-control" name="job_title" ng-model="uservals.job_title" placeholder="Current job title / position" required>
                 </div>
 
                 <div class="form-group">
-                    <input type="text" class="form-control" ng-model="uservals.organization" placeholder="Current organization" required>
+                    <input type="text" class="form-control" name="current_organization" ng-model="uservals.organization" placeholder="Current organization" required>
                 </div>
 
                 <div class="row">
@@ -242,23 +242,32 @@
                 <div class="row">
                     <div class="form-group col-md-12">
                     <h5>I attest that all the information provided in this form is true and accurate to the best of my abilities.</h5>
-                        <label class="checkbox-inline"> <input type="checkbox" ng-model="uservals.info_accurate" required> Agree</label>
+                        <label class="checkbox-inline"> <input type="checkbox" name="info_accurate" ng-model="uservals.info_accurate" required> Agree</label>
                     </div>
                 </div>
 
                 <div class="row">
                     <div class="form-group col-md-12">
                     <h5>By submitting this application, I understand that if approved and after being trained, I become a member of the select EpiCore team that aims to collectively find outbreaks faster by responding to any request for information (RFI) in my area as best I can. </h5>
-                    <label class="checkbox-inline"> <input type="checkbox" ng-model="uservals.rfi_agreement" required> Agree</label>
+                    <label class="checkbox-inline"> <input type="checkbox" name="rfi_agreement" ng-model="uservals.rfi_agreement" required> Agree</label>
                     </div>
                 </div>
 
                 <div class="form-group col-xs-12">
-                    <button type="submit" ng-click="signup(uservals)" class="submit btn btn-default col-xs-12">Submit</button>
+<!--
+<ul>
+  <li ng-repeat="(key, errors) in applyForm.$error track by $index"> <strong>{{ key }}</strong> errors
+    <ul>
+      <li ng-repeat="e in errors">{{ e.$name }} has an error: <strong>{{ key }}</strong>.</li>
+    </ul>
+  </li>
+</ul>
+-->
+                    <button type="submit" ng-click="signup(uservals, applyForm.$valid)" class="submit btn btn-default col-xs-12">Submit</button>
                 </div>
             </form>
             <div>
-                <p class="intro" id="signup_message" ><strong ng-bind-html="signup_message" ></strong></p>
+                <p class="intro" name="signup_message" ><strong ng-bind-html="signup_message" ></strong></p>
             </div>
         </div><!--col-->
     </div><!--row-->
