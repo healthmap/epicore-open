@@ -27,7 +27,10 @@
 
                 <div class="form-group">
                     <label class="sr-only" for="country">Country</label>
-                    <input type="text" class="form-control" ng-model="uservals.country" name="country" placeholder="Your Country" required>
+                    <select ng-model="uservals.country" required>
+                        <option value="">-- Select your country --</option>
+                        <option ng-repeat="country in countries" value="{{country.code}}">{{country.name}}</option>
+                    </select>
                 </div>
 
 

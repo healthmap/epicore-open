@@ -4,7 +4,7 @@
  * Date: 9/29/15
  */
 
-$valid_passwords = array ("epicore" => "approval");
+$valid_passwords = array ("superuser" => "approval");
 $valid_users = array_keys($valid_passwords);
 
 $user = $_SERVER['PHP_AUTH_USER'];
@@ -18,5 +18,6 @@ if (!$validated) {
     die ("Not authorized");
 }
 
-header("Location: https://epicore.org/~jandre/epicore/#/approval");
+header("Location: ../#/approval");
+
 exit();
