@@ -76,8 +76,13 @@
                     <td>{{applicant.country}}</td>
                     <td>{{applicant.city}}</td>
                     <td>{{applicant.status}}</td>
-                    <td ng-show="applicant.status =='Pending'"><button type="button" ng-click="approveApplicant(applicant.maillist_id,'unsubscribe')">Unsubscribed</button></td>
-                    <td ng-show="applicant.status !='Pending'"><button type="button" ng-click="approveApplicant(applicant.maillist_id,'pending')">Pending</button></td>
+                    <td>
+                        <button  type="button" ng-click="approveApplicant(applicant.maillist_id,'pending')">Pending</button>
+                        <button  type="button" ng-click="approveApplicant(applicant.maillist_id,'approved')">Approved</button>
+                        <button  type="button" ng-click="approveApplicant(applicant.maillist_id,'unsubscribed')">Unsubscribed</button>
+                        <button  type="button" ng-click="approveApplicant(applicant.maillist_id,'inactive')">Inactive</button>
+                    </td>
+
                 </tr>
             </table>
 

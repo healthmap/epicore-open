@@ -260,5 +260,37 @@ class UserInfo
         return array($exists, $user_id);
     }
 
+    // set new password for an fetp
+    static function setFETPpassword($fetp_id, $password){
+        $pword = UserInfo::createPassword($password);
+        if ($fetp_id) {
+            $db = getDB();
+            $db->query("UPDATE fetp SET pword_hash='$pword[1]' WHERE fetp_id='$fetp_id'");
+            $db->commit();
+            return true;
+        }
+        else
+            return false;
+    }
+
+    static function getFETPid($email){
+        $db = getDB();
+        $fetp_id = $db->getOne("SELECT fetp_id FROM fetp WHERE email='$email'");
+        if ($fetp_id)
+            return $fetp_id;
+        else
+            return false;
+    }
+
+    static function getFETP($fetp_id){
+        $db = getDB();
+        $fetpinfo = $db->getRow("SELECT * FROM fetp WHERE fetp_id='$fetp_id'");
+        if ($fetp_id)
+            return $fetpinfo;
+        else
+            return false;
+
+    }
+
 }
 ?>

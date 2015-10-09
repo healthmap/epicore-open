@@ -32,6 +32,7 @@ config(function($routeProvider) {
         when("/approval", {templateUrl: "partials/approval.html", controller: "approvalController"}).
         when("/login", {templateUrl: "partials/login.html"}).
         when("/welcome", {templateUrl: "partials/welcome.html", controller: "fetpController"}).
+        when("/setpassword", {templateUrl: "partials/setpassword.html"}).
         when("/home", {templateUrl: "partials/home.html"}).
         otherwise({redirectTo: '/home'});
     });

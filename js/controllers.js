@@ -62,6 +62,7 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
             formData['usertype'] = $location.path().indexOf("/fetp") == 0 ? 'fetp' : '';
         } 
         if(!formData['ticket_id'] && !formData['alert_id'] && !formData['event_id'] && !$scope.loginForm.$valid) {
+            $scope.isRouteLoading = false;
             return;
         }
         $http({ url: 'scripts/login.php', method: "POST", data: formData
@@ -73,12 +74,18 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
                 var isActive = typeof(data['uinfo']['active']) != "undefined" ? data['uinfo']['active'] : 'Y';
                 $cookieStore.put('epiUserInfo', {'uid':data['uinfo']['user_id'], 'isPromed':isPromed, 'isOrganization':$rootScope.isOrganization, 'organization_id':data['uinfo']['organization_id'], 'organization':data['uinfo']['orgname'], 'fetp_id':data['uinfo']['fetp_id'], 'email':data['uinfo']['email'], 'uname':data['uinfo']['username'], 'active':isActive});
                 $rootScope.error_message = 'false';
-                // FETPs that aren't activated yet don't get review page
+                /*// FETPs that aren't activated yet don't get review page
                 if(data['uinfo']['fetp_id'] && data['uinfo']['active'] == 'N') {
                     var redirpath = '/welcome';
                 } else {
                     var redirpath = typeof(querystr['redir']) != "undefined" ? querystr['redir'] : '/'+data['path'];
+                }*/
+                var redirpath = '/welcome';
+                // FETPs that are activated and approved status get to review page
+                if(data['uinfo']['fetp_id'] && data['uinfo']['active'] == 'Y') {
+                    redirpath = typeof(querystr['redir']) != "undefined" ? querystr['redir'] : '/'+data['path'];
                 }
+                console.log(data);
                 $scope.isRouteLoading = false;
                 $location.path(redirpath);
             } else {
@@ -96,6 +103,55 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
         $cookieStore.remove('epiUserInfo');
         $window.sessionStorage.clear();
     }
+        /* set password */
+        $scope.setPassword = function(formData) {
+            $scope.isRouteLoading = true;
+            if(typeof(querystr['t']) != "undefined") {
+                formData['ticket_id'] = querystr['t'];
+            }
+            if (!$scope.setpwForm.$valid){
+                $scope.isRouteLoading = false;
+                $rootScope.error_message = 'Invalid email or password';
+                return false;
+            }
+            else {
+                $http({
+                    url: 'scripts/setpassword.php', method: "POST", data: formData
+                }).success(function (data, status, headers, config) {
+                    if (data['status'] == "success") {
+                        console.log(data);
+                        var isActive = typeof(data['uinfo']['active']) != "undefined" ? data['uinfo']['active'] : 'Y';
+                        $cookieStore.put('epiUserInfo', {
+                            'uid': data['uinfo']['user_id'],
+                            'isPromed': false,
+                            'isOrganization': false,
+                            'organization_id': data['uinfo']['organization_id'],
+                            'organization': data['uinfo']['orgname'],
+                            'fetp_id': data['uinfo']['fetp_id'],
+                            'email': data['uinfo']['email'],
+                            'uname': data['uinfo']['username'],
+                            'active': isActive
+                        });
+                        $rootScope.error_message = 'false';
+                        var redirpath = '/welcome';
+                        // FETPs that are activated and approved status get to review page
+                        if (data['uinfo']['fetp_id'] && data['uinfo']['active'] == 'Y') {
+                            redirpath = typeof(querystr['redir']) != "undefined" ? querystr['redir'] : '/' + data['path'];
+                        }
+                        $scope.isRouteLoading = false;
+                        $location.path(redirpath);
+                    } else {
+                        $scope.isRouteLoading = false;
+                        $rootScope.error_message = 'Invalid email address';
+                        $route.reload();
+                    }
+                }).error(function (data, status, headers, config) {
+                    $scope.isRouteLoading = false;
+                    console.log(status);
+                });
+            }
+        }
+
     /* get user cookie info */
     $scope.userInfo = $rootScope.userInfo = $cookieStore.get('epiUserInfo');
 
