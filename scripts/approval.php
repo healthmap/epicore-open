@@ -50,7 +50,7 @@ if ($approve_id) {
             $db->query("update maillist set approve_date='$approve_date' where maillist_id=$approve_id");
             $db->commit();
             // send mail
-            sendMail($approve_email, $approve_name, "EpiCore Approval", $action);
+            sendMail($approve_email, $approve_name, "EpiCore Course Completed", $action);
 
         }else if ($action == 'inactive'){
             $db->query("update fetp set active=0 where email='$approve_email'");
