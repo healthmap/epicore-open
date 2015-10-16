@@ -11,6 +11,8 @@ require_once "const.inc.php";
 require_once "AWSMail.class.php";
 require_once 'db.function.php';
 require_once 'UserInfo.class.php';
+require_once "send_email.php";
+
 $db = getDB();
 
 // approve applicant
@@ -36,8 +38,9 @@ if ($approve_id) {
                 $db->commit();
             }
 
+            $fetp_id = UserInfo::getFETPid($approve_email);
             // send email
-            sendMail($approve_email, $approve_name, "EpiCore Application Decision", $action);
+            sendMail($approve_email, $approve_name, "EpiCore Application Decision", $action, $fetp_id);
         }
         else if ($action == 'unsubscribed'){
             $db->query("update fetp set active='N' where email='$approve_email'");
@@ -49,8 +52,10 @@ if ($approve_id) {
             $approve_date = date('Y-m-d H:i:s', strtotime('now'));
             $db->query("update maillist set approve_date='$approve_date' where maillist_id=$approve_id");
             $db->commit();
+
+            $fetp_id = UserInfo::getFETPid($approve_email);
             // send mail
-            sendMail($approve_email, $approve_name, "EpiCore Course Completed", $action);
+            sendMail($approve_email, $approve_name, "EpiCore Course Completed", $action, $fetp_id);
 
         }else if ($action == 'inactive'){
             $db->query("update fetp set active=0 where email='$approve_email'");
@@ -88,32 +93,3 @@ foreach ($applicants as $applicant){
 
 // return all applicants
 print json_encode($applicants);
-
-
-function sendMail($email, $name, $subject, $status){
-
-    if($status =='pending'){
-        // create ticket for fetp
-        $fetp_id = UserInfo::getFETPid($email);
-        $db = getDB();
-        $ticket = md5(uniqid(rand(), true));
-        $db->query("INSERT INTO ticket (fetp_id, val, exp) VALUES (?, ?, ?)", array($fetp_id, $ticket, date('Y-m-d H:i:s', strtotime("+30 days"))));
-        $db->commit();
-        //get email template and set link
-        $link = 'https://www.epicore.org/~jandre/epicore/#/setpassword?t=' . $ticket;
-        $emailtemplate = file_get_contents("../emailtemplates/pending.html");
-    }
-
-    if ($status == 'approved'){
-        //get email template and set link
-        $link = 'https://www.epicore.org/~jandre/epicore/#/login';
-        $emailtemplate = file_get_contents("../emailtemplates/approve.html");
-    }
-
-    // send email
-    $extra_headers['text_or_html'] = "html";
-    $emailtext = str_replace("[NAME]", $name, $emailtemplate);
-    $emailtext = str_replace("[SUBJECT]", $subject, $emailtext);
-    $emailtext = str_replace("[LINK]", $link, $emailtext);
-    $aws_resp = AWSMail::mailfunc($email, $subject, $emailtext, EMAIL_INFO_EPICORE, $extra_headers);
-}
