@@ -219,6 +219,23 @@ class UserInfo
         $this->db->commit();
         return $fetpinfo;
     }
+    // returns user id if a new user is inserted and false if the user already exists.
+    static function joinfetp($pvals)
+    {
+        $db = getDB();
+        $user_id = $db->getOne("SELECT fetp_id FROM fetp WHERE email = ?", array($pvals['email']));
+        if(!$user_id) { // insert if not
+            $key_vals = join(",", array_keys($pvals));
+            $qmarks = join(",", array_fill(0, count($pvals), '?'));
+            $qvals = array_values($pvals);
+            $db->query("INSERT INTO fetp ($key_vals) VALUES ($qmarks)", $qvals);
+            $user_id = $db->getOne("SELECT LAST_INSERT_ID()");
+            $db->commit();
+            return $user_id;
+        }
+        else
+            return false;
+    }
 
     // returns user id if a new user is inserted and false if the user already exists.
     static function joinMaillist($pvals)
