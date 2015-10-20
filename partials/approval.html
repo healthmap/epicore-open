@@ -6,6 +6,15 @@
     <    class="row">
         <div class="col-xs-12 wbg" ng-controller="approvalController" ng-init="predicate='person'">
             <h3>Application Approval</h3>
+            Set the user status by clicking on one of the status buttons on the right side of the table below.  The user will be notified by email when their status is set
+            to Pending or Approved.<br><br>
+
+            <b>Pending</b>: user has applied and needs to take the training course.<br>
+            <b>Approved</b>: user has taken the training course and is approved to use the Epicore platform.<br>
+            <b>Unsubscribed</b>: user has taken course but is not active and does not have access to the Epicore platform.<br>
+            <b>Inactive</b>: user is inactive and does not have access to the Epicore platform.<br><br>
+
+            Click on a table heading to sort the table and filter the table using the search tool.<br><br>
             <i class="fa fa-search"></i> <input ng-model="query"> <br> <br>
             <table class='table table-hover table-bordered'>
                 <tr>
