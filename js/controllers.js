@@ -74,17 +74,19 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
                 var isActive = typeof(data['uinfo']['active']) != "undefined" ? data['uinfo']['active'] : 'Y';
                 $cookieStore.put('epiUserInfo', {'uid':data['uinfo']['user_id'], 'isPromed':isPromed, 'isOrganization':$rootScope.isOrganization, 'organization_id':data['uinfo']['organization_id'], 'organization':data['uinfo']['orgname'], 'fetp_id':data['uinfo']['fetp_id'], 'email':data['uinfo']['email'], 'uname':data['uinfo']['username'], 'active':isActive});
                 $rootScope.error_message = 'false';
-                /*// FETPs that aren't activated yet don't get review page
+                // FETPs that aren't activated yet don't get review page
                 if(data['uinfo']['fetp_id'] && data['uinfo']['active'] == 'N') {
                     var redirpath = '/welcome';
                 } else {
                     var redirpath = typeof(querystr['redir']) != "undefined" ? querystr['redir'] : '/'+data['path'];
-                }*/
+                }
+                /*
                 var redirpath = '/welcome';
                 // FETPs that are activated and approved status get to review page
                 if(data['uinfo']['fetp_id'] && data['uinfo']['active'] == 'Y') {
                     redirpath = typeof(querystr['redir']) != "undefined" ? querystr['redir'] : '/'+data['path'];
                 }
+                */
                 $scope.isRouteLoading = false;
                 $location.path(redirpath);
             } else {
