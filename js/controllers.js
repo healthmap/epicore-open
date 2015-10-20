@@ -85,7 +85,6 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
                 if(data['uinfo']['fetp_id'] && data['uinfo']['active'] == 'Y') {
                     redirpath = typeof(querystr['redir']) != "undefined" ? querystr['redir'] : '/'+data['path'];
                 }
-                console.log(data);
                 $scope.isRouteLoading = false;
                 $location.path(redirpath);
             } else {
@@ -495,7 +494,7 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
   and wipe session after added to db */
 }).controller('requestController', function($rootScope, $window, $scope, $routeParams, $cookieStore, $location, $http) {
 
-    $rootScope.userInfo = $cookieStore.get('epiUserInfo');
+    $scope.userInfo = $rootScope.userInfo = $cookieStore.get('epiUserInfo');
 
     // this will pre-fill the event form with session values if back button is used
     if($window.sessionStorage.length > 0) {
