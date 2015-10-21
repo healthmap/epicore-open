@@ -302,8 +302,18 @@ class UserInfo
     static function getFETP($fetp_id){
         $db = getDB();
         $fetpinfo = $db->getRow("SELECT * FROM fetp WHERE fetp_id='$fetp_id'");
-        if ($fetp_id)
+        if ($fetpinfo)
             return $fetpinfo;
+        else
+            return false;
+
+    }
+
+    static function getUserInfo($email){
+        $db = getDB();
+        $userinfo = $db->getRow("SELECT * FROM maillist WHERE email='$email'");
+        if ($userinfo)
+            return $userinfo;
         else
             return false;
 

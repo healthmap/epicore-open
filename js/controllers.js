@@ -120,7 +120,6 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
                     url: 'scripts/setpassword.php', method: "POST", data: formData
                 }).success(function (data, status, headers, config) {
                     if (data['status'] == "success") {
-                        console.log(data);
                         var isActive = typeof(data['uinfo']['active']) != "undefined" ? data['uinfo']['active'] : 'Y';
                         $cookieStore.put('epiUserInfo', {
                             'uid': data['uinfo']['user_id'],
@@ -141,6 +140,35 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
                         }
                         $scope.isRouteLoading = false;
                         $location.path(redirpath);
+                    } else {
+                        $scope.isRouteLoading = false;
+                        $rootScope.error_message = 'Invalid email address';
+                        $route.reload();
+                    }
+                }).error(function (data, status, headers, config) {
+                    $scope.isRouteLoading = false;
+                    console.log(status);
+                });
+
+
+            }
+        }
+
+        /* Reset password */
+        $scope.resetPassword = function(formData) {
+            if (!$scope.setpwForm.$valid){
+                $scope.isRouteLoading = false;
+                $rootScope.error_message = 'Invalid email address';
+                return false;
+            }
+            else {
+                $http({
+                    url: 'scripts/resetpassword.php', method: "POST", data: formData
+                }).success(function (data, status, headers, config) {
+                    if (data['status'] == "success") {
+                        $scope.isRouteLoading = false;
+                        $rootScope.error_message = 'Please check your email for instructions to reset your password.';
+                        $route.reload();
                     } else {
                         $scope.isRouteLoading = false;
                         $rootScope.error_message = 'Invalid email address';
