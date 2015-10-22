@@ -10,10 +10,9 @@
 
             <b>Accepted</b>: user has been accepted to take the training course.<br>
             <b>Approved</b>: user has taken the training course and is approved to use the Epicore platform.<br>
-            <b>Unsubscribed</b>: user has taken course but is not active and does not have access to the Epicore platform.<br>
-            <b>Inactive</b>: user is inactive and does not have access to the Epicore platform.<br><br>
+            <b>Unsubscribed</b>: user is not active and does not have access to the Epicore platform.<br><br>
 
-            Click on a table heading to sort the table and filter the table using the search tool.<br><br>
+            Click on a table heading to sort the table or filter the table using the search tool.<br><br>
             <i class="fa fa-search"></i> <input ng-model="query"> <br> <br>
             <table class='table table-hover table-bordered'>
                 <tr>
@@ -21,7 +20,6 @@
                     <th><a href="" ng-click="predicate = 'approve_date'; reverse=!reverse">Approval Date</a></th>
                     <th><a href="" ng-click="predicate = 'lastname'; reverse=!reverse">Name</a></th>
                     <th><a href="" ng-click="predicate = 'country'; reverse=!reverse">Country</a></th>
-                    <th><a href="" ng-click="predicate = 'city'; reverse=!reverse">City</a></th>
                     <th><a href="" ng-click="predicate = 'status'; reverse=!reverse">User Status</a></th>
                     <th>Set User Status</th>
                 </tr>
@@ -32,8 +30,11 @@
                         <a href="" ng-click="isCollapsed1 = !isCollapsed1"><i class="fa fa-plus-square-o"></i></a>
                         <ul ng-show="isCollapsed1" style="list-style-type: none">
                             <li><b>email:</b> {{applicant.email}}</li>
+                            <li><b>City:</b> {{applicant.city}}</li>
+                            <li><b>State/Province:</b> {{applicant.state}}</li>
                             <li><b>Job tite:</b> {{applicant.job_title}}</li>
                             <li><b>Organization:</b> {{applicant.organization}}</li>
+
                             <li><b>Sector:</b>
                                 <span ng_show="applicant.sector == 'G'">Governmental</span>
                                 <span ng_show="applicant.sector == 'N'">Nongovernmental / Nonprofit </span>
@@ -86,7 +87,6 @@
                         </ul>
                     </td>
                     <td>{{applicant.country}}</td>
-                    <td>{{applicant.city}}</td>
                     <td>
                         <span ng_show="applicant.status == 'Pending'">Accepted</span>
                         <span ng_show="applicant.status != 'Pending'">{{applicant.status}}</span>
@@ -95,7 +95,6 @@
                         <button  type="button" ng-click="approveApplicant(applicant.maillist_id,'pending')">Accepted</button>
                         <button  type="button" ng-click="approveApplicant(applicant.maillist_id,'approved')">Approved</button>
                         <button  type="button" ng-click="approveApplicant(applicant.maillist_id,'unsubscribed')">Unsubscribed</button>
-                        <button  type="button" ng-click="approveApplicant(applicant.maillist_id,'inactive')">Inactive</button>
                     </td>
 
                 </tr>

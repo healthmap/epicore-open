@@ -26,19 +26,22 @@
                 </div>
 
                 <div class="form-group">
+                    <label class="sr-only" for="city">City</label>
+                    <input type="text" class="form-control" ng-model="uservals.city" name="city" placeholder="Your City" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="sr-only" for="state">State</label>
+                    <input type="text" class="form-control" ng-model="uservals.state" name="state" placeholder="Your State/Province" required>
+                </div>
+
+                <div class="form-group">
                     <label class="sr-only" for="country">Country</label>
                     <select ng-model="uservals.country" required>
                         <option value="">-- Select your country --</option>
                         <option ng-repeat="country in countries" value="{{country.code}}">{{country.name}}</option>
                     </select>
                 </div>
-
-
-                <div class="form-group">
-                    <label class="sr-only" for="city">City</label>
-                    <input type="text" class="form-control" ng-model="uservals.city" name="city" placeholder="Your City" required>
-                </div>
-
 
                 <h3>Credentials</h3>
 
@@ -209,7 +212,7 @@
 
                 <div class="row">
                     <div class="form-group col-md-12">
-                        <h5>Sector: (Please select one)</h5>
+                        <h5>Sector (Please select one)</h5>
                         <div class="radio"> 
                             <label><input type="radio" ng-model="uservals.sector" value="G"> Governmental</label>
                         </div>
