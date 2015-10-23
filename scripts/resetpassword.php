@@ -7,7 +7,7 @@ require_once "send_email.php";
 // get user email
 $user_email = strip_tags($formvars->username);
 $fetp_id = UserInfo::getFETPid($user_email);
-$userinfo = UserInfo::getUserInfo($user_email);
+$userinfo = UserInfo::getUserInfobyEmail($user_email);
 
 // send email to reset password
 if ($fetp_id) {

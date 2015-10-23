@@ -329,21 +329,18 @@ class UserInfo
             return false;
     }
 
+    // sets fetp status to pending, approved, or unsubscribed.
+    // also sends email for pending and approved status.
     static function setUserStatus($approve_id, $status)
     {
         $db = getDB();
         $userinfo = UserInfo::getUserInfo($approve_id);
         if ($userinfo) {
-            $approve_email = $userinfo['email']; //$db->getOne("select email from maillist where maillist_id=$approve_id");
-            $approve_name = $userinfo['firstname']; // $db->getOne("select firstname from maillist where maillist_id=$approve_id");
-            $approve_countrycode = $userinfo['country']; //$db->getOne("select country from maillist where maillist_id=$approve_id");
+            $approve_email = $userinfo['email'];
+            $approve_name = $userinfo['firstname'];
+            $approve_countrycode = $userinfo['country'];
 
             if ($status == 'pending') {
-                //geocode user location
-                $address = $userinfo['city']. ', ' . $userinfo['state'] . ', ' . $userinfo['country'];
-                $position = Geocode::getLocationDetail('address', $address);
-                $lat = $position[0];
-                $lon = $position[1];
 
                 // copy maillist to new fetp if it does not exist and set fetp status to 'P'
                 $fetpemail = $db->getOne("select email from fetp where email='$approve_email'");
@@ -351,9 +348,12 @@ class UserInfo
                     $db->query("INSERT INTO fetp (email, countrycode, active, status, lat, lon)
                         VALUES ('$approve_email', '$approve_countrycode', 'N','P')");
                     $db->commit();
-                } else {
-                    $db->query("update fetp set status='P', countrycode= '$approve_countrycode', active='N', lat = '$lat', lon = '$lon'
-                                where email='$approve_email'");
+
+                    // geocode fetp
+                    UserInfo::geocodeFETP($approve_email);
+                }
+                else {
+                    $db->query("update fetp set status='P', active='N' where email='$approve_email'");
                     $db->commit();
                 }
                 $fetp_id = UserInfo::getFETPid($approve_email);
@@ -376,8 +376,31 @@ class UserInfo
                 $db->commit();
             }
         }
+
     }
 
+    // geocodes fetp based on location from maillist, and returns true if success or false if no info found in maillist.
+    static function geocodeFETP($email){
+        // get maillist info for fetp
+        $userinfo = UserInfo::getUserInfobyEmail($email);
+
+        if($userinfo) {
+            //geocode
+            $address = $userinfo['city'] . ', ' . $userinfo['state'] . ', ' . $userinfo['country'];
+            $position = Geocode::getLocationDetail('address', $address);
+            $lat = $position[0];
+            $lon = $position[1];
+
+            // update lat/lon
+            $db = getDB();
+            $db->query("update fetp set lat = '$lat', lon = '$lon' where email='$email'");
+            $db->commit();
+
+            return true;
+        }
+        else
+            return false;
+    }
 
 }
 ?>
