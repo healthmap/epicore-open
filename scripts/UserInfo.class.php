@@ -125,10 +125,10 @@ class UserInfo
 
         $db = getDB();
         if($filtertype == "radius") {
-            $q = $db->query("SELECT fetp_id FROM fetp WHERE lat > ? AND lat < ? AND lon > ? AND lon < ?", $filterval);
+            $q = $db->query("SELECT fetp_id FROM fetp WHERE active = 'Y' AND lat > ? AND lat < ? AND lon > ? AND lon < ?", $filterval);
         } else {
             $qmarks = join(",", array_fill(0, count($filterval), '?'));
-            $q = $db->query("SELECT fetp_id FROM fetp WHERE countrycode in ($qmarks)", $filterval);
+            $q = $db->query("SELECT fetp_id FROM fetp WHERE active = 'Y' AND countrycode in ($qmarks)", $filterval);
         }
         while($row = $q->fetchRow()) {
             $send_ids[] = $row['fetp_id'];
