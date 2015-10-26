@@ -24,6 +24,13 @@ if(is_numeric($authfetp['fetp_id']) && ($authfetp['fetp_id'] > 0) && ($username 
         if (!$fetpinfo['lat']){
             UserInfo::geocodeFETP($fetpinfo['email']);
         }
+
+        // set user ative for unsubsrcribed users
+        if (($fetpinfo['active'] == 'N') && ($fetpinfo['status'] == 'A')){
+            $uinfo = UserInfo::getUserInfobyEmail($fetpinfo['email']);
+            UserInfo::setUserStatus($uinfo['maillist_id'], 'approved');
+            $fetpinfo['active'] = 'Y';
+        }
     }
 }
 

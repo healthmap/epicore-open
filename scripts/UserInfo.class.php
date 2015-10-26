@@ -352,10 +352,10 @@ class UserInfo
                     // geocode fetp
                     UserInfo::geocodeFETP($approve_email);
                 }
-                else {
+                /*else {
                     $db->query("update fetp set status='P', active='N' where email='$approve_email'");
                     $db->commit();
-                }
+                }*/
                 $fetp_id = UserInfo::getFETPid($approve_email);
                 sendMail($approve_email, $approve_name, "EpiCore Application Decision", $status, $fetp_id);
 

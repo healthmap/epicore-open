@@ -2,6 +2,7 @@
 require_once "const.inc.php";
 require_once "AWSMail.class.php";
 require_once "send_email.php";
+require_once "UserInfo.class.php";
 
 // clean variables
 $formvars = json_decode(file_get_contents("php://input"));
@@ -26,8 +27,19 @@ if(!$user_id) {
     print json_encode(array('status' => 'failed', 'reason' => 'User could not be inserted'));
 } else {
     print json_encode(array('status' => 'success', 'uid' => $user_id, 'exists' => $exists));
-    $status = 'apply';
-    sendMail($pvals['email'], $pvals['firstname'],'EpiCore Application Received', $status, $user_id);
+
+    // send login/set password email to users that have taken the course
+    $fetpid = UserInfo::getFETPid($pvals['email']);
+    $fetpinfo = UserInfo::getFETP($fetpid);
+    if (($fetpinfo['active'] == 'N') && ($fetpinfo['status'] == 'A')){
+        $status = 'pending';
+        sendMail($pvals['email'], $pvals['firstname'],'EpiCore Application Decision', $status, $user_id);
+    }
+    else{ // send application received email to others
+        $status = 'apply';
+        sendMail($pvals['email'], $pvals['firstname'],'EpiCore Application Received', $status, $user_id);
+    }
+
 }
 
 ?>
