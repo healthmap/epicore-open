@@ -79,7 +79,7 @@ class UserInfo
             // first try the MOD user table.  If none, try the FETP user table.
             $uinfo = $db->getRow("SELECT user.*, organization.name AS orgname FROM user LEFT JOIN organization ON user.organization_id = organization.organization_id WHERE email = ?", array($email));
             if(!$uinfo['user_id']) {
-                $uinfo = $db->getRow("SELECT fetp_id, pword_hash, lat, lon, countrycode, active FROM fetp WHERE email = ?", array($email));
+                $uinfo = $db->getRow("SELECT fetp_id, pword_hash, lat, lon, countrycode, active, email FROM fetp WHERE email = ?", array($email));
                 $uinfo['username'] = "FETP ".$uinfo['fetp_id'];
             }
             if($uinfo['user_id'] || $uinfo['fetp_id']) {
@@ -345,7 +345,7 @@ class UserInfo
                 // copy maillist to new fetp if it does not exist and set fetp status to 'P'
                 $fetpemail = $db->getOne("select email from fetp where email='$approve_email'");
                 if (!$fetpemail) {
-                    $db->query("INSERT INTO fetp (email, countrycode, active, status, lat, lon)
+                    $db->query("INSERT INTO fetp (email, countrycode, active, status)
                         VALUES ('$approve_email', '$approve_countrycode', 'N','P')");
                     $db->commit();
 
