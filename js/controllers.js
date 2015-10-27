@@ -20,22 +20,28 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
     }
 
     $scope.signup = function(uservals, isValid) {
-        if(!isValid) {
+        console.log('test1');
+        if (!isValid){
+            $scope.signup_message = 'Form not complete. Please make sure all input boxes are filled out.';
             return false;
         }
-        console.log(uservals);
-        $http({ url: 'scripts/signup.php', method: "POST", data: uservals
-        }).success(function (data, status, headers, config) {
-            if(data['status'] == "success") {
-                if(data['exists'] == 1) {
-                    $scope.signup_message = 'Your email address is already in the applicant system.';
+        else {
+            console.log('test2');
+            $http({
+                url: 'scripts/signup.php', method: "POST", data: uservals
+            }).success(function (data, status, headers, config) {
+                if (data['status'] == "success") {
+                    console.log(data);
+                    if (data['exists'] == 1) {
+                        $scope.signup_message = 'Your email address is already in the applicant system.';
+                    } else {
+                        $location.path('/application_confirm');
+                    }
                 } else {
-                    $location.path('/application_confirm');
+                    $scope.signup_message = 'Sign-up failed.';
                 }
-            } else {
-                $scope.signup_message = 'Sign-up failed.';  
-            }
-        });
+            });
+        }
     }
 
     /* set some global variables for Tephinet integration */

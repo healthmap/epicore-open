@@ -28,7 +28,7 @@ if(is_numeric($authfetp['fetp_id']) && ($authfetp['fetp_id'] > 0) && ($username 
         // set user ative for unsubsrcribed users
         if (($fetpinfo['active'] == 'N') && ($fetpinfo['status'] == 'A')){
             $uinfo = UserInfo::getUserInfobyEmail($fetpinfo['email']);
-            UserInfo::setUserStatus($uinfo['maillist_id'], 'approved');
+            UserInfo::setUserStatus($uinfo['maillist_id'], 'preapproved');
             $fetpinfo['active'] = 'Y';
         }
     }

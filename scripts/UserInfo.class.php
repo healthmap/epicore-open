@@ -360,16 +360,17 @@ class UserInfo
                 sendMail($approve_email, $approve_name, "EpiCore Application Decision", $status, $fetp_id);
 
             }
-            else if ($status == 'approved') {
+            else if (($status == 'approved') ||($status == 'preapproved')) {
                 $db->query("update fetp set active='Y', status='A' where email='$approve_email'");
                 $db->commit();
                 $approve_date = date('Y-m-d H:i:s', strtotime('now'));
                 $db->query("update maillist set approve_date='$approve_date' where maillist_id=$approve_id");
                 $db->commit();
 
-                $fetp_id = UserInfo::getFETPid($approve_email);
-                sendMail($approve_email, $approve_name, "EpiCore Course Completed", $status, $fetp_id);
-
+                if ($status == 'approved') {
+                    $fetp_id = UserInfo::getFETPid($approve_email);
+                    sendMail($approve_email, $approve_name, "EpiCore Course Completed", $status, $fetp_id);
+                }
             }
             else if ($status == 'unsubscribed') {
                 $db->query("update fetp set active='N' where email='$approve_email'");

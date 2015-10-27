@@ -6,7 +6,7 @@
             <p>Please fill out the fields below to apply to become a member of EpiCore. <br>
                 Select members will shape the future of disease detection by helping to find outbreaks faster.</p>
 
-            <form name="applyForm" role="form">
+            <form name="applyForm" role="form" id="applyForm">
 
                 <h3>Contact Information</h3>
 
@@ -22,7 +22,7 @@
 
                 <div class="form-group">
                     <label class="sr-only" for="email">Primary Email</label>
-                    <input type="email" class="form-control" ng-model="uservals.email" name="email" placeholder="Your Email" required>
+                    <input type="text" class="form-control" ng-model="uservals.email" name="email" placeholder="Your Email" required>
                 </div>
 
                 <div class="form-group">
@@ -51,33 +51,33 @@
                     <div class="form-group col-md-12">
 
                     <div class="checkbox"> 
-                        <label> <input type="checkbox" ng-model="uservals.bachelors"> Bachelor’s Degree (BA, BS, AB, etc.)
-                        <input type="text" class="form-control" ng-model = "uservals.bachelors_type" ng-if="uservals.bachelors" required> </label>
+                        <label> <input type="checkbox" ng-model="uservals.bachelors"> Bachelor’s Degree (BA, BS, AB, etc.)</label>
+                        <label><input type="text" class="form-control" ng-model = "uservals.bachelors_type" ng-if="uservals.bachelors" required></label>
                     </div>
 
                     <div class="checkbox"> 
-                        <label> <input type="checkbox" ng-model="uservals.gradstudent"> Current Graduate Student 
-                        <input type="text" class="form-control" ng-model = "uservals.gradstudent_type" ng-if="uservals.gradstudent" required> </label>
+                        <label> <input type="checkbox" ng-model="uservals.gradstudent"> Current Graduate Student </label>
+                        <label><input type="text" class="form-control" ng-model = "uservals.gradstudent_type" ng-if="uservals.gradstudent" required></label>
                     </div>
 
                     <div class="checkbox"> 
-                        <label> <input type="checkbox" ng-model="uservals.masters"> Master’s Degree (MS, MPH, MA, etc.)
-                        <input type="text" class="form-control" ng-model = "uservals.masters_type" ng-if="uservals.masters" required> </label>
+                        <label> <input type="checkbox" ng-model="uservals.masters"> Master’s Degree (MS, MPH, MA, etc.)</label>
+                        <label><input type="text" class="form-control" ng-model = "uservals.masters_type" ng-if="uservals.masters" required></label>
                     </div>
 
                     <div class="checkbox"> 
-                        <label> <input type="checkbox" ng-model="uservals.medical"> Medical or Veterinary School Degree (MD, DVM, etc.)
-                        <input type="text" class="form-control" ng-model = "uservals.medical_type" ng-if="uservals.medical" required> </label>
+                        <label> <input type="checkbox" ng-model="uservals.medical"> Medical or Veterinary School Degree (MD, DVM, etc.)</label>
+                        <label><input type="text" class="form-control" ng-model = "uservals.medical_type" ng-if="uservals.medical" required></label>
                     </div>
 
                     <div class="checkbox"> 
-                        <label> <input type="checkbox" ng-model="uservals.otherdegree"> Other Professional School Degree (JD, DDC, etc.)
-                        <input type="text" class="form-control" ng-model = "uservals.otherdegree_type" ng-if="uservals.otherdegree" required> </label>
+                        <label> <input type="checkbox" ng-model="uservals.otherdegree"> Other Professional School Degree (JD, DDC, etc.) </label>
+                        <label><input type="text" class="form-control" ng-model = "uservals.otherdegree_type" ng-if="uservals.otherdegree" required></label>
                     </div>
 
                     <div class="checkbox"> 
-                        <label> <input type="checkbox" ng-model="uservals.doctorate"> Doctorate Degree (PhD, DrPH, ScD, etc.)
-                        <input type="text" class="form-control" ng-model = "uservals.doctorate_type" ng-if="uservals.doctorate" required> </label>
+                        <label> <input type="checkbox" ng-model="uservals.doctorate"> Doctorate Degree (PhD, DrPH, ScD, etc.) </label>
+                        <label><input type="text" class="form-control" ng-model = "uservals.doctorate_type" ng-if="uservals.doctorate" required></label>
                     </div>
 
                     </div>
@@ -158,7 +158,7 @@
 
                     <div class="checkbox">
                         <label> <input type="checkbox" name="other_knowledge" ng-model="uservals.other_knowledge"> Other</label>
-                        <input type="text" class="form-control" ng-model="uservals.other_knowledge_type" ng-if="uservals.other_knowledge" required>
+                        <label><input type="text" class="form-control" ng-model="uservals.other_knowledge_type" ng-if="uservals.other_knowledge" required></label>
                     </div>
 
                     </div>
@@ -258,15 +258,15 @@
                 </div>
 
                 <div class="form-group col-xs-12">
-<!--
-<ul>
+
+<!--<ul>
   <li ng-repeat="(key, errors) in applyForm.$error track by $index"> <strong>{{ key }}</strong> errors
     <ul>
       <li ng-repeat="e in errors">{{ e.$name }} has an error: <strong>{{ key }}</strong>.</li>
     </ul>
   </li>
-</ul>
--->
+</ul>-->
+
                     <button type="submit" ng-click="signup(uservals, applyForm.$valid)" class="submit btn btn-default col-xs-12">Submit</button>
                 </div>
             </form>
@@ -276,3 +276,7 @@
         </div><!--col-->
     </div><!--row-->
 </div><!--container-->
+<script>
+        // form validation
+        $("#applyForm").validate();
+</script>

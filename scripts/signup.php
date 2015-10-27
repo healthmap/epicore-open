@@ -23,23 +23,23 @@ $user_info = UserInfo::applyMaillist($pvals);
 $exists = $user_info[0];
 $user_id = $user_info[1];
 
-if(!$user_id) {
+/*if(!$user_id) {
     print json_encode(array('status' => 'failed', 'reason' => 'User could not be inserted'));
-} else {
+} else {*/
     print json_encode(array('status' => 'success', 'uid' => $user_id, 'exists' => $exists));
 
     // send login/set password email to users that have taken the course
     $fetpid = UserInfo::getFETPid($pvals['email']);
     $fetpinfo = UserInfo::getFETP($fetpid);
     if (($fetpinfo['active'] == 'N') && ($fetpinfo['status'] == 'A')){
-        $status = 'pending';
-        sendMail($pvals['email'], $pvals['firstname'],'EpiCore Application Decision', $status, $user_id);
+        $status = 'preapproved';
+        sendMail($pvals['email'], $pvals['firstname'],'EpiCore Approval', $status, $user_id);
     }
     else{ // send application received email to others
         $status = 'apply';
         sendMail($pvals['email'], $pvals['firstname'],'EpiCore Application Received', $status, $user_id);
     }
 
-}
+//}
 
 ?>

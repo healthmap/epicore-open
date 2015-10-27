@@ -26,6 +26,17 @@ function sendMail($email, $name, $subject, $status, $user_id){
         $link = 'https://www.epicore.org/~jandre/epicore/#/setpassword?t=' . $ticket;
         $emailtemplate = file_get_contents("../emailtemplates/pending.html");
     }
+    else if($status =='preapproved'){
+        // create ticket for fetp
+        $fetp_id = UserInfo::getFETPid($email);
+        $db = getDB();
+        $ticket = md5(uniqid(rand(), true));
+        $db->query("INSERT INTO ticket (fetp_id, val, exp) VALUES (?, ?, ?)", array($fetp_id, $ticket, date('Y-m-d H:i:s', strtotime("+30 days"))));
+        $db->commit();
+        //get email template and set link
+        $link = 'https://www.epicore.org/~jandre/epicore/#/setpassword?t=' . $ticket;
+        $emailtemplate = file_get_contents("../emailtemplates/preapprove.html");
+    }
     else if ($status == 'approved'){
         //get email template and set link
         $link = 'https://www.epicore.org/~jandre/epicore/#/login';
