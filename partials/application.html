@@ -245,6 +245,40 @@
 
                 <div class="row">
                     <div class="form-group col-md-12">
+                        <h5>How did you hear about us?</h5>
+                        <div class="checkbox">
+                            <label> <input type="checkbox" ng-model="uservals.googlesearch">Googlesearch</label>
+                        </div>
+
+                        <div class="checkbox">
+                            <label> <input type="checkbox" ng-model="uservals.epicoreworkshop">Attended an EpiCore workshop</label>
+                            <label><input type="text" class="form-control" ng-model = "uservals.epicoreworkshop_type" ng-if="uservals.epicoreworkshop" placeholder="explain when and where" required></label>
+                        </div>
+
+                        <div class="checkbox">
+                            <label> <input type="checkbox" ng-model="uservals.conference">At a conference</label>
+                            <label><input type="text" class="form-control" ng-model = "uservals.conference_type" ng-if="uservals.conference" placeholder="explain when and where" required></label>
+                        </div>
+
+                        <div class="checkbox">
+                            <label> <input type="checkbox" ng-model="uservals.promoemail">I received a promotional email</label>
+                            <label><input type="text" class="form-control" ng-model = "uservals.promoemail_type" ng-if="uservals.promoemail" placeholder="explain from which entity" required></label>
+                        </div>
+
+                        <div class="checkbox">
+                            <label> <input type="checkbox" ng-model="uservals.nextgenu">NextGenU</label>
+                        </div>
+
+                        <div class="checkbox">
+                            <label> <input type="checkbox" ng-model="uservals.othercontact">Other</label>
+                            <label><input type="text" class="form-control" ng-model = "uservals.othercontact_type" ng-if="uservals.othercontact" placeholder="explain where" required></label>
+                        </div>
+
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="form-group col-md-12">
                     <h5>I attest that all the information provided in this form is true and accurate to the best of my abilities.</h5>
                         <label class="checkbox-inline"> <input type="checkbox" name="info_accurate" ng-model="uservals.info_accurate" required> Agree</label>
                     </div>

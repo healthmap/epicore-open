@@ -258,7 +258,7 @@ class UserInfo
 
     }
 
-    // returns user id if a new user is inserted, or true if the user already exists and was updated
+    // returns user id of a new inserted user and existing=0, or id of existing user and existing=1
     static function applyMaillist($pvals)
     {
         $db = getDB();
@@ -402,6 +402,5 @@ class UserInfo
         else
             return false;
     }
-
 }
 ?>

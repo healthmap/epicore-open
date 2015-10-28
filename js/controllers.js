@@ -20,18 +20,15 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
     }
 
     $scope.signup = function(uservals, isValid) {
-        console.log('test1');
         if (!isValid){
             $scope.signup_message = 'Form not complete. Please make sure all input boxes are filled out.';
             return false;
         }
         else {
-            console.log('test2');
             $http({
                 url: 'scripts/signup.php', method: "POST", data: uservals
             }).success(function (data, status, headers, config) {
                 if (data['status'] == "success") {
-                    console.log(data);
                     if (data['exists'] == 1) {
                         $scope.signup_message = 'Your email address is already in the applicant system.';
                     } else {

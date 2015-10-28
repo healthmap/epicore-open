@@ -84,6 +84,14 @@
                                 <span ng_show="applicant.health_exp == 'D'">5-10 years</span>
                                 <span ng_show="applicant.health_exp == 'E'">More than 10 years</span>
                             </li>
+                            <li><b>Heard about Epicore by:</b>
+                                <span ng-show="applicant.googlesearch">Googlesearch, </span>
+                                <span ng-show="applicant.conference">Conference: {{applicant.conference_type}}, </span>
+                                <span ng-show="applicant.nextgenu">NextGenU, </span>
+                                <span ng-show="applicant.epicoreworkshop">Workshop: {{applicant.epicoreworkshop_type}}, </span>
+                                <span ng-show="applicant.promoemail">Email: {{applicant.promoemail_type}}, </span>
+                                <span ng-show="applicant.othercontact">Other: {{applicant.othercontact_type}}</span>
+                            </li>
                         </ul>
                     </td>
                     <td>{{applicant.country}}</td>
