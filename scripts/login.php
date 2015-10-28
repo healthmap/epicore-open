@@ -10,7 +10,7 @@ if(isset($formvars->ticket_id) && $formvars->usertype == "fetp") { // ticket sys
     $uinfo = UserInfo::authenticateFetp(strip_tags($formvars->ticket_id));
     $user_id = $uinfo['fetp_id'];
     // for now set the fetp_id as the username
-    $uinfo['username'] = "FETP $user_id";
+    $uinfo['username'] = "Member $user_id";
 } else {
     if($formvars->ticket_id) { // ticket system for mods coming from dashboard
         $uinfo = UserInfo::authenticateMod($formvars->ticket_id);

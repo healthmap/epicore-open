@@ -5,12 +5,12 @@
             <form>
             <div class="intro">
                 <h4>Request for Information</h4>
-                <p><strong>Step 2 of 3:</strong> Filter FETP recipients by country or bounding box
-                (currently <strong><span style="color:#c00">{{numFetps}}</span></strong> FETPs)</p>
+                <p><strong>Step 2 of 3:</strong> Filter Member recipients by country or bounding box
+                (currently <strong><span style="color:#c00">{{numFetps}}</span></strong> Members)</p>
             </div>
 
             <div class="form-group col-xs-12">
-            <div class="radio"><label><input type="radio" name="filtertype" ng-value="radius" ng-click="recalcUsers(formData, 'radius');" ng-checked="radiussel">FETPs within the bounding box (surrounding the event location '{{formData.location}}'):</label></div>
+            <div class="radio"><label><input type="radio" name="filtertype" ng-value="radius" ng-click="recalcUsers(formData, 'radius');" ng-checked="radiussel">Members within the bounding box (surrounding the event location '{{formData.location}}'):</label></div>
     <ui-gmap-google-map center="map.center" zoom="map.zoom" draggable="true" options="options" bounds="map.bounds">
         <ui-gmap-rectangle bounds="rectangle.bounds" stroke="rectangle.stroke" visible="true" fill="rectangle.fill" fit="false" editable="true" draggable="true" events="eventsRectangle">
         </ui-gmap-rectangle>
@@ -24,7 +24,7 @@
 
             <div class="form-group col-xs-12">
             <br>
-            <div class="radio"><label><input type="radio" name="filtertype" ng-value="country" ng-click="recalcUsers(formData, 'country');" ng-checked="!radiussel">FETPs in the country or countries:<br><span class="smtext">* hold down ctrl key (windows) or command key (mac) to select multiple</span></label></div>
+            <div class="radio"><label><input type="radio" name="filtertype" ng-value="country" ng-click="recalcUsers(formData, 'country');" ng-checked="!radiussel">Members in the country or countries:<br><span class="smtext">* hold down ctrl key (windows) or command key (mac) to select multiple</span></label></div>
                     <select class="form-control" ng-change="recalcUsers(formData, 'country');" ng-model="formData.countries" id="countries" name="countries" multiple>
 <!-- 
 <option value="AF">Afghanistan</option> 
@@ -300,7 +300,7 @@
 -->
 
             <div class="form-group col-xs-12">
-                <p>Sending request to <strong><span style="color:#c00">{{numFetps}}</span></strong> FETPs</p>
+                <p>Sending request to <strong><span style="color:#c00">{{numFetps}}</span></strong> Members</p>
                 <button type="submit" ng-click="buildEmailText(formData)" ng-disabled="submitDisabled" class="submit btn btn-default col-xs-12">Step 3: Review & Send <i class="fa fa-arrow-circle-right"></i></button>
             </div>
             
