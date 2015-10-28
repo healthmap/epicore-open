@@ -96,7 +96,7 @@
                 </div>
 
                 <!-- FETP Response Messages (Moderator or FETP)-->
-                <div  class="show-message-fetp" ng-if="(history_item.type == 'FETP Response') && (userInfo.uid || (history_item.fetp_id == userInfo.fetp_id))">
+                <div  class="show-message-fetp" ng-if="(history_item.type == 'Member Response') && (userInfo.uid || (history_item.fetp_id == userInfo.fetp_id))">
                      <a href="" ng-click="isCollapsed = !isCollapsed"><i class="fa fa-plus-square-o"></i></a>
                     <span ng-if="userInfo.uid">
                         {{history_item.type}}, {{history_item.date}}

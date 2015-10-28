@@ -432,7 +432,7 @@ class EventInfo
             if ($response['response_permission'] == "0")
                 $messages[$i]['text'] = $response_permission_lu["0"];;
             $messages[$i]['permission'] = $response['response_permission'];
-            $messages[$i]['type'] = 'FETP Response';
+            $messages[$i]['type'] = 'Member Response';
             $messages[$i]['response_id'] = $response['response_id'];
             $messages[$i]['fetp_id'] = $response['responder_id'];
             $messages[$i]['person_id'] = $event_person['user_id'];
@@ -470,11 +470,11 @@ class EventInfo
                 $mtype = $message['type'];
                 if ($message['type'] == 'Event Notes')
                     $mtype = $message['status'] . " event request";
-                if ($message['type'] == 'FETP Response')
+                if ($message['type'] == 'Member Response')
                     $mtype = "Your response";
                 if ($message['type'] == 'Moderator Response') {
                     if ($message['fetp_count'] > 1)
-                        $mtype = "Followup sent to all FETPs";
+                        $mtype = "Followup sent to all Members";
                     else
                         $mtype = "Followup sent to you";
                 }
@@ -501,9 +501,9 @@ class EventInfo
                     $mtype = $message['person'] . " ". $message['status'] . " event request";
                 if ($message['type'] == 'Moderator Response'){
                     if ($message['fetp_count'] > 1)
-                        $mtype = $message['person'] . " sent followup to all FETPs";
+                        $mtype = $message['person'] . " sent followup to all Members";
                     else
-                        $mtype = $message['person'] . " sent followup to 1 FETP";
+                        $mtype = $message['person'] . " sent followup to 1 Member";
                 }
                 $mtext = $message['text'];
                 $mdatetime = $message['date'];
