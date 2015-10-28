@@ -51,7 +51,7 @@ class EventInfo
 
         // add event request to messages
         $size = count($messages);
-        $messages[$size]['date'] = date('n/j/Y H:i', strtotime($event_info['create_date']));
+        $messages[$size]['date'] = date('j-M-Y H:i', strtotime($event_info['create_date']));
         $messages[$size]['text'] = nl2br($event_info['description']);
         $messages[$size]['personalized_text'] = $event_info['personalized_text'];
         $messages[$size]['type'] = 'Event Request';
@@ -267,8 +267,8 @@ class EventInfo
         if(empty($response_info)) {
             return 0;
         }
-        $response_info['response_date'] = date('n/j/Y H:i', strtotime($response_info['response_date'])); 
-        $response_info['event_date'] = date('n/j/Y H:i', strtotime($response_info['create_date'])); 
+        $response_info['response_date'] = date('n/j/Y H:i', strtotime($response_info['response_date']));
+        $response_info['event_date'] = date('n/j/Y H:i', strtotime($response_info['create_date']));
         // response perm of 0 means the FETP responded that he/she had no response
         if($response_info['response_permission'] == 0) {
             $response_info['response_permission'] = '';
@@ -307,7 +307,8 @@ class EventInfo
 
             unset($num_followups);
             while($gfrow = $get_followups->fetchRow()) {
-                $num_followups[$gfrow['followup_id']][] = $gfrow['send_date'];
+                $send_date = date('j-M-Y H:i', strtotime($gfrow['send_date']));  // Day Month Year
+                $num_followups[$gfrow['followup_id']][] = $send_date;
             }
 
             foreach($num_followups as $followupnum => $datearr) {
@@ -425,7 +426,7 @@ class EventInfo
             $messages[$i]['person'] = $followup_person['name'];
             $messages[$i]['person_id'] = $followup_person['user_id'];
             $messages[$i]['organization_id'] = $followup_person['organization_id'];
-            $messages[$i++]['date'] = date('n/j/Y H:i', strtotime($followup['action_date']));
+            $messages[$i++]['date'] = date('j-M-Y H:i', strtotime($followup['action_date']));
         }
         foreach ($responses as $response ){
             $messages[$i]['text'] = nl2br($response['response']);
@@ -437,7 +438,7 @@ class EventInfo
             $messages[$i]['fetp_id'] = $response['responder_id'];
             $messages[$i]['person_id'] = $event_person['user_id'];
             $messages[$i]['organization_id'] = $event_person['organization_id'];
-            $messages[$i++]['date'] = date('n/j/Y H:i', strtotime($response['response_date']));
+            $messages[$i++]['date'] = date('j-M-Y H:i', strtotime($response['response_date']));
         }
         foreach ($enotes as $enote){
             $status_person =$this->getStatusPerson($event_id, $enote['requester_id']);
@@ -445,7 +446,7 @@ class EventInfo
             $messages[$i]['text'] = nl2br($enote['note']);
             $messages[$i]['status'] = $status_lu[$enote['status']];
             $messages[$i]['type'] = 'Event Notes';
-            $messages[$i]['date'] = date('n/j/Y H:i', strtotime($enote['action_date']));
+            $messages[$i]['date'] = date('j-M-Y H:i', strtotime($enote['action_date']));
             $messages[$i]['person'] = $status_person['name'];
             $messages[$i]['person_id'] = $status_person['user_id'];
             $messages[$i++]['organization_id'] = $status_person['organization_id'];
@@ -479,7 +480,8 @@ class EventInfo
                         $mtype = "Followup sent to you";
                 }
                 $mtext = $message['text'];
-                $mdatetime = $message['date'];
+                //$mdatetime = $message['date'];
+                $mdatetime = date('j-M-Y H:i', strtotime($message['date']));
                 $history .= "<div style='background-color: #fff;padding:24px;color:#666;border: 1px solid #B4FEF7;'>";
                 $history .= "<p style='margin:12px 0;'>$mtype,  $mdatetime <br></p>$mtext</div><br>";
             }
@@ -506,7 +508,8 @@ class EventInfo
                         $mtype = $message['person'] . " sent followup to 1 Member";
                 }
                 $mtext = $message['text'];
-                $mdatetime = $message['date'];
+                //$mdatetime = $message['date'];
+                $mdatetime = date('j-M-Y H:i', strtotime($message['date']));
                 $history .= "<div style='background-color: #fff;padding:24px;color:#666;border: 1px solid #B4FEF7;'>";
                 $history .= "<p style='margin:12px 0;'>$mtype,  $mdatetime <br></p>$mtext</div><br>";
             }
