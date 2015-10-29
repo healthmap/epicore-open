@@ -42,6 +42,10 @@ function sendMail($email, $name, $subject, $status, $user_id){
         $link = 'https://www.epicore.org/#/login';
         $emailtemplate = file_get_contents("../emailtemplates/approve.html");
     }
+    else if ($status == 'declined'){
+        //get email template
+        $emailtemplate = file_get_contents("../emailtemplates/decline.html");
+    }
     else if($status =='resetpassword'){
         // create ticket for fetp
         $fetp_id = UserInfo::getFETPid($email);

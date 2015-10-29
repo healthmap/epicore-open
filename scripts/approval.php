@@ -26,29 +26,33 @@ UserInfo::setUserStatus($approve_id, $approve_status);
 $applicants = $db->getAll("select * from maillist");
 $fetps = $db->getAll("select * from fetp");
 
-// set all applicants status based on fetp active/status fields
-// fetp-active  fetp-status     app-status
-// null         null            Inactive
-// 'N'          P               Pending         Pending training
-// 'Y'          A               Approved        Finished training
-// 'N'          A               Unsubscribed    Unsubscribed
+// set all applicants status based on applicant approvestatus and fetp active/status fields
+// approvestatus    fetp-active  fetp-status     app-status
+// 'N'              x               x             Declined
+//  not N           null            null          Inactive
+//  not N           'N'              P            Pending         Pending training
+//  not N           'Y'              A            Approved        Finished training
+//  not N           'N'              A            Unsubscribed    Unsubscribed
 $applicant_status = [];
 $n = 0;
 foreach ($applicants as $applicant){
     $applicants[$n]['status'] = 'Inactive';
-    foreach($fetps as $fetp){
-        if (($fetp['email'] == $applicant['email']) && ($fetp['active'] == 'N') && ($fetp['status'] == "A")){
-            $applicants[$n]['status'] = "Unsubscribed";
-        }
-        else if (($fetp['email'] == $applicant['email']) && ($fetp['active'] == 'N') && ($fetp['status'] == "P")){
-            $applicants[$n]['status'] = "Pending";
-        }
-        else if (($fetp['email'] == $applicant['email']) && ($fetp['active'] == 'Y') && ($fetp['status'] == "A")){
-            $applicants[$n]['status'] = "Approved";
-        }
-        $applicants[$n]['apply_date'] = date('j-M-Y', strtotime($applicants[$n]['apply_date']));
-        $applicants[$n]['approve_date'] = date('j-M-Y', strtotime($applicants[$n]['approve_date']));
+    if ($applicants[$n]['approvestatus'] == 'N'){
+        $applicants[$n]['status'] = 'Declined';
     }
+    else {
+        foreach ($fetps as $fetp) {
+            if (($fetp['email'] == $applicant['email']) && ($fetp['active'] == 'N') && ($fetp['status'] == "A")) {
+                $applicants[$n]['status'] = "Unsubscribed";
+            } else if (($fetp['email'] == $applicant['email']) && ($fetp['active'] == 'N') && ($fetp['status'] == "P")) {
+                $applicants[$n]['status'] = "Pending";
+            } else if (($fetp['email'] == $applicant['email']) && ($fetp['active'] == 'Y') && ($fetp['status'] == "A")) {
+                $applicants[$n]['status'] = "Approved";
+            }
+        }
+    }
+    $applicants[$n]['apply_date'] = date('j-M-Y', strtotime($applicants[$n]['apply_date']));
+    $applicants[$n]['approve_date'] = date('j-M-Y', strtotime($applicants[$n]['approve_date']));
     $n++;
 }
 

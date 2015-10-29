@@ -352,10 +352,13 @@ class UserInfo
                     // geocode fetp
                     UserInfo::geocodeFETP($approve_email);
                 }
-                /*else {
-                    $db->query("update fetp set status='P', active='N' where email='$approve_email'");
+                else{
+                    $db->query("update fetp set active='N', status='P' where email='$approve_email'");
                     $db->commit();
-                }*/
+                }
+
+                $db->query("update maillist set approvestatus='Y' where maillist_id=$approve_id");
+                $db->commit();
                 $fetp_id = UserInfo::getFETPid($approve_email);
                 sendMail($approve_email, $approve_name, "EpiCore Application Decision", $status, $fetp_id);
 
@@ -364,7 +367,7 @@ class UserInfo
                 $db->query("update fetp set active='Y', status='A' where email='$approve_email'");
                 $db->commit();
                 $approve_date = date('Y-m-d H:i:s', strtotime('now'));
-                $db->query("update maillist set approve_date='$approve_date' where maillist_id=$approve_id");
+                $db->query("update maillist set approve_date='$approve_date', approvestatus='Y' where maillist_id=$approve_id");
                 $db->commit();
 
                 if ($status == 'approved') {
@@ -372,10 +375,27 @@ class UserInfo
                     sendMail($approve_email, $approve_name, "EpiCore Course Completed", $status, $fetp_id);
                 }
             }
+            else if ($status == 'declined') {
+
+                $db->query("update maillist set approvestatus='N' where maillist_id=$approve_id");
+                $db->commit();
+
+                $fetp_id = UserInfo::getFETPid($approve_email);
+                if ($fetp_id) {
+                    $db->query("update fetp set active='N' where email='$approve_email'");
+                    $db->commit();
+                }
+
+                sendMail($approve_email, $approve_name, "EpiCore Application Decision", $status, $approve_id);
+
+            }
             else if ($status == 'unsubscribed') {
+                $db->query("update maillist set approvestatus='Y' where maillist_id=$approve_id");
+                $db->commit();
                 $db->query("update fetp set active='N' where email='$approve_email'");
                 $db->commit();
             }
+
         }
 
     }
