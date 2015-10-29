@@ -46,6 +46,8 @@ foreach ($applicants as $applicant){
         else if (($fetp['email'] == $applicant['email']) && ($fetp['active'] == 'Y') && ($fetp['status'] == "A")){
             $applicants[$n]['status'] = "Approved";
         }
+        $applicants[$n]['apply_date'] = date('j-M-Y', strtotime($applicants[$n]['apply_date']));
+        $applicants[$n]['approve_date'] = date('j-M-Y', strtotime($applicants[$n]['approve_date']));
     }
     $n++;
 }
