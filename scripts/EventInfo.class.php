@@ -26,7 +26,7 @@ class EventInfo
         $event_info['org_requester_id'] = self::getOrganizationOfRequester();
         $event_info['html_description'] = str_replace("\n", "<br>", $event_info['description']);
         $event_info['num_responses'] = $this->db->getOne("SELECT count(*) FROM response WHERE event_id = ?", array($this->id));
-        $event_info['create_date'] = date('n/j/Y H:i', strtotime($event_info['create_date']));
+        $event_info['create_date'] = date('j-M-Y H:i', strtotime($event_info['create_date']));
         $event_info['person'] = $event_person['name'];
         return $event_info;
     }
