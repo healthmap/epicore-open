@@ -49,6 +49,9 @@ foreach ($applicants as $applicant){
             } else if (($fetp['email'] == $applicant['email']) && ($fetp['active'] == 'Y') && ($fetp['status'] == "A")) {
                 $applicants[$n]['status'] = "Approved";
             }
+            if ($fetp['email'] == $applicant['email']) {
+                $applicants[$n]['pword'] = $fetp['pword_hash'] ? 'Yes' : null;
+            }
         }
     }
     $applicants[$n]['apply_date'] = date('j-M-Y', strtotime($applicants[$n]['apply_date']));
