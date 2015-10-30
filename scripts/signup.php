@@ -33,7 +33,7 @@ if($exists) {
     $fetpinfo = UserInfo::getFETP($fetpid);
     if (($fetpinfo['active'] == 'N') && ($fetpinfo['status'] == 'A')){
         $status = 'preapproved';
-        sendMail($pvals['email'], $pvals['firstname'],'EpiCore Approval', $status, $fetpid);
+        sendMail($pvals['email'], $pvals['firstname'],'EpiCore Project Official Launch', $status, $fetpid);
     }
     else{ // send application received email to others
         $status = 'apply';
