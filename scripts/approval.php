@@ -38,7 +38,7 @@ $n = 0;
 foreach ($applicants as $applicant){
     $applicants[$n]['status'] = 'Inactive';
     if ($applicants[$n]['approvestatus'] == 'N'){
-        $applicants[$n]['status'] = 'Declined';
+        $applicants[$n]['status'] = 'Denied';
     }
     else {
         foreach ($fetps as $fetp) {

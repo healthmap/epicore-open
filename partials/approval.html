@@ -6,12 +6,12 @@
         <div class="col-xs-12 wbg" ng-controller="approvalController" ng-init="predicate='apply_date'; reverse=!reverse">
             <h3>Application Approval</h3>
             Set the user status by clicking on one of the status buttons on the right side of the table below.  The user will be notified by email when their status is set
-            to Accepted, Declined, or Approved.<br><br>
+            to Accepted, Denied, or Approved.<br><br>
 
             <b>Accepted</b>: user has been accepted to take the training course.<br>
             <b>Approved</b>: user has taken the training course and is approved to use the Epicore platform.<br>
             <b>Inactive</b>: user has not been accepted to take the training course yet, and does not have access to the Epicore platform.<br>
-            <b>Declined</b>: user was declined, and does not have access to the Epicore platform.<br>
+            <b>Denied</b>: user was denied, and does not have access to the Epicore platform.<br>
             <b>Unsubscribed</b>: user was de-activated and does not have access to the Epicore platform.<br><br>
 
             Click on a table heading to sort the table or filter the table using the search tool.<br><br>
@@ -104,7 +104,7 @@
                     <td>
                         <button  type="button" ng-click="approveApplicant(applicant.maillist_id,'pending')">Accepted</button>
                         <button  type="button" ng-click="approveApplicant(applicant.maillist_id,'approved')">Approved</button>
-                        <button  type="button" ng-click="approveApplicant(applicant.maillist_id,'declined')">Declined</button>
+                        <button  type="button" ng-click="approveApplicant(applicant.maillist_id,'declined')">Denied</button>
                         <button  type="button" ng-click="approveApplicant(applicant.maillist_id,'unsubscribed')">Unsubscribed</button>
                     </td>
 
