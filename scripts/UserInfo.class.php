@@ -372,7 +372,7 @@ class UserInfo
 
                 if ($status == 'approved') {
                     $fetp_id = UserInfo::getFETPid($approve_email);
-                    sendMail($approve_email, $approve_name, "EpiCore Course Completed", $status, $fetp_id);
+                    sendMail($approve_email, $approve_name, "Congratulations!", $status, $fetp_id);
                 }
             }
             else if ($status == 'declined') {
