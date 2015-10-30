@@ -224,7 +224,7 @@ class EventInfo
         // standard event substitutions
         $emailtext = str_replace("[PERSONALIZED_TEXT]", $personalized_text, $emailtext);
         $emailtext = str_replace("[TITLE]", $event_info['title'], $emailtext);
-        $emailtext = str_replace("[EVENT_DATE]", $event_info['create_date'], $emailtext);
+        $emailtext = str_replace("[EVENT_DATE]", date('j-M-Y H:i', strtotime($event_info['create_date'])), $emailtext);
         $emailtext = str_replace("[DESCRIPTION]", $description, $emailtext);
         $emailtext = str_replace("[LOCATION]", $event_info['location'], $emailtext);
         $emailtext = str_replace("[EPICORE_URL]", EPICORE_URL, $emailtext);
