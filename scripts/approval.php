@@ -42,14 +42,15 @@ foreach ($applicants as $applicant){
     }
     else {
         foreach ($fetps as $fetp) {
-            if (($fetp['email'] == $applicant['email']) && ($fetp['active'] == 'N') && ($fetp['status'] == "A")) {
+            $emailmatch = (strcasecmp($fetp['email'], $applicant['email']) == 0);
+            if ($emailmatch && ($fetp['active'] == 'N') && ($fetp['status'] == "A")) {
                 $applicants[$n]['status'] = "Unsubscribed";
-            } else if (($fetp['email'] == $applicant['email']) && ($fetp['active'] == 'N') && ($fetp['status'] == "P")) {
+            } else if ($emailmatch && ($fetp['active'] == 'N') && ($fetp['status'] == "P")) {
                 $applicants[$n]['status'] = "Pending";
-            } else if (($fetp['email'] == $applicant['email']) && ($fetp['active'] == 'Y') && ($fetp['status'] == "A")) {
+            } else if ($emailmatch && ($fetp['active'] == 'Y') && ($fetp['status'] == "A")) {
                 $applicants[$n]['status'] = "Approved";
             }
-            if ($fetp['email'] == $applicant['email']) {
+            if ($emailmatch) {
                 $applicants[$n]['pword'] = $fetp['pword_hash'] ? 'Yes' : null;
             }
         }
