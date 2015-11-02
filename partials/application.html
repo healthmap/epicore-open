@@ -169,15 +169,15 @@
                     <h5>Have you successfully completed a field epidemiology training program? </h5>
                         <label class="radio-inline"> <input type="radio" ng-model="uservals.training" value="1" ng-required="!uservals.training"> Yes</label>
                         <label class="radio-inline"> <input type="radio" ng-model="uservals.training" value="0" ng-required="!uservals.training"> No</label>
-                        <input type="text" class="form-control" name="training" ng-model = "uservals.fetp_training" ng-if="uservals.training" placeholder="What FETP program and where?" required>
+                        <input type="text" class="form-control" name="training" ng-model = "uservals.fetp_training" ng-if="uservals.training" placeholder="What FETP program and where?" ng-required="uservals.training">
                     </div>
                 </div>
 
                 <div class="row" ng-show="uservals.training">
                     <div class="form-group col-md-12">
                     <h5>Would you like to receive the TEPHINET newsletter?</h5>
-                        <label class="radio-inline"> <input type="radio" ng-model="uservals.tephinet_news" value="1" ng-required="!uservals.tephinet_news" > Yes</label>
-                        <label class="radio-inline"> <input type="radio" ng-model="uservals.tephinet_news" value="0" ng-required="!uservals.tephinet_news" > No</label>
+                        <label class="radio-inline"> <input type="radio" ng-model="uservals.tephinet_news" value="1" > Yes</label>
+                        <label class="radio-inline"> <input type="radio" ng-model="uservals.tephinet_news" value="0" > No</label>
                     </div>
                 </div>
 
@@ -293,13 +293,15 @@
 
                 <div class="form-group col-xs-12">
 
-<!--<ul>
+<!--
+<ul>
   <li ng-repeat="(key, errors) in applyForm.$error track by $index"> <strong>{{ key }}</strong> errors
     <ul>
       <li ng-repeat="e in errors">{{ e.$name }} has an error: <strong>{{ key }}</strong>.</li>
     </ul>
   </li>
-</ul>-->
+</ul>
+-->
 
                     <button type="submit" ng-click="signup(uservals, applyForm.$valid)" class="submit btn btn-default col-xs-12">Submit</button>
                 </div>
