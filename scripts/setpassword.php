@@ -15,7 +15,8 @@ $username = strip_tags($formvars->username);
 $password = strip_tags($formvars->password);
 
 // set password if username matches authenticated email
-if(is_numeric($authfetp['fetp_id']) && ($authfetp['fetp_id'] > 0) && ($username == $fetpinfo['email'])) {
+$emailmatch = (strcasecmp($fetpinfo['email'], $username) == 0);
+if(is_numeric($authfetp['fetp_id']) && ($authfetp['fetp_id'] > 0) && $emailmatch) {
     $password_set = UserInfo::setFETPpassword($authfetp['fetp_id'],$password);
     if ($password_set){
         $status = 'success';
