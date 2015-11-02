@@ -167,8 +167,8 @@
                 <div class="row">
                     <div class="form-group col-md-12">
                     <h5>Have you successfully completed a field epidemiology training program? </h5>
-                        <label class="radio-inline"> <input type="radio" ng-model="uservals.training" value="1"> Yes</label>
-                        <label class="radio-inline"> <input type="radio" ng-model="uservals.training" value="0"> No</label>
+                        <label class="radio-inline"> <input type="radio" ng-model="uservals.training" value="1" ng-required="!uservals.training"> Yes</label>
+                        <label class="radio-inline"> <input type="radio" ng-model="uservals.training" value="0" ng-required="!uservals.training"> No</label>
                         <input type="text" class="form-control" name="training" ng-model = "uservals.fetp_training" ng-if="uservals.training" placeholder="What FETP program and where?" required>
                     </div>
                 </div>
@@ -176,8 +176,8 @@
                 <div class="row" ng-show="uservals.training">
                     <div class="form-group col-md-12">
                     <h5>Would you like to receive the TEPHINET newsletter?</h5>
-                        <label class="radio-inline"> <input type="radio" ng-model="uservals.tephinet_news" value="1"> Yes</label>
-                        <label class="radio-inline"> <input type="radio" ng-model="uservals.tephinet_news" value="0"> No</label>
+                        <label class="radio-inline"> <input type="radio" ng-model="uservals.tephinet_news" value="1" ng-required="!uservals.tephinet_news" > Yes</label>
+                        <label class="radio-inline"> <input type="radio" ng-model="uservals.tephinet_news" value="0" ng-required="!uservals.tephinet_news" > No</label>
                     </div>
                 </div>
 
@@ -185,19 +185,19 @@
                     <div class="form-group col-md-12">
                     <h5>How many years of experience do you have in human and/or animal health?</h5>
                     <div class="radio">
-                        <label> <input type="radio" ng-model="uservals.health_exp" value="A"> No experience</label>
+                        <label> <input type="radio" ng-model="uservals.health_exp" value="A" ng-required="!uservals.health_exp" > No experience</label>
                     </div>
                     <div class="radio">
-                        <label> <input type="radio" ng-model="uservals.health_exp" value="B"> Less than 3 years</label>
+                        <label> <input type="radio" ng-model="uservals.health_exp" value="B" ng-required="!uservals.health_exp" > Less than 3 years</label>
                     </div>
                     <div class="radio">
-                        <label> <input type="radio" ng-model="uservals.health_exp" value="C"> 3-5 years</label>
+                        <label> <input type="radio" ng-model="uservals.health_exp" value="C" ng-required="!uservals.health_exp" > 3-5 years</label>
                     </div>
                     <div class="radio">
-                        <label> <input type="radio" ng-model="uservals.health_exp" value="D"> 5-10 years</label>
+                        <label> <input type="radio" ng-model="uservals.health_exp" value="D" ng-required="!uservals.health_exp" > 5-10 years</label>
                     </div>
                     <div class="radio">
-                        <label> <input type="radio" ng-model="uservals.health_exp" value="E"> More than 10 years</label>
+                        <label> <input type="radio" ng-model="uservals.health_exp" value="E" ng-required="!uservals.health_exp" > More than 10 years</label>
                     </div>
                     </div>
                 </div>
@@ -214,13 +214,13 @@
                     <div class="form-group col-md-12">
                         <h5>Sector (Please select one)</h5>
                         <div class="radio"> 
-                            <label><input type="radio" ng-model="uservals.sector" value="G"> Governmental</label>
+                            <label><input type="radio" ng-model="uservals.sector" value="G" ng-required="!uservals.sector" > Governmental</label>
                         </div>
                         <div class="radio"> 
-                            <label> <input type="radio" ng-model="uservals.sector" value="N"> Nongovernmental / Nonprofit </label>
+                            <label> <input type="radio" ng-model="uservals.sector" value="N" ng-required="!uservals.sector" > Nongovernmental / Nonprofit </label>
                         </div>
                         <div class="radio"> 
-                            <label> <input type="radio" ng-model="uservals.sector" value="P"> Private / For-Profit</label>
+                            <label> <input type="radio" ng-model="uservals.sector" value="P" ng-required="!uservals.sector" > Private / For-Profit</label>
                         </div>
                     </div>
                 </div>
