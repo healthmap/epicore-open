@@ -35,7 +35,7 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
                         $location.path('/application_confirm');
                     }
                 } else {
-                    $scope.signup_message = 'Sign-up failed.';
+                    $scope.signup_message = 'Your email address is already in the applicant system.';
                 }
             });
         }
