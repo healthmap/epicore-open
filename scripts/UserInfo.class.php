@@ -146,7 +146,13 @@ class UserInfo
     {
         // pull all fetp_id/emails from our db
         $db = getDB();
-        $email_hash = $db->getAssoc("SELECT fetp_id, email FROM fetp WHERE active='Y' AND email is NOT NULL");
+
+        if (is_array($fetp_ids) && !empty($fetp_ids)) {
+            $qmarks = join(",", array_fill(0, count($fetp_ids), '?'));
+            $email_hash = $db->getAssoc("SELECT fetp_id, email FROM fetp WHERE active='Y' AND email is NOT NULL AND fetp_id in ($qmarks)", FALSE, $fetp_ids);
+        } else {
+            $email_hash = $db->getAssoc("SELECT fetp_id, email FROM fetp WHERE active='Y' AND email is NOT NULL");
+        }
         
         // call to tephinet webservice
         require_once "GetURL.class.php";
