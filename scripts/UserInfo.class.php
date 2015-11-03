@@ -142,7 +142,8 @@ class UserInfo
 
     /* 
     if it's a non-Tephinet FETP, get the email from epicore db, otherwise
-    use the webservice on tephinet to get email addresses for an array of ids 
+    use the webservice on tephinet to get email addresses for an array of ids
+    REMOVED TEPHINET FOR NOW
     */
     static function getFETPEmails($fetp_ids)
     {
@@ -152,12 +153,13 @@ class UserInfo
         if (is_array($fetp_ids) && !empty($fetp_ids)) {
             $qmarks = join(",", array_fill(0, count($fetp_ids), '?'));
             $email_hash = $db->getAssoc("SELECT fetp_id, email FROM fetp WHERE active='Y' AND email is NOT NULL AND fetp_id in ($qmarks)", FALSE, $fetp_ids);
+            return $email_hash;
         } else {
             $email_hash = $db->getAssoc("SELECT fetp_id, email FROM fetp WHERE active='Y' AND email is NOT NULL");
         }
         
         // call to tephinet webservice
-        require_once "GetURL.class.php";
+        /*require_once "GetURL.class.php";
         $url = TEPHINET_BASE . 'epicore/getemails';
         $gurl = GetURL::getInstance();
         $fields_string = 'consumer_key='.TEPHINET_CONSUMER_KEY;
@@ -173,7 +175,7 @@ class UserInfo
         $email_addresses = json_decode($result);
         foreach($email_addresses as $tephinet_obj) {
             $email_hash[$fetp_lu[$tephinet_obj->uid]] = $tephinet_obj->mail;
-        }
+        }*/
         return $email_hash;
     }
 
