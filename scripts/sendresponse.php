@@ -62,7 +62,7 @@ if(is_numeric($event_id)) {
 
     }
     $extra_headers['user_ids'] = $idlist;
-    AWSMail::mailfunc($tolist, "EPICORE FETP response", $emailtext, EMAIL_NOREPLY, $extra_headers);
+    AWSMail::mailfunc($tolist, "EPICORE Member response", $emailtext, EMAIL_NOREPLY, $extra_headers);
 
     $status = "success";
     $path = "success/2";

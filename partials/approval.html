@@ -3,36 +3,43 @@
 </div>
 
 <div class="container main">
-    <    class="row">
-        <div class="col-xs-12 wbg" ng-controller="approvalController" ng-init="predicate='person'">
+        <div class="col-xs-12 wbg" ng-controller="approvalController" ng-init="predicate='apply_date'; reverse=!reverse">
             <h3>Application Approval</h3>
             Set the user status by clicking on one of the status buttons on the right side of the table below.  The user will be notified by email when their status is set
-            to Pending or Approved.<br><br>
+            to Accepted, Denied, or Approved.<br><br>
 
-            <b>Pending</b>: user has applied and needs to take the training course.<br>
+            <b>Accepted</b>: user has been accepted to take the training course.<br>
             <b>Approved</b>: user has taken the training course and is approved to use the Epicore platform.<br>
-            <b>Unsubscribed</b>: user has taken course but is not active and does not have access to the Epicore platform.<br>
-            <b>Inactive</b>: user is inactive and does not have access to the Epicore platform.<br><br>
+            <b>Inactive</b>: user has not been accepted to take the training course yet, and does not have access to the Epicore platform.<br>
+            <b>Denied</b>: user was denied, and does not have access to the Epicore platform.<br>
+            <b>Unsubscribed</b>: user was de-activated and does not have access to the Epicore platform.<br><br>
 
-            Click on a table heading to sort the table and filter the table using the search tool.<br><br>
+            Click on a table heading to sort the table or filter the table using the search tool.<br><br>
             <i class="fa fa-search"></i> <input ng-model="query"> <br> <br>
             <table class='table table-hover table-bordered'>
                 <tr>
+                    <th>#</th>
+                    <th><a href="" ng-click="predicate = 'apply_date'; reverse=!reverse">Application Date</a></th>
+                    <th><a href="" ng-click="predicate = 'approve_date'; reverse=!reverse">Approval Date</a></th>
                     <th><a href="" ng-click="predicate = 'lastname'; reverse=!reverse">Name</a></th>
                     <th><a href="" ng-click="predicate = 'country'; reverse=!reverse">Country</a></th>
-                    <th><a href="" ng-click="predicate = 'city'; reverse=!reverse">City</a></th>
-                    <th><a href="" ng-click="predicate = 'status'; reverse=!reverse">Status</a></th>
-                    <th>Set Status</th>
+                    <th><a href="" ng-click="predicate = 'pword'; reverse=!reverse">Password<br> Set</a></th>
+                    <th><a href="" ng-click="predicate = 'status'; reverse=!reverse">User Status</a></th>
+                    <th>Set User Status</th>
                 </tr>
                 <tr ng-repeat="applicant in applicants | filter:query | orderBy:predicate:reverse" >
+                    <td>{{$index+1}}</td>
+                    <td>{{applicant.apply_date}}</td>
+                    <td>{{applicant.approve_date}}</td>
                     <td>{{applicant.firstname}} {{applicant.lastname}}
                         <a href="" ng-click="isCollapsed1 = !isCollapsed1"><i class="fa fa-plus-square-o"></i></a>
                         <ul ng-show="isCollapsed1" style="list-style-type: none">
-                            <li><b>application date:</b> {{applicant.apply_date}}</li>
-                            <li><b>approval date:</b> {{applicant.approve_date}}</li>
                             <li><b>email:</b> {{applicant.email}}</li>
+                            <li><b>City:</b> {{applicant.city}}</li>
+                            <li><b>State/Province:</b> {{applicant.state}}</li>
                             <li><b>Job tite:</b> {{applicant.job_title}}</li>
                             <li><b>Organization:</b> {{applicant.organization}}</li>
+
                             <li><b>Sector:</b>
                                 <span ng_show="applicant.sector == 'G'">Governmental</span>
                                 <span ng_show="applicant.sector == 'N'">Nongovernmental / Nonprofit </span>
@@ -82,21 +89,30 @@
                                 <span ng_show="applicant.health_exp == 'D'">5-10 years</span>
                                 <span ng_show="applicant.health_exp == 'E'">More than 10 years</span>
                             </li>
+                            <li><b>Heard about Epicore by:</b>
+                                <span ng-show="applicant.googlesearch">Googlesearch, </span>
+                                <span ng-show="applicant.conference">Conference: {{applicant.conference_type}}, </span>
+                                <span ng-show="applicant.nextgenu">NextGenU, </span>
+                                <span ng-show="applicant.epicoreworkshop">Workshop: {{applicant.epicoreworkshop_type}}, </span>
+                                <span ng-show="applicant.promoemail">Email: {{applicant.promoemail_type}}, </span>
+                                <span ng-show="applicant.othercontact">Other: {{applicant.othercontact_type}}</span>
+                            </li>
                         </ul>
                     </td>
                     <td>{{applicant.country}}</td>
-                    <td>{{applicant.city}}</td>
-                    <td>{{applicant.status}}</td>
+                    <td>{{applicant.pword}}</td>
                     <td>
-                        <button  type="button" ng-click="approveApplicant(applicant.maillist_id,'pending')">Pending</button>
+                        <span ng_show="applicant.status == 'Pending'">Accepted</span>
+                        <span ng_show="applicant.status != 'Pending'">{{applicant.status}}</span>
+                    </td>
+                    <td>
+                        <button  type="button" ng-click="approveApplicant(applicant.maillist_id,'pending')">Accepted</button>
                         <button  type="button" ng-click="approveApplicant(applicant.maillist_id,'approved')">Approved</button>
+                        <button  type="button" ng-click="approveApplicant(applicant.maillist_id,'declined')">Denied</button>
                         <button  type="button" ng-click="approveApplicant(applicant.maillist_id,'unsubscribed')">Unsubscribed</button>
-                        <button  type="button" ng-click="approveApplicant(applicant.maillist_id,'inactive')">Inactive</button>
                     </td>
 
                 </tr>
             </table>
-
-        </div><!--col-->
-    </div><!--row-->
+        </div><!--wbg-->
 </div><!--container-->

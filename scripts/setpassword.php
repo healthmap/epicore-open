@@ -4,23 +4,37 @@ $formvars = json_decode(file_get_contents("php://input"));
 require_once "UserInfo.class.php";
 $status = 'failed';
 
-// authenticate fetp
+// authenticate fetp and get info
 $ticket = strip_tags($formvars->ticket_id);
-$fetpinfo = UserInfo::authenticateFetp($ticket);
-$uinfo = UserInfo::getFETP($fetpinfo['fetp_id']);
-$uinfo['username'] = "FETP ". $fetpinfo['fetp_id'];
+$authfetp = UserInfo::authenticateFetp($ticket);
+$fetpinfo = UserInfo::getFETP($authfetp['fetp_id']);
+$fetpinfo['username'] = "FETP ". $authfetp['fetp_id'];
 
-// getpassword
+// get username/email and password
 $username = strip_tags($formvars->username);
 $password = strip_tags($formvars->password);
 
 // set password if username matches authenticated email
-if(is_numeric($fetpinfo['fetp_id']) && ($fetpinfo['fetp_id'] > 0) && ($username == $uinfo['email'])) {
-    $password_set = UserInfo::setFETPpassword($fetpinfo['fetp_id'],$password);
-    if ($password_set)
+$emailmatch = (strcasecmp($fetpinfo['email'], $username) == 0);
+if(is_numeric($authfetp['fetp_id']) && ($authfetp['fetp_id'] > 0) && $emailmatch) {
+    $password_set = UserInfo::setFETPpassword($authfetp['fetp_id'],$password);
+    if ($password_set){
         $status = 'success';
+
+        // geocode fetp if not already done
+        if (!$fetpinfo['lat']){
+            UserInfo::geocodeFETP($fetpinfo['email']);
+        }
+
+        // set user active for unsubsrcribed users
+        if (($fetpinfo['active'] == 'N') && ($fetpinfo['status'] == 'A')){
+            $uinfo = UserInfo::getUserInfobyEmail($fetpinfo['email']);
+            UserInfo::setUserStatus($uinfo['maillist_id'], 'preapproved');
+            $fetpinfo['active'] = 'Y';
+        }
+    }
 }
 
-print json_encode(array('status' => $status, 'uinfo' => $uinfo));
+print json_encode(array('status' => $status, 'uinfo' => $fetpinfo));
 
 ?>

@@ -3,7 +3,7 @@ angular.module('EpicoreApp.services', [])
         $rootScope.$on("$routeChangeStart", function (event, next, current) {
             var requesturl = $location.path();
             var urlarr = requesturl.split("/");
-            var nonauthpages = new Array('fetp', 'about', 'terms', 'mod', 'application', 'application_confirm', 'approval', 'login', 'setpassword');
+            var nonauthpages = new Array('fetp', 'about', 'terms', 'mod', 'application', 'application_confirm', 'approval', 'login', 'setpassword', 'resetpassword');
             // if user is not authenticated, make them go to homepage if on an auth-only page
             if(!authService.isAuthenticated() && nonauthpages.indexOf(urlarr[1]) == -1) {
                 if(urlarr[1] == "home") {

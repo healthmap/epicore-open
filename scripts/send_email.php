@@ -5,6 +5,7 @@
  */
 require_once "const.inc.php";
 require_once "AWSMail.class.php";
+require_once "db.function.php";
 
 function sendMail($email, $name, $subject, $status, $user_id){
 
@@ -22,13 +23,39 @@ function sendMail($email, $name, $subject, $status, $user_id){
         $db->query("INSERT INTO ticket (fetp_id, val, exp) VALUES (?, ?, ?)", array($fetp_id, $ticket, date('Y-m-d H:i:s', strtotime("+30 days"))));
         $db->commit();
         //get email template and set link
-        $link = 'https://www.epicore.org/~jandre/epicore/#/setpassword?t=' . $ticket;
+        $link = 'https://www.epicore.org/#/setpassword?t=' . $ticket;
         $emailtemplate = file_get_contents("../emailtemplates/pending.html");
+    }
+    else if($status =='preapproved'){
+        // create ticket for fetp
+        $fetp_id = UserInfo::getFETPid($email);
+        $db = getDB();
+        $ticket = md5(uniqid(rand(), true));
+        $db->query("INSERT INTO ticket (fetp_id, val, exp) VALUES (?, ?, ?)", array($fetp_id, $ticket, date('Y-m-d H:i:s', strtotime("+30 days"))));
+        $db->commit();
+        //get email template and set link
+        $link = 'https://www.epicore.org/#/setpassword?t=' . $ticket;
+        $emailtemplate = file_get_contents("../emailtemplates/preapprove.html");
     }
     else if ($status == 'approved'){
         //get email template and set link
-        $link = 'https://www.epicore.org/~jandre/epicore/#/login';
+        $link = 'https://www.epicore.org/#/login';
         $emailtemplate = file_get_contents("../emailtemplates/approve.html");
+    }
+    else if ($status == 'declined'){
+        //get email template
+        $emailtemplate = file_get_contents("../emailtemplates/decline.html");
+    }
+    else if($status =='resetpassword'){
+        // create ticket for fetp
+        $fetp_id = UserInfo::getFETPid($email);
+        $db = getDB();
+        $ticket = md5(uniqid(rand(), true));
+        $db->query("INSERT INTO ticket (fetp_id, val, exp) VALUES (?, ?, ?)", array($fetp_id, $ticket, date('Y-m-d H:i:s', strtotime("+30 days"))));
+        $db->commit();
+        //get email template and set link
+        $link = 'https://www.epicore.org/#/setpassword?t=' . $ticket;
+        $emailtemplate = file_get_contents("../emailtemplates/resetpassword.html");
     }
     else{
         return false;

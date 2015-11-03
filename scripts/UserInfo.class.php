@@ -9,7 +9,9 @@ require_once 'db.function.php';
 require_once 'const.inc.php';
 require_once 'PlaceInfo.class.php';
 require_once 'pbkdf2.php';
-//require_once 'cache.function.php';
+require_once "AWSMail.class.php";
+require_once "send_email.php";
+require_once "Geocode.php";
 
 class UserInfo
 {
@@ -39,13 +41,13 @@ class UserInfo
                 $requests[$row['event_id']]['title'] = $row['title'];
                 $requests[$row['event_id']]['location'] = $row['location'];
                 // make send date an array, because there may be multiple
-                $requests[$row['event_id']]['send_dates'][] = date('n/j/Y H:i', strtotime($row['send_date']));
+                $requests[$row['event_id']]['send_dates'][] = date('j-M-Y H:i', strtotime($row['send_date']));
                 
                 // get the FETPs responses to that event
                 $respq = $this->db->query("SELECT response_id, response_date FROM response WHERE responder_id = ? AND event_id = ? ORDER BY response_date DESC", array($this->id, $row['event_id']));
                 $response_dates = [];
                 while($resprow = $respq->fetchRow()) {
-                    array_push($response_dates, date('n/j/Y H:i', strtotime($resprow['response_date'])));
+                    array_push($response_dates, date('j-M-Y H:i', strtotime($resprow['response_date'])));
                     //$requests[$row['event_id']]['response_dates'][$resprow['response_id']] = date('n/j/Y H:i', strtotime($resprow['response_date']));
                 }
                 $requests[$row['event_id']]['response_dates'] = array_unique($response_dates);
@@ -77,8 +79,8 @@ class UserInfo
             // first try the MOD user table.  If none, try the FETP user table.
             $uinfo = $db->getRow("SELECT user.*, organization.name AS orgname FROM user LEFT JOIN organization ON user.organization_id = organization.organization_id WHERE email = ?", array($email));
             if(!$uinfo['user_id']) {
-                $uinfo = $db->getRow("SELECT fetp_id, pword_hash, lat, lon, countrycode, active FROM fetp WHERE email = ?", array($email));
-                $uinfo['username'] = "FETP ".$uinfo['fetp_id'];
+                $uinfo = $db->getRow("SELECT fetp_id, pword_hash, lat, lon, countrycode, active, email FROM fetp WHERE email = ?", array($email));
+                $uinfo['username'] = "Member ".$uinfo['fetp_id'];
             }
             if($uinfo['user_id'] || $uinfo['fetp_id']) {
                 $resp = validate_password($dbdata['password'], $uinfo['pword_hash']);
@@ -123,10 +125,10 @@ class UserInfo
 
         $db = getDB();
         if($filtertype == "radius") {
-            $q = $db->query("SELECT fetp_id FROM fetp WHERE lat > ? AND lat < ? AND lon > ? AND lon < ?", $filterval);
+            $q = $db->query("SELECT fetp_id FROM fetp WHERE active = 'Y' AND lat > ? AND lat < ? AND lon > ? AND lon < ?", $filterval);
         } else {
             $qmarks = join(",", array_fill(0, count($filterval), '?'));
-            $q = $db->query("SELECT fetp_id FROM fetp WHERE countrycode in ($qmarks)", $filterval);
+            $q = $db->query("SELECT fetp_id FROM fetp WHERE active = 'Y' AND countrycode in ($qmarks)", $filterval);
         }
         while($row = $q->fetchRow()) {
             $send_ids[] = $row['fetp_id'];
@@ -262,7 +264,7 @@ class UserInfo
 
     }
 
-    // returns user id if a new user is inserted, or true if the user already exists and was updated
+    // returns user id of a new inserted user and existing=0, or id of existing user and existing=1
     static function applyMaillist($pvals)
     {
         $db = getDB();
@@ -308,12 +310,123 @@ class UserInfo
     static function getFETP($fetp_id){
         $db = getDB();
         $fetpinfo = $db->getRow("SELECT * FROM fetp WHERE fetp_id='$fetp_id'");
-        if ($fetp_id)
+        if ($fetpinfo)
             return $fetpinfo;
         else
             return false;
 
     }
 
+    static function getUserInfobyEmail($email){
+        $db = getDB();
+        $userinfo = $db->getRow("SELECT * FROM maillist WHERE email='$email'");
+        if ($userinfo)
+            return $userinfo;
+        else
+            return false;
+    }
+
+    static function getUserInfo($uid){
+        $db = getDB();
+        $userinfo = $db->getRow("SELECT * FROM maillist WHERE maillist_id='$uid'");
+        if ($userinfo)
+            return $userinfo;
+        else
+            return false;
+    }
+
+    // sets fetp status to pending, approved, or unsubscribed.
+    // also sends email for pending and approved status.
+    static function setUserStatus($approve_id, $status)
+    {
+        $db = getDB();
+        $userinfo = UserInfo::getUserInfo($approve_id);
+        if ($userinfo) {
+            $approve_email = $userinfo['email'];
+            $approve_name = $userinfo['firstname'];
+            $approve_countrycode = $userinfo['country'];
+
+            if ($status == 'pending') {
+
+                // copy maillist to new fetp if it does not exist and set fetp status to 'P'
+                $fetpemail = $db->getOne("select email from fetp where email='$approve_email'");
+                if (!$fetpemail) {
+                    $db->query("INSERT INTO fetp (email, countrycode, active, status)
+                        VALUES ('$approve_email', '$approve_countrycode', 'N','P')");
+                    $db->commit();
+
+                    // geocode fetp
+                    UserInfo::geocodeFETP($approve_email);
+                }
+                else{
+                    $db->query("update fetp set active='N', status='P' where email='$approve_email'");
+                    $db->commit();
+                }
+
+                $db->query("update maillist set approvestatus='Y' where maillist_id=$approve_id");
+                $db->commit();
+                $fetp_id = UserInfo::getFETPid($approve_email);
+                sendMail($approve_email, $approve_name, "EpiCore Application Decision", $status, $fetp_id);
+
+            }
+            else if (($status == 'approved') ||($status == 'preapproved')) {
+                $db->query("update fetp set active='Y', status='A' where email='$approve_email'");
+                $db->commit();
+                $approve_date = date('Y-m-d H:i:s', strtotime('now'));
+                $db->query("update maillist set approve_date='$approve_date', approvestatus='Y' where maillist_id=$approve_id");
+                $db->commit();
+
+                if ($status == 'approved') {
+                    $fetp_id = UserInfo::getFETPid($approve_email);
+                    sendMail($approve_email, $approve_name, "Congratulations!", $status, $fetp_id);
+                }
+            }
+            else if ($status == 'declined') {
+
+                $db->query("update maillist set approvestatus='N' where maillist_id=$approve_id");
+                $db->commit();
+
+                $fetp_id = UserInfo::getFETPid($approve_email);
+                if ($fetp_id) {
+                    $db->query("update fetp set active='N' where email='$approve_email'");
+                    $db->commit();
+                }
+
+                sendMail($approve_email, $approve_name, "EpiCore Application Decision", $status, $approve_id);
+
+            }
+            else if ($status == 'unsubscribed') {
+                $db->query("update maillist set approvestatus='Y' where maillist_id=$approve_id");
+                $db->commit();
+                $db->query("update fetp set active='N' where email='$approve_email'");
+                $db->commit();
+            }
+
+        }
+
+    }
+
+    // geocodes fetp based on location from maillist, and returns true if success or false if no info found in maillist.
+    static function geocodeFETP($email){
+        // get maillist info for fetp
+        $userinfo = UserInfo::getUserInfobyEmail($email);
+
+        if($userinfo) {
+            //geocode
+            $address = $userinfo['city'] . ', ' . $userinfo['state'] . ', ' . $userinfo['country'];
+            $position = Geocode::getLocationDetail('address', $address);
+            $lat = $position[0];
+            $lon = $position[1];
+
+            // update lat/lon
+            $db = getDB();
+            $db->query("update fetp set lat = '$lat', lon = '$lon' where email='$email'");
+            $db->commit();
+
+            return true;
+        }
+        else
+            return false;
+    }
 }
 ?>

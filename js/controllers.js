@@ -20,22 +20,25 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
     }
 
     $scope.signup = function(uservals, isValid) {
-        if(!isValid) {
+        if (!isValid){
+            $scope.signup_message = 'Form not complete. Please make sure all input boxes are filled out.';
             return false;
         }
-        console.log(uservals);
-        $http({ url: 'scripts/signup.php', method: "POST", data: uservals
-        }).success(function (data, status, headers, config) {
-            if(data['status'] == "success") {
-                if(data['exists'] == 1) {
-                    $scope.signup_message = 'Your email address is already in the applicant system.';
+        else {
+            $http({
+                url: 'scripts/signup.php', method: "POST", data: uservals
+            }).success(function (data, status, headers, config) {
+                if (data['status'] == "success") {
+                    if (data['exists'] == 1) {
+                        $scope.signup_message = 'Your email address is already in the applicant system.';
+                    } else {
+                        $location.path('/application_confirm');
+                    }
                 } else {
-                    $location.path('/application_confirm');
+                    $scope.signup_message = 'Your email address is already in the applicant system.';
                 }
-            } else {
-                $scope.signup_message = 'Sign-up failed.';  
-            }
-        });
+            });
+        }
     }
 
     /* set some global variables for Tephinet integration */
@@ -120,7 +123,6 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
                     url: 'scripts/setpassword.php', method: "POST", data: formData
                 }).success(function (data, status, headers, config) {
                     if (data['status'] == "success") {
-                        console.log(data);
                         var isActive = typeof(data['uinfo']['active']) != "undefined" ? data['uinfo']['active'] : 'Y';
                         $cookieStore.put('epiUserInfo', {
                             'uid': data['uinfo']['user_id'],
@@ -141,6 +143,35 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
                         }
                         $scope.isRouteLoading = false;
                         $location.path(redirpath);
+                    } else {
+                        $scope.isRouteLoading = false;
+                        $rootScope.error_message = 'Invalid email address';
+                        $route.reload();
+                    }
+                }).error(function (data, status, headers, config) {
+                    $scope.isRouteLoading = false;
+                    console.log(status);
+                });
+
+
+            }
+        }
+
+        /* Reset password */
+        $scope.resetPassword = function(formData) {
+            if (!$scope.setpwForm.$valid){
+                $scope.isRouteLoading = false;
+                $rootScope.error_message = 'Invalid email address';
+                return false;
+            }
+            else {
+                $http({
+                    url: 'scripts/resetpassword.php', method: "POST", data: formData
+                }).success(function (data, status, headers, config) {
+                    if (data['status'] == "success") {
+                        $scope.isRouteLoading = false;
+                        $rootScope.error_message = 'Please check your email for instructions to reset your password.';
+                        $route.reload();
                     } else {
                         $scope.isRouteLoading = false;
                         $rootScope.error_message = 'Invalid email address';

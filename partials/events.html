@@ -18,7 +18,7 @@
                     <th><a href="" ng-click="predicate = 'title'; reverse=!reverse">Title</a></th>
                     <th><a href="" ng-click="predicate = 'person'; reverse=!reverse">Moderator</a></th>
                     <th><a href="" ng-click="predicate = 'location'; reverse=!reverse">Location</a></th>
-                    <th>Requests Sent<br>Date (# FETP recipients)</th>
+                    <th>Requests Sent Date<br> (# recipients)</th>
                     <th># Responses</th>
                 </tr>
                 <tr><th colspan="6"><a href="" ng-click="isCollapsed1 = !isCollapsed1"><i class="fa fa-plus-square-o"></i></a> Initiated by you</th></tr>
@@ -27,7 +27,7 @@
                     <td>{{event.person}}</td>
                     <td>{{event.location}}</td>
                     <td>
-                    <span ng-repeat="followup in event.num_followups">
+                    <span ng-repeat="followup in event.num_followups" >
                         {{followup.date}} ({{followup.num}}) <br>
                     </span>
                     </td>
@@ -73,7 +73,7 @@
                 <tr class="black_bg">
                     <th><a href="" ng-click="predicate = 'title'; reverse=!reverse">Title</a></th>
                     <th><a href="" ng-click="predicate = 'location'; reverse=!reverse">Location</a></th>
-                    <th>Date Sent To You</th>
+                    <th>Date Sent</th>
                     <th>Response Date</th>
                 </tr>
                 <tr ng-repeat="event in eventsList | filter:query | orderBy:predicate:reverse">
