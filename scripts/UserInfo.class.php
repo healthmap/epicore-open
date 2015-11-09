@@ -256,7 +256,7 @@ class UserInfo
             $key_vals = join(",", array_keys($pvals));
             $qmarks = join(",", array_fill(0, count($pvals), '?'));
             $qvals = array_values($pvals);
-            $db->query("INSERT INTO maillist ($key_vals) VALUES ($qmarks)", $qvals);
+            $db->query("INSERT IGNORE INTO maillist ($key_vals) VALUES ($qmarks)", $qvals);
             $user_id = $db->getOne("SELECT LAST_INSERT_ID()");
             $db->commit();
             return $user_id;
@@ -280,7 +280,7 @@ class UserInfo
             $qmarks = join(",", array_fill(0, count($pvals), '?'));
             $qvals = array_values($pvals);
             $applydate = date('Y-m-d H:i:s', strtotime('now'));
-            $db->query("INSERT INTO maillist ($key_vals) VALUES ($qmarks)", $qvals);
+            $db->query("INSERT IGNORE INTO maillist ($key_vals) VALUES ($qmarks)", $qvals);
             $user_id = $db->getOne("SELECT LAST_INSERT_ID()");
             $db->commit();
         }
