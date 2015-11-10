@@ -5,6 +5,7 @@
  *
  * Sets user status and sends email.
  * Returns all users info.
+ * Also saves data in a csv file.
  *
  */
 require_once "const.inc.php";
@@ -177,6 +178,12 @@ foreach($applicants as $applicant){
         $user['Heard about Epicore by'] .= 'Email: ' . $applicant['promoemail_type']. ', ';
     if ($applicant['othercontact'])
         $user['Heard about Epicore by'] .= 'Other: ' . $applicant['othercontact_type']. ', ';
+    // user course type
+    $user['Course Type'] = '';
+    if ($applicant['online_course'])
+        $user['Course Type'] = 'online';
+    elseif ($applicant['inperson_course'])
+        $user['Course Type'] = 'inperson';
     //user status
     $user['User Status'] = $applicant['status'] == 'Pending' ? 'Accepted' : $applicant['status'] ;
 

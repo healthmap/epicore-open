@@ -430,5 +430,11 @@ class UserInfo
         else
             return false;
     }
+
+    static function setCourseType($approve_id, $online, $inperson){
+        $db = getDB();
+        $db->query("update maillist set online_course='$online', inperson_course='$inperson' where maillist_id='$approve_id'");
+        $db->commit();
+    }
 }
 ?>

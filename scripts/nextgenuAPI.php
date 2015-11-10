@@ -28,12 +28,21 @@ foreach ($nextgenu_list as $email){
 foreach ($email_list as $approve_email) {
     print("$approve_email\n");
 
+    // get user info
     $fetp_id = UserInfo::getFETPid($approve_email);
     $fetpinfo = UserInfo::getFETP($fetp_id);
     $userinfo = UserInfo::getUserInfobyEmail($approve_email);
     $approve_id = $userinfo['maillist_id'];
 
+    // set user status approved if user exists and status is pending/accepted
     if ($approve_id && ($fetpinfo['status'] == 'P')) {
         UserInfo::setUserStatus($approve_id, 'approved');
+    }
+
+    // set user has taken online course
+    if ($approve_id){
+        $online = true;
+        $inperson = false;
+        UserInfo::setCourseType($approve_id, $online, $inperson);
     }
 }

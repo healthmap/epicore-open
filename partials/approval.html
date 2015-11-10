@@ -23,9 +23,10 @@
                     <th width="5%">#</th>
                     <th width="10%"><a href="" ng-click="predicate = 'apply_date'; reverse=!reverse">Application Date</a></th>
                     <th width="10%"><a href="" ng-click="predicate = 'approve_date'; reverse=!reverse">Approval Date</a></th>
-                    <th width="30%"><a href="" ng-click="predicate = 'lastname'; reverse=!reverse">Name</a></th>
+                    <th width="25%"><a href="" ng-click="predicate = 'lastname'; reverse=!reverse">Name</a></th>
                     <th width="5%"><a href="" ng-click="predicate = 'country'; reverse=!reverse">Country</a></th>
                     <th width="5%"><a href="" ng-click="predicate = 'pword'; reverse=!reverse">Pword<br> Set</a></th>
+                    <th width="5%"><a href="" ng-click="predicate = 'status'; reverse=!reverse">Course Type</a></th>
                     <th width="5%"><a href="" ng-click="predicate = 'status'; reverse=!reverse">User Status</a></th>
                     <th width="15%">Accept or Approve</th>
                     <th width="15%">Deny or Unsubscribe</th>
@@ -104,6 +105,10 @@
                     </td>
                     <td>{{applicant.country}}</td>
                     <td>{{applicant.pword}}</td>
+                    <td>
+                        <span ng-show="applicant.online_course">Online</span>
+                        <span ng-show="applicant.inperson_course">Inperson</span>
+                    </td>
                     <td>
                         <span ng_show="applicant.status == 'Pending'">Accepted</span>
                         <span ng_show="applicant.status != 'Pending'">{{applicant.status}}</span>
