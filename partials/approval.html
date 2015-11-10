@@ -14,6 +14,8 @@
             <b>Denied</b>: user was denied, and does not have access to the Epicore platform.<br>
             <b>Unsubscribed</b>: user was de-activated and does not have access to the Epicore platform.<br><br>
 
+            <a href="data/approval.csv" class="bxitnlink">Download approval csv file <i class="fa fa-download"></i></a>
+            <br><br>
             Click on a table heading to sort the table or filter the table using the search tool.<br><br>
             <i class="fa fa-search"></i> <input ng-model="query"> <br> <br>
             <table class='table table-hover table-bordered' style="font-size: small">
@@ -62,21 +64,21 @@
 
                             <li><b>Universities:</b> {{applicant.universities}}</li>
                             <li><b>Basic Knowledge:</b>
-                                <span ng-show="applicant.clinical_med_adult">Clinical Medicine – Adult</span>
-                                <span ng-show="applicant.clinical_med_pediatric">Clinical Medicine – Pediatric</span>
-                                <span ng-show="applicant.clinical_med_vet">Clinical Medicine – Vet</span>
-                                <span ng-show="applicant.research">Research</span>
-                                <span ng-show="applicant.microbiology">microbiology</span>
-                                <span ng-show="applicant.virology">virology</span>
-                                <span ng-show="applicant.parasitology">parasitology</span>
-                                <span ng-show="applicant.vaccinology">vaccinology</span>
-                                <span ng-show="applicant.epidemiology">epidemiology</span>
-                                <span ng-show="applicant.biotechnology">biotechnology</span>
-                                <span ng-show="applicant.pharmacy">pharmacy</span>
-                                <span ng-show="applicant.publichealth">public health</span>
-                                <span ng-show="applicant.disease_surv">disease surveillance</span>
-                                <span ng-show="applicant.informatics">informatics</span>
-                                <span ng-show="applicant.biostatistics">biostatistics</span>
+                                <span ng-show="applicant.clinical_med_adult">Clinical Medicine – Adult, </span>
+                                <span ng-show="applicant.clinical_med_pediatric">Clinical Medicine – Pediatric, </span>
+                                <span ng-show="applicant.clinical_med_vet">Clinical Medicine – Vet, </span>
+                                <span ng-show="applicant.research">Research, </span>
+                                <span ng-show="applicant.microbiology">microbiology, </span>
+                                <span ng-show="applicant.virology">virology, </span>
+                                <span ng-show="applicant.parasitology">parasitology, </span>
+                                <span ng-show="applicant.vaccinology">vaccinology, </span>
+                                <span ng-show="applicant.epidemiology">epidemiology, </span>
+                                <span ng-show="applicant.biotechnology">biotechnology, </span>
+                                <span ng-show="applicant.pharmacy">pharmacy, </span>
+                                <span ng-show="applicant.publichealth">public health, </span>
+                                <span ng-show="applicant.disease_surv">disease surveillance, </span>
+                                <span ng-show="applicant.informatics">informatics, </span>
+                                <span ng-show="applicant.biostatistics">biostatistics, </span>
                                 <span ng-show="applicant.other_knowledge">{{applicant.other_knowledge_type}}</span>
                             </li>
                             <li><b>FETP Training:</b>

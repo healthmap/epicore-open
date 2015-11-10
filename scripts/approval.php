@@ -62,3 +62,130 @@ foreach ($applicants as $applicant){
 
 // return all applicants
 print json_encode($applicants);
+
+
+// save applicants to a csv
+$fp = fopen('../data/approval.csv', 'w');
+$user = array();
+//fputcsv($fp, array_keys($applicants[0]));   // save keys as header values
+$n=0;
+foreach($applicants as $applicant){
+    $user['Application Date'] = $applicant['apply_date'];
+    $user['Approval Date'] = $applicant['approve_date'];
+    $user['Name'] = $applicant['firstname'] . ' ' . $applicant['lastname'];
+    $user['email'] = $applicant['email'];
+    $user['City'] = $applicant['city'];
+    $user['State/Province'] = $applicant['state'];
+    $user['Country'] = $applicant['country'];
+    $user['Job Title'] = $applicant['job_title'];
+    $user['Organization'] = $applicant['organization'];
+    //Sector
+    $user['Sector'] = '';
+    if ($applicant['sector'] == 'G')
+        $user['Sector'] = 'Governmental';
+    elseif ($applicant['sector'] == 'N')
+        $user['Sector'] = 'Non-governmental/Nonprofit';
+    elseif ($applicant['sector'] == 'P')
+        $user['Sector'] = 'Private';
+    // Organization Category
+    $user['Organization Category'] = '';
+    if ($applicant['health_org_university'])
+        $user['Organization Category'] = 'University or any academic or research institution';
+    elseif ($applicant['health_org_doh'])
+        $user['Organization Category'] = 'Ministry / Department of Health';
+    elseif ($applicant['health_org_clinic'])
+        $user['Organization Category'] = 'Medical clinic';
+    elseif ($applicant['health_org_other'])
+        $user['Organization Category'] = 'Other health-related organizations';
+
+    //Degrees
+    $user['Degrees'] = '';
+    if ($applicant['bachelors_type'])
+        $user['Degrees'] = $applicant['bachelors_type'] . ', ';
+    if ($applicant['gradstudent_type'])
+        $user['Degrees'] .= $applicant['gradstudent_type'] . ', ';
+    if ($applicant['masters_type'])
+        $user['Degrees'] .= $applicant['masters_type'] . ', ';
+    if ($applicant['medical_type'])
+        $user['Degrees'] .= $applicant['medical_type'] . ', ';
+    if ($applicant['doctorate_type'])
+        $user['Degrees'] .= $applicant['doctorate_type'] . ', ';
+    if ($applicant['otherdegree_type'])
+        $user['Degrees'] .= $applicant['otherdegree_type'] . ', ';
+
+    // Universities
+    $user['Universities'] = $applicant['universities'];
+    // Basic Knowledge
+    $user['Basic Knowledge'] = '';
+    if ($applicant['clinical_med_adult'])
+        $user['Basic Knowledge'] = 'Clinical Medicine – Adult, ';
+    if ($applicant['clinical_med_pediatric'])
+        $user['Basic Knowledge'] .= 'Clinical Medicine – Pediatric, ';
+    if ($applicant['clinical_med_vet'])
+        $user['Basic Knowledge'] .= 'Clinical Medicine – Vet, ';
+    if ($applicant['research'])
+        $user['Basic Knowledge'] .= '>Research, ';
+    if ($applicant['microbiology'])
+        $user['Basic Knowledge'] .= 'microbiology, ';
+    if ($applicant['virology'])
+        $user['Basic Knowledge'] .= 'virology, ';
+    if ($applicant['parasitology'])
+        $user['Basic Knowledge'] .= 'parasitology, ';
+    if ($applicant['vaccinology'])
+        $user['Basic Knowledge'] .= 'vaccinology, ';
+    if ($applicant['epidemiology'])
+        $user['Basic Knowledge'] .= 'epidemiology, ';
+    if ($applicant['biotechnology'])
+        $user['Basic Knowledge'] .= 'biotechnology, ';
+    if ($applicant['pharmacy'])
+        $user['Basic Knowledge'] .= 'pharmacy, ';
+    if ($applicant['publichealth'])
+        $user['Basic Knowledge'] .= 'public health, ';
+    if ($applicant['disease_surv'])
+        $user['Basic Knowledge'] .= 'disease surveillance, ';
+    if ($applicant['informatics'])
+        $user['Basic Knowledge'] .= 'informatics, ';
+    if ($applicant['biostatistics'])
+        $user['Basic Knowledge'] .= 'biostatistics, ';
+    if ($applicant['other_knowledge'])
+        $user['Basic Knowledge'] .= $applicant['other_knowledge_type'];
+    // fetp training
+    $user['FETP Training'] = $applicant['fetp_training'] ? $applicant['fetp_training']: 'none';
+    // years experience
+    $user['Years of Experience'] = '';
+    if ($applicant['health_exp'] == 'A')
+        $user['Years of Experience'] = 'none';
+    elseif ($applicant['health_exp'] == 'B')
+        $user['Years of Experience'] = 'less than 3 years';
+    elseif ($applicant['health_exp'] == 'C')
+        $user['Years of Experience'] = '3-5 years';
+    elseif ($applicant['health_exp'] == 'D')
+        $user['Years of Experience'] = '5-10 years';
+    elseif ($applicant['health_exp'] == 'E')
+        $user['Years of Experience'] = 'More than 10 years';
+    //Heard about by
+    $user['Heard about Epicore by'] = '';
+    if ($applicant['googlesearch'])
+        $user['Heard about Epicore by'] = 'Googlesearch, ';
+    if ($applicant['conference'])
+        $user['Heard about Epicore by'] .= 'Conference: ' . $applicant['conference_type']. ', ';
+    if ($applicant['nextgenu'])
+        $user['Heard about Epicore by'] .= 'NextGenU, ';
+    if ($applicant['epicoreworkshop'])
+        $user['Heard about Epicore by'] .= 'Workshop: ' . $applicant['epicoreworkshop_type']. ', ';
+    if ($applicant['promoemail'])
+        $user['Heard about Epicore by'] .= 'Email: ' . $applicant['promoemail_type']. ', ';
+    if ($applicant['othercontact'])
+        $user['Heard about Epicore by'] .= 'Other: ' . $applicant['othercontact_type']. ', ';
+    //user status
+    $user['User Status'] = $applicant['status'] == 'Pending' ? 'Accepted' : $applicant['status'] ;
+
+    // save keys as header values
+    if ($n == 0)
+        fputcsv($fp, array_keys($user));
+
+    $n=1;
+
+    // save user
+    fputcsv($fp, $user);
+}
