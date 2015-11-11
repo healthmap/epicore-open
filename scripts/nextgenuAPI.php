@@ -23,6 +23,7 @@ $i=0;
 foreach ($nextgenu_list as $email){
     $email_list[$i++] = $email->email;
 }
+$email_list[$i] = 'jeffandre@comcast.net';
 
 // approve users in email list from nextGenU
 foreach ($email_list as $approve_email) {
