@@ -37,10 +37,8 @@ foreach ($email_list as $approve_email) {
     // set user status approved if user exists and status is pending/accepted
     if ($approve_id && ($fetpinfo['status'] == 'P')) {
         UserInfo::setUserStatus($approve_id, 'approved');
-    }
 
-    // set user has taken online course
-    if ($approve_id){
+        // set user has taken online course
         $online = true;
         $inperson = false;
         UserInfo::setCourseType($approve_id, $online, $inperson);
