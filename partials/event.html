@@ -99,7 +99,8 @@
                 <div  class="show-message-fetp" ng-if="(history_item.type == 'Member Response') && (userInfo.uid || (history_item.fetp_id == userInfo.fetp_id))">
                      <a href="" ng-click="isCollapsed = !isCollapsed"><i class="fa fa-plus-square-o"></i></a>
                     <span ng-if="userInfo.uid">
-                        {{history_item.type}}, {{history_item.date}}
+                        <!--{{history_item.type}}, {{history_item.date}}-->
+                        Member {{history_item.fetp_id}} Response, {{history_item.date}}
                     </span>
                     <span ng-if="userInfo.fetp_id">
                         your response, {{history_item.date}}
