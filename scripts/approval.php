@@ -56,6 +56,8 @@ foreach ($applicants as $applicant){
             }
         }
     }
+    $applicants[$n]['apply_date_iso'] = $applicants[$n]['apply_date'];
+    $applicants[$n]['approve_date_iso'] = $applicants[$n]['approve_date'];
     $applicants[$n]['apply_date'] = date('j-M-Y', strtotime($applicants[$n]['apply_date']));
     $applicants[$n]['approve_date'] = $applicants[$n]['approve_date'] ?  date('j-M-Y', strtotime($applicants[$n]['approve_date'])) : $applicants[$n]['approve_date'];
     $n++;
