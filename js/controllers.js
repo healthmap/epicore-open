@@ -744,9 +744,9 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
         var messages = {};
         messages[1] = "You have been signed up.";
         messages[2] = "Your response has been sent to the moderator who initiated the request.";
-        messages[3] = "Your request has been sent to the selected FETPs.";
-        messages[4] = "Your request has been closed and an email has gone out to the original FETPs contacted.";
-        messages[5] = "Your request has been reopened and an email has gone out to the original FETPs contacted.";
+        messages[3] = "Your request has been sent to the selected members.";
+        messages[4] = "Your request has been closed and an email has gone out to the original members contacted.";
+        messages[5] = "Your request has been reopened and an email has gone out to the original members contacted.";
         $scope.id = $routeParams.id;
         $scope.messageResponse = {};
         $scope.messageResponse.text = messages[$scope.id];
