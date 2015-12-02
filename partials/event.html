@@ -10,7 +10,9 @@
         <div ng-show="!isOrganization && isAuthorizedFETP">
             <p>Do you have anything to contribute regarding this outbreak?</p>
             <a href="#/reply/{{id}}" class="nav-button">Yes, respond to this request</a>
-            <a href ng-click="sendResponse({response_permission: '0'})" class="nav-button">No, not at this time</a>
+            <span ng-if="changeStatusText == 'Close'">
+                <a href ng-click="sendResponse({response_permission: '0'})" class="nav-button">No, not at this time</a>
+            </span>
         </div>
         <!-- END REPLY FORM -->
 
