@@ -53,6 +53,8 @@ foreach ($applicants as $applicant){
             }
             if ($emailmatch) {
                 $applicants[$n]['pword'] = $fetp['pword_hash'] ? 'Yes' : null;
+                $applicants[$n]['member_id'] = $fetp['fetp_id'];;
+
             }
         }
     }
@@ -77,6 +79,7 @@ foreach($applicants as $applicant){
     $user['Approval Date'] = $applicant['approve_date'];
     $user['Name'] = $applicant['firstname'] . ' ' . $applicant['lastname'];
     $user['email'] = $applicant['email'];
+    $user['Member ID'] = $applicant['member_id'];
     $user['City'] = $applicant['city'];
     $user['State/Province'] = $applicant['state'];
     $user['Country'] = $applicant['country'];
@@ -188,6 +191,8 @@ foreach($applicants as $applicant){
         $user['Course Type'] = 'inperson';
     //user status
     $user['User Status'] = $applicant['status'] == 'Pending' ? 'Accepted' : $applicant['status'] ;
+    // user set password
+    $user['pword'] = $applicant['pword'];
 
     // save keys as header values
     if ($n == 0)
