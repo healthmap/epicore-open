@@ -11,7 +11,7 @@ require_once 'db.function.php';
 $fetps = array();
 
 $db = getDB();
-$all_fetps = $db->getAll("select * from fetp");
+$all_fetps = $db->getAll("select * from fetp where active='Y' and status='A'");
 
 
 // push the centerlat and centerlon onto fetp array for the center marker
