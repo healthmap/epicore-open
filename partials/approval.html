@@ -23,7 +23,8 @@
                     <th width="5%">#</th>
                     <th width="10%"><a href="" ng-click="predicate = 'apply_date_iso'; reverse=!reverse">Application Date</a></th>
                     <th width="10%"><a href="" ng-click="predicate = 'approve_date_iso'; reverse=!reverse">Approval Date</a></th>
-                    <th width="25%"><a href="" ng-click="predicate = 'lastname'; reverse=!reverse">Name</a></th>
+                    <th width="20%"><a href="" ng-click="predicate = 'lastname'; reverse=!reverse">Name</a></th>
+                    <th width="5%"><a href="" ng-click="predicate = 'member_id'; reverse=!reverse">Member #</a></th>
                     <th width="5%"><a href="" ng-click="predicate = 'country'; reverse=!reverse">Country</a></th>
                     <th width="5%"><a href="" ng-click="predicate = 'pword'; reverse=!reverse">Pword<br> Set</a></th>
                     <th width="5%">Course Type</th>
@@ -36,6 +37,7 @@
                     <td>{{applicant.apply_date}}</td>
                     <td>{{applicant.approve_date}}</td>
                     <td>{{applicant.firstname}} {{applicant.lastname}}
+                    <td>{{applicant.member_id}}</td>
                         <a href="" ng-click="isCollapsed1 = !isCollapsed1"><i class="fa fa-plus-square-o"></i></a>
                         <ul ng-show="isCollapsed1" style="list-style-type: none">
                             <li><b>email:</b> {{applicant.email}}</li>
