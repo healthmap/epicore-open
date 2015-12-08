@@ -314,7 +314,8 @@ class EventInfo
             foreach($num_followups as $followupnum => $datearr) {
                 $row['num_followups'][] = array('date' => $datearr[0], 'num' => count($datearr), 'text' => $text[$followupnum]);
             }
-            $row['create_date'] = date('n/j/Y H:i', strtotime($row['create_date']));
+            $row['iso_create_date'] = $row['create_date'];
+            $row['create_date'] = date('j-M-Y H:i', strtotime($row['create_date']));
             $event_person = EventInfo::getEventPerson($row['event_id']);
             $row['person'] = $event_person['name'];
 

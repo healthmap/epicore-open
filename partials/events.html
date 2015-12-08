@@ -11,11 +11,12 @@
             <i class="fa fa-search"></i> <input ng-model="query"> <br> <br>
 
             <!-- view for organizations -->
-        <div ng-show="isOrganization" ng-init="predicate='person'">
+        <div ng-show="isOrganization" ng-init="predicate='!iso_create_date'">
         <table>
             <tbody>
                 <tr class="black_bg">
                     <th><a href="" ng-click="predicate = 'title'; reverse=!reverse">Title</a></th>
+                    <th><a href="" ng-click="predicate = 'iso_create_date'; reverse=!reverse">Create Date</a></th>
                     <th><a href="" ng-click="predicate = 'person'; reverse=!reverse">Moderator</a></th>
                     <th><a href="" ng-click="predicate = 'location'; reverse=!reverse">Location</a></th>
                     <th>Requests Sent Date<br> (# recipients)</th>
@@ -24,6 +25,7 @@
                 <tr><th colspan="6"><a href="" ng-click="isCollapsed1 = !isCollapsed1"><i class="fa fa-plus-square-o"></i></a> Initiated by you</th></tr>
                 <tr ng-show="!isCollapsed1" ng-repeat="event in eventsList['yours'] | filter:query | orderBy:predicate:reverse" >
                     <td><a href="#/events/{{event.event_id}}">{{event.title}}</a></td>
+                    <td>{{event.create_date}}</td>
                     <td>{{event.person}}</td>
                     <td>{{event.location}}</td>
                     <td>
@@ -38,6 +40,7 @@
                 <tr><th colspan="6"><a href="" ng-click="isCollapsed2 = !isCollapsed2"><i class="fa fa-plus-square-o"></i></a> Initiated by your organization ({{userInfo.organization}})</th></tr>
                 <tr ng-show="!isCollapsed2" ng-repeat="event in eventsList['yourorg'] | filter:query | orderBy:predicate:reverse">
                     <td><a href="#/events/{{event.event_id}}">{{event.title}}</a></td>
+                    <td>{{event.create_date}}</td>
                     <td>{{event.person}}</td>
                     <td>{{event.location}}</td>
                     <td>
@@ -50,8 +53,9 @@
                     </td>
                 </tr>
                 <tr><th colspan="6"><a href="" ng-click="isCollapsed3 = !isCollapsed3"><i class="fa fa-plus-square-o"></i></a> Initiated by others</th></tr>
-                <tr ng-show="!isCollapsed3" ng-repeat="event in eventsList['other'] | filter:query">
+                <tr ng-show="!isCollapsed3" ng-repeat="event in eventsList['other'] | filter:query | orderBy:predicate:reverse" >
                     <td><a href="#/events/{{event.event_id}}">{{event.title}}</a></td>
+                    <td>{{event.create_date}}</td>
                     <td></td>
                     <td>{{event.location}}</td>
                     <td>
