@@ -45,39 +45,39 @@
 
                 <h3>Credentials</h3>
 
-                <h5>Acedemic Degrees (Please select all that apply and name your degree and field) </h5>
+                <h5>Acedemic Degrees (Please select all that apply and name your degree and field. You must select at least one.) </h5>
 
                 <div class="row">
                     <div class="form-group col-md-12">
 
                     <div class="checkbox"> 
-                        <label> <input type="checkbox" ng-model="uservals.bachelors"> Bachelor’s Degree (BA, BS, AB, etc.)</label>
-                        <label><input type="text" class="form-control" ng-model = "uservals.bachelors_type" ng-if="uservals.bachelors" required></label>
+                        <label> <input type="checkbox" ng-model="uservals.bachelors" name="bachelors" ng-required="!(uservals.bachelors || uservals.gradstudent || uservals.masters || uservals.medical || uservals.otherdegree ||uservals.doctorate)"> Bachelor’s Degree (BA, BS, AB, etc.)</label>
+                        <label><input type="text" class="form-control" ng-model = "uservals.bachelors_type" name="bachelors_type" ng-if="uservals.bachelors" required></label>
                     </div>
 
                     <div class="checkbox"> 
-                        <label> <input type="checkbox" ng-model="uservals.gradstudent"> Current Graduate Student </label>
-                        <label><input type="text" class="form-control" ng-model = "uservals.gradstudent_type" ng-if="uservals.gradstudent" required></label>
+                        <label> <input type="checkbox" ng-model="uservals.gradstudent" name="gradstudent" ng-required="!(uservals.bachelors || uservals.gradstudent || uservals.masters || uservals.medical || uservals.otherdegree ||uservals.doctorate)"> Current Graduate Student </label>
+                        <label><input type="text" class="form-control" ng-model = "uservals.gradstudent_type" name="gradstudent_type" ng-if="uservals.gradstudent" required></label>
                     </div>
 
                     <div class="checkbox"> 
-                        <label> <input type="checkbox" ng-model="uservals.masters"> Master’s Degree (MS, MPH, MA, etc.)</label>
-                        <label><input type="text" class="form-control" ng-model = "uservals.masters_type" ng-if="uservals.masters" required></label>
+                        <label> <input type="checkbox" ng-model="uservals.masters" name="masters" ng-required="!(uservals.bachelors || uservals.gradstudent || uservals.masters || uservals.medical || uservals.otherdegree ||uservals.doctorate)"> Master’s Degree (MS, MPH, MA, etc.)</label>
+                        <label><input type="text" class="form-control" ng-model = "uservals.masters_type" name="masters_type" ng-if="uservals.masters" required></label>
                     </div>
 
                     <div class="checkbox"> 
-                        <label> <input type="checkbox" ng-model="uservals.medical"> Medical or Veterinary School Degree (MD, DVM, etc.)</label>
-                        <label><input type="text" class="form-control" ng-model = "uservals.medical_type" ng-if="uservals.medical" required></label>
+                        <label> <input type="checkbox" ng-model="uservals.medical" name="medical" ng-required="!(uservals.bachelors || uservals.gradstudent || uservals.masters || uservals.medical || uservals.otherdegree ||uservals.doctorate)"> Medical or Veterinary School Degree (MD, DVM, etc.)</label>
+                        <label><input type="text" class="form-control" ng-model = "uservals.medical_type" name="medical_type" ng-if="uservals.medical" required></label>
                     </div>
 
                     <div class="checkbox"> 
-                        <label> <input type="checkbox" ng-model="uservals.otherdegree"> Other Professional School Degree (JD, DDC, etc.) </label>
-                        <label><input type="text" class="form-control" ng-model = "uservals.otherdegree_type" ng-if="uservals.otherdegree" required></label>
+                        <label> <input type="checkbox" ng-model="uservals.otherdegree" name="otherdegree" ng-required="!(uservals.bachelors || uservals.gradstudent || uservals.masters || uservals.medical || uservals.otherdegree ||uservals.doctorate)"> Other Professional School Degree (JD, DDC, etc.) </label>
+                        <label><input type="text" class="form-control" ng-model = "uservals.otherdegree_type" name="otherdegree_type" ng-if="uservals.otherdegree" required></label>
                     </div>
 
                     <div class="checkbox"> 
-                        <label> <input type="checkbox" ng-model="uservals.doctorate"> Doctorate Degree (PhD, DrPH, ScD, etc.) </label>
-                        <label><input type="text" class="form-control" ng-model = "uservals.doctorate_type" ng-if="uservals.doctorate" required></label>
+                        <label> <input type="checkbox" ng-model="uservals.doctorate" name="doctorate" ng-required="!(uservals.bachelors || uservals.gradstudent || uservals.masters || uservals.medical || uservals.otherdegree ||uservals.doctorate)"> Doctorate Degree (PhD, DrPH, ScD, etc.) </label>
+                        <label><input type="text" class="form-control" ng-model = "uservals.doctorate_type" name="doctorate_type" ng-if="uservals.doctorate" required></label>
                     </div>
 
                     </div>
@@ -158,7 +158,7 @@
 
                     <div class="checkbox">
                         <label> <input type="checkbox" name="other_knowledge" ng-model="uservals.other_knowledge"> Other</label>
-                        <label><input type="text" class="form-control" ng-model="uservals.other_knowledge_type" ng-if="uservals.other_knowledge" required></label>
+                        <label><input type="text" class="form-control" ng-model="uservals.other_knowledge_type" name="other_knowledge_type" ng-if="uservals.other_knowledge" required></label>
                     </div>
 
                     </div>
@@ -252,17 +252,17 @@
 
                         <div class="checkbox">
                             <label> <input type="checkbox" ng-model="uservals.epicoreworkshop">Attended an EpiCore workshop</label>
-                            <label><input type="text" class="form-control" ng-model = "uservals.epicoreworkshop_type" ng-if="uservals.epicoreworkshop" placeholder="explain when and where" required></label>
+                            <label><input type="text" class="form-control" ng-model = "uservals.epicoreworkshop_type" name="epicoreworkshop_type" ng-if="uservals.epicoreworkshop" placeholder="explain when and where" required></label>
                         </div>
 
                         <div class="checkbox">
                             <label> <input type="checkbox" ng-model="uservals.conference">At a conference</label>
-                            <label><input type="text" class="form-control" ng-model = "uservals.conference_type" ng-if="uservals.conference" placeholder="explain when and where" required></label>
+                            <label><input type="text" class="form-control" ng-model = "uservals.conference_type" name = "conference_type" ng-if="uservals.conference" placeholder="explain when and where" required></label>
                         </div>
 
                         <div class="checkbox">
                             <label> <input type="checkbox" ng-model="uservals.promoemail">I received a promotional email</label>
-                            <label><input type="text" class="form-control" ng-model = "uservals.promoemail_type" ng-if="uservals.promoemail" placeholder="explain from which entity" required></label>
+                            <label><input type="text" class="form-control" ng-model = "uservals.promoemail_type" name="promoemail_type" ng-if="uservals.promoemail" placeholder="explain from which entity" required></label>
                         </div>
 
                         <div class="checkbox">
@@ -271,7 +271,7 @@
 
                         <div class="checkbox">
                             <label> <input type="checkbox" ng-model="uservals.othercontact">Other</label>
-                            <label><input type="text" class="form-control" ng-model = "uservals.othercontact_type" ng-if="uservals.othercontact" placeholder="explain where" required></label>
+                            <label><input type="text" class="form-control" ng-model = "uservals.othercontact_type" name= "othercontact_type" ng-if="uservals.othercontact" placeholder="explain where" required></label>
                         </div>
 
                     </div>
