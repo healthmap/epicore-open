@@ -4,7 +4,9 @@
     <div id="form-container" class="col-sm-9 col-md-7 col-lg-6">
         <form name="loginForm" ng-controller="userController">
          <p class="intro">With the spread of new technologies and the availability of <em>Big Data</em>, public health professionals have new opportunities to find and verify outbreaks faster. Epicore volunteers will help verify early signals of outbreaks and thereby improve public health responses.</p> 
-         <p class="intro" id="error_message" ng-show="{{error_message}}"><strong>Authentication failed.</strong></p>
+         <p class="intro" id="error_message" ng-show="{{error_message}}"><strong style="color: red;">Authentication failed!</strong><br><br>
+                 <a href="#/resetpassword">Forgot your password? <i class="fa fa-arrow-circle-right"></i></a>
+            </p>
 
 			<div class="form-group col-xs-12">
                 <label class="sr-only" for="username">Email Address</label>
@@ -29,12 +31,10 @@
        </form>
     
             <p class="intro">
-                <small>
+                <span ng-if="!error_message">
                     <!--<a href="{{tephinetBase}}epicore/oauth_request/EJL7rbQR3YTQXPb8ku6zEQbmRSXzLRtd/Nr8TTVMoAvm4X86jjzbp65aE7kTmR2WN">Log in with your Tephinet account <i class="fa fa-arrow-circle-right"></i></a><br>-->
                     <a href="#/resetpassword">Forgot your password? <i class="fa fa-arrow-circle-right"></i></a><br><br>
-                    <!--<a href="#/about">Learn more about the EpiCore project <i class="fa fa-arrow-circle-right"></i></a>-->
-
-                </small>
+                </span>
             </p>
   </div><!--form-container-->
 
