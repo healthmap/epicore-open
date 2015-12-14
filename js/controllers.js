@@ -766,6 +766,20 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
             });
         };
 
+        $scope.sendReminder = function(action){
+            if (confirm('Are you sure you want to send reminder emails?')) {
+                data = {action: action};
+                $http({
+                    url: 'scripts/sendreminder.php', method: "POST", data: data
+                }).success(function (respdata, status, headers, config) {
+                    alert(respdata.length + ' emails sent.');
+                    //console.log(respdata);
+                });
+            } else {
+
+            }
+        };
+
         /* filter for trusted HTML */
     }).filter('to_trusted', ['$sce', function($sce){
         return function(text) {

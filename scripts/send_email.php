@@ -57,6 +57,40 @@ function sendMail($email, $name, $subject, $status, $user_id){
         $link = 'https://www.epicore.org/#/setpassword?t=' . $ticket;
         $emailtemplate = file_get_contents("../emailtemplates/resetpassword.html");
     }
+    else if($status =='preapprove_reminder'){
+        // create ticket for fetp
+        $fetp_id = UserInfo::getFETPid($email);
+        $db = getDB();
+        $ticket = md5(uniqid(rand(), true));
+        $db->query("INSERT INTO ticket (fetp_id, val, exp) VALUES (?, ?, ?)", array($fetp_id, $ticket, date('Y-m-d H:i:s', strtotime("+30 days"))));
+        $db->commit();
+        //get email template and set link
+        $link = 'https://www.epicore.org/#/setpassword?t=' . $ticket;
+        $emailtemplate = file_get_contents("../emailtemplates/preapprove_reminder.html");
+        $subject = 'EpiCore misses you! Set your password now!';
+    }
+    else if($status =='setpassword_reminder'){
+        // create ticket for fetp
+        $fetp_id = UserInfo::getFETPid($email);
+        $db = getDB();
+        $ticket = md5(uniqid(rand(), true));
+        $db->query("INSERT INTO ticket (fetp_id, val, exp) VALUES (?, ?, ?)", array($fetp_id, $ticket, date('Y-m-d H:i:s', strtotime("+30 days"))));
+        $db->commit();
+        //get email template and set link
+        $link = 'https://www.epicore.org/#/setpassword?t=' . $ticket;
+        $emailtemplate = file_get_contents("../emailtemplates/setpassword_reminder.html");
+        $subject = 'EpiCore misses you! Set your password now!';
+    }
+    else if($status =='training_reminder'){
+        //get email template and set link
+        $link = 'https://www.epicore.org/#/login';
+        $emailtemplate = file_get_contents("../emailtemplates/training_reminder.html");
+        $subject = '80% of success is showing up!';
+    }
+    else if($status =='launch_reminder'){
+        $emailtemplate = file_get_contents("../emailtemplates/launch_reminder.html");
+        $subject = 'Epicore Project Officially Launched!';
+    }
     else{
         return false;
     }
