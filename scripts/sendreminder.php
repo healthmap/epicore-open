@@ -17,7 +17,7 @@ $maillist = '';
 if ($action == 'preapprove_reminder') {
     $maillist = $db->getAll("select fetp_id, f.email,firstname from fetp as f, maillist as m  where f.email=m.email and active='N' and status='A' and pword_hash is null");
     foreach ($maillist as $member) {
-        sendMail($member['email'], $member['firstname'], "EpiCore misses you! Set your password now!", $action, $member['fetp_id']);
+        sendMail($member['email'], $member['firstname'], "Reminder | EpiCore misses you! Set your password now!", $action, $member['fetp_id']);
     }
 }
 
@@ -26,7 +26,7 @@ if ($action == 'setpassword_reminder') {
     $maillist = $db->getAll("select fetp_id, f.email,firstname from fetp as f, maillist as m  where f.email=m.email and active='N'
                             and status='P' and pword_hash is null");
     foreach ($maillist as $member) {
-        sendMail($member['email'], $member['firstname'], "EpiCore misses you! Set your password now!", $action, $member['fetp_id']);
+        sendMail($member['email'], $member['firstname'], "Reminder | EpiCore misses you! Set your password now!", $action, $member['fetp_id']);
     }
 }
 
@@ -36,7 +36,7 @@ if ($action == 'training_reminder') {
                             and status='P' and pword_hash is not null and f.email
                             in (select email from maillist where online_course is null)");
     foreach ($maillist as $member) {
-        sendMail($member['email'], $member['firstname'], "80% of success is showing up!", $action, $member['fetp_id']);
+        sendMail($member['email'], $member['firstname'], "Reminder | 80% of success is showing up!", $action, $member['fetp_id']);
     }
 }
 
@@ -44,7 +44,7 @@ if ($action == 'training_reminder') {
 if ($action == 'launch_reminder') {
     $maillist = $db->getAll("select maillist_id,email,firstname from contactlist where email not in (select email from maillist)");
     foreach ($maillist as $member) {
-        sendMail($member['email'], $member['firstname'], "Epicore Project Officially Launched!", $action, $member['maillist_id']);
+        sendMail($member['email'], $member['firstname'], "Reminder | EpiCore Project Official Launch!", $action, $member['maillist_id']);
     }
 }
 
