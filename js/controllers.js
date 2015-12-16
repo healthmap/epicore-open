@@ -755,6 +755,9 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
         var data = {};
             $http({ url: 'scripts/approval.php', method: "POST", data: data
             }).success(function (respdata, status, headers, config) {
+                for (var n in respdata){
+                    respdata[n]['member_id'] = parseInt(respdata[n]['member_id']);  // use int so orberby works
+                }
                 $scope.applicants = respdata;
             });
 
@@ -773,7 +776,6 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
                     url: 'scripts/sendreminder.php', method: "POST", data: data
                 }).success(function (respdata, status, headers, config) {
                     alert(respdata.length + ' emails sent.');
-                    //console.log(respdata);
                 });
             } else {
 
