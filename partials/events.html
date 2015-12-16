@@ -11,7 +11,7 @@
             <i class="fa fa-search"></i> <input ng-model="query"> <br> <br>
 
             <!-- view for organizations -->
-        <div ng-show="isOrganization" ng-init="predicate='!iso_create_date'">
+        <div ng-show="isOrganization" ng-init="predicate = 'iso_create_date'; reverse=!reverse">
         <table>
             <tbody>
                 <tr class="black_bg">
