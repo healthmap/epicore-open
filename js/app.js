@@ -27,7 +27,7 @@ config(function($routeProvider) {
         when("/fetp", {templateUrl: "partials/fetp.html"}).
         when("/fetp/:eid", {templateUrl: "partials/fetp.html"}).
         when("/mod/:tid/:aid", {templateUrl: "partials/mod.html"}).
-        when("/application", {templateUrl: "partials/application.html"}).
+        when("/application", {templateUrl: "partials/application_new.html"}).
         when("/application_confirm", {templateUrl: "partials/application_confirm.html"}).
         when("/approval", {templateUrl: "partials/approval.html", controller: "approvalController"}).
         when("/login", {templateUrl: "partials/login.html"}).
