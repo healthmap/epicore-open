@@ -20,8 +20,12 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
     }
 
     $scope.signup = function(uservals, isValid) {
+        $scope.no_knowledge = !uservals.clinical_med_adult && !uservals.clinical_med_pediatric && !uservals.clinical_med_vet && !uservals.research &&
+                                    !uservals.microbiology && !uservals.virology && !uservals.parasitology && !uservals.vaccinology && !uservals.epidemiology &&
+                                    !uservals.biotechnology && !uservals.pharmacy && !uservals.publichealth && !uservals.disease_surv && !uservals.informatics && !uservals.biostatistics;
+
         if (!isValid){
-            $scope.signup_message = 'Form not complete. Please make sure all input boxes are filled out.';
+            $scope.signup_message = 'Form not complete. Please make sure all input boxes are filled out and selections have been made.';
             return false;
         }
         else {
