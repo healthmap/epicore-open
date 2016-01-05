@@ -56,14 +56,14 @@
                         <br>
                         <h3>Education</h3>
                         <h5>Education (1)</h5>
-                        <label class="control-label" for="universities">School</label>
-                        <input type="text" class="form-control" ng-model="uservals.universities" name="universities" placeholder="School" required>
+                        <label class="control-label" for="university">School</label>
+                        <input type="text" class="form-control" ng-model="uservals.university" name="university" placeholder="School" required>
                     </div>
                 </div>
                 <div class="row">
                     <div class="form-group col-md-8">
                         <label class="control-label" for="major">Major</label>
-                        <input type="text" class="form-control" ng-model="uservals.major" name="major" placeholder="Major, example: Pharmacy, Nursing, Microbiology, etc" required>
+                        <input type="text" class="form-control" ng-model="uservals.major" name="major" placeholder="example: Pharmacy, Nursing, Microbiology, etc" required>
                     </div>
                 </div>
 
@@ -78,6 +78,8 @@
                         <option value="dvm">DVM</option>
                         <option value="other">other</option>
                     </select>
+                    <label ><input type="text" class="form-control" ng-model="uservals.other_degree" name="other_degree" ng-if="uservals.degree == 'other' " required></label>
+
                 </div>
 
                 <div class="form-group col-md-8">
@@ -98,8 +100,8 @@
                         <div class="form-group col-md-8">
                             <br>
                             <h5>Education (2)</h5>
-                            <label class="control-label" for="universities1">School</label>
-                            <input type="text" class="form-control" ng-model="uservals.universities1" name="universities1" placeholder="School" required>
+                            <label class="control-label" for="university1">School</label>
+                            <input type="text" class="form-control" ng-model="uservals.university1" name="university1" placeholder="School" required>
                         </div>
                     </div>
                     <div class="row">
@@ -109,7 +111,7 @@
                         </div>
                     </div>
                     <div class="form-group col-md-8">
-                        <label class="control-label" for="degree1">Degree</label>Degree:
+                        <label class="control-label" for="degree1">Degree</label>
                         <select ng-model="uservals.degree1" name="degree1" required>
                             <option value="">-- select --</option>
                             <option value="bachelors">Bachelor's Degree</option>
@@ -119,6 +121,8 @@
                             <option value="dvm">DVM</option>
                             <option value="other">other</option>
                         </select>
+                        <label ><input type="text" class="form-control" ng-model="uservals.other_degree1" name="other_degree1" ng-if="uservals.degree1 == 'other' " required></label>
+
                     </div>
 
                     <div class="form-group col-md-8">
@@ -141,8 +145,8 @@
                         <div class="form-group col-md-8">
                             <br>
                             <h5>Education (3)</h5>
-                            <label class="control-label" for="universities2">School</label>
-                            <input type="text" class="form-control" ng-model="uservals.universities2" name="universities2" placeholder="School" required>
+                            <label class="control-label" for="university2">School</label>
+                            <input type="text" class="form-control" ng-model="uservals.university2" name="university2" placeholder="School" required>
                         </div>
                     </div>
                     <div class="row">
@@ -162,6 +166,8 @@
                             <option value="dvm">DVM</option>
                             <option value="other">other</option>
                         </select>
+                        <label ><input type="text" class="form-control" ng-model="uservals.other_degree2" name="other_degree2" ng-if="uservals.degree2 == 'other' " required></label>
+
                     </div>
 
                     <div class="form-group col-md-8">
