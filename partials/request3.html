@@ -15,7 +15,7 @@
             </div>
 
                 <div class="form-group col-xs-12">
-                    <button ng-click="sendRequest(sendRequestForm.$valid)" type="submit" class="submit btn btn-default col-xs-12">Send Email</button>
+                    <button ng-click="sendRequest(sendRequestForm.$valid)" ng-disabled="submitDisabled" type="submit" class="submit btn btn-default col-xs-12">Send Email</button>
                 </div><!-- /input-group -->
             
             </form>

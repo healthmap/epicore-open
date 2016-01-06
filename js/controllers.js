@@ -704,6 +704,7 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
 
     /* step 3 : save all event RFI data in database and send the request */
     $scope.sendRequest = function() {
+            $scope.submitDisabled = true;
             var formData = {};
             if($window.sessionStorage.searchType == "radius") {
                 formData['search_box'] = $window.sessionStorage.searchBox;
@@ -723,6 +724,7 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
                 // empty out the form values since you've submitted so they aren't prefilled next time
                 $window.sessionStorage.clear();
                 $location.path('/success/3');
+                $scope.submitDisabled = false;
             });
         };
 
