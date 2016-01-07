@@ -65,17 +65,17 @@
                         <br>
                         <h3>Education</h3>
                         <h5>Education (1)</h5>
-                        <label class="control-label" for="university">School</label>
-                        <input type="text" class="form-control" ng-model="uservals.university" name="university" placeholder="School" required>
+                        <label class="control-label" for="university1">School</label>
+                        <input type="text" class="form-control" ng-model="uservals.university1" name="university1" placeholder="School" required>
                     </div>
                     <div class="form-group">
-                        <label class="control-label" for="major">Major</label>
-                        <input type="text" class="form-control" ng-model="uservals.major" name="major" placeholder="example: Pharmacy, Nursing, Microbiology, etc" required>
+                        <label class="control-label" for="major1">Major</label>
+                        <input type="text" class="form-control" ng-model="uservals.major1" name="major1" placeholder="example: Pharmacy, Nursing, Microbiology, etc" required>
                     </div>
 
                 <div class="form-group">
-                    <label class="control-label" for="degree">Degree</label>
-                    <select ng-model="uservals.degree" name="degree" required>
+                    <label class="control-label" for="degree1">Degree</label>
+                    <select ng-model="uservals.degree1" name="degree1" required>
                         <option value="">-- select --</option>
                         <option value="bachelors">Bachelor's Degree</option>
                         <option value="masters">Master's Degree</option>
@@ -84,13 +84,13 @@
                         <option value="dvm">DVM</option>
                         <option value="other">other</option>
                     </select>
-                    <label ><input type="text" class="form-control" ng-model="uservals.other_degree" name="other_degree" ng-if="uservals.degree == 'other' " required></label>
+                    <label ><input type="text" class="form-control" ng-model="uservals.other_degree1" name="other_degree1" ng-if="uservals.degree1 == 'other' " required></label>
 
                 </div>
 
                 <div class="form-group">
-                    <label class="control-label" for="school_country">Country</label>
-                    <select ng-model="uservals.school_country" name="school_country" required>
+                    <label class="control-label" for="school_country1">Country</label>
+                    <select ng-model="uservals.school_country1" name="school_country1" required>
                         <option value="">-- select --</option>
                         <option ng-repeat="country in countries" value="{{country.code}}">{{country.name}}</option>
                     </select>
@@ -105,47 +105,6 @@
                         <div class="form-group">
                             <br>
                             <h5>Education (2)</h5>
-                            <label class="control-label" for="university1">School</label>
-                            <input type="text" class="form-control" ng-model="uservals.university1" name="university1" placeholder="School" required>
-                        </div>
-                        <div class="form-group">
-                            <label class="control-label" for="major1">Major</label>
-                            <input type="text" class="form-control" ng-model="uservals.major1" name="major1" placeholder="Major" required>
-                        </div>
-                    <div class="form-group">
-                        <label class="control-label" for="degree1">Degree</label>
-                        <select ng-model="uservals.degree1" name="degree1" required>
-                            <option value="">-- select --</option>
-                            <option value="bachelors">Bachelor's Degree</option>
-                            <option value="masters">Master's Degree</option>
-                            <option value="phd">Doctoral Degree</option>
-                            <option value="md">MD/MBBS</option>
-                            <option value="dvm">DVM</option>
-                            <option value="other">other</option>
-                        </select>
-                        <label ><input type="text" class="form-control" ng-model="uservals.other_degree1" name="other_degree1" ng-if="uservals.degree1 == 'other' " required></label>
-
-                    </div>
-
-                    <div class="form-group">
-                        <label class="control-label" for="school_country1">Country</label>
-                        <select ng-model="uservals.school_country1" name="school_country1" required>
-                            <option value="">-- select --</option>
-                            <option ng-repeat="country in countries" value="{{country.code}}">{{country.name}}</option>
-                        </select>
-                    </div>
-
-                </div>
-
-                <div class="form-group" ng-show="more_schools1">
-                    <div class="checkbox-block">
-                        <label> <input type="checkbox" name="more_schools2" ng-model="more_schools2" >Click here if you have a third degree</label>
-                    </div>
-                </div>
-                <div ng-if="more_schools2 && more_schools1">
-                        <div class="form-group">
-                            <br>
-                            <h5>Education (3)</h5>
                             <label class="control-label" for="university2">School</label>
                             <input type="text" class="form-control" ng-model="uservals.university2" name="university2" placeholder="School" required>
                         </div>
@@ -171,6 +130,47 @@
                     <div class="form-group">
                         <label class="control-label" for="school_country2">Country</label>
                         <select ng-model="uservals.school_country2" name="school_country2" required>
+                            <option value="">-- select --</option>
+                            <option ng-repeat="country in countries" value="{{country.code}}">{{country.name}}</option>
+                        </select>
+                    </div>
+
+                </div>
+
+                <div class="form-group" ng-show="more_schools1">
+                    <div class="checkbox-block">
+                        <label> <input type="checkbox" name="more_schools2" ng-model="more_schools2" >Click here if you have a third degree</label>
+                    </div>
+                </div>
+                <div ng-if="more_schools2 && more_schools1">
+                        <div class="form-group">
+                            <br>
+                            <h5>Education (3)</h5>
+                            <label class="control-label" for="university3">School</label>
+                            <input type="text" class="form-control" ng-model="uservals.university3" name="university3" placeholder="School" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label" for="major3">Major</label>
+                            <input type="text" class="form-control" ng-model="uservals.major3" name="major3" placeholder="Major" required>
+                        </div>
+                    <div class="form-group">
+                        <label class="control-label" for="degree3">Degree</label>
+                        <select ng-model="uservals.degree3" name="degree3" required>
+                            <option value="">-- select --</option>
+                            <option value="bachelors">Bachelor's Degree</option>
+                            <option value="masters">Master's Degree</option>
+                            <option value="phd">Doctoral Degree</option>
+                            <option value="md">MD/MBBS</option>
+                            <option value="dvm">DVM</option>
+                            <option value="other">other</option>
+                        </select>
+                        <label ><input type="text" class="form-control" ng-model="uservals.other_degree3" name="other_degree3" ng-if="uservals.degree3 == 'other' " required></label>
+
+                    </div>
+
+                    <div class="form-group">
+                        <label class="control-label" for="school_country3">Country</label>
+                        <select ng-model="uservals.school_country3" name="school_country3" required>
                             <option value="">-- select --</option>
                             <option ng-repeat="country in countries" value="{{country.code}}">{{country.name}}</option>
                         </select>
