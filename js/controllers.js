@@ -20,12 +20,31 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
     }
 
     $scope.signup = function(uservals, isValid) {
-        $scope.no_knowledge = !uservals.clinical_med_adult && !uservals.clinical_med_pediatric && !uservals.clinical_med_vet && !uservals.research &&
-                                    !uservals.microbiology && !uservals.virology && !uservals.parasitology && !uservals.vaccinology && !uservals.epidemiology &&
-                                    !uservals.biotechnology && !uservals.pharmacy && !uservals.publichealth && !uservals.disease_surv && !uservals.informatics && !uservals.biostatistics;
 
-        if (!isValid){
-            $scope.signup_message = 'Form not complete. Please make sure all input boxes are filled out and selections have been made.';
+        $scope.attempted = true;
+
+        // validate checkboxes
+        $scope.no_knowledge = !uservals.clinical_med_adult && !uservals.clinical_med_pediatric && !uservals.clinical_med_vet && !uservals.research &&
+                                !uservals.microbiology && !uservals.virology && !uservals.parasitology && !uservals.vaccinology && !uservals.epidemiology &&
+                                !uservals.biotechnology && !uservals.pharmacy && !uservals.publichealth && !uservals.disease_surv && !uservals.informatics &&
+                                !uservals.biostatistics && !uservals.other_knowledge;
+
+        $scope.no_category = !uservals.health_org_university  && !uservals.health_org_doh && !uservals.health_org_clinic
+                                && !uservals.health_org_other && !uservals.health_org_none;
+
+        $scope.no_notification = !uservals.epicoreworkshop && !uservals.conference && !uservals.promoemail && !uservals.othercontact;
+
+        // validate radio buttons
+        $scope.no_training = !uservals.training;
+
+        // check email
+        var regex = /^([a-zA-Z0-9_.+-])+\@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/;
+        var isemail = regex.test(uservals.email);
+
+        if (!isValid || !isemail  || $scope.no_knowledge || $scope.no_category || $scope.no_notification || !uservals.training
+            || !uservals.health_exp || !uservals.sector){
+
+            $scope.signup_message = 'Form not complete. Please correct the errors above in red, and then submit again.';
             return false;
         }
         else {
@@ -43,7 +62,7 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
                 }
             });
         }
-    }
+    };
 
     /* set some global variables for Tephinet integration */
     $http({ url: 'scripts/getvars.php', method: "POST"
@@ -514,6 +533,7 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
 
         $scope.sendResponse = function(formData, isValid) {
             if(formData['response_permission'] == 0 || isValid) {
+                $scope.submitDisabled = true;
                 // if user has chosen "I have nothing to contribute" button, 
                 // formData comes in as object response_permissions: 0 
                 formData['event_id'] = $routeParams.id
@@ -521,6 +541,7 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
                 $http({ url: 'scripts/sendresponse.php', method: "POST", data: formData
                 }).success(function (data, status, headers, config) {
                     $location.path('/'+data['path']);
+                    $scope.submitDisabled = false;
                 });
             }
         }
