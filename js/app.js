@@ -36,4 +36,15 @@ config(function($routeProvider) {
         when("/resetpassword", {templateUrl: "partials/resetpassword.html"}).
         when("/home", {templateUrl: "partials/home.html"}).
         otherwise({redirectTo: '/home'});
-    });
+    }).
+    run(['$rootScope', '$location', '$window', function($rootScope, $location, $window){    //google analytics
+        $rootScope
+            .$on('$stateChangeSuccess',
+            function(event){
+
+                if (!$window.ga)
+                    return;
+
+                $window.ga('send', 'pageview', { page: $location.path() });
+            });
+    }]);
