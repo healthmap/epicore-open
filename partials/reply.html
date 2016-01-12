@@ -36,7 +36,7 @@
             -->
 
             <div class="form-group col-xs-12">
-                <button ng-click="sendResponse(formData, sendResponseForm.$valid)" type="submit" class="submit btn btn-default col-xs-12">Submit</button>
+                <button ng-click="sendResponse(formData, sendResponseForm.$valid)" ng-disabled="submitDisabled" type="submit" class="submit btn btn-default col-xs-12">Submit</button>
             </div><!-- /input-group -->
         </form>
 
