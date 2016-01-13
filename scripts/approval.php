@@ -103,6 +103,9 @@ foreach($applicants as $applicant){
         $user['Organization Category'] = 'Medical clinic';
     elseif ($applicant['health_org_other'])
         $user['Organization Category'] = 'Other health-related organizations';
+    elseif ($applicant['health_org_none'])
+        $user['Organization Category'] = 'No category';
+
 
     //Degrees
     $user['Degrees'] = '';
@@ -121,6 +124,22 @@ foreach($applicants as $applicant){
 
     // Universities
     $user['Universities'] = $applicant['universities'];
+
+    // Universities 1-3
+    $user['University1'] = $applicant['university1'];
+    $user['Country1'] = $applicant['school_country1'];
+    $user['Major1'] = $applicant['major1'];
+    $user['Degree1'] = $applicant['degree1'] ? $applicant['degree1']: $applicant['other_degree1'];
+    $user['University2'] = $applicant['university2'];
+    $user['Country2'] = $applicant['school_country2'];
+    $user['Major2'] = $applicant['major2'];
+    $user['Degree2'] = $applicant['degree2'] ? $applicant['degree2']: $applicant['other_degree2'];
+    $user['University3'] = $applicant['university3'];
+    $user['Country3'] = $applicant['school_country3'];
+    $user['Major3'] = $applicant['major3'];
+    $user['Degree3'] = $applicant['degree3'] ? $applicant['degree3']: $applicant['other_degree3'];
+
+
     // Basic Knowledge
     $user['Basic Knowledge'] = '';
     if ($applicant['clinical_med_adult'])
