@@ -38,13 +38,7 @@ config(function($routeProvider) {
         otherwise({redirectTo: '/home'});
     }).
     run(['$rootScope', '$location', '$window', function($rootScope, $location, $window){    //google analytics
-        $rootScope
-            .$on('$stateChangeSuccess',
-            function(event){
-
-                if (!$window.ga)
-                    return;
-
+        $rootScope.$on('$routeChangeSuccess', function(event){
                 $window.ga('send', 'pageview', { page: $location.path() });
             });
     }]);
