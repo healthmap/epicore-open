@@ -1,12 +1,13 @@
-angular.module('EpicoreApp', [
+var app = angular.module('EpicoreApp', [
     'EpicoreApp.services',
     'EpicoreApp.controllers',
     'ngCookies',
     'ngRoute',
     'ngSanitize',
     'uiGmapgoogle-maps'
-]).  
-config(function($routeProvider) {
+]);
+
+app.config(function($routeProvider) {
   $routeProvider.
         when("/events", {templateUrl: "partials/events.html", controller: "eventsController"}).
         when("/map", {templateUrl: "partials/map.html", controller: "mapController"}).
@@ -36,9 +37,27 @@ config(function($routeProvider) {
         when("/resetpassword", {templateUrl: "partials/resetpassword.html"}).
         when("/home", {templateUrl: "partials/home.html"}).
         otherwise({redirectTo: '/home'});
-    }).
-    run(['$rootScope', '$location', '$window', function($rootScope, $location, $window){    //google analytics
+    });
+
+app.run(['$rootScope', '$location', '$window', function($rootScope, $location, $window){    //google analytics
         $rootScope.$on('$routeChangeSuccess', function(event){
                 $window.ga('send', 'pageview', { page: $location.path() });
             });
     }]);
+
+app.directive('siteHeader', function () {
+    return {
+        restrict: 'E',
+        template: '<i class="fa fa-arrow-circle-left"></i> <button class="btn">{{back}} to RFI list</button>',
+        scope: {
+            back: '@back',
+            icons: '@icons'
+        },
+        link: function(scope, element, attrs) {
+            $(element[0]).on('click', function() {
+                history.back();
+                scope.$apply();
+            });
+        }
+    };
+});

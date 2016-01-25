@@ -315,9 +315,22 @@ class EventInfo
                 $row['num_followups'][] = array('date' => $datearr[0], 'num' => count($datearr), 'text' => $text[$followupnum]);
             }
             $row['iso_create_date'] = $row['create_date'];
+            $row['event_id_int'] = (int)$row['event_id'];
             $row['create_date'] = date('j-M-Y H:i', strtotime($row['create_date']));
             $event_person = EventInfo::getEventPerson($row['event_id']);
             $row['person'] = $event_person['name'];
+            $place = explode(',',$row['location']);
+            if (sizeof($place) == 3){
+                $row['country'] = $place[2];
+            }
+            elseif(sizeof($place) == 2){
+                $row['country'] = $place[1];
+            }
+            elseif(sizeof($place) == 1){
+                $row['country'] = $place[0];
+            }
+
+
 
             if($uid == $row['requester_id']) {
                 $events['yours'][] = $row;

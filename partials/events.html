@@ -12,22 +12,26 @@
 
             <!-- view for organizations -->
         <div ng-show="isOrganization" ng-init="predicate = 'iso_create_date'; reverse=!reverse">
-        <table>
+        <table class='table table-hover table-bordered' style="font-size: small">
             <tbody>
                 <tr class="black_bg">
+                    <th width="5%"><a href="" ng-click="predicate = 'event_id_int'; reverse=!reverse">ID</a></th>
                     <th><a href="" ng-click="predicate = 'title'; reverse=!reverse">Title</a></th>
                     <th><a href="" ng-click="predicate = 'iso_create_date'; reverse=!reverse">Create Date</a></th>
                     <th><a href="" ng-click="predicate = 'person'; reverse=!reverse">Moderator</a></th>
-                    <th><a href="" ng-click="predicate = 'location'; reverse=!reverse">Location</a></th>
+                    <th width="10%"><a href="" ng-click="predicate = 'location'; reverse=!reverse">Location</a></th>
+                    <th><a href="" ng-click="predicate = 'country'; reverse=!reverse">Country</a></th>
                     <th>Requests Sent Date<br> (# recipients)</th>
                     <th># Responses</th>
                 </tr>
-                <tr><th colspan="6"><a href="" ng-click="isCollapsed1 = !isCollapsed1"><i class="fa fa-plus-square-o"></i></a> Initiated by you</th></tr>
+                <tr><th colspan="8"><a href="" ng-click="isCollapsed1 = !isCollapsed1"><i class="fa fa-plus-square-o"></i></a> Initiated by you</th></tr>
                 <tr ng-show="!isCollapsed1" ng-repeat="event in eventsList['yours'] | filter:query | orderBy:predicate:reverse" >
+                    <td>{{event.event_id_int}}</td>
                     <td><a href="#/events/{{event.event_id}}">{{event.title}}</a></td>
                     <td>{{event.create_date}}</td>
                     <td>{{event.person}}</td>
                     <td>{{event.location}}</td>
+                    <td>{{event.country}}</td>
                     <td>
                     <span ng-repeat="followup in event.num_followups" >
                         {{followup.date}} ({{followup.num}}) <br>
@@ -37,12 +41,14 @@
                         <span>{{event.num_responses}}</span>
                     </td>
                 </tr>
-                <tr><th colspan="6"><a href="" ng-click="isCollapsed2 = !isCollapsed2"><i class="fa fa-plus-square-o"></i></a> Initiated by your organization ({{userInfo.organization}})</th></tr>
+                <tr><th colspan="8"><a href="" ng-click="isCollapsed2 = !isCollapsed2"><i class="fa fa-plus-square-o"></i></a> Initiated by your organization ({{userInfo.organization}})</th></tr>
                 <tr ng-show="!isCollapsed2" ng-repeat="event in eventsList['yourorg'] | filter:query | orderBy:predicate:reverse">
+                    <td>{{event.event_id_int}}</td>
                     <td><a href="#/events/{{event.event_id}}">{{event.title}}</a></td>
                     <td>{{event.create_date}}</td>
                     <td>{{event.person}}</td>
                     <td>{{event.location}}</td>
+                    <td>{{event.country}}</td>
                     <td>
                     <span ng-repeat="followup in event.num_followups">
                     {{followup.date}} ({{followup.num}})<br>
@@ -52,12 +58,14 @@
                         <span>{{event.num_responses}}</span>
                     </td>
                 </tr>
-                <tr><th colspan="6"><a href="" ng-click="isCollapsed3 = !isCollapsed3"><i class="fa fa-plus-square-o"></i></a> Initiated by others</th></tr>
+                <tr><th colspan="8"><a href="" ng-click="isCollapsed3 = !isCollapsed3"><i class="fa fa-plus-square-o"></i></a> Initiated by others</th></tr>
                 <tr ng-show="!isCollapsed3" ng-repeat="event in eventsList['other'] | filter:query | orderBy:predicate:reverse" >
+                    <td>{{event.event_id_int}}</td>
                     <td><a href="#/events/{{event.event_id}}">{{event.title}}</a></td>
                     <td>{{event.create_date}}</td>
                     <td></td>
                     <td>{{event.location}}</td>
+                    <td>{{event.country}}</td>
                     <td>
                     <span ng-repeat="followup in event.num_followups">
                     {{followup.date}} ({{followup.num}})<br>
