@@ -61,6 +61,9 @@ if(is_numeric($event_id)) {
         array_push($tolist, EMAIL_PROIN);
 
     }
+    // send copy to epicore info
+    array_push($tolist, EMAIL_INFO_EPICORE);
+
     $extra_headers['user_ids'] = $idlist;
     AWSMail::mailfunc($tolist, "EPICORE Member response", $emailtext, EMAIL_NOREPLY, $extra_headers);
 

@@ -71,6 +71,8 @@ if(is_numeric($event_id) && is_numeric($user_id)) {
         if ($moderator['organization_id'] == PROMED_ID){
             array_push($tolist, EMAIL_PROIN);
         }
+        // send copy to epicore info
+        array_push($tolist, EMAIL_INFO_EPICORE);
 
         if ($status_type == 're-opened')
             $status_type_new = 're-opened_proin';

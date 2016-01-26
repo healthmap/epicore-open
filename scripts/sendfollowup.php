@@ -110,6 +110,9 @@ if ($moderator['organization_id'] == PROMED_ID){
     array_push($tolist, EMAIL_PROIN);
 }
 
+// send copy to epicore info
+array_push($tolist, EMAIL_INFO_EPICORE);
+
 // send email
 if (!empty($tolist)) {
     $name = $moderator['name'];

@@ -33,7 +33,6 @@ $fetp_emails = UserInfo::getFETPEmails($fetp_ids);
 $extra_headers['text_or_html'] = "html";
 
 $emailtext = $ei->buildEmailForEvent($event_info, 'rfi', '', 'text');
-$proin_emailtext = $ei->buildEmailForEvent($event_info, 'rfi_proin', '', 'text');
 
 foreach($fetp_emails as $fetp_id => $recipient) {
     $idlist[0] = $fetp_id;
@@ -43,16 +42,22 @@ foreach($fetp_emails as $fetp_id => $recipient) {
     $aws_resp = AWSMail::mailfunc($recipient, "EPICORE Request For Information", $custom_emailtext, EMAIL_NOREPLY, $extra_headers);
 
 }
-// get event moderator name
-$moderator = $ei->getEventPerson($event_id);
-// send a modified copy to pro-in for ProMED moderators only
+
+// build copy email
+$proin_emailtext = $ei->buildEmailForEvent($event_info, 'rfi_proin', '', 'text');
+$moderator = $ei->getEventPerson($event_id); // get event moderator name
+$name = $moderator['name'];
+$email = $moderator['email'];
+$modfetp = "Moderator: $name ($email) sent the following RFI";
+$custom_emailtext_proin = trim(str_replace("[PRO_IN]", $modfetp, $proin_emailtext));
+
+// send copy to pro-in for ProMED moderators only
 if ($moderator['organization_id'] == PROMED_ID){
-    $name = $moderator['name'];
-    $email = $moderator['email'];
-    $modfetp = "Moderator: $name ($email) sent the following RFI";
-    $custom_emailtext_proin = trim(str_replace("[PRO_IN]", $modfetp, $proin_emailtext));
     $aws_resp = AWSMail::mailfunc(EMAIL_PROIN, "EPICORE Request For Information", $custom_emailtext_proin, EMAIL_NOREPLY, $extra_headers);
 }
+
+// send copy to epicore info
+$aws_resp = AWSMail::mailfunc(EMAIL_INFO_EPICORE, "EPICORE Request For Information", $custom_emailtext_proin, EMAIL_NOREPLY, $extra_headers);
 
 print json_encode(array('status' => 'success', 'fetps' => $fetp_ids));
 
