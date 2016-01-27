@@ -53,10 +53,14 @@ $custom_emailtext_proin = trim(str_replace("[PRO_IN]", $modfetp, $proin_emailtex
 
 // send copy to pro-in for ProMED moderators only
 if ($moderator['organization_id'] == PROMED_ID){
+    $idlist[0] = PROMED_ID;
+    $extra_headers['user_ids'] = $idlist;
     $aws_resp = AWSMail::mailfunc(EMAIL_PROIN, "EPICORE Request For Information", $custom_emailtext_proin, EMAIL_NOREPLY, $extra_headers);
 }
 
 // send copy to epicore info
+$idlist[0] = EPICORE_ID;
+$extra_headers['user_ids'] = $idlist;
 $aws_resp = AWSMail::mailfunc(EMAIL_INFO_EPICORE, "EPICORE Request For Information", $custom_emailtext_proin, EMAIL_NOREPLY, $extra_headers);
 
 print json_encode(array('status' => 'success', 'fetps' => $fetp_ids));

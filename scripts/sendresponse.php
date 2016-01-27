@@ -59,10 +59,12 @@ if(is_numeric($event_id)) {
     // send a modified copy to pro-in for ProMED event moderator only
     if ($emoderator['organization_id'] == PROMED_ID){
         array_push($tolist, EMAIL_PROIN);
+        array_push($idlist, PROMED_ID);
 
     }
     // send copy to epicore info
     array_push($tolist, EMAIL_INFO_EPICORE);
+    array_push($idlist, EPICORE_ID);
 
     $extra_headers['user_ids'] = $idlist;
     AWSMail::mailfunc($tolist, "EPICORE Member response", $emailtext, EMAIL_NOREPLY, $extra_headers);

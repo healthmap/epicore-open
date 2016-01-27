@@ -108,10 +108,12 @@ foreach ($fmoderators as $fmoderator){
 // send a modified copy to PRO-IN for ProMed moderators only
 if ($moderator['organization_id'] == PROMED_ID){
     array_push($tolist, EMAIL_PROIN);
+    array_push($idlist, PROMED_ID);
 }
 
 // send copy to epicore info
 array_push($tolist, EMAIL_INFO_EPICORE);
+array_push($idlist, EPICORE_ID);
 
 // send email
 if (!empty($tolist)) {
