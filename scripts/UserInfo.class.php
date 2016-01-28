@@ -29,7 +29,10 @@ class UserInfo
 
     function getFETPRequests($status)
     {
-        $q = $this->db->query("SELECT event.event_id, event.title, event_fetp.send_date, place.name AS location FROM event_fetp, event, place WHERE fetp_id = ? AND event_fetp.event_id = event.event_id AND event.place_id = place.place_id ORDER BY send_date DESC", array($this->id));
+        $q = $this->db->query("SELECT event.event_id, event.title, event.create_date, event_fetp.send_date, place.name AS location
+                                FROM event_fetp, event, place
+                                WHERE fetp_id = ? AND event_fetp.event_id = event.event_id AND event.place_id = place.place_id
+                                ORDER BY send_date DESC", array($this->id));
         $status = $status ? $status : 'O';
         while($row = $q->fetchRow()) {
             // responses are recorded by the FETPs user id, not FETP_id
@@ -40,8 +43,12 @@ class UserInfo
                 $requests[$row['event_id']]['event_id'] = $row['event_id'];
                 $requests[$row['event_id']]['title'] = $row['title'];
                 $requests[$row['event_id']]['location'] = $row['location'];
+                $requests[$row['event_id']]['iso_create_date'] = $row['create_date'];
+                $requests[$row['event_id']]['create_date'] = date('j-M-Y H:i', strtotime($row['create_date']));
                 // make send date an array, because there may be multiple
                 $requests[$row['event_id']]['send_dates'][] = date('j-M-Y H:i', strtotime($row['send_date']));
+                $requests[$row['event_id']]['iso_send_dates'][] = $row['send_date'];
+                $requests[$row['event_id']]['last_send_date'] = $requests[$row['event_id']]['iso_send_dates'][0];
                 
                 // get the FETPs responses to that event
                 $respq = $this->db->query("SELECT response_id, response_date FROM response WHERE responder_id = ? AND event_id = ? ORDER BY response_date DESC", array($this->id, $row['event_id']));

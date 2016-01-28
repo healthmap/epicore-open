@@ -79,14 +79,14 @@
         </table>
         </div>
         <!-- view for FETPs -->
-        <div ng-show="!isOrganization">
-        <table>
+        <div ng-show="!isOrganization" ng-init="predicate = 'last_send_date'; reverse=reverse">
+        <table class='table table-hover table-bordered' style="font-size: small">
             <tbody>
                 <tr class="black_bg">
                     <th><a href="" ng-click="predicate = 'title'; reverse=!reverse">Title</a></th>
                     <th><a href="" ng-click="predicate = 'location'; reverse=!reverse">Location</a></th>
-                    <th>Date Sent</th>
-                    <th>Response Date</th>
+                    <th><a href="" ng-click="predicate = 'last_send_date'; reverse=!reverse">Request Received Date</a></th>
+                    <th>Your Response Date</th>
                 </tr>
                 <tr ng-repeat="event in eventsList | filter:query | orderBy:predicate:reverse">
                     <td><a href="#/events/{{event.event_id}}">{{event.title}}</a></td>
