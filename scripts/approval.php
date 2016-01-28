@@ -60,8 +60,10 @@ foreach ($applicants as $applicant){
     }
     $applicants[$n]['apply_date_iso'] = $applicants[$n]['apply_date'];
     $applicants[$n]['approve_date_iso'] = $applicants[$n]['approve_date'];
+    $applicants[$n]['accept_date_iso'] = $applicants[$n]['accept_date'];
     $applicants[$n]['apply_date'] = date('j-M-Y', strtotime($applicants[$n]['apply_date']));
     $applicants[$n]['approve_date'] = $applicants[$n]['approve_date'] ?  date('j-M-Y', strtotime($applicants[$n]['approve_date'])) : $applicants[$n]['approve_date'];
+    $applicants[$n]['accept_date'] = $applicants[$n]['accept_date'] ?  date('j-M-Y', strtotime($applicants[$n]['accept_date'])) : $applicants[$n]['accept_date'];
     $applicants[$n]['country'] = $countries[$applicants[$n]['country']];
     $n++;
 }
@@ -78,6 +80,7 @@ $n=0;
 foreach($applicants as $applicant){
     $user['Application Date'] = $applicant['apply_date'];
     $user['Approval Date'] = $applicant['approve_date'];
+    $user['Acceptance Date'] = $applicant['accept_date'];
     $user['Name'] = $applicant['firstname'] . ' ' . $applicant['lastname'];
     $user['email'] = $applicant['email'];
     $user['Member ID'] = $applicant['member_id'];

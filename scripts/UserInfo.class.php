@@ -365,7 +365,8 @@ class UserInfo
                     $db->commit();
                 }
 
-                $db->query("update maillist set approvestatus='Y' where maillist_id=$approve_id");
+                $accept_date = date('Y-m-d H:i:s', strtotime('now'));
+                $db->query("update maillist set accept_date='$accept_date', approvestatus='Y' where maillist_id=$approve_id");
                 $db->commit();
                 $fetp_id = UserInfo::getFETPid($approve_email);
                 sendMail($approve_email, $approve_name, "EpiCore Application Decision", $status, $fetp_id);
