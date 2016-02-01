@@ -2,8 +2,8 @@
     <span class="title">Epicore</span>
 </div>
 
-<div class="container main">
-        <div class="col-xs-12 wbg" ng-controller="approvalController" ng-init="predicate='apply_date_iso'; reverse=!reverse">
+<div class="container-fluid main">
+        <div class="col-md-12 wbg" ng-controller="approvalController" ng-init="predicate='apply_date_iso'; reverse=!reverse">
             <h3>Application Approval</h3>
             Set the user status by clicking on one of the status buttons on the right side of the table below.  The user will be notified by email when their status is set
             to Accepted, Denied, or Approved.<br><br>
@@ -26,18 +26,18 @@
             <i class="fa fa-search"></i> <input ng-model="query"> <br> <br>
             <table class='table table-hover table-bordered' style="font-size: small">
                 <tr>
-                    <th width="3%">#</th>
-                    <th width="9%"><a href="" ng-click="predicate = 'apply_date_iso'; reverse=!reverse">Application Date</a></th>
-                    <th width="10%"><a href="" ng-click="predicate = 'approve_date_iso'; reverse=!reverse">Approval Date </a></th>
-                    <th width="9%"><a href="" ng-click="predicate = 'accept_date_iso'; reverse=!reverse">Acceptance Date</a></th>
-                    <th width="5%"><a href="" ng-click="predicate = 'member_id'; reverse=!reverse">Member #</a></th>
-                    <th width="15%"><a href="" ng-click="predicate = 'lastname'; reverse=!reverse">Name</a></th>
-                    <th width="5%"><a href="" ng-click="predicate = 'country'; reverse=!reverse">Country</a></th>
-                    <th width="5%"><a href="" ng-click="predicate = 'pword'; reverse=!reverse">Pword<br> Set</a></th>
-                    <th width="5%">Course Type</th>
-                    <th width="5%"><a href="" ng-click="predicate = 'status'; reverse=!reverse">User Status</a></th>
-                    <th width="10%">Accept or Approve</th>
-                    <th width="13%">Deny or Unsubscribe</th>
+                    <th >#</th>
+                    <th ><a href="" ng-click="predicate = 'apply_date_iso'; reverse=!reverse">Application Date</a></th>
+                    <th ><a href="" ng-click="predicate = 'approve_date_iso'; reverse=!reverse">Approval Date </a></th>
+                    <th ><a href="" ng-click="predicate = 'accept_date_iso'; reverse=!reverse">Acceptance Date</a></th>
+                    <th ><a href="" ng-click="predicate = 'member_id'; reverse=!reverse">Member #</a></th>
+                    <th ><a href="" ng-click="predicate = 'lastname'; reverse=!reverse">Name</a></th>
+                    <th ><a href="" ng-click="predicate = 'country'; reverse=!reverse">Country</a></th>
+                    <th ><a href="" ng-click="predicate = 'pword'; reverse=!reverse">Pword<br> Set</a></th>
+                    <th >Course Type</th>
+                    <th ><a href="" ng-click="predicate = 'status'; reverse=!reverse">User Status</a></th>
+                    <th >Accept or Approve</th>
+                    <th >Deny or Unsubscribe</th>
                 </tr>
                 <tr ng-repeat="applicant in applicants | filter:query | orderBy:predicate:reverse" >
                     <td>{{$index+1}}</td>
@@ -144,12 +144,12 @@
                         <span ng_show="applicant.status != 'Pending'">{{applicant.status}}</span>
                     </td>
                     <td>
-                        <button  type="button" ng-click="approveApplicant(applicant.maillist_id,'pending')">Accept</button><br><br>
+                        <button  type="button" ng-click="approveApplicant(applicant.maillist_id,'pending')">Accept</button>
                         <button  type="button" ng-click="approveApplicant(applicant.maillist_id,'approved')">Approve</button>
                     </td>
                     <td>
-                        <button  type="button" ng-click="approveApplicant(applicant.maillist_id,'declined')">Deny</button><br><br>
-                        <button  type="button" ng-click="approveApplicant(applicant.maillist_id,'unsubscribed')">Unsubscribe</button><br><br>
+                        <button  type="button" ng-click="approveApplicant(applicant.maillist_id,'declined')">Deny</button>
+                        <button  type="button" ng-click="approveApplicant(applicant.maillist_id,'unsubscribed')">Unsubscribe</button>
                     </td>
 
                 </tr>
