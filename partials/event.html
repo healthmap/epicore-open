@@ -79,7 +79,7 @@
                         </div>
 
                         <!-- Followup messages for one FETP not in same organization (Moderator only)-->
-                        <div  class="show-message-mod" ng-if="(history_item.organization_id != userInfo.organization_id) && userInfo.uid)">
+                        <div  class="show-message-mod" ng-if="(history_item.organization_id != userInfo.organization_id) && userInfo.uid">
                             <a href="" ng-click="isCollapsed = !isCollapsed"><i class="fa fa-plus-square-o"></i></a>
                             followup sent to Member, {{history_item.date}}
                             <!--<a ng-if="userInfo.fetp_id" class="nav-button" href="#/reply/{{id}}">Reply</a>-->
