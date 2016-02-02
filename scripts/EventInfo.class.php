@@ -28,6 +28,11 @@ class EventInfo
         $event_info['num_responses'] = $this->db->getOne("SELECT count(*) FROM response WHERE event_id = ?", array($this->id));
         $event_info['create_date'] = date('j-M-Y H:i', strtotime($event_info['create_date']));
         $event_info['person'] = $event_person['name'];
+
+        $event_info['description'] = iconv("UTF-8", "ISO-8859-1//IGNORE", $event_info['description']);
+        $event_info['personalized_text'] = iconv("UTF-8", "ISO-8859-1//IGNORE", $event_info['personalized_text']);
+        $event_info['title'] = iconv("UTF-8", "ISO-8859-1//IGNORE", $event_info['title']);
+
         return $event_info;
     }
 
@@ -317,6 +322,9 @@ class EventInfo
             $row['iso_create_date'] = $row['create_date'];
             $row['event_id_int'] = (int)$row['event_id'];
             $row['create_date'] = date('j-M-Y H:i', strtotime($row['create_date']));
+
+            $row['title'] = iconv("UTF-8", "ISO-8859-1//IGNORE", $row['title']);
+
             $event_person = EventInfo::getEventPerson($row['event_id']);
             $row['person'] = $event_person['name'];
             $place = explode(',',$row['location']);
@@ -329,7 +337,6 @@ class EventInfo
             elseif(sizeof($place) == 1){
                 $row['country'] = $place[0];
             }
-
 
 
             if($uid == $row['requester_id']) {
@@ -431,6 +438,8 @@ class EventInfo
         foreach ($followups as $followup ){
             $followup_person =$this->getFollowupPerson($event_id, $followup['requester_id']);
 
+            $followup['text'] = iconv("UTF-8", "ISO-8859-1//IGNORE", $followup['text']);
+
             $messages[$i]['text'] = nl2br($followup['text']);
             $messages[$i]['fetp_count'] = $followup['fetp_count'];
             $messages[$i]['fetp_id'] = $followup['fetp_id'];
@@ -443,6 +452,8 @@ class EventInfo
             $messages[$i++]['date'] = date('j-M-Y H:i', strtotime($followup['action_date']));
         }
         foreach ($responses as $response ){
+            $response['text'] = iconv("UTF-8", "ISO-8859-1//IGNORE", $response['text']);
+
             $messages[$i]['text'] = nl2br($response['response']);
             if ($response['response_permission'] == "0")
                 $messages[$i]['text'] = $response_permission_lu["0"];;
@@ -456,6 +467,8 @@ class EventInfo
         }
         foreach ($enotes as $enote){
             $status_person =$this->getStatusPerson($event_id, $enote['requester_id']);
+
+            $enote['note'] = iconv("UTF-8", "ISO-8859-1//IGNORE", $enote['note']);
 
             $messages[$i]['text'] = nl2br($enote['note']);
             $messages[$i]['status'] = $status_lu[$enote['status']];
