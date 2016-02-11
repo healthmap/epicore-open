@@ -1,7 +1,7 @@
 <div ng-include src="'header.html'"></div>
 <div class="container main">
     <div class="row">
-        <div id="form-container" class="col-xs-12 col-sm-9 col-md-7 col-lg-6">
+        <div id="form-container" class="col-xs-12">
         <div class="intro">
             <h4>Close Request for Information</h4>
             <p>
@@ -23,11 +23,19 @@
             <textarea ng-model="formData.notes" style="height:100px" class="form-control" name="reply" id="notesfield" placeholder="Additional Notes"></textarea>
             </div>
 
-            <div class="form-group col-xs-12">
+            <div ng-if="validResponses > 0">
+                <p>Please assess all member responses (useful, used in promed, or not useful) in the message history below before closing this RFI.</p>
+                <div ng-include="'partials/messagehistory.html'" ng-init="closerfi='1'" ></div><br>
+            </div>
+
+            <div class="form-group col-xs-12" ng-init>
                 <button ng-click="changeRequestStatus(formData, 'Close', changeStatusForm.$valid)" type="submit" class="submit btn btn-default col-xs-12">Close request</button>
             </div><!-- /input-group -->
         </form>
 
+            <div ng-if="close_message">
+                <p class="intro error" name="close_message" ><strong ng-bind-html="close_message" style="color: red"></strong></p>
+            </div>
         </div>
     </div><!--row-->
 </div><!--container main-->

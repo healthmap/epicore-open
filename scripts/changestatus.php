@@ -7,6 +7,10 @@ require_once "const.inc.php";
 
 $event_id = $formvars->event_id;
 $user_id = $formvars->uid;
+$useful_rids = $formvars->useful_rids;
+$usefulpromed_rids = $formvars->usefulpromed_rids;
+$notuseful_rids = $formvars->notuseful_rids;
+
 if(is_numeric($event_id) && is_numeric($user_id)) {
     $thestatus = $formvars->thestatus == "Reopen" ? 'O' : 'C';
     $ei = new EventInfo($event_id);
@@ -14,7 +18,13 @@ if(is_numeric($event_id) && is_numeric($user_id)) {
     // reason is one of the radio button choices on the close event form
     $reason = isset($formvars->reason) && is_numeric($formvars->reason) ? $formvars->reason : '';
     $return_val = $ei->changeStatus($thestatus, $user_id, $formvars->notes, $reason);
+
     if($return_val == 1) {
+        // set response status (useful or not)
+        $ei->setResponseStatus($useful_rids, 1);
+        $ei->setResponseStatus($usefulpromed_rids, 2);
+        $ei->setResponseStatus($notuseful_rids, 0);
+
         $status = "success"; 
         // now send the notes to all orig FETPs specifying status change
         $fetp_ids = $ei->getFETPRecipients();    

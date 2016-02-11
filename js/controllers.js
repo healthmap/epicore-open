@@ -486,6 +486,7 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
         if(!$scope.formData) {
             $scope.formData = {};
         }
+        $scope.validResponses = 0;
 
         eventAPIservice.getEvents($scope.id).success(function (response) {
             $scope.isOrganization = $scope.userInfo.fetp_id > 0 ? false : true;
@@ -502,6 +503,14 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
 
             $scope.eventsList = response.EventsList;
             $scope.filePreview = response.EventsList.filePreview ? response.EventsList.filePreview : '';
+
+            // count responses with content
+            for (var h in $scope.eventsList.history) {
+                if (($scope.eventsList.history[h].permission !== '0') && ($scope.eventsList.history[h].type == 'Member Response')
+                    && ($scope.userInfo.uid)){
+                    $scope.validResponses++;
+                }
+            }
         });
 
         $scope.sendFollowup = function(formData, isValid) {
@@ -519,17 +528,48 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
         }
 
         $scope.changeRequestStatus = function(formData, thestatus, isValid) {
+            // count responses assessed as useful,used in promed, or not useful when closing an RFI
+            // only for responses with content
+            var useful_rids = [];
+            var usefulpromed_rids = [];
+            var notuseful_rids = [];
+            if(isValid && (thestatus == 'Close') && ($scope.validResponses > 0)) {
+                for (var h in $scope.eventsList.history) {
+                    var h_rid = $scope.eventsList.history[h].response_id;
+                    var h_type = $scope.eventsList.history[h].type;
+                    var h_fetp_id = $scope.eventsList.history[h].fetp_id;
+                    var h_orgid = $scope.eventsList.history[h].organization_id;
+                    var h_useful = $scope.eventsList.history[h].useful;
+                    if ((h_type == 'Member Response')
+                        && ($scope.userInfo.uid || (h_fetp_id == $scope.userInfo.fetp_id)) && (h_orgid == $scope.userInfo.organization_id)) {
+                        if (h_useful === null) {
+                            alert('Please assess all member responses.');
+                            $scope.close_message = 'Please assess all member responses.';
+                            return false;
+                        } else if (h_useful === '1') {
+                            useful_rids.push(h_rid);   // save useful response_ids
+                        } else if (h_useful === '2') {
+                            usefulpromed_rids.push(h_rid);   // save useful promed response_ids
+                        } else {
+                            notuseful_rids.push(h_rid);   // save not useful response_ids
+                        }
+                    }
+                }
+            }
             if(isValid) {
-                formData['event_id'] = $routeParams.id
+                formData['event_id'] = $routeParams.id;
                 formData['uid'] = $scope.userInfo.uid;
                 formData['thestatus'] = thestatus;
+                formData['useful_rids'] = useful_rids.toString();
+                formData['usefulpromed_rids'] = usefulpromed_rids.toString();
+                formData['notuseful_rids'] = notuseful_rids.toString();
                 $http({ url: 'scripts/changestatus.php', method: "POST", data: formData
                 }).success(function (data, status, headers, config) {
                     var pathid = thestatus == "Reopen" ? 5 : 4;
                     $location.path('/success/'+pathid);
                 });
             }
-        }
+        };
 
         $scope.sendResponse = function(formData, isValid) {
             if(formData['response_permission'] == 0 || isValid) {

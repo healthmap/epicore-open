@@ -29,10 +29,6 @@ class EventInfo
         $event_info['create_date'] = date('j-M-Y H:i', strtotime($event_info['create_date']));
         $event_info['person'] = $event_person['name'];
 
-        //$event_info['description'] = iconv("UTF-8", "ISO-8859-1//IGNORE", $event_info['description']);
-        //s$event_info['personalized_text'] = iconv("UTF-8", "ISO-8859-1//IGNORE", $event_info['personalized_text']);
-        //$event_info['title'] = iconv("UTF-8", "ISO-8859-1//IGNORE", $event_info['title']);
-
         return $event_info;
     }
 
@@ -116,6 +112,20 @@ class EventInfo
             return 1;
         }
         return 0;
+    }
+
+    function setResponseStatus($rid, $status) {
+        $res = $this->db->query("UPDATE response SET useful='$status' WHERE response_id in ($rid)");
+
+        // check that result is not an error
+        if (PEAR::isError($res)) {
+            //die($res->getMessage());
+            return false;
+        }
+        else {
+            $this->db->commit();
+            return true;
+        }
     }
 
     function insertResponse($data_arr) {
@@ -304,6 +314,8 @@ class EventInfo
 
             // get the number of requests sent for that event
             $row['num_responses'] = $db->getOne("SELECT count(*) FROM response WHERE event_id = ?", array($row['event_id']));
+            $row['num_responses_content'] = $db->getOne("SELECT count(*) FROM response WHERE event_id = ? AND response_permission <>0 ", array($row['event_id']));
+            $row['num_responses_nocontent'] = $row['num_responses'] - $row['num_responses_content'];
             $get_followups = $db->query("SELECT send_date,followup_id FROM event_fetp WHERE event_id = ? ORDER BY send_date DESC", array($row['event_id']));
             $ftext = $db->query("SELECT text,followup_id from followup WHERE event_id = ?", array($row['event_id']));
             while($gftext = $ftext->fetchRow()){
@@ -413,14 +425,14 @@ class EventInfo
             $followups = $db->getAll("SELECT text, action_date, requester_id, fetp_id, f.followup_id, count(fetp_id) as fetp_count FROM followup f, event_fetp fe WHERE f.event_id=fe.event_id
                         AND f.followup_id=fe.followup_id AND f.event_id = ? AND fetp_id = ?  GROUP BY text ORDER BY action_date", array($event_id, $fetp_id));
             // get fetp response from single fetp
-            $responses = $db->getAll("SELECT response, responder_id, response_date, response_permission from response WHERE event_id = ? AND responder_id = ?
+            $responses = $db->getAll("SELECT response, responder_id, response_date, response_permission, useful from response WHERE event_id = ? AND responder_id = ?
                                   ORDER BY response_date", array($event_id, $fetp_id));
         }
         else{   // get followups sent to all fetps
             $followups = $db->getAll("SELECT text, action_date, requester_id, fetp_id, f.followup_id, count(fetp_id) as fetp_count FROM followup f, event_fetp fe WHERE f.event_id=fe.event_id
                         AND f.followup_id=fe.followup_id AND f.event_id = ? GROUP BY text ORDER BY action_date", array($event_id));
             // get fetp responses from all fetps
-            $responses = $db->getAll("SELECT response, response_id, responder_id, response_date, response_permission from response WHERE event_id = ?
+            $responses = $db->getAll("SELECT response, response_id, responder_id, response_date, response_permission, useful from response WHERE event_id = ?
                                   ORDER BY response_date", array($event_id));
         }
 
@@ -438,8 +450,6 @@ class EventInfo
         foreach ($followups as $followup ){
             $followup_person =$this->getFollowupPerson($event_id, $followup['requester_id']);
 
-            //$followup['text'] = iconv("UTF-8", "ISO-8859-1//IGNORE", $followup['text']);
-
             $messages[$i]['text'] = nl2br($followup['text']);
             $messages[$i]['fetp_count'] = $followup['fetp_count'];
             $messages[$i]['fetp_id'] = $followup['fetp_id'];
@@ -452,7 +462,6 @@ class EventInfo
             $messages[$i++]['date'] = date('j-M-Y H:i', strtotime($followup['action_date']));
         }
         foreach ($responses as $response ){
-            //$response['text'] = iconv("UTF-8", "ISO-8859-1//IGNORE", $response['text']);
 
             $messages[$i]['text'] = nl2br($response['response']);
             if ($response['response_permission'] == "0")
@@ -461,14 +470,13 @@ class EventInfo
             $messages[$i]['type'] = 'Member Response';
             $messages[$i]['response_id'] = $response['response_id'];
             $messages[$i]['fetp_id'] = $response['responder_id'];
+            $messages[$i]['useful'] = $response['useful'];
             $messages[$i]['person_id'] = $event_person['user_id'];
             $messages[$i]['organization_id'] = $event_person['organization_id'];
             $messages[$i++]['date'] = date('j-M-Y H:i', strtotime($response['response_date']));
         }
         foreach ($enotes as $enote){
             $status_person =$this->getStatusPerson($event_id, $enote['requester_id']);
-
-            //$enote['note'] = iconv("UTF-8", "ISO-8859-1//IGNORE", $enote['note']);
 
             $messages[$i]['text'] = nl2br($enote['note']);
             $messages[$i]['status'] = $status_lu[$enote['status']];

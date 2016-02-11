@@ -1,5 +1,5 @@
 <div ng-include src="'header.html'"></div>
-<div class="container main">
+<div class="container-fluid main">
     <div class="row">
         <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 wbg">
         <h4>Request for Information list</h4>
@@ -22,9 +22,10 @@
                     <th width="10%"><a href="" ng-click="predicate = 'location'; reverse=!reverse">Location</a></th>
                     <th><a href="" ng-click="predicate = 'country'; reverse=!reverse">Country</a></th>
                     <th>Requests Sent Date<br> (# recipients)</th>
-                    <th># Responses</th>
+                    <th width="5%" ># Responses with content</th>
+                    <th width="5%" ># Responses nothing to contribute</th>
                 </tr>
-                <tr><th colspan="8"><a href="" ng-click="isCollapsed1 = !isCollapsed1"><i class="fa fa-plus-square-o"></i></a> Initiated by you</th></tr>
+                <tr><th colspan="9"><a href="" ng-click="isCollapsed1 = !isCollapsed1"><i class="fa fa-plus-square-o"></i></a> Initiated by you</th></tr>
                 <tr ng-show="!isCollapsed1" ng-repeat="event in eventsList['yours'] | filter:query | orderBy:predicate:reverse" >
                     <td>{{event.event_id_int}}</td>
                     <td><a href="#/events/{{event.event_id}}">{{event.title}}</a></td>
@@ -38,10 +39,13 @@
                     </span>
                     </td>
                     <td>
-                        <span>{{event.num_responses}}</span>
+                        <span>{{event.num_responses_content}}</span>
+                    </td>
+                    <td>
+                        <span>{{event.num_responses_nocontent}}</span>
                     </td>
                 </tr>
-                <tr><th colspan="8"><a href="" ng-click="isCollapsed2 = !isCollapsed2"><i class="fa fa-plus-square-o"></i></a> Initiated by your organization ({{userInfo.organization}})</th></tr>
+                <tr><th colspan="9"><a href="" ng-click="isCollapsed2 = !isCollapsed2"><i class="fa fa-plus-square-o"></i></a> Initiated by your organization ({{userInfo.organization}})</th></tr>
                 <tr ng-show="!isCollapsed2" ng-repeat="event in eventsList['yourorg'] | filter:query | orderBy:predicate:reverse">
                     <td>{{event.event_id_int}}</td>
                     <td><a href="#/events/{{event.event_id}}">{{event.title}}</a></td>
@@ -55,10 +59,13 @@
                     </span>
                     </td>
                     <td>
-                        <span>{{event.num_responses}}</span>
+                        <span>{{event.num_responses_content}}</span>
+                    </td>
+                    <td>
+                        <span>{{event.num_responses_nocontent}}</span>
                     </td>
                 </tr>
-                <tr><th colspan="8"><a href="" ng-click="isCollapsed3 = !isCollapsed3"><i class="fa fa-plus-square-o"></i></a> Initiated by others</th></tr>
+                <tr><th colspan="9"><a href="" ng-click="isCollapsed3 = !isCollapsed3"><i class="fa fa-plus-square-o"></i></a> Initiated by others</th></tr>
                 <tr ng-show="!isCollapsed3" ng-repeat="event in eventsList['other'] | filter:query | orderBy:predicate:reverse" >
                     <td>{{event.event_id_int}}</td>
                     <td><a href="#/events/{{event.event_id}}">{{event.title}}</a></td>
@@ -72,7 +79,10 @@
                     </span>
                     </td>
                     <td>
-                        <span>{{event.num_responses}}</span>
+                        <span>{{event.num_responses_content}}</span>
+                    </td>
+                    <td>
+                        <span>{{event.num_responses_nocontent}}</span>
                     </td>
                 </tr>
             </tbody>
