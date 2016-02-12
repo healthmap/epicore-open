@@ -22,8 +22,8 @@
                     <th width="10%"><a href="" ng-click="predicate = 'location'; reverse=!reverse">Location</a></th>
                     <th><a href="" ng-click="predicate = 'country'; reverse=!reverse">Country</a></th>
                     <th>Requests Sent Date<br> (# recipients)</th>
-                    <th width="5%" ># Responses with content</th>
-                    <th width="5%" ># Responses nothing to contribute</th>
+                    <th width="5%" >Responses with content</th>
+                    <th width="5%" >Responses nothing to contribute</th>
                 </tr>
                 <tr><th colspan="9"><a href="" ng-click="isCollapsed1 = !isCollapsed1"><i class="fa fa-plus-square-o"></i></a> Initiated by you</th></tr>
                 <tr ng-show="!isCollapsed1" ng-repeat="event in eventsList['yours'] | filter:query | orderBy:predicate:reverse" >

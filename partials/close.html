@@ -8,7 +8,7 @@
             Title: {{eventsList.title}}<br>
             Date: {{eventsList.create_date}}
             </p>
-            <p>NOTE: All Members originally contacted for this RFI will be notified via email.</p>
+            <b>NOTE: All Members originally contacted for this RFI will be notified via email.</b>
         </div>
 
         <!-- CHANGE STATUS FORM (for owner of event) -->
@@ -24,7 +24,11 @@
             </div>
 
             <div ng-if="validResponses > 0">
-                <p>Please assess all member responses (useful, used in promed, or not useful) in the message history below before closing this RFI.</p>
+                <b>Please assess all member responses in the message history below before closing this RFI.</b><br>
+                <span ><i style="color: red" class="fa fa-thumbs-o-down"></i> - Not Helpful</span><br>
+                <span ><i style="color:blue" class="fa fa-thumbs-o-up"></i> - Helpful but not used in a post</span> <br>
+                <span > <i style="color:green" class="fa fa-thumbs-o-up">+ProMED</i> - Helpful and used in a post</span><br><br>
+
                 <div ng-include="'partials/messagehistory.html'" ng-init="closerfi='1'" ></div><br>
             </div>
 

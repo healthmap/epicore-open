@@ -10,9 +10,9 @@
 
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
             <ul class="right nav navbar-nav">
-                <li ng-show="{{userInfo.isPromed}}"><a href="http://promedmail.org/dashboard"><img src="img/promed.png"> Dashboard <i class="fa fa-arrow-circle-right"></i></a>&nbsp;&nbsp;</li>
-                <li ng-show="{{userInfo.isOrganization}}"><a href="#/request" ng-class="getClass('/request')">Request</a></li>
-                <li ng-if="userInfo.active=='Y'"><a href="#/events" ng-class="getClass('/events')">Review</a></li>
+                <li ng-show="{{userInfo.isPromed}}"><a href="http://promedmail.org/dashboard" target="_blank"><img src="img/promed.png"> ProMED Dashboard <i class="fa fa-arrow-circle-right"></i></a>&nbsp;&nbsp;</li>
+                <li ng-if="userInfo.active=='Y'"><a href="#/events" ng-class="getClass('/events')">Epicore Dashboard</a></li>
+                <li ng-show="{{userInfo.isOrganization}}"><a href="#/request" ng-class="getClass('/request')">Send Request</a></li>
                 <li ng-if="userInfo.active=='N'"><a href="#/welcome" ng-class="getClass('/welcome')">Welcome</a></li>
                 <li><a ng-href="#/home" ng-click="userLogout()">Logout [{{userInfo.uname}}]</a></li>
             </ul>
