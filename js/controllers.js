@@ -130,6 +130,7 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
         $cookieStore.remove('epiUserInfo');
         $window.sessionStorage.clear();
     }
+
         /* set password */
         $scope.setPassword = function(formData) {
             $scope.isRouteLoading = true;
@@ -604,7 +605,7 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
         $scope.formData.latlon = $window.sessionStorage.latlon;
     }
 
-    // if there's an alertid passed in, get the info to prepopulate the fields
+    // if there's an alertid passed in from ProMED, get the info to prepopulate the fields
     $scope.alertid = $routeParams.alertid;
     if($scope.alertid && ($scope.alertid !== $window.sessionStorage.alertid)) {
         $window.sessionStorage.alertid = $scope.alertid;
@@ -789,7 +790,24 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
             });
         };
 
-}).controller('responseController', function($scope, $location, $routeParams, $cookieStore, $http) {
+        /* clear request form */
+        $scope.clearRequest = function() {
+            if (confirm('Are you sure you want to clear this request form?')) {
+                $scope.formData = {};
+                $window.sessionStorage.title = '';
+                $window.sessionStorage.description = '';
+                $window.sessionStorage.location = '';
+                $window.sessionStorage.latlon = '';
+                $window.sessionStorage.additionalText = '';
+                $window.sessionStorage.alertid = '';
+            } else {
+
+            }
+
+        }
+
+
+    }).controller('responseController', function($scope, $location, $routeParams, $cookieStore, $http) {
         $scope.userInfo = $cookieStore.get('epiUserInfo');
         var formData = {};
         formData['uid'] = $scope.userInfo.uid;
