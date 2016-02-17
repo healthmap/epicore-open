@@ -15,6 +15,7 @@ if(!isset($formvars->alert_id) || !is_numeric($formvars->alert_id)) {
 require_once "AlertInfo.class.php";
 $ai = new AlertInfo($formvars->alert_id);
 $alert_info = $ai->getInfo();
+header('content-type: application/json; charset=utf-8');
 print json_encode($alert_info);
 exit;
 

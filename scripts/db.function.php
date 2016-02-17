@@ -15,7 +15,8 @@ function getDB($which = '')
         $which = $which ? $which : 'epicore_db';
         $dsn = $opts[$which];
         $db =& DB::connect($dsn);
-        $db->connection->set_charset("utf8");
+        if ($which == 'epicore_db')
+            $db->connection->set_charset("utf8");
         if (PEAR::isError($db)) {
             //print_r($db);
             die('Cant connect to database as normal user');
