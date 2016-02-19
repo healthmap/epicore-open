@@ -100,14 +100,14 @@ foreach($applicants as $applicant){
     // Organization Category
     $user['Organization Category'] = '';
     if ($applicant['health_org_university'])
-        $user['Organization Category'] = 'University or any academic or research institution';
-    elseif ($applicant['health_org_doh'])
-        $user['Organization Category'] = 'Ministry / Department of Health';
-    elseif ($applicant['health_org_clinic'])
-        $user['Organization Category'] = 'Medical clinic';
-    elseif ($applicant['health_org_other'])
-        $user['Organization Category'] = 'Other health-related organizations';
-    elseif ($applicant['health_org_none'])
+        $user['Organization Category'] = 'University or any academic or research institution, ';
+    if ($applicant['health_org_doh'])
+        $user['Organization Category'] .= 'Ministry / Department of Health, ';
+    if ($applicant['health_org_clinic'])
+        $user['Organization Category'] .= 'Medical clinic, ';
+    if ($applicant['health_org_other'])
+        $user['Organization Category'] .= 'Other health-related organizations, ';
+    if ($applicant['health_org_none'])
         $user['Organization Category'] = 'No category';
 
 
@@ -143,6 +143,16 @@ foreach($applicants as $applicant){
     $user['Major3'] = $applicant['major3'];
     $user['Degree3'] = $applicant['degree3'] ? $applicant['degree3']: $applicant['other_degree3'];
 
+    // Health experience
+    $user['Health Experience'] = '';
+    if ($applicant['human_health'])
+        $user['Health Experience'] = 'Human health, ';
+    if ($applicant['animal_health'])
+        $user['Health Experience'] .= 'Animal health, ';
+    if ($applicant['env_health'])
+        $user['Health Experience'] .= 'Environmental, ';
+    if ($applicant['health_exp_none'])
+        $user['Health Experience'] = 'None';
 
     // Basic Knowledge
     $user['Basic Knowledge'] = '';

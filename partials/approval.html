@@ -93,8 +93,13 @@
                                     <br>degree: {{applicant.degree3}} <span ng-show="applicant.degree3 == 'other'"> - {{applicant.other_degree3}}</span>
                                 </span>
                             </li>
-
-                            <li><b>Basic Knowledge:</b>
+                            <li><b>Health Experience:</b>
+                                <span ng_show="applicant.human_health">Human health, </span>
+                                <span ng_show="applicant.animal_health">Animal health, </span>
+                                <span ng_show="applicant.env_health">Environmental health</span>
+                                <span ng_show="applicant.health_exp_none">None</span>
+                            </li>
+                            <li ng_show="!applicant.human_health && !applicant.animal_health && !applicant.env_health && !applicant.health_exp_none"><b>Basic Knowledge:</b>
                                 <span ng-show="applicant.clinical_med_adult">Clinical Medicine – Adult, </span>
                                 <span ng-show="applicant.clinical_med_pediatric">Clinical Medicine – Pediatric, </span>
                                 <span ng-show="applicant.clinical_med_vet">Clinical Medicine – Vet, </span>

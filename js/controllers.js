@@ -24,10 +24,12 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
         $scope.attempted = true;
 
         // validate checkboxes
-        $scope.no_knowledge = !uservals.clinical_med_adult && !uservals.clinical_med_pediatric && !uservals.clinical_med_vet && !uservals.research &&
+        /*$scope.no_knowledge = !uservals.clinical_med_adult && !uservals.clinical_med_pediatric && !uservals.clinical_med_vet && !uservals.research &&
                                 !uservals.microbiology && !uservals.virology && !uservals.parasitology && !uservals.vaccinology && !uservals.epidemiology &&
                                 !uservals.biotechnology && !uservals.pharmacy && !uservals.publichealth && !uservals.disease_surv && !uservals.informatics &&
                                 !uservals.biostatistics && !uservals.other_knowledge;
+         */
+        $scope.no_health_exp = !uservals.human_health && !uservals.animanl_health && !uservals.env_health && !uservals.health_exp_none;
 
         $scope.no_category = !uservals.health_org_university  && !uservals.health_org_doh && !uservals.health_org_clinic
                                 && !uservals.health_org_other && !uservals.health_org_none;
@@ -41,7 +43,7 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
         var regex = /^([a-zA-Z0-9_.+-])+\@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/;
         var isemail = regex.test(uservals.email);
 
-        if (!isValid || !isemail  || $scope.no_knowledge || $scope.no_category || $scope.no_notification || !uservals.training
+        if (!isValid || !isemail || $scope.no_health_exp || $scope.no_category || $scope.no_notification || !uservals.training
             || !uservals.health_exp || !uservals.sector){
 
             $scope.signup_message = 'Form not complete. Please correct the errors above in red, and then submit again.';
