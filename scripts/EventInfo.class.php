@@ -60,6 +60,7 @@ class EventInfo
         $messages[$size]['location'] = $event_info['location'];
         $messages[$size]['person'] = $event_info['person'];
         $messages[$size]['organization_id'] = $event_info['org_requester_id'];
+        $messages[$size]['disease'] = $event_info['disease'];
 
         return $messages;
     }
@@ -383,7 +384,7 @@ class EventInfo
         $create_date = $darr['create_date'] ? $darr['create_date'] : date('Y-m-d H:i:s');
 
         // insert into the event table
-        $q = $db->query("INSERT INTO event (place_id, title, description, personalized_text, create_date, requester_id, search_box, search_countries, alert_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)", array($place_id, $darr['title'], $darr['description'], $darr['personalized_text'], $create_date, $darr['requester_id'], $darr['search_box'], $darr['search_countries'], $darr['alert_id']));
+        $q = $db->query("INSERT INTO event (place_id, title, description, personalized_text, disease, create_date, requester_id, search_box, search_countries, alert_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", array($place_id, $darr['title'], $darr['description'], $darr['personalized_text'], $darr['disease'], $create_date, $darr['requester_id'], $darr['search_box'], $darr['search_countries'], $darr['alert_id']));
         $event_id = $db->getOne("SELECT LAST_INSERT_ID()");
         $db->commit();
         return $event_id;

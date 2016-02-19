@@ -29,7 +29,7 @@ class UserInfo
 
     function getFETPRequests($status)
     {
-        $q = $this->db->query("SELECT event.event_id, event.title, event.create_date, event_fetp.send_date, place.name AS location
+        $q = $this->db->query("SELECT event.event_id, event.title, event.disease, event.create_date, event_fetp.send_date, place.name AS location
                                 FROM event_fetp, event, place
                                 WHERE fetp_id = ? AND event_fetp.event_id = event.event_id AND event.place_id = place.place_id
                                 ORDER BY send_date DESC", array($this->id));
@@ -43,6 +43,7 @@ class UserInfo
                 $requests[$row['event_id']]['event_id'] = $row['event_id'];
                 $requests[$row['event_id']]['title'] = $row['title'];
                 $requests[$row['event_id']]['location'] = $row['location'];
+                $requests[$row['event_id']]['disease'] = $row['disease'];
                 $requests[$row['event_id']]['iso_create_date'] = $row['create_date'];
                 $requests[$row['event_id']]['create_date'] = date('j-M-Y H:i', strtotime($row['create_date']));
                 // make send date an array, because there may be multiple

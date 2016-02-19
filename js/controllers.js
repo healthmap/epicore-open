@@ -602,6 +602,7 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
         $scope.formData.additionalText = $window.sessionStorage.additionalText;
         $scope.formData.description = $window.sessionStorage.description;
         $scope.formData.location = $window.sessionStorage.location;
+        $scope.formData.disease = $window.sessionStorage.disease;
         $scope.formData.latlon = $window.sessionStorage.latlon;
     }
 
@@ -613,13 +614,26 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
         alertData['alert_id'] = $scope.alertid;
         $http({ url: 'scripts/getalert.php', method: "POST", data: alertData
             }).success(function (data, status, headers, config) {
+            console.log(data);
                 $scope.formData = data; // this pre-populates the values on the form
                 $scope.formData.additionalText = '';
                 $window.sessionStorage.title = data['title'];
                 $window.sessionStorage.description = data['description'];
                 $window.sessionStorage.location = data['location'];
                 $window.sessionStorage.latlon = data['latlon'];
+                $window.sessionStorage.disease = data['disease'];
+                $window.sessionStorage.species = data['species'];
                 $window.sessionStorage.additionalText = '';
+
+            //insert arabic summary into description if available
+            var a = data['arabic_text'];
+            if (a != ''){
+                var d = data['description'];
+                d = d.replace("<http://www.isid.org>", "<http://www.isid.org>" +'\n\n' + a + '\n');
+                $window.sessionStorage.description = d;
+                $scope.formData.description = d;
+            }
+
             });
     }
 
@@ -641,6 +655,7 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
             // otherwise save the session data, get FETPs near location and move on
             $window.sessionStorage.title = formData['title'];
             $window.sessionStorage.description = formData['description'];
+            $window.sessionStorage.disease = formData['disease'];
             $window.sessionStorage.additionalText = formData['additionalText'] ? formData['additionalText'] : '';
 
             // if you're here from the back button and the location hasn't changed,
@@ -780,6 +795,7 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
             formData['title'] = $window.sessionStorage.title;
             formData['description'] = $window.sessionStorage.description;
             formData['additionalText'] = $window.sessionStorage.additionalText;
+            formData['disease'] = $window.sessionStorage.disease;
             formData['alert_id'] = $window.sessionStorage.alertid;
             $http({ url: 'scripts/sendrequest.php', method: "POST", data: formData 
             }).success(function (respdata, status, headers, config) {
@@ -799,6 +815,8 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
                 $window.sessionStorage.location = '';
                 $window.sessionStorage.latlon = '';
                 $window.sessionStorage.additionalText = '';
+                $window.sessionStorage.disease = '';
+                $window.sessionStorage.species = '';
                 $window.sessionStorage.alertid = '';
             } else {
 

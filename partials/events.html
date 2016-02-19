@@ -17,6 +17,7 @@
                 <tr class="black_bg">
                     <th width="5%"><a href="" ng-click="predicate = 'event_id_int'; reverse=!reverse">ID</a></th>
                     <th><a href="" ng-click="predicate = 'title'; reverse=!reverse">Title</a></th>
+                    <th><a href="" ng-click="predicate = 'disease'; reverse=!reverse">Disease</a></th>
                     <th width="7%" ><a href="" ng-click="predicate = 'iso_create_date'; reverse=!reverse">Create Date</a></th>
                     <th><a href="" ng-click="predicate = 'person'; reverse=!reverse">Moderator</a></th>
                     <th width="10%"><a href="" ng-click="predicate = 'location'; reverse=!reverse">Location</a></th>
@@ -25,10 +26,11 @@
                     <th width="5%" >Responses with content</th>
                     <th width="5%" >Responses nothing to contribute</th>
                 </tr>
-                <tr><th colspan="9"><a href="" ng-click="isCollapsed1 = !isCollapsed1"><i class="fa fa-plus-square-o"></i></a> Initiated by you</th></tr>
+                <tr><th colspan="10"><a href="" ng-click="isCollapsed1 = !isCollapsed1"><i class="fa fa-plus-square-o"></i></a> Initiated by you</th></tr>
                 <tr ng-show="!isCollapsed1" ng-repeat="event in eventsList['yours'] | filter:query | orderBy:predicate:reverse" >
                     <td>{{event.event_id_int}}</td>
                     <td><a href="#/events/{{event.event_id}}">{{event.title}}</a></td>
+                    <td>{{event.disease}}</td>
                     <td>{{event.create_date}}</td>
                     <td>{{event.person}}</td>
                     <td>{{event.location}}</td>
@@ -45,10 +47,11 @@
                         <span>{{event.num_responses_nocontent}}</span>
                     </td>
                 </tr>
-                <tr><th colspan="9"><a href="" ng-click="isCollapsed2 = !isCollapsed2"><i class="fa fa-plus-square-o"></i></a> Initiated by your organization ({{userInfo.organization}})</th></tr>
+                <tr><th colspan="10"><a href="" ng-click="isCollapsed2 = !isCollapsed2"><i class="fa fa-plus-square-o"></i></a> Initiated by your organization ({{userInfo.organization}})</th></tr>
                 <tr ng-show="!isCollapsed2" ng-repeat="event in eventsList['yourorg'] | filter:query | orderBy:predicate:reverse">
                     <td>{{event.event_id_int}}</td>
                     <td><a href="#/events/{{event.event_id}}">{{event.title}}</a></td>
+                    <td>{{event.disease}}</td>
                     <td>{{event.create_date}}</td>
                     <td>{{event.person}}</td>
                     <td>{{event.location}}</td>
@@ -65,10 +68,11 @@
                         <span>{{event.num_responses_nocontent}}</span>
                     </td>
                 </tr>
-                <tr><th colspan="9"><a href="" ng-click="isCollapsed3 = !isCollapsed3"><i class="fa fa-plus-square-o"></i></a> Initiated by others</th></tr>
+                <tr><th colspan="10"><a href="" ng-click="isCollapsed3 = !isCollapsed3"><i class="fa fa-plus-square-o"></i></a> Initiated by others</th></tr>
                 <tr ng-show="!isCollapsed3" ng-repeat="event in eventsList['other'] | filter:query | orderBy:predicate:reverse" >
                     <td>{{event.event_id_int}}</td>
                     <td><a href="#/events/{{event.event_id}}">{{event.title}}</a></td>
+                    <td>{{event.disease}}</td>
                     <td>{{event.create_date}}</td>
                     <td></td>
                     <td>{{event.location}}</td>
@@ -94,12 +98,14 @@
             <tbody>
                 <tr class="black_bg">
                     <th><a href="" ng-click="predicate = 'title'; reverse=!reverse">Title</a></th>
+                    <th><a href="" ng-click="predicate = 'disease'; reverse=!reverse">Disease</a></th>
                     <th><a href="" ng-click="predicate = 'location'; reverse=!reverse">Location</a></th>
                     <th><a href="" ng-click="predicate = 'last_send_date'; reverse=!reverse">Request Received Date</a></th>
                     <th>Your Response Date</th>
                 </tr>
                 <tr ng-repeat="event in eventsList | filter:query | orderBy:predicate:reverse">
                     <td><a href="#/events/{{event.event_id}}">{{event.title}}</a></td>
+                    <td>{{event.disease}}</td>
                     <td>{{event.location}}</td>
                     <td>
                         <p ng-repeat="send_date in event.send_dates">
