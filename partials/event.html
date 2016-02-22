@@ -23,7 +23,12 @@
             <span ng-if="changeStatusText == 'Close'">
                 <a href="#/followup/{{id}}" class="nav-button">Send follow-up email to all Members</a>
             </span>
-            <a href="#/{{changeStatusType}}/{{id}}" class="nav-button" ng-click="checkStatus()" >{{changeStatusText}} request</a>
+            <span>
+                <a href="#/{{changeStatusType}}/{{id}}" class="nav-button" ng-click="checkStatus()" >{{changeStatusText}} request</a>
+            </span>
+            <span>
+                <a href="#/request_edit/{{id}}" class="nav-button">Edit request </a>
+            </span>
         </span>
         <!-- END CLOSE FORM (for owner of event) -->
     </div>

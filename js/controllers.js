@@ -595,18 +595,18 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
   and wipe session after added to db */
 }).controller('requestController', function($rootScope, $window, $scope, $routeParams, $cookieStore, $location, $http) {
 
-    $scope.userInfo = $rootScope.userInfo = $cookieStore.get('epiUserInfo');
+            $scope.userInfo = $rootScope.userInfo = $cookieStore.get('epiUserInfo');
 
-    // this will pre-fill the event form with session values if back button is used
-    if($window.sessionStorage.length > 0) {
-        $scope.formData = {};
-        $scope.formData.title = $window.sessionStorage.title;
-        $scope.formData.additionalText = $window.sessionStorage.additionalText;
-        $scope.formData.description = $window.sessionStorage.description;
-        $scope.formData.location = $window.sessionStorage.location;
-        $scope.formData.disease = $window.sessionStorage.disease;
-        $scope.formData.latlon = $window.sessionStorage.latlon;
-    }
+        // this will pre-fill the event form with session values if back button is used
+        if($window.sessionStorage.length > 0) {
+            $scope.formData = {};
+            $scope.formData.title = $window.sessionStorage.title;
+            $scope.formData.additionalText = $window.sessionStorage.additionalText;
+            $scope.formData.description = $window.sessionStorage.description;
+            $scope.formData.location = $window.sessionStorage.location;
+            $scope.formData.disease = $window.sessionStorage.disease;
+            $scope.formData.latlon = $window.sessionStorage.latlon;
+        }
 
     // if there's an alertid passed in from ProMED, get the info to prepopulate the fields
     $scope.alertid = $routeParams.alertid;
@@ -616,7 +616,6 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
         alertData['alert_id'] = $scope.alertid;
         $http({ url: 'scripts/getalert.php', method: "POST", data: alertData
             }).success(function (data, status, headers, config) {
-            console.log(data);
                 $scope.formData = data; // this pre-populates the values on the form
                 $scope.formData.additionalText = '';
                 $window.sessionStorage.title = data['title'];
@@ -636,7 +635,7 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
                 $scope.formData.description = d;
             }
 
-            });
+        });
     }
 
 
@@ -826,6 +825,50 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
 
         }
 
+        /* edit request by owner or superuser */
+    }).controller('editRequestController', function($rootScope, $window, $scope, $routeParams, $cookieStore, $location, $http) {
+
+        $scope.userInfo = $rootScope.userInfo = $cookieStore.get('epiUserInfo');
+
+        // prepopulate edit request form
+        $scope.eventid = $routeParams.id;
+        if($scope.eventid) {
+            var eventData = {};
+            eventData['event_id'] = $scope.eventid;
+            $http({ url: 'scripts/getrequest.php', method: "POST", data: eventData
+            }).success(function (data, status, headers, config) {
+                $scope.formData = data; // this pre-populates the values on the form
+                $scope.formData.additionalText = data['personalized_text'];
+            });
+        }
+
+        $scope.updateEvent = function(formData, isValid) {
+            if (isValid) {
+                // jquery hack to get the latlon hidden value and autocomplete for location (angular bug)
+                formData['latlon'] = $("#default_location").val();
+                formData['location'] = $("#searchTextField").val();
+
+                if(!formData['latlon']) {
+                    alert("Geolocation failed - please scroll down and select a location from the auto-suggester in the location field so that we have the coordinates of the event.");
+                    $scope.formData.location = '';
+                    return false;
+                }
+
+                // update event
+                $http({ url: 'scripts/updaterequest.php', method: "POST", data: formData
+                }).success(function (data, status, headers, config) {
+                    if (data['status'] == 'success'){
+                        $location.path('/success/6');
+                    }
+                    else{
+                        console.log(data['reason']);
+                    }
+                }).error(function (data, status, headers, config) {
+                    console.log(status);
+                });
+
+            }
+        };
 
     }).controller('responseController', function($scope, $location, $routeParams, $cookieStore, $http) {
         $scope.userInfo = $cookieStore.get('epiUserInfo');
@@ -852,6 +895,7 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
         messages[3] = "Your request has been sent to the selected members.";
         messages[4] = "Your request has been closed and an email has gone out to the original members contacted.";
         messages[5] = "Your request has been reopened and an email has gone out to the original members contacted.";
+        messages[6] = "Your request has been updated.";
         $scope.id = $routeParams.id;
         $scope.messageResponse = {};
         $scope.messageResponse.text = messages[$scope.id];

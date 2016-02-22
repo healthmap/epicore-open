@@ -1,0 +1,47 @@
+<div ng-include src="'header.html'"></div>
+<div class="container main">
+    <div class="row">
+        <div id="form-container" class="col-xs-12 col-sm-12 col-md-12 col-lg-12 wbg">
+            <form name="requestForm">
+            <div class="intro">
+                <h4>Edit Request for Information</h4>
+            </div>
+
+
+            <div class="form-group col-xs-12">
+                <label class="sr-only" for="location">Additional Email Text</label>
+                <textarea class="form-control" style="height:50px" ng-model="formData.additionalText" id="emailfield" placeholder="Personalized Email Text"></textarea>
+            </div>
+
+            <div class="form-group col-xs-12">
+                <label class="sr-only" for="posttitle">Event Title</label>
+                <input type="text" class="form-control" ng-model="formData.title" name="title" id="title" placeholder="Event Title" value="" required>
+            </div>
+            
+            <div class="form-group col-xs-12">
+                <label class="sr-only" for="location">Event Location</label>
+                <input type="text" class="form-control" ng-model="formData.location" name="location" id="searchTextField" placeholder="Event Location" value="" required>
+                <input type="hidden" name="latlon" ng-model="formData.latlon" id="default_location" value="{{formData.latlon}}">
+            </div>
+
+                <div class="form-group col-xs-12">
+                    <label class="sr-only" for="disease">Event Disease</label>
+                    <input type="text" class="form-control" ng-model="formData.disease" name="disease" id="disease" placeholder="Event Disease" value="" required>
+                </div>
+
+            <div class="form-group col-xs-12">
+                <label class="sr-only" for="location">Event Description</label>
+                <textarea class="form-control" style="height:300px" name="description" ng-model="formData.description" id="descriptionfield" placeholder="Event Description" required></textarea>
+            </div>
+
+                <div class="form-group col-xs-12">
+                    <button ng-click="updateEvent(formData, requestForm.$valid)" type="submit" class="submit btn btn-default col-xs-12">Update Request</button>
+                </div><!-- /input-group -->
+            </form>
+        </div><!--col-->
+    </div><!--row-->
+</div><!--container-->
+<script>
+initialize_googleplaces(); // google places for auto-suggester
+$("form").validate(); // form validation
+</script>

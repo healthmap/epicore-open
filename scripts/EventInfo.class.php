@@ -22,7 +22,7 @@ class EventInfo
 
         $event_person = $this->getEventPerson($this->id);
 
-        $event_info = $this->db->getRow("SELECT event.*, place.name AS location FROM event, place WHERE event_id = ? AND event.place_id = place.place_id", array($this->id));
+        $event_info = $this->db->getRow("SELECT event.*, place.name AS location, concat(place.lat,',',place.lon) AS latlon FROM event, place WHERE event_id = ? AND event.place_id = place.place_id", array($this->id));
         $event_info['org_requester_id'] = self::getOrganizationOfRequester();
         $event_info['html_description'] = str_replace("\n", "<br>", $event_info['description']);
         $event_info['num_responses'] = $this->db->getOne("SELECT count(*) FROM response WHERE event_id = ?", array($this->id));
@@ -187,22 +187,42 @@ class EventInfo
     }
 
 
-    function updateEvent($data_arr)
+    static function updateEvent($data_arr)
     {
         // sanitize the input
         foreach($data_arr as $key => $val) {
             $darr[$key] = strip_tags($val);
         }
-        if(!is_numeric($darr['requester_id'])) {
-            return 0;
-            exit;
+        if(!is_numeric($darr['requester_id']) || !is_numeric($darr['event_id'])) {
+            return 'invalid requester id or invalid event_id';
         }
-        // insert into the place table if doesn't exist
-        $place_id = PlaceInfo::insertLocation($darr['latlon'], $darr['location']);
-        // update the event table
-        $q = $this->db->query("UPDATE event SET place_id = ?, title = ?, description = ? WHERE event_id = ?", array($place_id, $darr['title'], $darr['description'], $this->id));
-        $this->db->commit();
-        return $this->id;
+
+        $db = getDB();
+        $eid = $db->getOne("SELECT event_id FROM event WHERE event_id = ? ", array($darr['event_id']));
+        if ($eid) {
+
+            // update location
+            $pid = $db->getOne("SELECT place_id FROM event WHERE event_id = ? ", array($eid));
+            $place_id = PlaceInfo::updateLocation($pid, $darr['latlon'], $darr['location']);
+            if ($place_id != $pid)
+                return $place_id;
+
+            // update the event table
+            $q = $db->query("UPDATE event SET title = ?, description = ?, personalized_text = ?, disease = ? WHERE event_id = ?",
+                array($darr['title'], $darr['description'], $darr['personalized_text'], $darr['disease'], $darr['event_id']));
+
+            // check that result is not an error
+            if (PEAR::isError($q)) {
+                //die($res->getMessage());
+                return 'failed update event query';
+            } else {
+                $db->commit();
+            }
+            return $eid;
+        } else {
+            return 'event does not exist for event id '. $eid;
+        }
+
     }
 
     function buildEmailForEvent($event_info = array(), $type, $custom_vars = array(), $return_type = 'text')

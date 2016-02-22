@@ -22,6 +22,7 @@ app.config(function($routeProvider) {
         when("/request/:alertid", {templateUrl: "partials/request.html", controller: "requestController"}).
         when("/request2", {templateUrl: "partials/request2.html", controller: "requestController"}).
         when("/request3", {templateUrl: "partials/request3.html", controller: "requestController"}).
+        when("/request_edit/:id", {templateUrl: "partials/request_edit.html", controller: "editRequestController"}).
         when("/success/:id", {templateUrl: "partials/success.html", controller: "successController"}).
         when("/about", {templateUrl: "partials/about.html"}).
         when("/terms", {templateUrl: "partials/terms.html"}).
