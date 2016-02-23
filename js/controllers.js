@@ -1,6 +1,6 @@
 angular.module('EpicoreApp.controllers', []).
 
-/* User - includes Login & Logout */
+/* User - includes signup, Reset password, Login & Logout */
 controller('userController', function($rootScope, $routeParams, $scope, $route, $cookies, $cookieStore, $location, $http, $window) {
 
     $scope.isRouteLoading = false;
@@ -18,6 +18,35 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
     $scope.go = function(path) {
         $location.path(path);
     }
+
+        // prepopulate application form
+        $scope.uid = $routeParams.id;
+        $scope.action = $routeParams.action;
+        if($scope.uid && ($scope.action == 'edit')) {
+            $scope.more_schools1 = true;
+            $scope.more_schools2 = true;
+            var data = {};
+            data['uid'] = $scope.uid;
+            data['action'] = $scope.action;
+            $http({ url: 'scripts/getapplicant.php', method: "POST", data: data
+            }).success(function (data, status, headers, config) {
+                $scope.uservals = data; // this pre-populates the values on the form
+                if ($scope.uservals.university2) {
+                    $scope.more_schools1 = true;
+                    $scope.uservals.school_country2 = data['school_country2'];
+                }
+                else{
+                    $scope.more_schools1 = false;
+                }
+                if ($scope.uservals.university3) {
+                    $scope.more_schools2 = true;
+                    $scope.uservals.school_country3 = data['school_country3'];
+                }
+                else{
+                    $scope.more_schools2 = false;
+                }
+            });
+        }
 
     $scope.signup = function(uservals, isValid) {
 
@@ -50,19 +79,33 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
             return false;
         }
         else {
-            $http({
-                url: 'scripts/signup.php', method: "POST", data: uservals
-            }).success(function (data, status, headers, config) {
-                if (data['status'] == "success") {
-                    if (data['exists'] == 1) {
-                        $scope.signup_message = 'Your email address is already in the applicant system.';
+            if($scope.action == 'edit'){
+                $http({
+                    url: 'scripts/updateuser.php', method: "POST", data: uservals
+                }).success(function (data, status, headers, config) {
+                    if (data['status'] == "success") {
+                        $location.path('/approval');
                     } else {
-                        $location.path('/application_confirm');
+                        $scope.signup_message = data['message'];
                     }
-                } else {
-                    $scope.signup_message = 'Your email address is already in the applicant system.';
-                }
-            });
+                });
+
+            }
+            else {
+                $http({
+                    url: 'scripts/signup.php', method: "POST", data: uservals
+                }).success(function (data, status, headers, config) {
+                    if (data['status'] == "success") {
+                        if (data['exists'] == 1) {
+                            $scope.signup_message = 'Your email address is already in the applicant system.';
+                        } else {
+                            $location.path('/application_confirm');
+                        }
+                    } else {
+                        $scope.signup_message = 'Your email address is already in the applicant system.';
+                    }
+                });
+            }
         }
     };
 
@@ -900,7 +943,7 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
         $scope.messageResponse = {};
         $scope.messageResponse.text = messages[$scope.id];
 
-    }).controller('approvalController', function($scope, $http) {
+    }).controller('approvalController', function($scope, $http, $location, $route) {
         var data = {};
             $http({ url: 'scripts/approval.php', method: "POST", data: data
             }).success(function (respdata, status, headers, config) {
@@ -928,6 +971,29 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
                 });
             } else {
 
+            }
+        };
+
+        $scope.editApplicant = function(uid, action){
+            $location.path('/application/' + uid + '/' +action);
+        };
+
+        $scope.deleteApplicant = function(uid){
+            if (confirm('Are you sure you want to delete this user?')) {
+                data = {uid: uid};
+                $http({
+                    url: 'scripts/deleteuser.php', method: "POST", data: data
+                }).success(function (data, status, headers, config) {
+                    if (data['status'] = 'success')
+                        $route.reload();
+                    else{
+                        alert(data['message']);
+                    }
+                }).error(function (data, status, headers, config) {
+                console.log(status);
+            });
+
+            } else {
             }
         };
 

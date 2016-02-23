@@ -295,6 +295,120 @@ class UserInfo
         return array($exists, $user_id);
     }
 
+    // returns user id of updated user or false if error
+    static function updateMaillist($pvals)
+    {
+        $db = getDB();
+        $user_id = $db->getOne("SELECT maillist_id FROM maillist WHERE maillist_id = ?", array($pvals['maillist_id']));
+
+        // update maillist
+        $message = '';
+        if($user_id) {
+            $q = $db->query("UPDATE maillist SET email = ?, firstname = ?, lastname = ?, country = ?, city =?, state=?,
+                        university1 =?, major1=?, degree1=?, other_degree1=?, school_country1=?,
+                        university2 =?, major2=?, degree2=?, other_degree2=?, school_country2=?,
+                        university3 =?, major3=?, degree3=?, other_degree3=?, school_country3=?,
+                        training=?, fetp_training=?, health_exp=?, human_health=?, animal_health=?, env_health=?, health_exp_none=?,
+                        job_title=?, organization=?, sector=?, health_org_university=?, health_org_doh=?, health_org_clinic=?, health_org_other=?, health_org_none=?,
+                        epicoreworkshop=?, epicoreworkshop_type=?, conference=?, conference_type=?, promoemail=?, promoemail_type=?,
+                        othercontact=?, othercontact_type=?, info_accurate=?, rfi_agreement=?
+                        WHERE maillist_id = ?",
+                        array($pvals['email'], $pvals['firstname'], $pvals['lastname'], $pvals['country'], $pvals['city'], $pvals['state'],
+                            $pvals['university1'], $pvals['major1'], $pvals['degree1'], $pvals['other_degree1'], $pvals['school_country1'],
+                            $pvals['university2'], $pvals['major2'], $pvals['degree2'], $pvals['other_degree2'], $pvals['school_country2'],
+                            $pvals['university3'], $pvals['major3'], $pvals['degree3'], $pvals['other_degree3'], $pvals['school_country3'],
+                            $pvals['training'], $pvals['fetp_training'], $pvals['health_exp'], $pvals['human_health'], $pvals['animal_health'], $pvals['env_health'], $pvals['health_exp_none'],
+                            $pvals['job_title'], $pvals['organization'], $pvals['sector'], $pvals['health_org_university'], $pvals['health_org_doh'], $pvals['health_org_clinic'], $pvals['health_org_other'],$pvals['health_org_none'],
+                            $pvals['epicoreworkshop'], $pvals['epicoreworkshop_type'],$pvals['conference'], $pvals['conference_type'], $pvals['promoemail'], $pvals['promoemail_type'],
+                            $pvals['othercontact'], $pvals['othercontact_type'], $pvals['info_accurate'], $pvals['rfi_agreement'], $pvals['maillist_id']));
+
+            // check that result is not an error
+            if (PEAR::isError($q)) {
+                //die($res->getMessage());
+                $status = 'failed';
+                $message = 'failed maillist update';
+            } else {
+                $status = 'success';
+                $db->commit();
+            }
+
+            // get associated fetp
+            $fetp_info = UserInfo::getFETPbyMid($pvals['maillist_id']);
+            //update fetp email and country code and latlong
+            // udate email
+            if ($fetp_info['email'] != $pvals['email'] && $status == 'success'){
+                $s = UserInfo::updateFETPemail($fetp_info['fetp_id'], $pvals['email']);
+                if($s){
+                    $status = 'success';
+                }
+                else{
+                    $status = 'failed';
+                    $message = 'failed to update fetp email';
+                }
+            }
+            // update country code and geocode
+            if ($fetp_info['countrycode'] != $pvals['country'] && $status == 'success'){
+                $s = UserInfo::geocodeFETP($pvals['email']);
+                if($s){
+                    $status = 'success';
+                }
+                else{
+                    $status = 'failed';
+                    $message = 'failed to update fetp location';
+                }
+            }
+
+
+        } else {
+            $status = 'failed';
+            $message = 'invalid maillist id';
+
+        }
+        return array($status, $message);
+    }
+
+    static function deleteMaillist($mid)
+    {
+        $db = getDB();
+        $user_id = $db->getOne("SELECT maillist_id FROM maillist WHERE maillist_id = ?", array($mid));
+
+        // update maillist
+        $message = '';
+        $status = 'success';
+        if ($user_id) {
+            $q = $db->query("DELETE FROM maillist WHERE maillist_id = ?", array($user_id));
+
+            // check that result is not an error
+            if (PEAR::isError($q)) {
+                //die($res->getMessage());
+                $status = 'failed';
+                $message = 'failed maillist delete';
+            } else {
+                $db->commit();
+            }
+
+            // delete associated fetp
+            $fetp_info = UserInfo::getFETPbyMid($user_id);
+            if($fetp_info && $status == 'success')
+                $q = $db->query("DELETE FROM fetp WHERE maillist_id=?", array($user_id));
+
+            // check that result is not an error
+            if (PEAR::isError($q)) {
+                //die($res->getMessage());
+                $status = 'failed';
+                $message = 'failed maillist delete';
+            } else {
+                $db->commit();
+            }
+
+        }
+        else{
+            $status = 'failed';
+            $message = 'user does not exist';
+        }
+        return array($status, $message);
+    }
+
     // set new password for an fetp
     static function setFETPpassword($fetp_id, $password){
         $pword = UserInfo::createPassword($password);
@@ -324,7 +438,27 @@ class UserInfo
             return $fetpinfo;
         else
             return false;
+    }
 
+    static function getFETPbyMid($mid){
+        $db = getDB();
+        $fetpinfo = $db->getRow("SELECT * FROM fetp WHERE maillist_id='$mid'");
+        if ($fetpinfo)
+            return $fetpinfo;
+        else
+            return false;
+    }
+
+    static function updateFETPemail($fetp_id,$email){
+
+        if ($fetp_id) {
+            $db = getDB();
+            $db->query("UPDATE fetp SET email='$email' WHERE fetp_id='$fetp_id'");
+            $db->commit();
+            return true;
+        }
+        else
+            return false;
     }
 
     static function getUserInfobyEmail($email){
@@ -355,14 +489,15 @@ class UserInfo
             $approve_email = $userinfo['email'];
             $approve_name = $userinfo['firstname'];
             $approve_countrycode = $userinfo['country'];
+            $approve_id = $userinfo['maillist_id'];
 
             if ($status == 'pending') {
 
                 // copy maillist to new fetp if it does not exist and set fetp status to 'P'
                 $fetpemail = $db->getOne("select email from fetp where email='$approve_email'");
                 if (!$fetpemail) {
-                    $db->query("INSERT INTO fetp (email, countrycode, active, status)
-                        VALUES ('$approve_email', '$approve_countrycode', 'N','P')");
+                    $db->query("INSERT INTO fetp (email, countrycode, active, status, maillist_id)
+                        VALUES ('$approve_email', '$approve_countrycode', 'N','P', '$approve_id')");
                     $db->commit();
 
                     // geocode fetp

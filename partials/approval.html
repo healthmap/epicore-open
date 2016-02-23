@@ -36,8 +36,9 @@
                     <th ><a href="" ng-click="predicate = 'pword'; reverse=!reverse">Pword<br> Set</a></th>
                     <th >Course Type</th>
                     <th ><a href="" ng-click="predicate = 'status'; reverse=!reverse">User Status</a></th>
-                    <th >Accept or Approve</th>
-                    <th >Deny or Unsubscribe</th>
+                    <th >Accept or <br>Approve</th>
+                    <th >Deny or <br>Unsubscribe</th>
+                    <th >Edit or <br>Delete</th>
                 </tr>
                 <tr ng-repeat="applicant in applicants | filter:query | orderBy:predicate:reverse" >
                     <td>{{$index+1}}</td>
@@ -155,6 +156,10 @@
                     <td>
                         <button  type="button" ng-click="approveApplicant(applicant.maillist_id,'declined')">Deny</button>
                         <button  type="button" ng-click="approveApplicant(applicant.maillist_id,'unsubscribed')">Unsubscribe</button>
+                    </td>
+                    <td>
+                        <button  type="button" ng-click="editApplicant(applicant.maillist_id,'edit')"><i class="fa fa-pencil-square-o fa-2x"></i></button>&nbsp;
+                        <button  type="button" ng-click="deleteApplicant(applicant.maillist_id)"><i class="fa fa-trash-o fa-2x"></i></button>
                     </td>
 
                 </tr>
