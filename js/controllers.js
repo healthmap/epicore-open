@@ -143,7 +143,9 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
                 $rootScope.isOrganization = data['uinfo']['organization_id'] > 0 ? true : false;
                 var isPromed = data['uinfo']['organization_id'] == 4 ? true : false;
                 var isActive = typeof(data['uinfo']['active']) != "undefined" ? data['uinfo']['active'] : 'Y';
-                $cookieStore.put('epiUserInfo', {'uid':data['uinfo']['user_id'], 'isPromed':isPromed, 'isOrganization':$rootScope.isOrganization, 'organization_id':data['uinfo']['organization_id'], 'organization':data['uinfo']['orgname'], 'fetp_id':data['uinfo']['fetp_id'], 'email':data['uinfo']['email'], 'uname':data['uinfo']['username'], 'active':isActive});
+                $cookieStore.put('epiUserInfo', {'uid':data['uinfo']['user_id'], 'isPromed':isPromed, 'isOrganization':$rootScope.isOrganization,
+                    'organization_id':data['uinfo']['organization_id'], 'organization':data['uinfo']['orgname'], 'fetp_id':data['uinfo']['fetp_id'],
+                    'email':data['uinfo']['email'], 'uname':data['uinfo']['username'], 'active':isActive, 'superuser':data['uinfo']['superuser']});
                 $rootScope.error_message = 'false';
                 // FETPs that aren't activated yet don't get review page
                 if(data['uinfo']['fetp_id'] && data['uinfo']['active'] == 'N') {
@@ -630,7 +632,25 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
                     $scope.submitDisabled = false;
                 });
             }
-        }
+        };
+
+        $scope.deleteEvent = function(eid){
+            if (confirm('Are you sure you want to delete this event?')) {
+                data = {eid: eid, superuser: $scope.userInfo.superuser};
+                $http({
+                    url: 'scripts/deleteEvent.php', method: "POST", data: data
+                }).success(function (data, status, headers, config) {
+                    if (data['status'] == 'success') {
+                        $location.path('/success/7');
+                    }
+                    else{
+                        console.log(data['reason']);
+                    }
+                }).error(function (data, status, headers, config) {
+                    console.log(status);
+                });
+            }
+        };
 
 
 /* Request (RFI)
@@ -939,6 +959,7 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
         messages[4] = "Your request has been closed and an email has gone out to the original members contacted.";
         messages[5] = "Your request has been reopened and an email has gone out to the original members contacted.";
         messages[6] = "Your request has been updated.";
+        messages[7] = "Your event has been deleted.";
         $scope.id = $routeParams.id;
         $scope.messageResponse = {};
         $scope.messageResponse.text = messages[$scope.id];

@@ -432,6 +432,71 @@ class EventInfo
         return $followup_id;
     }
 
+    static function deleteEvent($eid){
+        $db = getDB();
+        $event_id = $db->getOne("SELECT event_id FROM event WHERE event_id = ?", array($eid));
+
+        // delete event
+        $message = '';
+        $status = 'success';
+        if ($event_id) {
+            $q = $db->query("DELETE FROM event WHERE event_id = ?", array($event_id));
+
+            // check that result is not an error
+            if (PEAR::isError($q)) {
+                //die($res->getMessage());
+                $status = 'failed';
+                $message = 'failed to delete event';
+            } else {
+                $db->commit();
+            }
+
+            // delete associated tables
+            if($status == 'success') {
+                $q = $db->query("DELETE FROM event_notes WHERE event_id = ?", array($event_id));
+                // check that result is not an error
+                if (PEAR::isError($q)) {
+                    //die($res->getMessage());
+                    $status = 'failed';
+                    $message = 'failed to delete event notes';
+                } else {
+                    $db->commit();
+                }
+                $q = $db->query("DELETE FROM event_fetp WHERE event_id = ?", array($event_id));
+                // check that result is not an error
+                if (PEAR::isError($q)) {
+                    //die($res->getMessage());
+                    $status = 'failed';
+                    $message = 'failed to delete event fetp';
+                } else {
+                    $db->commit();
+                }
+                $q = $db->query("DELETE FROM followup WHERE event_id = ?", array($event_id));
+                if (PEAR::isError($q)) {
+                    //die($res->getMessage());
+                    $status = 'failed';
+                    $message = 'failed to delete followup';
+                } else {
+                    $db->commit();
+                }
+                $q = $db->query("DELETE FROM response WHERE event_id = ?", array($event_id));
+                if (PEAR::isError($q)) {
+                    //die($res->getMessage());
+                    $status = 'failed';
+                    $message = 'failed to delete response';
+                } else {
+                    $db->commit();
+                }
+            }
+
+        }
+        else{
+            $status = 'failed';
+            $message = 'event does not exist';
+        }
+        return array($status, $message);
+    }
+
     function getFollowupId(){
         $db = getDB();
         return $db->getOne("select MAX(followup_id) from followup WHERE event_id=?", array($this->id));

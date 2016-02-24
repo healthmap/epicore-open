@@ -2,6 +2,7 @@
 /* take the input from the Epicore login form and authenticate user */
 $formvars = json_decode(file_get_contents("php://input"));
 
+require_once "const.inc.php";
 require_once "UserInfo.class.php";
 $status = "incorrect password";
 $path = "home";
@@ -39,6 +40,7 @@ if(is_numeric($user_id) && $user_id > 0) {
     } else {
         $path = "events";
     }
+    $uinfo['superuser'] = (isset($uinfo['user_id']) && in_array($uinfo['user_id'], $super_users)) ? true: false;
 }
 
 print json_encode(array('status' => $status, 'path' => $path, 'uinfo' => $uinfo));

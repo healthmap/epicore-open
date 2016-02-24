@@ -26,8 +26,11 @@
             <span>
                 <a href="#/{{changeStatusType}}/{{id}}" class="nav-button" ng-click="checkStatus()" >{{changeStatusText}} request</a>
             </span>
-            <span>
+            <span ng-if="userInfo.superuser">
                 <a href="#/request_edit/{{id}}" class="nav-button">Edit request </a>
+            </span>
+            <span ng-if="userInfo.superuser">
+                <a href="" class="nav-button" ng-click="deleteEvent(id)" >Delete request </a>
             </span>
         </span>
         <!-- END CLOSE FORM (for owner of event) -->

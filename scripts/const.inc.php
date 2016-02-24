@@ -19,7 +19,7 @@ define('EPICORE_ID', 0);
 
 $status_lu = array('O' => 're-opened', 'C' => 'closed');
 
-$super_users = array(1,11,79,13); // Sue, Anika, Zeenah, Sumi
+$super_users = array(1,79, 91, 95, 66); // Sue, Zeenah, Jeff, Emily, Larry Madoff
 
 $response_permission_lu = array(
     "0" => "indicated nothing to contribute to the outbreak",
