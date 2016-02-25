@@ -145,7 +145,7 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
                 var isActive = typeof(data['uinfo']['active']) != "undefined" ? data['uinfo']['active'] : 'Y';
                 $cookieStore.put('epiUserInfo', {'uid':data['uinfo']['user_id'], 'isPromed':isPromed, 'isOrganization':$rootScope.isOrganization,
                     'organization_id':data['uinfo']['organization_id'], 'organization':data['uinfo']['orgname'], 'fetp_id':data['uinfo']['fetp_id'],
-                    'email':data['uinfo']['email'], 'uname':data['uinfo']['username'], 'active':isActive, 'superuser':data['uinfo']['superuser']});
+                    'email':data['uinfo']['email'], 'uname':data['uinfo']['username'], 'active':isActive, 'status':data['uinfo']['status'], 'superuser':data['uinfo']['superuser']});
                 $rootScope.error_message = 'false';
                 // FETPs that aren't activated yet don't get review page
                 if(data['uinfo']['fetp_id'] && data['uinfo']['active'] == 'N') {
@@ -204,7 +204,8 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
                             'fetp_id': data['uinfo']['fetp_id'],
                             'email': data['uinfo']['email'],
                             'uname': data['uinfo']['username'],
-                            'active': isActive
+                            'active': isActive,
+                            'status': data['uinfo']['status']
                         });
                         $rootScope.error_message = 'false';
                         var redirpath = '/welcome';
@@ -1016,6 +1017,60 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
 
             } else {
             }
+        };
+
+    }).controller('testController', function($scope, $cookieStore, $http, $location) {
+
+        $scope.code1 = 'dvj0lYB7Wjc'; // healthmap youtube video code
+        $scope.passed = false;
+
+        // grade the test and approve member after they pass the test
+        $scope.grade = function(test) {
+            $scope.attempted = true;
+
+            var missed = [];
+            if (test.q1 != 'E')
+                missed.push('1');
+            if (test.q2 != 'C')
+                missed.push('2');
+            if (test.q3 != 'B')
+                missed.push('3');
+            if (test.q4 != 'B')
+                missed.push('4');
+            if (test.q5 != 'E')
+                missed.push('5');
+
+            if (missed != ''){
+                $scope.test_message = "Missed question(s): " + missed + ".  Please take the test again.";
+            }else{  // approve member
+                $scope.passed = true;
+                //get member info
+                $scope.userInfo = $cookieStore.get('epiUserInfo');
+
+                // check member status add set to approved if status is accepted ('P')
+                if ($scope.userInfo.status == 'P') {
+                    var status = 'approved';
+                    var data = {fetp_id: $scope.userInfo.fetp_id, status: status};
+                    $http({
+                        url: 'scripts/approveUser.php', method: "POST", data: data
+                    }).success(function (respdata, status, headers, config) {
+                        if (respdata['status'] == 'success') {
+                            $scope.test_message = "You passed the test! <br><br> You can now login to the Epicore platform using your email and password.";
+                            $scope.passed = true;
+                            // update cookie
+                            $scope.userInfo.status = 'A';
+                            $cookieStore.put('epiUserInfo',$scope.userInfo);
+                        }
+                        else {
+                            console.log(respdata['message']);
+                        }
+                    });
+                }else{ // member already approved
+                    $scope.test_message = "You passed the test! <br><br> You can now login to the Epicore platform using your email and password.";
+                    $scope.passed = true;
+                }
+            }
+
         };
 
         /* filter for trusted HTML */
