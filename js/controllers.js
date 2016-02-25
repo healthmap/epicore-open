@@ -965,7 +965,12 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
         $scope.messageResponse = {};
         $scope.messageResponse.text = messages[$scope.id];
 
-    }).controller('approvalController', function($scope, $http, $location, $route) {
+    }).controller('approvalController', function($scope, $http, $location, $route, $cookieStore) {
+
+        // only allow superusers for admin
+        $scope.userInfo = $cookieStore.get('epiUserInfo');
+        $scope.superuser = (typeof($scope.userInfo) != "undefined") ? $scope.userInfo.superuser: false;
+
         var data = {};
             $http({ url: 'scripts/approval.php', method: "POST", data: data
             }).success(function (respdata, status, headers, config) {
