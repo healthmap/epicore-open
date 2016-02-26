@@ -31,22 +31,26 @@ app.config(function($routeProvider) {
         when("/mod/:tid/:aid", {templateUrl: "partials/mod.html"}).
         when("/application", {templateUrl: "partials/application_new.html"}).
         when("/application_confirm", {templateUrl: "partials/application_confirm.html"}).
-        when("/application/:id/:action", {templateUrl: "partials/application_new.html", controller: "userController"}).
+        when("/application/:id/:action/:idtype", {templateUrl: "partials/application_new.html", controller: "userController"}).
         when("/approval", {templateUrl: "partials/approval.html", controller: "approvalController"}).
         when("/login", {templateUrl: "partials/login.html"}).
         when("/welcome", {templateUrl: "partials/welcome.html", controller: "fetpController"}).
+        //when("/welcome", {templateUrl: "partials/welcome_new.html", controller: "fetpController"}).
         when("/setpassword", {templateUrl: "partials/setpassword.html"}).
         when("/resetpassword", {templateUrl: "partials/resetpassword.html"}).
         when("/home", {templateUrl: "partials/home.html"}).
+        when("/test", {templateUrl: "partials/test.html", controller: "testController"}).
         otherwise({redirectTo: '/home'});
     });
 
-app.run(['$rootScope', '$location', '$window', function($rootScope, $location, $window){    //google analytics
+/* google analytics */
+app.run(['$rootScope', '$location', '$window', function($rootScope, $location, $window){
         $rootScope.$on('$routeChangeSuccess', function(event){
                 $window.ga('send', 'pageview', { page: $location.path() });
             });
     }]);
 
+/* back button directive used on Event.html*/
 app.directive('siteHeader', function () {
     return {
         restrict: 'E',
@@ -59,6 +63,23 @@ app.directive('siteHeader', function () {
             $(element[0]).on('click', function() {
                 history.back();
                 scope.$apply();
+            });
+        }
+    };
+});
+
+/* youtube directive */
+app.directive('myYoutube', function($sce) {
+    return {
+        restrict: 'EA',
+        scope: { code:'=' },
+        replace: true,
+        template: '<div style="height:400px;"><iframe style="overflow:hidden;height:100%;width:100%" width="100%" height="100%" src="{{url}}" frameborder="0" allowfullscreen></iframe></div>',
+        link: function (scope) {
+            scope.$watch('code', function (newVal) {
+                if (newVal) {
+                    scope.url = $sce.trustAsResourceUrl("https://www.youtube.com/embed/" + newVal);
+                }
             });
         }
     };

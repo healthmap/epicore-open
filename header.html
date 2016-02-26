@@ -15,6 +15,7 @@
                 <li ng-show="{{userInfo.isOrganization}}"><a href="#/request" ng-class="getClass('/request')">Send Request</a></li>
                 <li ng-if="userInfo.active=='N'"><a href="#/welcome" ng-class="getClass('/welcome')">Welcome</a></li>
                 <li><a ng-href="#/home" ng-click="userLogout()">Logout [{{userInfo.uname}}]</a></li>
+                <li><a ng-show="userInfo.fetp_id" ng-href="#/application/{{userInfo.fetp_id}}/edit/fetp" >Edit Profile</a></li>
             </ul>
         </div><!-- /.navbar-collapse -->
     </div><!-- /.container -->

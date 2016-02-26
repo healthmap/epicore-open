@@ -8,7 +8,7 @@ $status = 'failed';
 $ticket = strip_tags($formvars->ticket_id);
 $authfetp = UserInfo::authenticateFetp($ticket);
 $fetpinfo = UserInfo::getFETP($authfetp['fetp_id']);
-$fetpinfo['username'] = "FETP ". $authfetp['fetp_id'];
+$fetpinfo['username'] = "MEMBER ". $authfetp['fetp_id'];
 
 // get username/email and password
 $username = strip_tags($formvars->username);
