@@ -1,26 +1,17 @@
-<div ng-include src="'header_nologin.html'"></div>
-<style>
-    .form-group .control-label:after {
-        content:" *";
-        color: #ab3047;
-    }
-    .correct {
-        color: #337e70;
-    }
-    .incorrect {
-        color: #ab3047;
-    }
-    .radio-block label {
-        font-weight: normal;
-    }
-    .error {
-        color: red;
-    }
-</style>
-<div class="container main">
+<div ng-include src="'header_new.html'"></div>
+
+<div class="jumbotron page" style="background:url('img/bg.jpg');background-size:cover;color: #fff;margin-bottom: 0px;background-position: right center;">
+<div class="gradient-overlay light"></div>
+    <div class="container">
+        <h1><span class="tagline text-uppercase">EpiCore Application</span></h1>
+    </div>
+</div>
+
+<div class="wrapper">
+
+<div class="container">
     <div class="row">
-        <div name="form-container" class="col-xs-12 col-sm-8 col-sm-offset-2 wbg">
-            <h1>EpiCore Application Form</h1>
+        <div name="form-container" class="col-xs-12 col-sm-8">
             <p>Please do NOT write in all capital letters.<br>
                 <span class="correct"><i class="fa fa-check-circle-o"></i> John Smith<br></span>
                 <span class="incorrect"><i class="fa fa-times-circle-o"></i> JOHN SMITH, John SMITH</span></p>
@@ -101,7 +92,7 @@
                 </div>
 
                 <div class="form-group">
-                    <div class="checkbox-block">
+                    <div class="checkbox">
                         <label> <input type="checkbox" name="more_schools1" ng-model="more_schools1"> Click here if you have a second degree</label>
                     </div>
                 </div>
@@ -142,7 +133,7 @@
                 </div>
 
                 <div class="form-group" ng-show="more_schools1">
-                    <div class="checkbox-block">
+                    <div class="checkbox">
                         <label> <input type="checkbox"  name="more_schools2" ng-model="more_schools2" >Click here if you have a third degree</label>
                     </div>
                 </div>
@@ -192,67 +183,67 @@
                                 !uservals.biotechnology && !uservals.pharmacy && !uservals.publichealth && !uservals.disease_surv && !uservals.informatics &&
                                 !uservals.biostatistics && !uservals.other_knowledge && attempted" class="error">Must select at least one</span>
 
-                    <div class="checkbox-block">
+                    <div class="checkbox">
                         <label> <input type="checkbox"  ng-true-value="1" ng-model="uservals.clinical_med_adult"> Clinical Medicine – Adult</label>
                     </div>
 
-                    <div class="checkbox-block">
+                    <div class="checkbox">
                         <label> <input type="checkbox"  ng-true-value="1" ng-model="uservals.clinical_med_pediatric"> Clinical Medicine – Pediatric</label>
                     </div>
 
-                    <div class="checkbox-block">
+                    <div class="checkbox">
                         <label> <input type="checkbox"  ng-true-value="1" ng-model="uservals.clinical_med_vet"> Clinical Medicine – Veterinary</label>
                     </div>
 
-                    <div class="checkbox-block">
+                    <div class="checkbox">
                         <label> <input type="checkbox"  ng-true-value="1" ng-model="uservals.research"> Research</label>
                     </div>
 
-                    <div class="checkbox-block">
+                    <div class="checkbox">
                         <label> <input type="checkbox"  ng-true-value="1" ng-model="uservals.microbiology"> Microbiology</label>
                     </div>
 
-                    <div class="checkbox-block">
+                    <div class="checkbox">
                         <label> <input type="checkbox"  ng-true-value="1" ng-model="uservals.virology"> Virology</label>
                     </div>
 
-                    <div class="checkbox-block">
+                    <div class="checkbox">
                         <label> <input type="checkbox"  ng-true-value="1" ng-model="uservals.parasitology"> Parasitology</label>
                     </div>
 
-                    <div class="checkbox-block">
+                    <div class="checkbox">
                         <label> <input type="checkbox"  ng-true-value="1" ng-model="uservals.vaccinology"> Vaccinology</label>
                     </div>
 
-                    <div class="checkbox-block">
+                    <div class="checkbox">
                         <label> <input type="checkbox"  ng-true-value="1" ng-model="uservals.epidemiology"> Epidemiology</label>
                     </div>
 
-                    <div class="checkbox-block">
+                    <div class="checkbox">
                         <label> <input type="checkbox"  ng-true-value="1" ng-model="uservals.biotechnology"> Biotechnology</label>
                     </div>
 
-                    <div class="checkbox-block">
+                    <div class="checkbox">
                         <label> <input type="checkbox"  ng-true-value="1" ng-model="uservals.pharmacy"> Pharmacy (Drug Development)</label>
                     </div>
 
-                    <div class="checkbox-block">
+                    <div class="checkbox">
                         <label> <input type="checkbox"  ng-true-value="1" ng-model="uservals.publichealth"> Public Health</label>
                     </div>
 
-                    <div class="checkbox-block">
+                    <div class="checkbox">
                         <label> <input type="checkbox"  ng-true-value="1" ng-model="uservals.disease_surv"> Disease Surveillance</label>
                     </div>
 
-                    <div class="checkbox-block">
+                    <div class="checkbox">
                         <label> <input type="checkbox"  ng-true-value="1" ng-model="uservals.informatics"> Informatics</label>
                     </div>
 
-                    <div class="checkbox-block">
+                    <div class="checkbox">
                         <label> <input type="checkbox"  ng-true-value="1" ng-model="uservals.biostatistics"> Biostatistics</label>
                     </div>
 
-                    <div class="checkbox-block">
+                    <div class="checkbox">
                         <label> <input type="checkbox"  ng-true-value="1" name="other_knowledge" ng-model="uservals.other_knowledge" > Other</label>
                         <label ><input type="text" class="form-control" ng-model="uservals.other_knowledge_type" name="other_knowledge_type" ng-if="uservals.other_knowledge" required></label>
                     </div>
@@ -277,21 +268,21 @@
                 </div>
 -->
                 <div class="form-group">
-                    <h5 class="control-label">How many years of experience do you have in human and/or animal health? (please select one)</h5>
+                    <h5 class="control-label">How many years of experience do you have in human and/or animal health?</h5>
                         <span ng-show="!uservals.health_exp && attempted" class="error">Must select one</span>
-                    <div class="radio-block">
+                    <div class="radio">
                         <label> <input type="radio" name='health_exp' ng-model="uservals.health_exp" value="A" > No experience</label>
                     </div>
-                    <div class="radio-block">
+                    <div class="radio">
                         <label> <input type="radio" ng-model="uservals.health_exp" value="B" > Less than 3 years</label>
                     </div>
-                    <div class="radio-block">
+                    <div class="radio">
                         <label> <input type="radio" ng-model="uservals.health_exp" value="C" > 3-5 years</label>
                     </div>
-                    <div class="radio-block">
+                    <div class="radio">
                         <label> <input type="radio" ng-model="uservals.health_exp" value="D" > 5-10 years</label>
                     </div>
-                    <div class="radio-block">
+                    <div class="radio">
                         <label> <input type="radio" ng-model="uservals.health_exp" value="E" > More than 10 years</label>
                     </div>
                 </div>
@@ -301,16 +292,16 @@
                         <span ng-show="!uservals.human_health  && !uservals.animal_health && !uservals.env_health
                                 && !uservals.health_exp_none && attempted" class="error">Must select at least one</span>
 
-                    <div class="checkbox-block">
+                    <div class="checkbox">
                         <label><input type="checkbox" ng-true-value="1" ng-model="uservals.human_health" ng-click="uservals.health_exp_none = false"> Human Health</label>
                     </div>
-                    <div class="checkbox-block">
+                    <div class="checkbox">
                         <label> <input type="checkbox" ng-true-value="1"  ng-model="uservals.animal_health" ng-click="uservals.health_exp_none = false"> Animal Health</label>
                     </div>
-                    <div class="checkbox-block">
+                    <div class="checkbox">
                         <label> <input type="checkbox" ng-true-value="1"  ng-model="uservals.env_health" ng-click="uservals.health_exp_none = false"> Environmental Health</label>
                     </div>
-                    <div class="checkbox-block">
+                    <div class="checkbox">
                         <label> <input type="checkbox" ng-true-value="1"  name="health_exp_none" ng-model="uservals.health_exp_none" ng-click="(uservals.human_health = false);
                                                             (uservals.animal_health=false); (uservals.env_health=false); "> None of the above</label>
                     </div>
@@ -319,7 +310,7 @@
                 <div class="form-group">
                     <br>
                     <h3>Current Work</h3>
-                    <label class="control-label" for="job_title">What is your current job title / position?</label>
+                    <label class="control-label" for="job_title">What is your current job title?</label>
                     <input type="text" class="form-control" name="job_title" ng-model="uservals.job_title" placeholder="current job title / position" required>
                 </div>
 
@@ -332,13 +323,13 @@
                         <h5 class="control-label">Which sector does your organization best fall under (Please select one)</h5>
                         <span ng-show="!uservals.sector && attempted" class="error">Must select one</span>
 
-                        <div class="radio-block"> 
+                        <div class="radio"> 
                             <label><input type="radio" ng-model="uservals.sector" value="G" > Governmental</label>
                         </div>
-                        <div class="radio-block"> 
+                        <div class="radio"> 
                             <label> <input type="radio" ng-model="uservals.sector" value="N" > Nongovernmental / Nonprofit </label>
                         </div>
-                        <div class="radio-block"> 
+                        <div class="radio"> 
                             <label> <input type="radio" name="sector" ng-model="uservals.sector" value="P" > Private / For-Profit</label>
                         </div>
                     </div>
@@ -348,19 +339,19 @@
                         <span ng-show="!uservals.health_org_university  && !uservals.health_org_doh && !uservals.health_org_clinic
                                 && !uservals.health_org_other && !uservals.health_org_none && attempted" class="error">Must select at least one</span>
 
-                        <div class="checkbox-block">
+                        <div class="checkbox">
                             <label><input type="checkbox" ng-true-value="1"  ng-model="uservals.health_org_university" ng-click="uservals.health_org_none = false"> University or any academic or research institution</label>
                         </div>
-                        <div class="checkbox-block">
+                        <div class="checkbox">
                             <label> <input type="checkbox"  ng-true-value="1" ng-model="uservals.health_org_doh" ng-click="uservals.health_org_none = false"> Ministry / Department of Health</label>
                         </div>
-                        <div class="checkbox-block">
+                        <div class="checkbox">
                             <label> <input type="checkbox" ng-true-value="1"  ng-model="uservals.health_org_clinic" ng-click="uservals.health_org_none = false"> Medical clinic</label>
                         </div>
-                        <div class="checkbox-block">
+                        <div class="checkbox">
                             <label> <input type="checkbox"  ng-true-value="1" ng-model="uservals.health_org_other" ng-click="uservals.health_org_none = false"> Other health-related organizations, including nonprofit, nongovernmental or private sector organizations</label>
                         </div>
-                        <div class="checkbox-block">
+                        <div class="checkbox">
                             <label> <input type="checkbox" ng-true-value="1"  name="health_org_none" ng-model="uservals.health_org_none" ng-click="(uservals.health_org_university = false);
                                                             (uservals.health_org_doh=false); (uservals.health_org_clinic=false); (uservals.health_org_other=false);"> None of the above</label>
                         </div>
@@ -370,26 +361,26 @@
                         <br>
                         <h3>Administrative</h3>
 
-                        <h5 class="control-label">How did you hear about us? (please select at least one)</h5>
+                        <h5 class="control-label">How did you hear about us? (select all that apply)</h5>
                         <span ng-show="!uservals.epicoreworkshop && !uservals.conference && !uservals.promoemail
                                         && !uservals.othercontact && attempted" class="error">Must select at least one</span>
 
-                        <div class="checkbox-block">
+                        <div class="checkbox">
                             <label> <input type="checkbox"  ng-true-value="1" ng-model="uservals.epicoreworkshop" > Attended an EpiCore workshop</label>
                             <label><input type="text" class="form-control" ng-model = "uservals.epicoreworkshop_type" name="epicoreworkshop_type" ng-if="uservals.epicoreworkshop" placeholder="please explain when and where" size="120" required></label>
                         </div>
 
-                        <div class="checkbox-block">
+                        <div class="checkbox">
                             <label> <input type="checkbox"  ng-true-value="1" ng-model="uservals.conference"> At a conference</label>
                             <label><input type="text" class="form-control" ng-model = "uservals.conference_type" name = "conference_type" ng-if="uservals.conference" placeholder="please explain when and where" size="120" required></label>
                         </div>
 
-                        <div class="checkbox-block">
+                        <div class="checkbox">
                             <label> <input type="checkbox"  ng-true-value="1" ng-model="uservals.promoemail"> I received a promotional email</label>
                             <label><input type="text" class="form-control" ng-model = "uservals.promoemail_type" name="promoemail_type" ng-if="uservals.promoemail" placeholder="please explain from which entity" size="120" required></label>
                         </div>
 
-                        <div class="checkbox-block">
+                        <div class="checkbox">
                             <label> <input type="checkbox"  ng-true-value="1" name='othercontact' ng-model="uservals.othercontact" > Other</label>
                             <label><input type="text" class="form-control" ng-model = "uservals.othercontact_type" name= "othercontact_type" ng-if="uservals.othercontact" placeholder="please explain when and where" size="120" required></label>
                         </div>
@@ -420,7 +411,7 @@
 -->
 
 
-                    <button type="submit" ng-click="signup(uservals, applyForm.$valid)" class="submit btn btn-default">Submit</button>
+                    <button type="submit" ng-click="signup(uservals, applyForm.$valid)" class="submit btn btn-primary text-uppercase">Submit</button>
                 </div>
             </form>
             <div>
@@ -429,6 +420,7 @@
         </div><!--col-->
     </div><!--row-->
 </div><!--container-->
+</div><!--wrapper-->
 <script>
         // form validation
         $("#applyForm").validate(

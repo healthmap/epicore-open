@@ -1,45 +1,54 @@
-<div ng-include src="'header_nologin.html'"></div>
-<div class="container main">
+<div ng-include src="'header_new.html'"></div>
+<div class="jumbotron page" style="background:url('img/bg.jpg');background-size:cover;color: #fff;margin-bottom: 0px;background-position: right center;">
+<div class="gradient-overlay light"></div>
+    <div class="container">
+        <h1><span class="tagline text-uppercase">Member Log In</span></h1>
+    </div>
+</div>
+
+<div class="wrapper">
+<div class="container">
 <div class="row">
-    <div id="form-container" class="col-sm-9 col-md-7 col-lg-6">
+    <div id="form-container" class="col-xs-12 col-md-6">
         <form name="loginForm" ng-controller="userController">
          <p class="intro">With the spread of new technologies and the availability of <em>Big Data</em>, public health professionals have new opportunities to find and verify outbreaks faster. Epicore volunteers will help verify early signals of outbreaks and thereby improve public health responses.</p> 
          <p class="intro" id="error_message" ng-show="{{error_message}}"><strong style="color: red;">Authentication failed!</strong><br><br>
                  <a href="#/resetpassword">Forgot your password? <i class="fa fa-arrow-circle-right"></i></a>
             </p>
 
-			<div class="form-group col-xs-12">
+			<div class="form-group">
                 <label class="sr-only" for="username">Email Address</label>
                 <input type="text" class="form-control" ng-model="formData.username" name="username" id="username" placeholder="Email Address" required>
             </div>
             
-			<div class="form-group col-xs-12">
+			<div class="form-group">
                 <label class="sr-only" for="password">Password</label>
                 <input type="password" class="form-control" ng-model="formData.password" name="password" id="password" placeholder="Password" required>
             </div>
             
-			<div class="checkbox form-group">
+			<div class="checkbox">
                 <label><input type="checkbox" name="agree" ng-model="formData.agree" required> I agree to Epicore's <a href="#/terms">Terms of Participation</a></label>.
             </div>
             
-			<div class="form-group col-xs-12">
+			<div class="form-group">
             <span ng-show="isRouteLoading">
                 <i class="fa fa-spinner fa-pulse"></i> Please wait...
             </span>
-                <button ng-click="userLogin(formData)" type="submit" class="submit btn btn-default col-xs-12">Login</button>
+                <button ng-click="userLogin(formData)" type="submit" class="submit btn btn-primary">Login</button>
             </div><!-- /input-group -->
        </form>
     
-            <p class="intro">
+            <p>
                 <span ng-if="!error_message">
                     <!--<a href="{{tephinetBase}}epicore/oauth_request/EJL7rbQR3YTQXPb8ku6zEQbmRSXzLRtd/Nr8TTVMoAvm4X86jjzbp65aE7kTmR2WN">Log in with your Tephinet account <i class="fa fa-arrow-circle-right"></i></a><br>-->
-                    <a href="#/resetpassword">Forgot your password? <i class="fa fa-arrow-circle-right"></i></a><br><br>
+                    <a href="#/resetpassword">Forgot your password?</a>
                 </span>
             </p>
   </div><!--form-container-->
 
 </div><!--row-->
-</div><!--container main-->
+</div><!--container-->
+</div><!--wrapper-->
 
 <script>
     // form validation

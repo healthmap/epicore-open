@@ -1,12 +1,14 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <link href='https://fonts.googleapis.com/css?family=Lato:300,400,700,900' rel='stylesheet' type='text/css'>
     <title>Epicore</title>
     <meta http-equiv="X-UA-Compatible" content="IE=edge"> 
     <meta http-equiv="content-type" content="text/html; charset=UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <link rel="stylesheet" href="css/bootstrap.css">
+    <!--<link rel="stylesheet" href="css/bootstrap.css">-->
+    <link rel="stylesheet" href="css/bootstrap.min.css">
     <link rel="stylesheet" href="css/ng-slider.min.css">
     <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
 
@@ -64,18 +66,18 @@
 </head>
 
 <body ng-app="EpicoreApp" ng-controller="userController">
-<div class="image-wrapper">
 
 <ng-view></ng-view>
 
-</div><!--image-wrapper-->
-<footer id="footer">
+<div class="wrapper">
+<footer id="footer" class="grayscale text-center">
 <div class="container">
-<img src="img/logos/hm.png" alt="HealthMap">
-<img src="img/logos/promed.gif" alt="ProMED">
-<img src="img/logos/skoll.png" alt="Skoll">
-<img src="img/logos/tephinet.png" alt="Tephinet">
+<img src="img/logos/hm.png" alt="HealthMap" height="30px">
+<img src="img/logos/promed.gif" alt="ProMED" height="40px">
+<img src="img/logos/skoll.png" alt="Skoll" height="50px">
+<img src="img/logos/tephinet.png" alt="Tephinet" height="50px">
 </div>
 </footer>
+</div>
 </body>
 </html>
