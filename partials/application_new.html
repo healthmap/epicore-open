@@ -1,4 +1,5 @@
-<div ng-include src="'header_nologin.html'"></div>
+<div ng-show="!uid" ng-include src="'header_nologin.html'"></div>
+<div ng-show="uid" ng-include src="'header.html'"></div>
 <style>
     .form-group .control-label:after {
         content:" *";
@@ -20,7 +21,8 @@
 <div class="container main">
     <div class="row">
         <div name="form-container" class="col-xs-12 col-sm-8 col-sm-offset-2 wbg">
-            <h1>EpiCore Application Form</h1>
+            <h1 ng-show="!uid">EpiCore Application Form</h1>
+            <h1 ng-show="uid">Edit Profile</h1>
             <p>Please do NOT write in all capital letters.<br>
                 <span class="correct"><i class="fa fa-check-circle-o"></i> John Smith<br></span>
                 <span class="incorrect"><i class="fa fa-times-circle-o"></i> JOHN SMITH, John SMITH</span></p>

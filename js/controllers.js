@@ -22,12 +22,14 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
         // prepopulate application form
         $scope.uid = $routeParams.id;
         $scope.action = $routeParams.action;
+        $scope.idtype = $routeParams.idtype;
         if($scope.uid && ($scope.action == 'edit')) {
             $scope.more_schools1 = true;
             $scope.more_schools2 = true;
             var data = {};
             data['uid'] = $scope.uid;
             data['action'] = $scope.action;
+            data['idtype'] = $scope.idtype;
             $http({ url: 'scripts/getapplicant.php', method: "POST", data: data
             }).success(function (data, status, headers, config) {
                 $scope.uservals = data; // this pre-populates the values on the form
@@ -84,7 +86,12 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
                     url: 'scripts/updateuser.php', method: "POST", data: uservals
                 }).success(function (data, status, headers, config) {
                     if (data['status'] == "success") {
-                        $location.path('/approval');
+                        if($scope.idtype == 'fetp'){
+                            $location.path('/application/' + $scope.uid + '/edit/fetp');
+                            $scope.signup_message = 'Successfully Updated profile';
+                        }
+                        else
+                            $location.path('/approval');
                     } else {
                         $scope.signup_message = data['message'];
                     }
@@ -1002,7 +1009,7 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
         };
 
         $scope.editApplicant = function(uid, action){
-            $location.path('/application/' + uid + '/' +action);
+            $location.path('/application/' + uid + '/' +action + '/member');
         };
 
         $scope.deleteApplicant = function(uid){

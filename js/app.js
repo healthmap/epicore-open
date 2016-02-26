@@ -31,7 +31,7 @@ app.config(function($routeProvider) {
         when("/mod/:tid/:aid", {templateUrl: "partials/mod.html"}).
         when("/application", {templateUrl: "partials/application_new.html"}).
         when("/application_confirm", {templateUrl: "partials/application_confirm.html"}).
-        when("/application/:id/:action", {templateUrl: "partials/application_new.html", controller: "userController"}).
+        when("/application/:id/:action/:idtype", {templateUrl: "partials/application_new.html", controller: "userController"}).
         when("/approval", {templateUrl: "partials/approval.html", controller: "approvalController"}).
         when("/login", {templateUrl: "partials/login.html"}).
         when("/welcome", {templateUrl: "partials/welcome.html", controller: "fetpController"}).
