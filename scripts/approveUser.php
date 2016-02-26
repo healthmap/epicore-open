@@ -26,7 +26,7 @@ if ($fetp_id && $approve_status){
         // set user has taken online course
         $online = true;
         $inperson = false;
-        UserInfo::setCourseType($approve_id, $online, $inperson);
+        UserInfo::setCourseType($fetp_info['maillist_id'], $online, $inperson);
 
     }else{
         $status = 'failed';
