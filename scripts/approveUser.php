@@ -22,12 +22,11 @@ $approve_status = strip_tags((string)$data->status);
 if ($fetp_id && $approve_status){
     $fetp_info = UserInfo::getFETP($fetp_id);
     if ($fetp_info['maillist_id']){
-        // approve
         UserInfo::setUserStatus($fetp_info['maillist_id'], $approve_status);
         // set user has taken online course
         $online = true;
         $inperson = false;
-        UserInfo::setCourseType($fetp_info['maillist_id'], $online, $inperson);
+        UserInfo::setCourseType($approve_id, $online, $inperson);
 
     }else{
         $status = 'failed';
