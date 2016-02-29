@@ -30,6 +30,7 @@ h3,.h3{line-height:1.5em}
 .btn-huge:after{content:'';position:absolute;top:100%;left:0;right:0;margin:0 auto;width:0;height:0;border-top:solid 48px #333;border-left:solid 110px transparent;border-right:solid 110px transparent}
 .jumbotron{position:relative;padding:72px 0}
 .jumbotron.dashboard{padding:48px 0}
+.jumbotron.dashboard h1{font-size:36px}
 .jumbotron .container{position:relative}
 .gradient-overlay{position:absolute;left:0;right:0;bottom:0;top:0;background:linear-gradient(to right, rgba(6,51,66,0.9) 0, rgba(6,51,66,0.6) 100%)}
 a.logo{color:#1b6078;font-weight:700;letter-spacing:.05em}
@@ -49,10 +50,11 @@ a.btn-primary,.btn-primary{color:#fff;background-color:#7bc9c1;border-color:#7bc
 .mt48{margin-top:48px}
 .table.nmb,.nmb{margin-bottom:0}
 .mb12{margin-bottom:12px}
+.mb24{margin-bottom:24px}
 .inherit{color:inherit}
 .table{display:table;margin-bottom:24px}
 .valign{display:table-cell;vertical-align:middle}
 .show-message-mod{background:#efefef}
 .show-message-fetp{background:#cdcdcd}
-.show-message-mod,.show-message-fetp{padding:12px;max-height:48px}
+.show-message-mod,.show-message-fetp{padding:12px}
 @media (max-width:1200px){.nav>li>a,.nav .btn{font-size:.875em}}@media (max-width:991px){.img-content-block{margin-bottom:24px}}@media (max-width:767px){.container-fluid>.navbar-collapse,.container-fluid>.navbar-header,.container>.navbar-collapse,.container>.navbar-header{margin:0} .navbar-nav>li>a{line-height:36px;height:36px;padding:0} .container{width:96%} .navbar-nav .btn,.navbar-nav a.btn,.navbar-nav .btn.btn-inverted{margin:0;padding:0;line-height:36px;height:36px;text-align:left;background:transparent;border:0;color:#333} .valign{display:block}}.angular-google-map-container{height:300px}

@@ -63,7 +63,7 @@
                         your response, {{history_item.date}}
                     </span>
         <!-- show reply button -->
-        <a ng-if="!closerfi && (history_item.organization_id == userInfo.organization_id) " class="btn btn-primary btn-sm" href="#/followup/{{id}}/{{history_item.response_id}}">Reply</a>
+        <a ng-if="!closerfi && (history_item.organization_id == userInfo.organization_id) " class="" href="#/followup/{{id}}/{{history_item.response_id}}">Reply</a>
         <!-- show ratings for closed event -->
         <span ng-if="closerfi && (history_item.organization_id == userInfo.organization_id) " >
             &nbsp;&nbsp;<label><input type="radio" ng-model="history_item.useful" value="0" > <i style="color:red" class="fa fa-thumbs-o-down"></i></label>&nbsp;&nbsp;
