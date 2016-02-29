@@ -977,6 +977,7 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
         // only allow superusers for admin
         $scope.userInfo = $cookieStore.get('epiUserInfo');
         $scope.superuser = (typeof($scope.userInfo) != "undefined") ? $scope.userInfo.superuser: false;
+        $scope.showpage = false;
 
         var data = {};
             $http({ url: 'scripts/approval.php', method: "POST", data: data
@@ -985,6 +986,7 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
                     respdata[n]['member_id'] = parseInt(respdata[n]['member_id']);  // use int so orberby works
                 }
                 $scope.applicants = respdata;
+                $scope.showpage = true;
             });
 
         $scope.approveApplicant = function(maillist_id, action){
