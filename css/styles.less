@@ -113,7 +113,8 @@ h5, .h5 {
     margin-bottom: 48px;
     }
 
-.jumbotron.page h1 {
+.jumbotron.page h1,
+.jumbotron.dashboard h1 {
     margin-bottom: 0px;
     }
 
@@ -186,6 +187,14 @@ h3, .h3 {
     padding: 72px 0;
     }
 
+.jumbotron.dashboard {
+    padding: 48px 0;
+    }
+
+.jumbotron.dashboard h1 {
+    font-size: 36px;
+    }
+
 .jumbotron .container {
     position: relative;
     }
@@ -244,6 +253,12 @@ a.btn-primary, .btn-primary {
     outline: 0px;
     }
 
+.btn-primary.btn-sm, .btn-sm {
+    padding: 4px 12px;
+    min-width: 0px;
+    margin-top: -5px;
+    }
+
 .navbar-default .navbar-nav>li>a {
     color: #333;
     }
@@ -289,6 +304,20 @@ a.btn-primary, .btn-primary {
 .valign {
     display: table-cell;
     vertical-align: middle;
+    }
+
+// DASHBOARD
+.show-message-mod {
+    background: #efefef;
+    }
+
+.show-message-fetp {
+    background: #cdcdcd;
+    }
+
+.show-message-mod, .show-message-fetp {
+    padding: 12px;
+    max-height: 48px;
     }
 
 @media (max-width: 1200px) {

@@ -1,19 +1,25 @@
 <div ng-include src="'header.html'"></div>
+<div class="jumbotron dashboard" style="background:url('img/bg.jpg');background-size:cover;color: #fff;margin-bottom: 0px;background-position: right center;">
+<div class="gradient-overlay"></div>
+    <div class="container">
+        <h1><span class="text-uppercase">Request For Information Details</span></h1>
+    </div>
+</div>
 
-<div class="container main" >
+<div class="wrapper">
+<div class="container">
 <div class="row">
-    <div class="col-xs-12 wbg" >
+    <div class="col-xs-12">
         <p>
             <site-header back="back"></site-header>
         </p>
 
-        <h4>Request For information details</h4>
         <!-- REPLY FORM (for FETPS only who received the event) -->
         <div ng-show="!isOrganization && isAuthorizedFETP">
             <p>Do you have anything to contribute regarding this outbreak?</p>
-            <a href="#/reply/{{id}}" class="nav-button">Yes, respond to this request</a>
+            <a href="#/reply/{{id}}" class="btn btn-primary">Yes, respond to this request</a>
             <span ng-if="changeStatusText == 'Close'">
-                <a href ng-click="sendResponse({response_permission: '0'})" class="nav-button">No, not at this time</a>
+                <a href ng-click="sendResponse({response_permission: '0'})" class="btn btn-primary">No, not at this time</a>
             </span>
         </div>
         <!-- END REPLY FORM -->
@@ -21,16 +27,16 @@
         <!-- OWNER of event gets additional options to close event or send followup email -->
         <span ng-show="isAuthorizedToFollowup && eventsList.event_id">
             <span ng-if="changeStatusText == 'Close'">
-                <a href="#/followup/{{id}}" class="nav-button">Send follow-up email to all Members</a>
+                <a href="#/followup/{{id}}" class="btn btn-primary">Send follow-up email to all Members</a>
             </span>
             <span>
-                <a href="#/{{changeStatusType}}/{{id}}" class="nav-button" ng-click="checkStatus()" >{{changeStatusText}} request</a>
+                <a href="#/{{changeStatusType}}/{{id}}" class="btn btn-primary" ng-click="checkStatus()" >{{changeStatusText}} request</a>
             </span>
             <span ng-if="userInfo.superuser">
-                <a href="#/request_edit/{{id}}" class="nav-button">Edit request </a>
+                <a href="#/request_edit/{{id}}" class="btn btn-primary">Edit request </a>
             </span>
             <span ng-if="userInfo.superuser">
-                <a href="" class="nav-button" ng-click="deleteEvent(id)" >Delete request </a>
+                <a href="" class="btn btn-primary" ng-click="deleteEvent(id)" >Delete request </a>
             </span>
         </span>
         <!-- END CLOSE FORM (for owner of event) -->
@@ -38,16 +44,16 @@
 </div><!--row-->
 
 <div class="row" ng-show="isAuthorizedFETP || (isOrganization && eventsList.event_id)">
-    <div class="col-xs-12 wbg" >
+    <div class="col-xs-12">
         <!-- Show Event History Messages -->
 
         <div class="event-item" ng-repeat="history_item in eventsList.history">
             <!-- Original Event Request Message in same organization (Moderator or FETP)-->
             <div ng-if="(history_item.type == 'Event Request')">
-                    <h4><b>Title:</b> {{history_item.title}}<br>
-                        <b>Disease:</b> {{history_item.disease}}<br>
-                        <b>Location:</b> {{history_item.location}}<br>
-                        <b>Date:</b> {{history_item.date}}</h4>
+                    <p><strong>Title:</strong> {{history_item.title}}<br>
+                        <strong>Disease:</strong> {{history_item.disease}}<br>
+                        <strong>Location:</strong> {{history_item.location}}<br>
+                        <strong>Date:</strong> {{history_item.date}}</p>
             </div>
         </div>
 
@@ -58,12 +64,13 @@
 
     <div class="row" ng-hide="(isAuthorizedFETP || (isOrganization && eventsList.event_id)) || isAuthorizedFETP == null || isOrganization == null">
     <!--<div class="row" ng-show="!isAuthorizedFETP && !isOrganization || !eventsList.event_id" >-->
-        <div class="col-xs-12 wbg" >
+        <div class="col-xs-12">
             <p>You are not authorized to view this event.</p>
         </div>
     </div>
 
-</div><!--container main-->
+</div><!--container-->
+</div><!--wrapper-->
 
 
 

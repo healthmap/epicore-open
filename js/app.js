@@ -54,7 +54,7 @@ app.run(['$rootScope', '$location', '$window', function($rootScope, $location, $
 app.directive('siteHeader', function () {
     return {
         restrict: 'E',
-        template: '<i class="fa fa-arrow-circle-left"></i> <button class="btn">{{back}} to RFI list</button>',
+        template: '<button class="btn"><i class="fa fa-arrow-circle-left"></i> {{back}} to RFI list</button>',
         scope: {
             back: '@back',
             icons: '@icons'
