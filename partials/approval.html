@@ -3,10 +3,10 @@
 </div>
 
 <div class="container-fluid main">
-    <div div class="col-md-12 wbg" ng-show="!superuser">
+    <div div class="col-md-12 wbg" ng-show="!(superuser && showpage)">
         <h3>You do not have access to this page.</h3>
     </div>
-        <div ng-show="superuser"class="col-md-12 wbg" ng-controller="approvalController" ng-init="predicate='apply_date_iso'; reverse=!reverse" >
+        <div ng-show="superuser && showpage"class="col-md-12 wbg" ng-controller="approvalController" ng-init="predicate='apply_date_iso'; reverse=!reverse" >
             <h3>Application Approval</h3>
             Set the user status by clicking on one of the status buttons on the right side of the table below.  The user will be notified by email when their status is set
             to Accepted, Denied, or Approved.<br><br>
