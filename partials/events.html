@@ -1,33 +1,41 @@
 <div ng-include src="'header.html'"></div>
-<div class="wrapper">
+<div class="jumbotron dashboard">
+    <div class="container">
+        <h1><span>Request For Information List</span></h1>
+    </div>
+</div>
+        
+<div class="wrapper secondary-nav">
+    <div class="container">
+        <span ng-show="onOpen" class="text-uppercase"><span class="border-bottom tab">Open events</span><span class="tab"><a href="#/events/closed" class="inherit">Closed events</a></span></span>
+        <span ng-show="!onOpen" class="text-uppercase"><span class="tab"><a href="#/events" class="inherit">Open events</a></span><span class="border-bottom tab">Closed events</span></span>
+    </div>
+</div>
+
+<div class="wrapper dashboard">
 <div class="container">
     <div class="row">
-        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 wbg">
-        <h4>Request for Information list</h4>
-        <p>
-        <span ng-show="onOpen">Open events&nbsp;|&nbsp;<a href="#/events/closed">Closed events</a></span>
-        <span ng-show="!onOpen"><a href="#/events">Open events</a>&nbsp;|&nbsp;Closed events</span>
-        </p>
+        <div class="col-xs-12">
 
-            <i class="fa fa-search"></i> <input ng-model="query"> <br> <br>
+        <p><span class="search-wrapper"><i class="fa fa-search"></i> <input ng-model="query"></span></p>
 
             <!-- view for organizations -->
         <div ng-show="isOrganization" ng-init="predicate = 'iso_create_date'; reverse=!reverse">
-        <table class='table table-hover table-bordered' style="font-size: small">
+        <table class='small table table-hover table-bordered'>
             <tbody>
-                <tr class="black_bg">
-                    <th width="5%"><a href="" ng-click="predicate = 'event_id_int'; reverse=!reverse">ID</a></th>
-                    <th><a href="" ng-click="predicate = 'title'; reverse=!reverse">Title</a></th>
-                    <th><a href="" ng-click="predicate = 'disease'; reverse=!reverse">Disease</a></th>
-                    <th width="7%" ><a href="" ng-click="predicate = 'iso_create_date'; reverse=!reverse">Create Date</a></th>
-                    <th><a href="" ng-click="predicate = 'person'; reverse=!reverse">Moderator</a></th>
-                    <th width="10%"><a href="" ng-click="predicate = 'location'; reverse=!reverse">Location</a></th>
-                    <th><a href="" ng-click="predicate = 'country'; reverse=!reverse">Country</a></th>
-                    <th>Requests Sent Date<br> (# recipients)</th>
-                    <th width="5%" >Responses with content</th>
-                    <th width="5%" >Responses nothing to contribute</th>
+                <tr>
+                    <th width="50px" ng-click="predicate = 'event_id_int'; reverse=!reverse">ID <i class="fa fa-sort"></i></th>
+                    <th ng-click="predicate = 'title'; reverse=!reverse">Title <i class="fa fa-sort"></i></th>
+                    <th width="110px" ng-click="predicate = 'disease'; reverse=!reverse">Disease <i class="fa fa-sort"></i></th>
+                    <th width="110px" ng-click="predicate = 'iso_create_date'; reverse=!reverse">Create Date <i class="fa fa-sort"></i></th>
+                    <th width="110px" ng-click="predicate = 'person'; reverse=!reverse">Moderator <i class="fa fa-sort"></i></th>
+                    <th ng-click="predicate = 'location'; reverse=!reverse">Location <i class="fa fa-sort"></i></th>
+                    <th width="100px" ng-click="predicate = 'country'; reverse=!reverse">Country <i class="fa fa-sort"></i></th>
+                    <th width="160px">Requests Sent Date<br> (# recipients)</th>
+                    <th width="50px">Replies with content</th>
+                    <th width="50px">Replies nothing to contribute</th>
                 </tr>
-                <tr><th colspan="10"><a href="" ng-click="isCollapsed1 = !isCollapsed1"><i class="fa fa-plus-square-o"></i></a> Initiated by you</th></tr>
+                <tr><th colspan="10" ng-click="isCollapsed1 = !isCollapsed1" class="link"><i class="fa fa-plus-square-o"></i> Initiated by you</th></tr>
                 <tr ng-show="!isCollapsed1" ng-repeat="event in eventsList['yours'] | filter:query | orderBy:predicate:reverse" >
                     <td>{{event.event_id_int}}</td>
                     <td><a href="#/events/{{event.event_id}}">{{event.title}}</a></td>
@@ -48,7 +56,7 @@
                         <span>{{event.num_responses_nocontent}}</span>
                     </td>
                 </tr>
-                <tr><th colspan="10"><a href="" ng-click="isCollapsed2 = !isCollapsed2"><i class="fa fa-plus-square-o"></i></a> Initiated by your organization ({{userInfo.organization}})</th></tr>
+                <tr><th colspan="10" class="link" ng-click="isCollapsed2 = !isCollapsed2"><i class="fa fa-plus-square-o"></i> Initiated by your organization ({{userInfo.organization}})</th></tr>
                 <tr ng-show="!isCollapsed2" ng-repeat="event in eventsList['yourorg'] | filter:query | orderBy:predicate:reverse">
                     <td>{{event.event_id_int}}</td>
                     <td><a href="#/events/{{event.event_id}}">{{event.title}}</a></td>
@@ -69,7 +77,7 @@
                         <span>{{event.num_responses_nocontent}}</span>
                     </td>
                 </tr>
-                <tr><th colspan="10"><a href="" ng-click="isCollapsed3 = !isCollapsed3"><i class="fa fa-plus-square-o"></i></a> Initiated by others</th></tr>
+                <tr><th colspan="10" class="link" ng-click="isCollapsed3 = !isCollapsed3"><i class="fa fa-plus-square-o"></i> Initiated by others</th></tr>
                 <tr ng-show="!isCollapsed3" ng-repeat="event in eventsList['other'] | filter:query | orderBy:predicate:reverse" >
                     <td>{{event.event_id_int}}</td>
                     <td><a href="#/events/{{event.event_id}}">{{event.title}}</a></td>
@@ -95,9 +103,9 @@
         </div>
         <!-- view for FETPs -->
         <div ng-show="!isOrganization" ng-init="predicate = 'last_send_date'; reverse=reverse">
-        <table class='table table-hover table-bordered' style="font-size: small">
+        <table class='small table table-hover table-bordered'>
             <tbody>
-                <tr class="black_bg">
+                <tr>
                     <th><a href="" ng-click="predicate = 'title'; reverse=!reverse">Title</a></th>
                     <th><a href="" ng-click="predicate = 'disease'; reverse=!reverse">Disease</a></th>
                     <th><a href="" ng-click="predicate = 'location'; reverse=!reverse">Location</a></th>

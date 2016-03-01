@@ -1,12 +1,10 @@
-@primary-color: #1b6078;
-@secondary-color: #648194;
-@tertiary-color: #7bc9c1;
-@tertiary-color-light: #a4d7d1;
-@tertiary-color-dark: #589c9b;
-@dark-gray: #333;
+@primary-color: #195b72;
+@secondary-color: #01c2c2;
+@dark-gray: #2e3335;
+@light-gray: #878c8d;
 @dark-blue: #063342;
-@green: #4db799;
-@red: #c82749;
+@green: #0abc7e;
+@red: #cc064a;
 
 html {
     font-size: 1em;
@@ -22,6 +20,9 @@ p {
     margin: 0 0 1.5em 0;
     }
 
+.link {
+    cursor: pointer;
+    }
 
 .control-label {
     display: inline-block;
@@ -84,7 +85,7 @@ p {
     }
 
 a, a:visited {
-    color: @tertiary-color-dark;
+    color: @secondary-color;
     font-weight: 700;
     }
 .h1, .h2, .h3, .h4, .h5, .h6, h1, h2, h3, h4, h5, h6 {
@@ -130,6 +131,16 @@ h3, .h3 {
 .wrapper {
     padding: 72px 0;
     }
+
+.wrapper.dashboard {
+    padding: 48px 0;
+    border-bottom: 1px solid #efefef;
+    }
+
+.wrapper.secondary-nav {
+    padding: 24px 0;
+    }
+
 #footer img {
     margin: 24px;
     }
@@ -189,6 +200,8 @@ h3, .h3 {
 
 .jumbotron.dashboard {
     padding: 48px 0;
+    background: @primary-color;
+    margin: 0px;
     }
 
 .jumbotron.dashboard h1 {
@@ -241,15 +254,15 @@ a.logo {
 
 a.btn-primary, .btn-primary {
     color: #fff;
-    background-color: @tertiary-color;
-    border-color: @tertiary-color;
+    background-color: @secondary-color;
+    border-color: @secondary-color;
     min-width: 150px;
     }
 
 .btn-primary:focus, .btn-primary:hover, .btn-primary:active {
     color: #fff;
-    background-color: @tertiary-color-light;
-    border-color: @tertiary-color-light;
+    background-color: lighten(@secondary-color,10%);
+    border-color: lighten(@secondary-color,10%);
     outline: 0px;
     }
 
@@ -296,7 +309,7 @@ a.btn-primary, .btn-primary {
     margin-bottom: 24px;
     }
 
-.inherit {
+a.inherit, .inherit {
     color: inherit;
     }
 
@@ -311,6 +324,36 @@ a.btn-primary, .btn-primary {
     }
 
 // DASHBOARD
+.search-wrapper {
+    color: #fff;
+    padding: 12px;
+    background-color: @light-gray;
+    }
+
+.search-wrapper input {
+    background: transparent;
+    border: 0px;
+    outline: 0px;
+    }
+
+th {
+    background-color: @light-gray;
+    color: #fff;
+    font-weight: normal;
+    }
+
+.tab {
+    margin-right: 30px;
+    font-weight: 700;
+    padding-bottom: 24px;
+    color: #999;
+    }
+
+.border-bottom {
+    border-bottom: 4px solid @secondary-color;
+    color: @secondary-color;
+    }
+
 .show-message-mod {
     background: #efefef;
     }
