@@ -6,6 +6,15 @@
 @green: #0abc7e;
 @red: #cc064a;
 
+@transition: all 0.25s ease-out;
+    
+.transition {
+    -webkit-transition: @transition;
+    -moz-transition: @transition;
+    -o-transition: @transition;
+    transition: @transition;
+    }
+
 html {
     font-size: 1em;
     }
@@ -88,6 +97,12 @@ a, a:visited {
     color: @secondary-color;
     font-weight: 700;
     }
+
+a:focus, a:hover, a:active {
+    text-decoration: none;
+    color: lighten(@secondary-color,5%);
+    }
+
 .h1, .h2, .h3, .h4, .h5, .h6, h1, h2, h3, h4, h5, h6 {
     margin: 0 0 24px 0;
     color: @primary-color;
@@ -250,6 +265,7 @@ a.logo {
     font-size: 1em;
     padding: 12px;
     border-radius: 0px;
+    .transition;
     }
 
 a.btn-primary, .btn-primary {
@@ -259,17 +275,30 @@ a.btn-primary, .btn-primary {
     min-width: 150px;
     }
 
+a.btn-default, .btn-default {
+    background-color: @dark-blue;
+    border-color: @dark-blue;
+    color: #fff;
+    }
+
+.btn-default:focus, .btn-default:hover, .btn-default:active {
+    color: #fff;
+    background-color: lighten(@dark-blue,5%);
+    border-color: lighten(@dark-blue,5%);
+    outline: 0px;
+    }
 .btn-primary:focus, .btn-primary:hover, .btn-primary:active {
     color: #fff;
-    background-color: lighten(@secondary-color,10%);
-    border-color: lighten(@secondary-color,10%);
+    background-color: lighten(@secondary-color,5%);
+    border-color: lighten(@secondary-color,5%);
     outline: 0px;
     }
 
-.btn-primary.btn-sm, .btn-sm {
-    padding: 4px 12px;
+.btn-default.btn-sm, .btn-sm {
+    padding: 6px 12px;
     min-width: 0px;
-    margin-top: -5px;
+    font-size: .875em; 
+    margin-top:-6px;
     }
 
 .navbar-default .navbar-nav>li>a {
@@ -340,6 +369,10 @@ th {
     background-color: @light-gray;
     color: #fff;
     font-weight: normal;
+    }
+
+.btn-tab {
+    margin-right: 30px;
     }
 
 .tab {

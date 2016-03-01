@@ -26,10 +26,10 @@
         <!-- OWNER of event gets additional options to close event or send followup email -->
         <span ng-show="isAuthorizedToFollowup && eventsList.event_id">
             <span ng-if="changeStatusText == 'Close'">
-                <a href="#/followup/{{id}}" class="btn btn-primary">Send follow-up email to all Members</a>
+                <a href="#/followup/{{id}}" class="btn btn-secondary btn-tab">Send follow-up email to all Members</a>
             </span>
             <span>
-                <a href="#/{{changeStatusType}}/{{id}}" class="btn btn-primary" ng-click="checkStatus()" >{{changeStatusText}} request</a>
+                <a href="#/{{changeStatusType}}/{{id}}" class="btn btn-secondary btn-tab" ng-click="checkStatus()" >{{changeStatusText}} request</a>
             </span>
             <span ng-if="userInfo.superuser">
                 <a href="#/request_edit/{{id}}" class="btn btn-primary">Edit request </a>

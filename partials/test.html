@@ -1,19 +1,18 @@
-<div ng-include src="'header_nologin.html'"></div>
-<style>
-    .radio-block label {
-        font-weight: normal;
-    }
-    .red {
-        color: red;
-    }
-</style>
-<div class="container main">
+<div ng-include src="'header_new.html'"></div>
+<div class="jumbotron page" style="background:url('img/bg.jpg');background-size:cover;color: #fff;margin-bottom: 0px;background-position: right center;">
+<div class="gradient-overlay light"></div>
+    <div class="container">
+        <h1><span class="tagline text-uppercase">Training Videos</span></h1>
+    </div>
+</div>
+
+<div class="wrapper">
+<div class="container">
     <div class="row">
 
-        <div name="form-container" class="col-xs-12 wbg">
+        <div name="form-container" class="col-xs-12">
             <!-- youtube videos -->
             <div>
-                <h1>Training Videos</h1>
                 <p><b>Please watch all of the following training videos.</b></p>
 
                 <div my-youtube code="code1"></div>
@@ -31,108 +30,108 @@
             <form name="testForm" role="form" id="testForm">
 
                 <div class="form-group">
-                    <p><b>1) The following could be considered (an) information source(s) for disease surveillance: (Please select one answer below)</b></p>
+                    <p><b>1. The following could be considered (an) information source(s) for disease surveillance:</b></p>
                         <span ng-show="!test.q1 && attempted" class="red">Must select one</span>
-                    <div class="radio-block">
-                        <label> <input type="radio" ng-model="test.q1" value="A" >  a)  Blogs and online discussion groups</label>
+                    <div class="radio">
+                        <label> <input type="radio" ng-model="test.q1" value="A" > a)  Blogs and online discussion groups</label>
                     </div>
-                    <div class="radio-block">
+                    <div class="radio">
                         <label> <input type="radio" ng-model="test.q1" value="B" >  b)  Social media</label>
                     </div>
-                    <div class="radio-block">
+                    <div class="radio">
                         <label> <input type="radio" ng-model="test.q1" value="C" >  c)  Rumor (gossip)  </label>
                     </div>
-                    <div class="radio-block">
+                    <div class="radio">
                         <label> <input type="radio" ng-model="test.q1" value="D" >  d)  Local media</label>
                     </div>
-                    <div class="radio-block">
+                    <div class="radio">
                         <label> <input type="radio" ng-model="test.q1" value="E" >  e)  All of the above</label>
                     </div>
-                    <div class="radio-block">
+                    <div class="radio">
                         <label> <input type="radio" ng-model="test.q1" value="F" >  f)  b and d only</label>
                     </div>
                 </div>
 
             <div class="form-group">
-                <p>2)<b> <b class="red">All of the following</b> are important reasons for using non-traditional sources in disease surveillance <b class="red">except</b>: (Please select one answer below)</b></p>
+                <p>2.<b> <b class="red">All of the following</b> are important reasons for using non-traditional sources in disease surveillance <b class="red">except</b>:</b></p>
                 <span ng-show="!test.q2 && attempted" class="red">Must select one</span>
-                <div class="radio-block">
+                <div class="radio">
                     <label> <input type="radio" ng-model="test.q2" value="A" >  a)  Faster disease detection </label>
                 </div>
-                <div class="radio-block">
+                <div class="radio">
                     <label> <input type="radio" ng-model="test.q2" value="B" >  b)  Faster disease reporting</label>
                 </div>
-                <div class="radio-block">
+                <div class="radio">
                     <label> <input type="radio" ng-model="test.q2" value="C" >  c)  Better Accuracy</label>
                 </div>
-                <div class="radio-block">
+                <div class="radio">
                     <label> <input type="radio" ng-model="test.q2" value="D" >  d)  Not restricted to certain diseases</label>
                 </div>
             </div>
 
             <div class="form-group">
-                <p><b>3)  Over the past 20 years, some data suggest that the time required for an outbreak to be publicly reported: (Please select one answer below)</b></p>
+                <p><b>3. Over the past 20 years, some data suggest that the time required for an outbreak to be publicly reported:</b></p>
                 <span ng-show="!test.q3 && attempted" class="red">Must select one</span>
-                <div class="radio-block">
+                <div class="radio">
                     <label> <input type="radio" ng-model="test.q3" value="A" >  a)  Increased by almost 50%</label>
                 </div>
-                <div class="radio-block">
+                <div class="radio">
                     <label> <input type="radio" ng-model="test.q3" value="B" >  b)  Decreased by almost 50%</label>
                 </div>
-                <div class="radio-block">
+                <div class="radio">
                     <label> <input type="radio" ng-model="test.q3" value="C" >  c)  Remained unchanged</label>
                 </div>
-                <div class="radio-block">
+                <div class="radio">
                     <label> <input type="radio" ng-model="test.q3" value="D" >  d)  Unknown, because this question has never been studied</label>
                 </div>
             </div>
 
             <div class="form-group">
-                <p><b>4)  <b class="red">All of the following</b> are online disease surveillance sources <b class="red">except</b>: (Please select one answer below)</b></p>
+                <p><b>4. All of the following are online disease surveillance sources except:</b></p>
                 <span ng-show="!test.q4 && attempted" class="red">Must select one</span>
-                <div class="radio-block">
+                <div class="radio">
                     <label> <input type="radio" ng-model="test.q4" value="A" >  a)	HealthMap</label>
                 </div>
-                <div class="radio-block">
+                <div class="radio">
                     <label> <input type="radio" ng-model="test.q4" value="B" >  b)	OneHealth</label>
                 </div>
-                <div class="radio-block">
+                <div class="radio">
                     <label> <input type="radio" ng-model="test.q4" value="C" >  c)	ProMED-mail</label>
                 </div>
-                <div class="radio-block">
+                <div class="radio">
                     <label> <input type="radio" ng-model="test.q4" value="D" >  d)	GPHIN</label>
                 </div>
-                <div class="radio-block">
+                <div class="radio">
                     <label> <input type="radio" ng-model="test.q4" value="E" >  e)	Google Flu Trends</label>
                 </div>
             </div>
 
             <div class="form-group">
-                <p><b>5)	One of these options about the epicore.org platform is <b class="red">not</b> correct (Please select one answer below)</b></p>
+                <p><b>5. One of these options about the epicore.org platform is <b class="red">not</b> correct</b></p>
                 <span ng-show="!test.q5 && attempted" class="red">Must select one</span>
-                <div class="radio-block">
+                <div class="radio">
                     <label> <input type="radio" ng-model="test.q5" value="A" >  a)	Requests for information on disease outbreaks will be sent to you by expert moderators</label>
                 </div>
-                <div class="radio-block">
+                <div class="radio">
                     <label> <input type="radio" ng-model="test.q5" value="B" >  b)	You can use available traditional and/or non-traditional sources when collecting information for your response</label>
                 </div>
-                <div class="radio-block">
+                <div class="radio">
                     <label> <input type="radio" ng-model="test.q5" value="C" >  c)	Your responses will be anonymous, unless you choose otherwise</label>
                 </div>
-                <div class="radio-block">
+                <div class="radio">
                     <label> <input type="radio" ng-model="test.q5" value="D" >  d)	It is free to join EpiCore</label>
                 </div>
-                <div class="radio-block">
+                <div class="radio">
                     <label> <input type="radio" ng-model="test.q5" value="E" >  e)	None of the above</label>
                 </div>
             </div>
 
             <div class="form-group" ng-show="!passed">
-                <button type="submit" ng-click="grade(test)" class="submit btn btn-default">Submit</button>
+                <button type="submit" ng-click="grade(test)" class="submit btn btn-primary">Submit</button>
             </div>
         </form>
-            <div >
-                <p class="intro red" ><strong ng-bind-html="test_message" ></strong></p>
+            <div>
+                <p class="intro red"><strong ng-bind-html="test_message"></strong></p>
             </div>
             <div ng-show="passed">
                 <a href="#/login" class="nav-button"><b>Login</b></a>
@@ -140,4 +139,5 @@
         </div><!--col-->
     </div><!--row-->
 </div><!--container-->
+</div><!--wrapper-->
 

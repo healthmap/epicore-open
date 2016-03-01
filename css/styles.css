@@ -1,3 +1,4 @@
+.transition{-webkit-transition:all .25s ease-out;-moz-transition:all .25s ease-out;-o-transition:all .25s ease-out;transition:all .25s ease-out}
 html{font-size:1em}
 body{font-family:'Lato',sans-serif;font-weight:400;font-size:1em;line-height:1.5}
 p{margin:0 0 1.5em 0}
@@ -14,6 +15,7 @@ p{margin:0 0 1.5em 0}
 .navbar-nav .btn.btn-inverted{background:#2e3335;border:2px solid #2e3335;color:#fff}
 .grayscale{-webkit-filter:grayscale(1);-webkit-filter:grayscale(100%);filter:grayscale(100%)}
 a,a:visited{color:#01c2c2;font-weight:700}
+a:focus,a:hover,a:active{text-decoration:none;color:#01dbdb}
 .h1,.h2,.h3,.h4,.h5,.h6,h1,h2,h3,h4,h5,h6{margin:0 0 24px 0;color:#195b72;font-weight:400}
 h5,.h5{font-size:1em}
 .btn .h1,.btn .h2,.btn .h3,.btn .h4,.btn .h5,.btn .h6,.btn h1,.btn h2,.btn h3,.btn h4,.btn h5,.btn h6{color:#fff}
@@ -41,10 +43,12 @@ a.logo{color:#195b72;font-weight:700;letter-spacing:.05em}
 .tagline{letter-spacing:.1em}
 .tagline-first{font-size:.775em;font-weight:300}
 .tagline-second{font-weight:700;font-size:1.4em}
-.nav .btn,.btn,a.btn{font-size:1em;padding:12px;border-radius:0}
+.nav .btn,.btn,a.btn{font-size:1em;padding:12px;border-radius:0;-webkit-transition:all .25s ease-out;-moz-transition:all .25s ease-out;-o-transition:all .25s ease-out;transition:all .25s ease-out}
 a.btn-primary,.btn-primary{color:#fff;background-color:#01c2c2;border-color:#01c2c2;min-width:150px}
-.btn-primary:focus,.btn-primary:hover,.btn-primary:active{color:#fff;background-color:#01f5f5;border-color:#01f5f5;outline:0}
-.btn-primary.btn-sm,.btn-sm{padding:4px 12px;min-width:0;margin-top:-5px}
+a.btn-default,.btn-default{background-color:#063342;border-color:#063342;color:#fff}
+.btn-default:focus,.btn-default:hover,.btn-default:active{color:#fff;background-color:#084559;border-color:#084559;outline:0}
+.btn-primary:focus,.btn-primary:hover,.btn-primary:active{color:#fff;background-color:#01dbdb;border-color:#01dbdb;outline:0}
+.btn-default.btn-sm,.btn-sm{padding:6px 12px;min-width:0;font-size:.875em;margin-top:-6px}
 .navbar-default .navbar-nav>li>a{color:#333}
 .navbar-default .navbar-collapse,.navbar-default .navbar-form{border-color:transparent}
 .nav .btn-secondary,.btn-secondary{border:2px solid}
@@ -60,6 +64,7 @@ a.inherit,.inherit{color:inherit}
 .search-wrapper{color:#fff;padding:12px;background-color:#878c8d}
 .search-wrapper input{background:transparent;border:0;outline:0}
 th{background-color:#878c8d;color:#fff;font-weight:normal}
+.btn-tab{margin-right:30px}
 .tab{margin-right:30px;font-weight:700;padding-bottom:24px;color:#999}
 .border-bottom{border-bottom:4px solid #01c2c2;color:#01c2c2}
 .show-message-mod{background:#efefef}
