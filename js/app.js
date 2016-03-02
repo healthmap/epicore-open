@@ -39,7 +39,7 @@ app.config(function($routeProvider) {
         when("/setpassword", {templateUrl: "partials/setpassword.html"}).
         when("/resetpassword", {templateUrl: "partials/resetpassword.html"}).
         when("/home", {templateUrl: "partials/home.html"}).
-        when("/test", {templateUrl: "partials/test.html", controller: "testController"}).
+        when("/training", {templateUrl: "partials/test.html", controller: "testController"}).
         otherwise({redirectTo: '/home'});
     });
 
