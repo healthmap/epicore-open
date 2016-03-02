@@ -137,7 +137,10 @@ h3, .h3 {
 
 .wrapper {
     padding: 72px 0;
-    border-bottom: 1px solid #efefef;
+    }
+
+.wrapper.footer {
+    border-top: 1px solid #efefef;
     }
 
 .wrapper.dashboard {
@@ -309,6 +312,16 @@ a.btn-default, .btn-default {
 .btn-primary.active.focus, .btn-primary.active:focus, .btn-primary.active:hover, .btn-primary:active.focus, .btn-primary:active:focus, .btn-primary:active:hover, .open>.dropdown-toggle.btn-primary.focus, .open>.dropdown-toggle.btn-primary:focus, .open>.dropdown-toggle.btn-primary:hover {
     background-color: lighten(@secondary-color,5%);
     border-color: lighten(@secondary-color,5%);
+    }
+
+.btn-default.active.focus, .btn-default.active:focus, .btn-default.active:hover, .btn-default:active.focus, .btn-default:active:focus, .btn-default:active:hover, .open>.dropdown-toggle.btn-default.focus, .open>.dropdown-toggle.btn-default:focus, .open>.dropdown-toggle.btn-default:hover {
+    color: #fff;
+    background-color: lighten(@dark-blue,5%);
+    border-color: lighten(@dark-blue,5%);
+    }
+
+btn.active.focus, .btn.active:focus, .btn.focus, .btn:active.focus, .btn:active:focus, .btn:focus {
+    outline-offset: 0px;
     }
 
 .btn-default.btn-sm, .btn-sm {

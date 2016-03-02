@@ -23,7 +23,8 @@ h5,.h5{font-size:1em}
 .jumbotron.page h1,.jumbotron.dashboard h1{margin-bottom:0}
 h4,.h4{font-weight:700;line-height:1.33333}
 h3,.h3{line-height:1.5em}
-.wrapper{padding:72px 0;border-bottom:1px solid #efefef}
+.wrapper{padding:72px 0}
+.wrapper.footer{border-top:1px solid #efefef}
 .wrapper.dashboard{padding:48px 0}
 .wrapper.secondary-nav{padding:24px 0}
 #footer img{margin:24px}
@@ -52,6 +53,8 @@ a.btn-default,.btn-default{background-color:#063342;border-color:#063342;color:#
 .btn-huge:focus:after,.btn-huge:hover:after,.btn-huge:active:after{border-top:solid 48px #3a4043 !important}
 .btn-primary:focus,.btn-primary:hover,.btn-primary:active{color:#fff;background-color:#53cece;border-color:#53cece;outline:0}
 .btn-primary.active.focus,.btn-primary.active:focus,.btn-primary.active:hover,.btn-primary:active.focus,.btn-primary:active:focus,.btn-primary:active:hover,.open>.dropdown-toggle.btn-primary.focus,.open>.dropdown-toggle.btn-primary:focus,.open>.dropdown-toggle.btn-primary:hover{background-color:#53cece;border-color:#53cece}
+.btn-default.active.focus,.btn-default.active:focus,.btn-default.active:hover,.btn-default:active.focus,.btn-default:active:focus,.btn-default:active:hover,.open>.dropdown-toggle.btn-default.focus,.open>.dropdown-toggle.btn-default:focus,.open>.dropdown-toggle.btn-default:hover{color:#fff;background-color:#084559;border-color:#084559}
+btn.active.focus,.btn.active:focus,.btn.focus,.btn:active.focus,.btn:active:focus,.btn:focus{outline-offset:0}
 .btn-default.btn-sm,.btn-sm{padding:6px 12px;min-width:0;font-size:.875em;margin-top:-6px}
 .navbar-default .navbar-nav>li>a{color:#333}
 .navbar-default .navbar-collapse,.navbar-default .navbar-form{border-color:transparent}

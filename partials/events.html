@@ -106,10 +106,10 @@
         <table class='small table table-hover table-bordered'>
             <tbody>
                 <tr>
-                    <th><a href="" ng-click="predicate = 'title'; reverse=!reverse">Title</a></th>
-                    <th><a href="" ng-click="predicate = 'disease'; reverse=!reverse">Disease</a></th>
-                    <th><a href="" ng-click="predicate = 'location'; reverse=!reverse">Location</a></th>
-                    <th><a href="" ng-click="predicate = 'last_send_date'; reverse=!reverse">Request Received Date</a></th>
+                    <th ng-click="predicate = 'title'; reverse=!reverse">Title <i class="fa fa-sort"></i></th>
+                    <th ng-click="predicate = 'disease'; reverse=!reverse">Disease <i class="fa fa-sort"></i></th>
+                    <th ng-click="predicate = 'location'; reverse=!reverse">Location <i class="fa fa-sort"></i></th>
+                    <th ng-click="predicate = 'last_send_date'; reverse=!reverse">Request Received Date <i class="fa fa-sort"></i></th>
                     <th>Your Response Date</th>
                 </tr>
                 <tr ng-repeat="event in eventsList | filter:query | orderBy:predicate:reverse">
