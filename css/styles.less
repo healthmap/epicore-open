@@ -198,6 +198,7 @@ h3, .h3 {
     border-top: solid 48px #333333;
     border-left: solid 110px transparent;
     border-right: solid 110px transparent;
+    .transition;
     }
 
 .jumbotron {
@@ -257,6 +258,7 @@ a.logo {
     font-size: 1em;
     padding: 12px;
     border-radius: 0px;
+    text-transform: uppercase; 
     .transition;
     }
 
@@ -273,17 +275,40 @@ a.btn-default, .btn-default {
     color: #fff;
     }
 
+.btn:focus, .btn:hover, .btn:active {
+    outline: 0px;
+    .box-shadow-none;
+    }
+
 .btn-default:focus, .btn-default:hover, .btn-default:active {
     color: #fff;
     background-color: lighten(@dark-blue,5%);
     border-color: lighten(@dark-blue,5%);
-    outline: 0px;
     }
+
+.btn-secondary:focus, .btn-secondary:hover, .btn-secondary:active {
+    border-color: lighten(@secondary-color,5%);
+    color: lighten(@secondary-color,5%);
+    }
+
+.btn-huge:focus, .btn-huge:hover, .btn-huge:active {
+    background: lighten(@dark-gray,5%) !important;
+    }
+
+.btn-huge:focus:after, .btn-huge:hover:after, .btn-huge:active:after {
+    border-top: solid 48px lighten(@dark-gray,5%) !important;
+    }
+
 .btn-primary:focus, .btn-primary:hover, .btn-primary:active {
     color: #fff;
     background-color: lighten(@secondary-color,5%);
     border-color: lighten(@secondary-color,5%);
     outline: 0px;
+    }
+
+.btn-primary.active.focus, .btn-primary.active:focus, .btn-primary.active:hover, .btn-primary:active.focus, .btn-primary:active:focus, .btn-primary:active:hover, .open>.dropdown-toggle.btn-primary.focus, .open>.dropdown-toggle.btn-primary:focus, .open>.dropdown-toggle.btn-primary:hover {
+    background-color: lighten(@secondary-color,5%);
+    border-color: lighten(@secondary-color,5%);
     }
 
 .btn-default.btn-sm, .btn-sm {
@@ -371,6 +396,13 @@ a.inherit, .inherit {
     height: auto;
     border-radius: 0px;
     border: 2px solid lighten(@light-gray, 30%);
+    .box-shadow-none;
+    }
+
+.form-control:focus {
+    border-color: @secondary-color;
+    color: @secondary-color;
+    outline: 0;
     .box-shadow-none;
     }
 
