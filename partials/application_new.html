@@ -14,9 +14,10 @@
 <div class="container">
     <div class="row">
         <div name="form-container" class="col-xs-12 col-sm-8">
-            <p>Please do NOT write in all capital letters.<br>
-                <span class="correct"><i class="fa fa-check-circle-o"></i> John Smith<br></span>
-                <span class="incorrect"><i class="fa fa-times-circle-o"></i> JOHN SMITH, John SMITH</span></p>
+            <div class="note mb24">
+            <strong>Do not write in all capital letters.</strong><br>
+                <i class="fa fa-times-circle"></i> <span class="" style="text-decoration:line-through;">JOHN SMITH, John SMITH</span><br>
+                <i class="fa fa-check-circle"></i> <span class="">Smith</span></div>
 
             <form name="applyForm" role="form" id="applyForm">
 
@@ -24,22 +25,22 @@
                 <h3>Contact Information</h3>
 
                 <div class="form-group">
-                    <label class="control-label" for="firstname">First Name</label>
-                    <input type="text" class="form-control" ng-model="uservals.firstname" name="firstname" placeholder="First name only, without title or salutation. Correct:  John, Wrong: Mr. John, Dr. John" required>
+                    <label class="form-label" for="firstname">First Name</label>
+                    <input type="text" class="form-control" ng-model="uservals.firstname" name="firstname" placeholder="without title or salutation" required>
                 </div>
 
                 <div class="form-group">
-                    <label class="control-label" for="lastname">Last Name</label>
-                    <input type="text" class="form-control" ng-model="uservals.lastname" name="lastname" placeholder="Your Last Name" required>
+                    <label class="form-label" for="lastname">Last Name</label>
+                    <input type="text" class="form-control" ng-model="uservals.lastname" name="lastname" required>
                 </div>
 
                 <div class="form-group">
-                    <label class="control-label" for="email">Primary Email</label>
-                    <input type="text" class="form-control" ng-model="uservals.email" name="email" placeholder="Your Email" required>
+                    <label class="form-label" for="email">Primary Email</label>
+                    <input type="text" class="form-control" ng-model="uservals.email" name="email" required>
                 </div>
 
                 <div class="form-group">
-                    <label class="control-label" for="country">Country</label>
+                    <label class="form-label" for="country">Country</label>
                     <select ng-model="uservals.country" name="country" required>
                         <option value="">-- select --</option>
                         <option ng-repeat="country in countries" value="{{country.code}}">{{country.name}}</option>
@@ -47,13 +48,13 @@
                 </div>
 
                 <div class="form-group">
-                    <label class="control-label" for="city">City</label>
-                    <input type="text" class="form-control" ng-model="uservals.city" name="city" placeholder="Your City" required>
+                    <label class="form-label" for="city">City</label>
+                    <input type="text" class="form-control" ng-model="uservals.city" name="city" required>
                 </div>
 
                 <div class="form-group">
-                    <label class="control-label" for="state">State</label>
-                    <input type="text" class="form-control" ng-model="uservals.state" name="state" placeholder="Your State/Province" required>
+                    <label class="form-label" for="state">State</label>
+                    <input type="text" class="form-control" ng-model="uservals.state" name="state" required>
                 </div>
 
 
@@ -62,16 +63,16 @@
                         <h3>Education</h3>
                         <h4>Please list your degrees starting with the most recent</h4>
                         <h5>Education (1)</h5>
-                        <label class="control-label" for="university1">College / University</label>
-                        <input type="text" class="form-control" ng-model="uservals.university1" name="university1" placeholder="College / University" required>
+                        <label class="form-label" for="university1">College / University</label>
+                        <input type="text" class="form-control" ng-model="uservals.university1" name="university1" required>
                     </div>
                     <div class="form-group">
-                        <label class="control-label" for="major1">Major</label>
-                        <input type="text" class="form-control" ng-model="uservals.major1" name="major1" placeholder="example: Pharmacy, Nursing, Microbiology, etc" required>
+                        <label class="form-label" for="major1">Major</label>
+                        <input type="text" class="form-control" ng-model="uservals.major1" name="major1" required>
                     </div>
 
                 <div class="form-group">
-                    <label class="control-label" for="degree1">Degree</label>
+                    <label class="form-label" for="degree1">Degree</label>
                     <select ng-model="uservals.degree1" name="degree1" required>
                         <option value="">-- select --</option>
                         <option value="bachelors">Bachelor's Degree</option>
@@ -86,7 +87,7 @@
                 </div>
 
                 <div class="form-group">
-                    <label class="control-label" for="school_country1">Country</label>
+                    <label class="form-label" for="school_country1">Country</label>
                     <select ng-model="uservals.school_country1" name="school_country1" required>
                         <option value="">-- select --</option>
                         <option ng-repeat="country in countries" value="{{country.code}}">{{country.name}}</option>
@@ -102,15 +103,15 @@
                         <div class="form-group">
                             <br>
                             <h5>Education (2)</h5>
-                            <label class="control-label" for="university2">College / University</label>
+                            <label class="form-label" for="university2">College / University</label>
                             <input type="text" class="form-control" ng-model="uservals.university2" name="university2" placeholder="College / University" required>
                         </div>
                         <div class="form-group">
-                            <label class="control-label" for="major2">Major</label>
-                            <input type="text" class="form-control" ng-model="uservals.major2" name="major2" placeholder="Major" required>
+                            <label class="form-label" for="major2">Major</label>
+                            <input type="text" class="form-control" ng-model="uservals.major2" name="major2" required>
                         </div>
                     <div class="form-group">
-                        <label class="control-label" for="degree2">Degree</label>
+                        <label class="form-label" for="degree2">Degree</label>
                         <select ng-model="uservals.degree2" name="degree2" required>
                             <option value="">-- select --</option>
                             <option value="bachelors">Bachelor's Degree</option>
@@ -125,7 +126,7 @@
                     </div>
 
                     <div class="form-group">
-                        <label class="control-label" for="school_country2">Country</label>
+                        <label class="form-label" for="school_country2">Country</label>
                         <select ng-model="uservals.school_country2" name="school_country2" required>
                             <option value="">-- select --</option>
                             <option ng-repeat="country in countries" value="{{country.code}}">{{country.name}}</option>
@@ -143,15 +144,15 @@
                         <div class="form-group">
                             <br>
                             <h5>Education (3)</h5>
-                            <label class="control-label" for="university3">College / University</label>
-                            <input type="text" class="form-control" ng-model="uservals.university3" name="university3" placeholder="College / University" required>
+                            <label class="form-label" for="university3">College / University</label>
+                            <input type="text" class="form-control" ng-model="uservals.university3" name="university3" required>
                         </div>
                         <div class="form-group">
-                            <label class="control-label" for="major3">Major</label>
-                            <input type="text" class="form-control" ng-model="uservals.major3" name="major3" placeholder="Major" required>
+                            <label class="form-label" for="major3">Major</label>
+                            <input type="text" class="form-control" ng-model="uservals.major3" name="major3" required>
                         </div>
                     <div class="form-group">
-                        <label class="control-label" for="degree3">Degree</label>
+                        <label class="form-label" for="degree3">Degree</label>
                         <select ng-model="uservals.degree3" name="degree3" required>
                             <option value="">-- select --</option>
                             <option value="bachelors">Bachelor's Degree</option>
@@ -166,7 +167,7 @@
                     </div>
 
                     <div class="form-group">
-                        <label class="control-label" for="school_country3">Country</label>
+                        <label class="form-label" for="school_country3">Country</label>
                         <select ng-model="uservals.school_country3" name="school_country3" required>
                             <option value="">-- select --</option>
                             <option ng-repeat="country in countries" value="{{country.code}}">{{country.name}}</option>
@@ -179,7 +180,7 @@
                     <div class="form-group">
                         <br>
                         <h3>Knowledge and Experience</h3>
-                        <h5 class="control-label">Basic Knowledge (Please select all that apply and at least one.)</h5>
+                        <h5 class="form-label">Basic Knowledge (Please select all that apply and at least one.)</h5>
                         <span ng-show="!uservals.clinical_med_adult && !uservals.clinical_med_pediatric && !uservals.clinical_med_vet && !uservals.research &&
                                 !uservals.microbiology && !uservals.virology && !uservals.parasitology && !uservals.vaccinology && !uservals.epidemiology &&
                                 !uservals.biotechnology && !uservals.pharmacy && !uservals.publichealth && !uservals.disease_surv && !uservals.informatics &&
@@ -253,7 +254,7 @@
                     </div>
 -->
                     <div class="form-group">
-                    <h5 class="control-label">Have you successfully completed a field epidemiology training program <b>with TEPHINET or any other TEPHINET-affiliated regional network</b>? </h5>
+                    <h5 class="form-label">Have you successfully completed a field epidemiology training program with TEPHINET or any other TEPHINET-affiliated regional network?</h5>
                         <span ng-show="!uservals.training && attempted" class="error">Must select one</span>
 
                         <label class="radio-inline"> <input type="radio" ng-model="uservals.training" value="1" > Yes</label>
@@ -270,7 +271,7 @@
                 </div>
 -->
                 <div class="form-group">
-                    <h5 class="control-label">How many years of experience do you have in human and/or animal health?</h5>
+                    <h5 class="form-label">How many years of experience do you have in human and/or animal health?</h5>
                         <span ng-show="!uservals.health_exp && attempted" class="error">Must select one</span>
                     <div class="radio">
                         <label> <input type="radio" name='health_exp' ng-model="uservals.health_exp" value="A" > No experience</label>
@@ -290,7 +291,7 @@
                 </div>
 
                 <div class="form-group">
-                    <h5 class="control-label">Do you have at least one-year experience in the following (select all that apply) :</h5>
+                    <h5 class="form-label">Do you have at least one-year experience in the following:</h5>
                         <span ng-show="!uservals.human_health  && !uservals.animal_health && !uservals.env_health
                                 && !uservals.health_exp_none && attempted" class="error">Must select at least one</span>
 
@@ -312,17 +313,17 @@
                 <div class="form-group">
                     <br>
                     <h3>Current Work</h3>
-                    <label class="control-label" for="job_title">What is your current job title?</label>
-                    <input type="text" class="form-control" name="job_title" ng-model="uservals.job_title" placeholder="current job title / position" required>
+                    <label class="form-label" for="job_title">What is your current job title?</label>
+                    <input type="text" class="form-control" name="job_title" ng-model="uservals.job_title" required>
                 </div>
 
                 <div class="form-group">
-                    <label class="control-label" for="job_title">What is the name of the organization where you currently work?</label>
-                    <input type="text" class="form-control" name="current_organization" ng-model="uservals.organization" placeholder="name of the organization where you currently work" required>
+                    <label class="form-label" for="job_title">What is the name of the organization where you currently work?</label>
+                    <input type="text" class="form-control" name="current_organization" ng-model="uservals.organization" required>
                 </div>
 
                     <div class="form-group">
-                        <h5 class="control-label">Which sector does your organization best fall under (Please select one)</h5>
+                        <h5 class="form-label">Which sector does your organization best fall under</h5>
                         <span ng-show="!uservals.sector && attempted" class="error">Must select one</span>
 
                         <div class="radio"> 
@@ -337,7 +338,7 @@
                     </div>
 
                     <div class="form-group">
-                    <h5 class="control-label">Specifically, does the organization you work with fall under any of the following categories? (Please select all that apply)</h5>
+                    <h5 class="form-label">Does the organization you work with fall under any of the following categories?</h5>
                         <span ng-show="!uservals.health_org_university  && !uservals.health_org_doh && !uservals.health_org_clinic
                                 && !uservals.health_org_other && !uservals.health_org_none && attempted" class="error">Must select at least one</span>
 
@@ -351,7 +352,7 @@
                             <label> <input type="checkbox" ng-true-value="1"  ng-model="uservals.health_org_clinic" ng-click="uservals.health_org_none = false"> Medical clinic</label>
                         </div>
                         <div class="checkbox">
-                            <label> <input type="checkbox"  ng-true-value="1" ng-model="uservals.health_org_other" ng-click="uservals.health_org_none = false"> Other health-related organizations, including nonprofit, nongovernmental or private sector organizations</label>
+                            <label> <input type="checkbox"  ng-true-value="1" ng-model="uservals.health_org_other" ng-click="uservals.health_org_none = false"> Other health-related organizations in any sector</label>
                         </div>
                         <div class="checkbox">
                             <label> <input type="checkbox" ng-true-value="1"  name="health_org_none" ng-model="uservals.health_org_none" ng-click="(uservals.health_org_university = false);
@@ -363,7 +364,7 @@
                         <br>
                         <h3>Administrative</h3>
 
-                        <h5 class="control-label">How did you hear about us? (select all that apply)</h5>
+                        <h5 class="form-label">How did you hear about us?</h5>
                         <span ng-show="!uservals.epicoreworkshop && !uservals.conference && !uservals.promoemail
                                         && !uservals.othercontact && attempted" class="error">Must select at least one</span>
 
@@ -390,12 +391,12 @@
                     </div>
 
                     <div class="form-group">
-                    <h5 class="control-label">I attest that all the information provided in this form is true and accurate to the best of my abilities.</h5>
+                    <h5 class="form-label">I attest that all the information provided in this form is true and accurate to the best of my abilities.</h5>
                         <label class="checkbox-inline"> <input type="checkbox" name="info_accurate" ng-model="uservals.info_accurate" required> Agree</label>
                     </div>
 
                     <div class="form-group">
-                    <h5 class="control-label">By submitting this application, I understand that if approved and after being trained, I become a member of the select EpiCore team that aims to collectively find outbreaks faster by responding to any request for information (RFI) in my area as best I can. </h5>
+                    <h5 class="form-label">By submitting this application, I understand that if approved and after being trained, I become a member of the select EpiCore team that aims to collectively find outbreaks faster by responding to any request for information (RFI) in my area as best I can. </h5>
                     <label class="checkbox-inline"> <input type="checkbox" name="rfi_agreement" ng-model="uservals.rfi_agreement" required> Agree</label>
                     </div>
 
