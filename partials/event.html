@@ -32,10 +32,10 @@
                 <a href="#/{{changeStatusType}}/{{id}}" class="btn btn-secondary btn-tab" ng-click="checkStatus()" >{{changeStatusText}} request</a>
             </span>
             <span ng-if="userInfo.superuser">
-                <a href="#/request_edit/{{id}}" class="btn btn-primary">Edit request </a>
+                <a href="#/request_edit/{{id}}" class="btn btn-secondary btn-tab">Edit request </a>
             </span>
             <span ng-if="userInfo.superuser">
-                <a href="" class="btn btn-primary" ng-click="deleteEvent(id)" >Delete request </a>
+                <a href="" class="btn btn-secondary btn-tab" ng-click="deleteEvent(id)">Delete request </a>
             </span>
         </span>
         <!-- END CLOSE FORM (for owner of event) -->
