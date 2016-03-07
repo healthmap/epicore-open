@@ -1,9 +1,12 @@
 <div class="container-fluid main">
-    <div div class="col-md-12 wbg" ng-show="!(superuser && showpage)">
+    <div ng-show="!showpage">
+                <i class="fa fa-spinner fa-pulse"></i> Please wait...
+    </div>
+    <div div class="col-md-12 wbg" ng-show="!superuser">
         <h3>You do not have access to this page.</h3>
     </div>
         <div ng-show="superuser && showpage"class="col-md-12 wbg" ng-controller="approvalController" ng-init="predicate='apply_date_iso'; reverse=!reverse" >
-            <h3>Application Approval</h3>
+            <h3>Approval Portal</h3>
             Set the user status by clicking on one of the status buttons on the right side of the table below.  The user will be notified by email when their status is set
             to Accepted, Denied, or Approved.<br><br>
 
@@ -13,7 +16,9 @@
             <b>Denied</b>: user was denied, and does not have access to the Epicore platform.<br>
             <b>Unsubscribed</b>: user was de-activated and does not have access to the Epicore platform.<br><br>
 
-            <a href="data/approval.csv" class="bxitnlink">Download approval csv file <i class="fa fa-download"></i></a>
+            <a href="data/approval.csv" class="bxitnlink">Download Member Info <i class="fa fa-download"></i></a><br><br>
+
+            <a href="data/rfistats.csv" class="bxitnlink">Download Event Stats <i class="fa fa-download"></i></a>
             <br><br>
             Send Reminder Email Options:<br>
             <button  type="button" ng-click="sendReminder('preapprove_reminder')">Set Password (Pre-approved)</button>
@@ -23,7 +28,7 @@
 
             Click on a table heading to sort the table or filter the table using the search tool.<br><br>
             <i class="fa fa-search"></i> <input ng-model="query"> <br> <br>
-            <table class='table table-hover table-bordered small'>
+            <table class='table table-hover table-bordered' style="font-size: small">
                 <tr>
                     <th >#</th>
                     <th ><a href="" ng-click="predicate = 'apply_date_iso'; reverse=!reverse">Application Date</a></th>
@@ -46,8 +51,8 @@
                     <td>{{applicant.accept_date}}</td>
                     <td>{{applicant.member_id}}</td>
                     <td>{{applicant.firstname}} {{applicant.lastname}}
-                        <a href="" ng-click="isCollapsed1 = !isCollapsed1"><i class="fa fa-plus"></i></a>
-                        <ul ng-show="isCollapsed1" class="list-unstyled">
+                        <a href="" ng-click="isCollapsed1 = !isCollapsed1"><i class="fa fa-plus-square-o"></i></a>
+                        <ul ng-show="isCollapsed1" style="list-style-type: none">
                             <li><b>email:</b> {{applicant.email}}</li>
                             <li><b>City:</b> {{applicant.city}}</li>
                             <li><b>State/Province:</b> {{applicant.state}}</li>

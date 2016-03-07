@@ -333,10 +333,19 @@ class EventInfo
                 continue;
             }
 
+            // get organization id for the event
+            $row['organization_id'] = $db->getOne("SELECT organization_id FROM user WHERE user.user_id = ?", array($row['requester_id']));
+
             // get the number of requests sent for that event
             $row['num_responses'] = $db->getOne("SELECT count(*) FROM response WHERE event_id = ?", array($row['event_id']));
             $row['num_responses_content'] = $db->getOne("SELECT count(*) FROM response WHERE event_id = ? AND response_permission <>0 ", array($row['event_id']));
             $row['num_responses_nocontent'] = $row['num_responses'] - $row['num_responses_content'];
+            $row['num_notuseful_responses'] = $db->getOne("SELECT count(*) FROM response WHERE useful ='0' and event_id = ?", array($row['event_id']));
+            $row['num_useful_responses'] = $db->getOne("SELECT count(*) FROM response WHERE useful ='1' and event_id = ?", array($row['event_id']));
+            $row['num_useful_promed_responses'] = $db->getOne("SELECT count(*) FROM response WHERE useful ='2' and event_id = ?", array($row['event_id']));
+            $row['notuseful_responses'] = $db->getAll("SELECT * FROM response WHERE useful ='0' and event_id = ?", array($row['event_id']));
+            $row['useful_responses'] = $db->getAll("SELECT * FROM response WHERE useful ='1' and event_id = ?", array($row['event_id']));
+            $row['useful_promed_responses'] = $db->getAll("SELECT * FROM response WHERE useful ='2' and event_id = ?", array($row['event_id']));
             $get_followups = $db->query("SELECT send_date,followup_id FROM event_fetp WHERE event_id = ? ORDER BY send_date DESC", array($row['event_id']));
             $ftext = $db->query("SELECT text,followup_id from followup WHERE event_id = ?", array($row['event_id']));
             while($gftext = $ftext->fetchRow()){
@@ -697,5 +706,79 @@ class EventInfo
         }
         return $user;
     }
+
+    // get ALL event stats for all types: yours, yourorg, and other for the csv
+    static function getEventStats($uid, $status) {
+        // get event info
+        $events = EventInfo::getAllEvents($uid, $status);
+
+        // get stats for each type
+        $yours = EventInfo::getStats($events['yours'], $status);
+        $yourorg = EventInfo::getStats($events['yourorg'], $status);
+        $other = EventInfo::getStats($events['other'], $status);
+        $stats = array_merge($yours, $yourorg, $other);
+
+        return $stats;
+    }
+
+    // get event stats for each type formatted for the csv
+    static function getStats($events, $status){
+
+        $event_stats = array();
+        $stats = array();
+
+        foreach ($events as $event) {
+
+            // basic stats
+            $event_stats['status'] = $status;
+            $event_stats['person'] = $event['person'];
+            $event_stats['organization_id'] = $event['organization_id'];
+            $event_stats['country'] = $event['country'];
+            $event_stats['event_id'] = $event['event_id'];
+            $event_stats['disease'] = $event['disease'];
+            $event_stats['title'] = $event['title'];
+            $event_stats['create_date'] = $event['create_date'];
+            $event_stats['requester_id'] = $event['requester_id'];
+            $event_stats['location'] = $event['location'];
+            $event_stats['num_responses'] = $event['num_responses'];
+            $event_stats['num_responses_content'] = $event['num_responses_content'];
+            $event_stats['num_responses_nocontent'] = $event['num_responses_nocontent'];
+            $event_stats['num_notuseful_responses'] = $event['num_notuseful_responses'];
+            $event_stats['num_useful_responses'] = $event['num_useful_responses'];
+            $event_stats['num_useful_promed_responses'] = $event['num_useful_promed_responses'];
+
+            // not useful responses
+            $notuseful = $event['notuseful_responses'];
+            $event_stats['notuseful_ids'] = '';
+            foreach ($notuseful as $nu) {
+                $event_stats['notuseful_ids'] .= ($event_stats['notuseful_ids'] == '') ? $nu['responder_id'] : ',' . $nu['responder_id'];
+            }
+
+            // useful responses
+            $useful = $event['useful_responses'];
+            $event_stats['useful_ids'] = '';
+            foreach ($useful as $u) {
+                $event_stats['useful_ids'] .= ($event_stats['useful_ids'] == '') ? $u['responder_id'] : ',' . $u['responder_id'];
+            }
+
+            // useful promed responses
+            $promed = $event['useful_promed_responses'];
+            $event_stats['promed_ids'] = '';
+            foreach ($promed as $p) {
+                $event_stats['promed_ids'] .= ($event_stats['promed_ids'] == '') ? $p['responder_id'] : ',' . $p['responder_id'];
+            }
+
+            // followups
+            $followups = $event['num_followups'];
+            $first_request = end($followups);
+            $event_stats['num_members'] = $first_request['num'];    //number of members on initial RFI
+
+            // push event stats
+            array_push($stats, $event_stats);
+        }
+
+        return $stats;
+    }
+
 }
 ?>
