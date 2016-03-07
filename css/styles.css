@@ -1,5 +1,6 @@
 .transition{-webkit-transition:all .25s ease-out;-moz-transition:all .25s ease-out;-o-transition:all .25s ease-out;transition:all .25s ease-out}
 .box-shadow-none{-webkit-box-shadow:inset 0 0 0 rgba(0,0,0,0);box-shadow:inset 0 0 0 rgba(0,0,0,0)}
+.fullwidth{width:100%}
 html{font-size:1em}
 body{font-family:'Lato',sans-serif;font-weight:400;font-size:1em;line-height:1.5}
 p{margin:0 0 1.5em 0}
@@ -26,6 +27,7 @@ h4,.h4{font-weight:700;line-height:1.33333}
 h3,.h3{line-height:1.5em}
 .wrapper{padding:72px 0}
 .wrapper.gray{background:#efefef}
+.wrapper.darkgray{background:#2e3335;color:#fff}.wrapper.darkgray h1,.wrapper.darkgray h2,.wrapper.darkgray h3,.wrapper.darkgray h4{color:#fff}
 .wrapper.footer{border-top:1px solid #efefef}
 .wrapper.dashboard{padding:48px 0}
 .wrapper.secondary-nav{padding:24px 0}
