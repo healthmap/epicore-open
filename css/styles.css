@@ -10,6 +10,7 @@ p{margin:0 0 1.5em 0}
 .incorrect{color:#cc064a}
 .error{color:#cc064a}
 .navbar-default{background-color:#fff}
+.border{border:1px solid #cdcdce}
 .navbar-toggle{border:0;margin:0;padding:0;line-height:96px;font-size:1.2em;color:#195b72}
 .navbar-default .navbar-toggle:focus,.navbar-default .navbar-toggle:hover{background-color:transparent}
 .navbar-nav .btn{margin:22px 0 0 12px;line-height:24px;height:48px}
