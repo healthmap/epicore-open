@@ -28,6 +28,9 @@ app.config(function($routeProvider) {
         when("/how", {templateUrl: "partials/howitworks.html"}).
         when("/who", {templateUrl: "partials/whocanapply.html"}).
         when("/educator", {templateUrl: "partials/lpeducator.html"}).
+        when("/provider", {templateUrl: "partials/lpprovider.html"}).
+        when("/researcher", {templateUrl: "partials/lpresearcher.html"}).
+        when("/professional", {templateUrl: "partials/lpprofessional.html"}).
         when("/terms", {templateUrl: "partials/terms.html"}).
         when("/fetp", {templateUrl: "partials/fetp.html"}).
         when("/fetp/:eid", {templateUrl: "partials/fetp.html"}).

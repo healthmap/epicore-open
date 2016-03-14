@@ -47,11 +47,11 @@
                     <th><a href="" ng-click="predicate = 'lastname'; reverse=!reverse">Name</a></th>
                     <th ><a href="" ng-click="predicate = 'country'; reverse=!reverse">Country</a></th>
                     <th ><a href="" ng-click="predicate = 'pword'; reverse=!reverse">Pword<br> Set</a></th>
-                    <th >Course Type</th>
-                    <th ><a href="" ng-click="predicate = 'status'; reverse=!reverse">User Status</a></th>
-                    <th >Accept or <br>Approve</th>
-                    <th >Deny or <br>Unsubscribe</th>
-                    <th >Edit or <br>Delete</th>
+                    <th>Course Type</th>
+                    <th><a href="" ng-click="predicate = 'status'; reverse=!reverse">User Status</a></th>
+                    <th>Accept or Approve</th>
+                    <th>Deny or Unsubscribe</th>
+                    <th>Edit or Delete</th>
                 </tr>
                 <tr ng-repeat="applicant in applicants | filter:query | orderBy:predicate:reverse" >
                     <td>{{$index+1}}</td>
@@ -163,12 +163,12 @@
                         <span ng_show="applicant.status != 'Pending'">{{applicant.status}}</span>
                     </td>
                     <td>
-                        <button type="button" ng-click="approveApplicant(applicant.maillist_id,'pending')" class="btn btn-default btn-sm stacked">Accept</button>
-                        <button type="button" ng-click="approveApplicant(applicant.maillist_id,'approved')" class="btn btn-default btn-sm stacked">Approve</button>
+                        <button type="button" ng-click="approveApplicant(applicant.maillist_id,'pending')" class="btn btn-default btn-sm stacked"><i alt="accept" class="fa fa-check"></i></button>
+                        <button type="button" ng-click="approveApplicant(applicant.maillist_id,'approved')" class="btn btn-default btn-sm stacked"><i alt="approve" class="fa fa-certificate"></i></a></button>
                     </td>
                     <td>
-                        <button type="button" ng-click="approveApplicant(applicant.maillist_id,'declined')" class="btn btn-default btn-sm stacked">Deny</button>
-                        <button type="button" ng-click="approveApplicant(applicant.maillist_id,'unsubscribed')" class="btn btn-default btn-sm stacked">Unsubscribe</button>
+                        <button type="button" ng-click="approveApplicant(applicant.maillist_id,'declined')" class="btn btn-default btn-sm stacked"><i alt="deny" class="fa fa-minus"></i></button>
+                        <button type="button" ng-click="approveApplicant(applicant.maillist_id,'unsubscribed')" class="btn btn-default btn-sm stacked"><i alt="unsubscribe" class="fa fa-times"></i></button>
                     </td>
                     <td>
                         <button class="btn btn-default btn-sm stacked" type="button" ng-click="editApplicant(applicant.maillist_id,'edit')"><i class="fa fa-pencil-square-o"></i></button>&nbsp;
