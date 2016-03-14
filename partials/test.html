@@ -6,23 +6,56 @@
     </div>
 </div>
 
-<div class="wrapper">
-<div class="container">
-            <!-- youtube videos -->
-            <div>
-                <h2>Training Videos</h2>
-                <p>Please watch all of the following training videos.</p>
-                <div my-youtube code="code1"></div>
-            </div>
-</div>
+<div class="wrapper" ng-hide="part1">
+    <div class="container">
+        <h2>Welcome to EpiCore!</h2>
+        <p>Congratulations on your acceptance! The next step is for you to finish short certification training sessions online.</p>
+
+        <p>These sessions are designed to provide the basic skills and information you need as a health professional to improve disease surveillance not only in your community and country, but also globally.</p>
+
+        <p>The journey to EpiCore certification begins by clicking the button below, where you will be directed to watch a 20xx-minute video titled "Introduction to Innovative Disease Surveillance Training Course". This video will provide you with the ability to:</p>
+        <ul>
+            <li>Recognize the advantages and challenges of traditional disease surveillance</li>
+            <li>Recognize informal information sources</li>
+            <li>Define the meaning of innovative disease surveillance</li>
+            <li>Identify the benefits of using innovative disease surveillance methods</li>
+        </ul>
+
+        <p>Once done, you can click on "Proceed to the second Video" button, where you will be directed to watch a xx-minute video titled “The EpiCore Training Course” which will give you all the information you need to use the EpiCore platform efficiently.</p>
+
+        <p>Finally, you will be directed to a final page to take the short test that is required for certification. Once you have passed the test, you will gain all the privileges of a full EpiCore member where you will have access to your EpiCore dashboard and will   begin receiving RFIs on outbreaks in your region.</p>
+
+        <p>We are very excited to start working with you soon! And please do not hesitate to contact us at info@epicore.org if you have any questions.</p>
+
+        <p>Sincerely,<br>
+        -The EpiCore Team</p>
+ 
+        <button ng-click="part1=true;part2=true" class="btn btn-primary">Proceed to the first video</button>
+    </div>
 </div>
 
-<div class="wrapper npt">
+<div class="wrapper" ng-show="part2">
+    <div class="container">
+        <h2>Introduction to Innovative Disease Surveillance</h2>
+        <div class="mb24" my-youtube code="code1"></div>
+        <button ng-click="part3=true;part2=false" class="btn btn-primary">Proceed to the second video</button>
+    </div>
+</div>
+
+<div class="wrapper" ng-show="part3">
+    <div class="container">
+        <h2>Introduction to the EpiCore Platform</h2>
+        <div class="mb24" my-youtube code="code1"></div>
+        <button ng-click="part4=true;part3=false" class="btn btn-primary">Proceed to the test</button>
+    </div>
+</div>
+
+<div class="wrapper" ng-show="part4">
 <div class="container">
 
             <!-- Test -->
             <h2>Test</h2>
-            <p>Please answer all questions.</p>
+            <p>Please complete the following multiple choice questions. There is only one correct answer per question. All questions must be answered correctly in order to pass the test.</p>
 
             <form name="testForm" role="form" id="testForm">
 
