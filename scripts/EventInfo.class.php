@@ -226,6 +226,8 @@ class EventInfo
 
     function buildEmailForEvent($event_info = array(), $type, $custom_vars = array(), $return_type = 'text')
     {
+        global $response_permission_lu;
+
         // if event id is passed in, just pull the email text from the RFI preview, if there is one
         if($return_type == "file" && isset($this) && file_exists("../".EMAILPREVIEWS."$type/".$this->id.".html")) {
             $file_preview = EMAILPREVIEWS . "$type/".$this->id.".html";
@@ -268,6 +270,17 @@ class EventInfo
         foreach($custom_vars as $varname => $varval) {
             if (($varname == 'RESPONSE_TEXT') || ($varname == 'NOTES'))
                 $varval = nl2br($varval); //"<pre>$varval</pre>";
+            if ($varname == 'RESPONSE_PERMISSION'){ // add traffic light to permissions
+                if($varval == $response_permission_lu[1]){
+                    $varval = $varval . '<img src="'. EPICORE_URL. '/img/redlight.png" alt="traffic light" style="vertical-align:middle;height:48px;margin-left: 3px;">';
+                }
+                else if($varval == $response_permission_lu[2]){
+                    $varval = $varval . '<img src="'. EPICORE_URL. '/img/yellowlight.png" alt="traffic light" style="vertical-align:middle;height:48px;margin-left: 3px;">';
+                }
+                if($varval == $response_permission_lu[3]){
+                    $varval = $varval . '<img src="'. EPICORE_URL. '/img/greenlight.png" alt="traffic light" style="vertical-align:middle;height:48px;margin-left: 3px;">';
+                }
+            }
             $emailtext = str_replace("[$varname]", $varval, $emailtext);
         }
 
