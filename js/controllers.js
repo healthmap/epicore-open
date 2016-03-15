@@ -596,9 +596,10 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
                     var h_fetp_id = $scope.eventsList.history[h].fetp_id;
                     var h_orgid = $scope.eventsList.history[h].organization_id;
                     var h_useful = $scope.eventsList.history[h].useful;
-                    if ((h_type == 'Member Response')
+                    var h_perm = $scope.eventsList.history[h].permission;
+                    if ((h_type == 'Member Response' && h_perm !=='0')
                         && ($scope.userInfo.uid || (h_fetp_id == $scope.userInfo.fetp_id)) && (h_orgid == $scope.userInfo.organization_id)) {
-                        if (h_useful === null) {
+                        if (h_useful === null ) {
                             alert('Please assess all member responses.');
                             $scope.close_message = 'Please assess all member responses.';
                             return false;
