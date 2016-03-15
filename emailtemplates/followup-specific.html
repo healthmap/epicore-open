@@ -1,39 +1,42 @@
 <!DOCTYPE html>
 <head>
+<link href='https://fonts.googleapis.com/css?family=Lato:300,400,700,900' rel='stylesheet' type='text/css'>
 <meta http-equiv="content-type" content="text/html; charset=UTF-8">
-<title>Epicore Follow-up Request</title>
+<title>Epicore Response Follow up</title>
 </head>
 
-<body style="color:#002E3E; font-family:calibri,helvetica,arial,sans-serif; line-height:24px; margin:0px; background:#EDF1F2; font-size:16px;">
+<body style="color:#333333; font-family:'Lato',helvetica,arial,sans-serif; line-height:24px; margin:0px; background:#efefef; font-size:16px;">
 
-<div style="background-image: url(https://epicore.org/img/bg.jpg); background-position: 50% 0px; background-repeat: no-repeat; background-color:#1c4d63; background-size: cover; padding:72px 50px; border-bottom: 1px solid #B4FEF7; text-transform: uppercase; font-size:55px; color:#fff; line-height:48px;">
-<p style="margin:0px auto;max-width:700px;">Epicore</p>
+<div style="padding:24px 30px; text-transform: uppercase; font-size:30px; color:#063342; line-height:60px;">
+    <p style="margin:0px auto;max-width:700px;"><img style="vertical-align:top;" src="https://epicore.org/img/logos/epicore.png" height="60px" alt="Logo"> Epicore Response Follow up</p>
 </div>
 
-<div style="text-align:left;max-width:700px;margin:0 auto;padding:24px 50px;">
-
-<p style="margin:24px 0;font-size:22px;">The following is a follow-up to your Epicore RFI response:</p>
-[NOTES]
-
-<p style="margin:12px 0;"><a style="color:#12a3cc;" href="[EPICORE_URL]/#/fetp/[EVENT_ID]/?t=[TOKEN]">Respond to this message</a>.</p>
-
-<p style="margin:24px 0;font-size:22px;">Your response on [RESPONSE_DATE] was:</p>
-<p style="margin:12px 0;"><strong>Permission level:</strong> [RESPONSE_PERMISSION]</p>
-<p style="margin:12px 0;">[RESPONSE_TEXT]</p>
-
-    <p style="margin:24px 0;font-size:22px;">Event message history:</p>
-
-    [EVENT_HISTORY]
-
-    <div style="background-color: #fff;padding:24px;color:#666;border: 1px solid #B4FEF7;">
-        <p style='margin:24px 0;font-size:22px;'>Original Event Request</p>
-        <p style="margin:12px 0;"><strong>Date:</strong> [EVENT_DATE]<br>
-            <strong>Title:</strong> [TITLE]<br>
-            <strong>Location:</strong> [LOCATION]</p>
-        [PERSONALIZED_TEXT]
-        [DESCRIPTION]
+<div style="padding:0 30px;">
+        <div style="background: #063342;color: #fff;text-align:left;max-width:640px;margin:0px auto 0 auto;padding: 24px 30px">
+        <p style="margin:0 0 24px 0;font-size:18px;">This message is a follow up to an RFI response you submitted:</p>
+        <p style="margin:0;padding:0px;">
+        [NOTES]
+        </p>
     </div>
-
 </div>
+
+<div style="text-align:left;max-width:700px;margin:24px auto 0 auto;padding:0 30px;">
+    <a style="font-size:20px; margin:0 0 24px 0;display: inline-block;color:#fff;background:#e94654;padding: 24px 30px;text-transform:uppercase;letter-spacing:.05em;text-decoration:none;" href="[EPICORE_URL]/#/fetp/[EVENT_ID]/?t=[TOKEN]">Respond</a>
+</div>
+
+<div style="padding:0 30px;">
+    <div style="background: #fff;text-align:left;max-width:640px;margin:0 auto 24px auto;padding: 24px 30px;">
+        <p style="margin:0 0 24px 0;font-size:18px;font-weight:bold;">Your response on [RESPONSE_DATE] was:</p>
+        <p style="margin:0 0 24px 0;">[RESPONSE_TEXT]</p>
+        
+        <p style="margin: 0 0 24px 0;font-size:18px;font-weight:bold;">Original RFI:</p>
+        <p style="margin:0 0 24px 0;">Date: [EVENT_DATE]<br>
+        Title: [TITLE]<br>
+        Location: [LOCATION]</p>
+        <p style="margin:0 0 24px 0;">[PERSONALIZED_TEXT]</p>
+        <p style="margin:0;">[DESCRIPTION]</p>
+    </div>
+</div>
+
 </body>
 </html>
