@@ -301,6 +301,9 @@ class UserInfo
         $db = getDB();
         $user_id = $db->getOne("SELECT maillist_id FROM maillist WHERE maillist_id = ?", array($pvals['maillist_id']));
 
+        // get member info to check if location changed
+        $member_info = UserInfo::getUserInfo($user_id);
+
         // update maillist
         $message = '';
         if($user_id) {
@@ -334,8 +337,8 @@ class UserInfo
 
             // get associated fetp
             $fetp_info = UserInfo::getFETPbyMid($pvals['maillist_id']);
-            //update fetp email and country code and latlong
-            // udate email
+
+            // udate fetp email
             if ($fetp_info['email'] != $pvals['email'] && $status == 'success'){
                 $s = UserInfo::updateFETPemail($fetp_info['fetp_id'], $pvals['email']);
                 if($s){
@@ -346,15 +349,31 @@ class UserInfo
                     $message = 'failed to update fetp email';
                 }
             }
-            // update country code and geocode
-            if ($fetp_info['countrycode'] != $pvals['country'] && $status == 'success'){
-                $s = UserInfo::geocodeFETP($pvals['email']);
-                if($s){
-                    $status = 'success';
-                }
-                else{
+            // update country code and geocode if country or city changed
+            if ((($fetp_info['countrycode'] != $pvals['country']) || ($member_info['city'] != $pvals['city'])) && $status == 'success'){
+                //update country code
+                $country_code = $pvals['country'];
+                $fetp_id = $fetp_info['fetp_id'];
+                $q = $db->query("update fetp set countrycode='$country_code' where fetp_id='$fetp_id'");
+
+                // check that result is not an error
+                if (PEAR::isError($q)) {
+                    //die($res->getMessage());
                     $status = 'failed';
-                    $message = 'failed to update fetp location';
+                    $message = 'failed to update country/city';
+                } else {
+                    $status = 'success';
+                    $db->commit();
+                }
+                if ($status == 'success') {
+                    // geocode
+                    $s = UserInfo::geocodeFETP($pvals['email']);
+                    if ($s) {
+                        $status = 'success';
+                    } else {
+                        $status = 'failed';
+                        $message = 'failed to geocode member location';
+                    }
                 }
             }
 
