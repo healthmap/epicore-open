@@ -8,7 +8,7 @@
 <div class="wrapper dashboard">
 <div class="container">
     <div class="row">
-        <div id="form-container" class="col-xs-12 col-md-8">
+        <div id="form-container" class="col-xs-12 mb24">
             <p>
             <strong>Title:</strong> {{eventsList.title}}<br>
             <strong>Date:</strong> {{eventsList.create_date}}
@@ -29,9 +29,9 @@
 
             <div ng-if="validResponses > 0">
                 <b>Please assess all member responses in the message history below before closing this RFI.</b><br>
-                <span><i class="red fa fa-thumbs-o-down"></i> - Not Helpful</span><br>
-                <span><i class="blue fa fa-thumbs-o-up"></i> - Helpful but not used in a post</span> <br>
-                <span><i class="green fa fa-thumbs-o-up">+ProMED</i> - Helpful and used in a post</span><br><br>
+                <span><i class="fa fa-thumbs-o-down"></i> - Not Helpful</span><br>
+                <span><i class="fa fa-thumbs-o-up"></i> - Helpful but not used in a post</span> <br>
+                <span><i class="fa fa-thumbs-o-up">+ProMED</i> - Helpful and used in a post</span><br><br>
 
                 <div ng-include="'partials/messagehistory.html'" ng-init="closerfi='1'" ></div><br>
             </div>
