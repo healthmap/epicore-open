@@ -8,7 +8,6 @@
 require_once 'db.function.php';
 require_once 'const.inc.php';
 require_once 'PlaceInfo.class.php';
-//require_once 'cache.function.php';
 
 class EventInfo
 {
@@ -514,6 +513,8 @@ class EventInfo
     // get all response and followup messages for a given event and fetp(s), sorted by date (most recent first)
     function getFetpMessages($fetp_id, $event_id){
 
+        global $countries;
+
         // get followups sent to fetp(s), and responses from fetp(s)
         $db = getDB();
         if ($fetp_id) { //  get followup sent to single fetp
@@ -527,7 +528,7 @@ class EventInfo
             $followups = $db->getAll("SELECT text, action_date, requester_id, fetp_id, f.followup_id, count(fetp_id) as fetp_count FROM followup f, event_fetp fe WHERE f.event_id=fe.event_id
                         AND f.followup_id=fe.followup_id AND f.event_id = ? GROUP BY text ORDER BY action_date", array($event_id));
             // get fetp responses from all fetps
-            $responses = $db->getAll("SELECT response, response_id, responder_id, response_date, response_permission, useful from response WHERE event_id = ?
+            $responses = $db->getAll("SELECT response, response_id, responder_id, response_date, response_permission, useful, countrycode from response, fetp WHERE fetp_id = responder_id AND event_id = ?
                                   ORDER BY response_date", array($event_id));
         }
 
@@ -565,6 +566,7 @@ class EventInfo
             $messages[$i]['type'] = 'Member Response';
             $messages[$i]['response_id'] = $response['response_id'];
             $messages[$i]['fetp_id'] = $response['responder_id'];
+            $messages[$i]['country'] = $countries[$response['countrycode']];
             $messages[$i]['useful'] = $response['useful'];
             $messages[$i]['person_id'] = $event_person['user_id'];
             $messages[$i]['organization_id'] = $event_person['organization_id'];

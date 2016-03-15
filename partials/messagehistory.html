@@ -1,4 +1,13 @@
 <h4>Event Message History</h4>
+
+<div ng-if="!userInfo.fetp_id">
+<b>Permissions:</b><br>
+<span><i class="fa fa-circle perm0"></i> - no contribution</span><br>
+<span><i class="fa fa-circle perm1"></i> -  paraphrase / don't affiliate</span><br>
+<span><i class="fa fa-circle perm2"></i> - quote / don't affiliate</span><br>
+<span><i class="fa fa-circle perm3"></i> - quote / affiliate</span><br><br>
+</div>
+
 <div class="event-item" ng-repeat="history_item in eventsList.history">
 
     <!-- Followup messages from Moderator to FETP -->
@@ -56,8 +65,13 @@
     <div  class="show-message-fetp" ng-if="(history_item.type == 'Member Response') && (userInfo.uid || (history_item.fetp_id == userInfo.fetp_id)) && !(closerfi && (history_item.permission == 0))">
         <a href="" class="inherit" ng-click="isCollapsed = !isCollapsed"><i class="fa fa-plus"></i></a>
                     <span ng-if="userInfo.uid">
-                        <!--{{history_item.type}}, {{history_item.date}}-->
-                        Member {{history_item.fetp_id}} Response, {{history_item.date}}
+                        Member {{history_item.fetp_id}} Response,
+                        {{history_item.country}},
+                                    <span ng-if="history_item.permission == 0"><i class="fa fa-circle perm0"></i> no contribution</span>
+                                    <span ng-if="history_item.permission == 1"><i class="fa fa-circle perm1"></i> paraphrase / don't affiliate</span>
+                                    <span ng-if="history_item.permission == 2"><i class="fa fa-circle perm2"></i> quote / don't affiliate</span>
+                                    <span ng-if="history_item.permission == 3"><i class="fa fa-circle perm3"></i> quote / affiliate</span>,
+                        {{history_item.date}}
                     </span>
                     <span ng-if="userInfo.fetp_id">
                         your response, {{history_item.date}}

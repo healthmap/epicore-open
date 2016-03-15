@@ -9,6 +9,10 @@ p{margin:0 0 1.5em 0}
 .correct{color:#0abc7e}
 .incorrect{color:#cc064a}
 .error{color:#cc064a}
+.perm0{color:#878c8d}
+.perm1{color:#cc064a}
+.perm2{color:#ff0}
+.perm3{color:#0abc7e}
 .navbar-default{background-color:#fff}
 .border{border:1px solid #cdcdce}
 .navbar-toggle{border:0;margin:0;padding:0;line-height:96px;font-size:1.2em;color:#195b72}
