@@ -1037,6 +1037,7 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
     }).controller('testController', function($scope, $cookieStore, $http, $location) {
 
         $scope.code1 = 'dvj0lYB7Wjc'; // healthmap youtube video code
+        $scope.code2 = 'dvj0lYB7Wjc'; // healthmap youtube video code
         $scope.passed = false;
 
         // grade the test and approve member after they pass the test
