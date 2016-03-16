@@ -21,11 +21,20 @@ $status_lu = array('O' => 're-opened', 'C' => 'closed');
 
 $super_users = array(1,79, 91, 95, 66, 92); // Sue, Zeenah, Jeff, Emily, Larry Madoff, Rachel
 
+// permission text
 $response_permission_lu = array(
-    "0" => "indicated nothing to contribute to the outbreak",
-    "1" => "paraphrase this response when reporting on the event in other forums.",
-    "2" => "quote this response but may not provide any details on my identity (location, position, etc.)",
-    "3" => "quote this response and attribute it to me [name and title in response text]"
+    "0" => " Indicated nothing to contribute to the outbreak",
+    "1" => " Paraphrase / do not use direct quotes from this response, mask any identifying information referenced in the response text and do not provide any details on my identity",
+    "2" => " Quote this response but mask any identifying information referenced in the response text and do not provide any details on my identity",
+    "3" => " Quote this response and attribute it to me [name and title in response text]"
+);
+
+// permission traffic light icons
+$permission_img = array(
+    "0"  => '',
+    "1" => '<img src="'. EPICORE_URL. '/img/redlight.png" alt="traffic light" style="vertical-align:middle;height:48px;margin-left: 3px;">',
+    "2" => '<img src="'. EPICORE_URL. '/img/yellowlight.png" alt="traffic light" style="vertical-align:middle;height:48px;margin-left: 3px;">',
+    "3" => '<img src="'. EPICORE_URL. '/img/greenlight.png" alt="traffic light" style="vertical-align:middle;height:48px;margin-left: 3px;">'
 );
 
 $reason_lu = array(
