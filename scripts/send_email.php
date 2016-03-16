@@ -23,7 +23,7 @@ function sendMail($email, $name, $subject, $status, $user_id){
         $db->query("INSERT INTO ticket (fetp_id, val, exp) VALUES (?, ?, ?)", array($fetp_id, $ticket, date('Y-m-d H:i:s', strtotime("+30 days"))));
         $db->commit();
         //get email template and set link
-        $link = 'https://www.epicore.org/#/setpassword?t=' . $ticket;
+        $link = EPICORE_URL .'/#/setpassword?t=' . $ticket;
         $emailtemplate = file_get_contents("../emailtemplates/pending.html");
     }
     else if($status =='preapproved'){
@@ -34,12 +34,12 @@ function sendMail($email, $name, $subject, $status, $user_id){
         $db->query("INSERT INTO ticket (fetp_id, val, exp) VALUES (?, ?, ?)", array($fetp_id, $ticket, date('Y-m-d H:i:s', strtotime("+30 days"))));
         $db->commit();
         //get email template and set link
-        $link = 'https://www.epicore.org/#/setpassword?t=' . $ticket;
+        $link = EPICORE_URL .'/#/setpassword?t=' . $ticket;
         $emailtemplate = file_get_contents("../emailtemplates/preapprove.html");
     }
     else if ($status == 'approved'){
         //get email template and set link
-        $link = 'https://www.epicore.org/#/login';
+        $link = EPICORE_URL .'/#/login';
         $emailtemplate = file_get_contents("../emailtemplates/approve.html");
     }
     else if ($status == 'declined'){
@@ -54,7 +54,7 @@ function sendMail($email, $name, $subject, $status, $user_id){
         $db->query("INSERT INTO ticket (fetp_id, val, exp) VALUES (?, ?, ?)", array($fetp_id, $ticket, date('Y-m-d H:i:s', strtotime("+30 days"))));
         $db->commit();
         //get email template and set link
-        $link = 'https://www.epicore.org/#/setpassword?t=' . $ticket;
+        $link = EPICORE_URL .'/#/setpassword?t=' . $ticket;
         $emailtemplate = file_get_contents("../emailtemplates/resetpassword.html");
     }
     else if($status =='preapprove_reminder'){
@@ -65,7 +65,7 @@ function sendMail($email, $name, $subject, $status, $user_id){
         $db->query("INSERT INTO ticket (fetp_id, val, exp) VALUES (?, ?, ?)", array($fetp_id, $ticket, date('Y-m-d H:i:s', strtotime("+30 days"))));
         $db->commit();
         //get email template and set link
-        $link = 'https://www.epicore.org/#/setpassword?t=' . $ticket;
+        $link = EPICORE_URL .'/#/setpassword?t=' . $ticket;
         $emailtemplate = file_get_contents("../emailtemplates/preapprove_reminder.html");
     }
     else if($status =='setpassword_reminder'){
@@ -76,12 +76,12 @@ function sendMail($email, $name, $subject, $status, $user_id){
         $db->query("INSERT INTO ticket (fetp_id, val, exp) VALUES (?, ?, ?)", array($fetp_id, $ticket, date('Y-m-d H:i:s', strtotime("+30 days"))));
         $db->commit();
         //get email template and set link
-        $link = 'https://www.epicore.org/#/setpassword?t=' . $ticket;
+        $link = EPICORE_URL .'/#/setpassword?t=' . $ticket;
         $emailtemplate = file_get_contents("../emailtemplates/setpassword_reminder.html");
     }
     else if($status =='training_reminder'){
         //get email template and set link
-        $link = 'https://www.epicore.org/#/login';
+        $link = EPICORE_URL .'/#/login';
         $emailtemplate = file_get_contents("../emailtemplates/training_reminder.html");
     }
     else if($status =='launch_reminder'){
