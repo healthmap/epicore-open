@@ -156,7 +156,7 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
                 $rootScope.error_message = 'false';
                 // FETPs that aren't activated yet don't get review page
                 if(data['uinfo']['fetp_id'] && data['uinfo']['active'] == 'N') {
-                    var redirpath = '/welcome';
+                    var redirpath = '/training';
                 } else {
                     var redirpath = typeof(querystr['redir']) != "undefined" ? querystr['redir'] : '/'+data['path'];
                 }
@@ -215,7 +215,7 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
                             'status': data['uinfo']['status']
                         });
                         $rootScope.error_message = 'false';
-                        var redirpath = '/test';
+                        var redirpath = '/training';
                         // FETPs that are activated and approved status get to review page
                         if (data['uinfo']['fetp_id'] && data['uinfo']['active'] == 'Y') {
                             redirpath = typeof(querystr['redir']) != "undefined" ? querystr['redir'] : '/' + data['path'];
