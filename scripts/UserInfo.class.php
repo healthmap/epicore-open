@@ -600,8 +600,10 @@ class UserInfo
         $db->commit();
     }
 
-    // get all members info for csv
+    // get all members info
     static function getMembers(){
+        global $countries;
+
         // get all applicants and fetps
         $db = getDB();
         $applicants = $db->getAll("select * from maillist");
@@ -652,7 +654,7 @@ class UserInfo
 
     }
 
-    // format members for csv file
+    // get all members for csv file
     static function getMembersInfo($members) {
 
         // save all member info
