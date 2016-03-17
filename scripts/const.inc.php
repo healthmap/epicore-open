@@ -24,8 +24,8 @@ $super_users = array(1,79, 91, 95, 66, 92); // Sue, Zeenah, Jeff, Emily, Larry M
 // permission text
 $response_permission_lu = array(
     "0" => " Indicated nothing to contribute to the outbreak",
-    "1" => " Paraphrase / do not use direct quotes from this response, mask any identifying information referenced in the response text and do not provide any details on my identity",
-    "2" => " Quote this response but mask any identifying information referenced in the response text and do not provide any details on my identity",
+    "1" => " Paraphrase / do not use direct quotes from this response, mask any identifying information referenced in the response text and do not provide any details on the responding member identity",
+    "2" => " Quote this response but mask any identifying information referenced in the response text and do not provide any details on the responding member identity",
     "3" => " Quote this response and attribute it to me [name and title in response text]"
 );
 

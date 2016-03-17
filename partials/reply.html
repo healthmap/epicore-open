@@ -9,7 +9,7 @@
 <div class="wrapper">
 <div class="container">
     <div class="row" ng-show="isAuthorizedFETP" >
-        <div id="form-container" class="col-xs-12 col-md-8">
+        <div id="form-container" class="col-xs-12">
         <p><a href="#/events" class="btn btn-default"><i class="fa fa-arrow-circle-left"></i> Back to EpiCore Dashboard</a></p>
 
             <p>
@@ -26,13 +26,13 @@
                <label for="response_permission">EpiCore Moderators may:</label>
             <div class="radio">
                 <label>
-                    <input type="radio" ng-model="formData.response_permission" name="response_permission" value="1" required> (red) Paraphrase / do not use direct quotes from this response, mask any identifying information referenced in the response text and do not provide any details on my identity  
+                    <input type="radio" ng-model="formData.response_permission" name="response_permission" value="1" required> <i class="fa fa-circle perm1"></i> Paraphrase / do not use direct quotes from this response, mask any identifying information referenced in the response text and do not provide any details on my identity
                     </label>
                 <label>
-                    <input type="radio" ng-model="formData.response_permission" name="response_permission" value="2" required> (yellow) Quote this response but mask any identifying information referenced in the response text and do not provide any details on my identity 
+                    <input type="radio" ng-model="formData.response_permission" name="response_permission" value="2" required> <i class="fa fa-circle perm2"></i> Quote this response but mask any identifying information referenced in the response text and do not provide any details on my identity
                     </label>
                 <label>
-                    <input type="radio" ng-model="formData.response_permission" name="response_permission" value="3" required> Quote this response and attribute it to me
+                    <input type="radio" ng-model="formData.response_permission" name="response_permission" value="3" required> <i class="fa fa-circle perm3"></i> Quote this response and attribute it to me [remember to insert your name and title in the response text]
                 </label>
             </div>
 
