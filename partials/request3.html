@@ -12,16 +12,16 @@
             <form name="sendRequestForm">
                 <h3>Step 3 of 3</h3> 
                 <h4>Preview & Send RFI</h4>
-                <p>The following is what your <strong>{{numFetps}}</strong> member recipients will receive via email.
-  If it looks good, press "Send Email".</p>
+                <p>The following is what your recipient members will receive via email.
+  If it looks good, press "Send RFI".</p>
 
             <div class="form-group">
-            <p><a href="#/request" class="btn btn-default"><i class="fa fa-arrow-circle-left"></i> Edit event details</a></p>
+            <p><a href="#/request" class="btn btn-default"><i class="fa fa-arrow-circle-left"></i> Edit RFI</a></p>
             <iframe width="800" height="400" ng-src="{{filePreview}}"></iframe>
             </div>
 
                 <div class="form-group">
-                    <button ng-click="sendRequest(sendRequestForm.$valid)" ng-disabled="submitDisabled" type="submit" class="submit btn btn-primary">Send Email</button>
+                    <button ng-click="sendRequest(sendRequestForm.$valid)" ng-disabled="submitDisabled" type="submit" class="submit btn btn-primary">Send RFI</button>
                 </div><!-- /input-group -->
 
             </form>

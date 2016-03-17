@@ -549,7 +549,7 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
             // if RFI requester is the logged in user or of same org, they get different action items
             if(response.EventsList != null) {
                 $scope.isAuthorizedToFollowup = $scope.userInfo.organization_id == response.EventsList.org_requester_id ? true : false;
-                $scope.changeStatusText = response.EventsList.estatus == "C" ? 'Reopen' : 'Close';
+                $scope.changeStatusText = response.EventsList.estatus == "C" ? 'Re open' : 'Close';
                 $scope.changeStatusType = response.EventsList.estatus == "C" ? 'reopen' : 'close';
                 $scope.isAuthorizedFETP = false;
                 if (response.EventsList.fetp_ids != null && response.EventsList.fetp_ids.indexOf($scope.userInfo.fetp_id) != -1) {
@@ -964,11 +964,11 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
         var messages = {};
         messages[1] = "You have been signed up.";
         messages[2] = 'The moderator who initiated the request has been notified. If you get any information on this RFI in the future, please come back to this RFI and click on "Yes, respond to this RFI"';
-        messages[3] = "Your request has been sent to the selected members.";
-        messages[4] = "Your request has been closed and an email has gone out to the original members contacted.";
-        messages[5] = "Your request has been reopened and an email has gone out to the original members contacted.";
-        messages[6] = "Your request has been updated.";
-        messages[7] = "Your event has been deleted.";
+        messages[3] = "Your RFI has been sent to the selected members.";
+        messages[4] = "Your RFI has been closed and an email has gone out to the original members contacted.";
+        messages[5] = "Your RFI has been reopened and an email has gone out to the original members contacted.";
+        messages[6] = "Your RFI has been updated.";
+        messages[7] = "Your RFI has been deleted.";
         $scope.id = $routeParams.id;
         $scope.messageResponse = {};
         $scope.messageResponse.text = messages[$scope.id];

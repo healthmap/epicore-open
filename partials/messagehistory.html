@@ -1,11 +1,13 @@
 <h4>RFI Message History</h4>
 
 <div ng-if="!userInfo.fetp_id">
-<b>Permissions:</b><br>
-<span><i class="fa fa-circle perm0"></i> - no contribution</span><br>
-<span><i class="fa fa-circle perm1"></i> -  paraphrase / don't affiliate</span><br>
-<span><i class="fa fa-circle perm2"></i> - quote / don't affiliate</span><br>
-<span><i class="fa fa-circle perm3"></i> - quote / affiliate</span><br><br>
+<p>
+<strong>Permissions:</strong><br>
+<span><i class="fa fa-circle perm0"></i> No contribution</span><br>
+<span><i class="fa fa-circle perm1"></i> Paraphrase / do not use direct quotes from this response, mask any identifying information referenced in the response text and do not provide any details on the identity of the responding member</span><br>
+<span><i class="fa fa-circle perm2"></i> Quote this response but mask any identifying information referenced in the response text and do not provide any details on the identity of the responding member</span><br>
+<span><i class="fa fa-circle perm3"></i> Quote this response and attribute it to the responding member</span>
+</p>
 </div>
 
 <div class="event-item" ng-repeat="history_item in eventsList.history">
@@ -118,7 +120,7 @@
     <!-- Event open/closed status message in same organization message (Moderator) -->
     <div  class="show-message-mod" ng-if="(history_item.type == 'Event Notes') && (history_item.organization_id == userInfo.organization_id)">
         <a href="" class="inherit" ng-click="isCollapsed = !isCollapsed"><i class="fa fa-plus"></i></a>
-        {{history_item.person}} {{history_item.status}} event request, {{history_item.date}}
+        {{history_item.person}} {{history_item.status}} RFI, {{history_item.date}}
         <div class="show-response" ng-show="isCollapsed">
             <p ng-bind-html="history_item.text | to_trusted"></p>
         </div>
@@ -127,7 +129,7 @@
     <!-- Event open/closed status message not in same organization message (Moderator or FETP)-->
     <div  class="show-message-mod" ng-if="(history_item.type == 'Event Notes') && (history_item.organization_id != userInfo.organization_id)">
         <a href="" class="inherit" ng-click="isCollapsed = !isCollapsed"><i class="fa fa-plus"></i></a>
-        {{history_item.status}} event request, {{history_item.date}}
+        {{history_item.status}} RFI, {{history_item.date}}
         <div class="show-response" ng-show="isCollapsed">
             <p ng-bind-html="history_item.text | to_trusted"></p>
         </div>
