@@ -26,8 +26,8 @@
             <b>Unsubscribed</b>: user was de-activated and does not have access to the Epicore platform.</p>
 
             <p>
-            <a href="data/approval.csv" class="btn btn-tab btn-default">Download Member Info <i class="fa fa-download"></i></a>
-            <a href="data/rfistats.csv" class="btn btn-tab btn-default">Download Event Stats <i class="fa fa-download"></i></a>
+            <a href="data/approval.csv" class="btn btn-tab btn-default"><i class="fa fa-download"></i> Member Info</a>
+            <a href="data/rfistats.csv" class="btn btn-tab btn-default"><i class="fa fa-download"></i> Event Stats</a>
             </p>
             <h4>Send Reminder Email Options:</h4>
             <button type="button" class="btn btn-secondary secondary-color btn-tab" ng-click="sendReminder('preapprove_reminder')">Set Password (Pre-approved)</button>
@@ -49,9 +49,9 @@
                     <th ><a href="" ng-click="predicate = 'pword'; reverse=!reverse">Pword<br> Set</a></th>
                     <th>Course Type</th>
                     <th><a href="" ng-click="predicate = 'status'; reverse=!reverse">User Status</a></th>
-                    <th>Accept or Approve</th>
-                    <th>Deny or Unsubscribe</th>
-                    <th>Edit or Delete</th>
+                    <th width="100px">Accept or Approve</th>
+                    <th width="100px">Deny or Unsubscribe</th>
+                    <th width="100px">Edit or Delete</th>
                 </tr>
                 <tr ng-repeat="applicant in applicants | filter:query | orderBy:predicate:reverse" >
                     <td>{{$index+1}}</td>
@@ -171,7 +171,7 @@
                         <button type="button" ng-click="approveApplicant(applicant.maillist_id,'unsubscribed')" class="btn btn-default btn-sm stacked"><i alt="unsubscribe" class="fa fa-times"></i></button>
                     </td>
                     <td>
-                        <button class="btn btn-default btn-sm stacked" type="button" ng-click="editApplicant(applicant.maillist_id,'edit')"><i class="fa fa-pencil-square-o"></i></button>&nbsp;
+                        <button class="btn btn-default btn-sm stacked" type="button" ng-click="editApplicant(applicant.maillist_id,'edit')"><i class="fa fa-pencil-square-o"></i></button>
                         <button  class="btn btn-default btn-sm stacked" type="button" ng-click="deleteApplicant(applicant.maillist_id)"><i class="fa fa-trash-o"></i></button>
                     </td>
 
