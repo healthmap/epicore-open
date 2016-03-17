@@ -1,7 +1,7 @@
 <div ng-include src="'header.html'"></div>
 <div class="jumbotron dashboard">
     <div class="container">
-        <h1><span>RFI Details</span></h1>
+        <h1><span ng-if="changeStatusText != 'Close'">Closed </span><span>RFI Details</span></h1>
     </div>
 </div>
 
@@ -15,8 +15,9 @@
 
         <!-- REPLY FORM (for FETPS only who received the event) -->
         <div ng-show="!isOrganization && isAuthorizedFETP">
-            <p>Do you have anything to contribute for this outbreak?</p>
-            <a href="#/reply/{{id}}" class="btn btn-primary">Yes, respond to this RFI</a>
+            <p ng-if="changeStatusText != 'Close'">This RFI is closed, but if you have anything to contribute, you can click on “Respond to this RFI” below and your response will be sent to the requesting moderator. </p>
+            <p ng-if="changeStatusText == 'Close'">Do you have anything to contribute for this outbreak? </p>
+            <a href="#/reply/{{id}}" class="btn btn-primary"><span ng-if="changeStatusText == 'Close'">Yes, </span>Respond to this RFI</a>
             <span ng-if="changeStatusText == 'Close'">
                 <a href ng-click="sendResponse({response_permission: '0'})" class="btn btn-primary">No, not at this time</a>
             </span>
@@ -26,7 +27,7 @@
         <!-- OWNER of event gets additional options to close event or send followup email -->
         <span ng-show="isAuthorizedToFollowup && eventsList.event_id">
             <span ng-if="changeStatusText == 'Close'">
-                <a href="#/followup/{{id}}" class="btn btn-secondary btn-tab">Send follow-up message</a>
+                <a href="#/followup/{{id}}" class="btn btn-secondary btn-tab">Send follow-up message to all members</a>
             </span>
             <span>
                 <a href="#/{{changeStatusType}}/{{id}}" class="btn btn-secondary btn-tab" ng-click="checkStatus()" >{{changeStatusText}} RFI</a>

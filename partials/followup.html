@@ -1,7 +1,7 @@
 <div ng-include src="'header.html'"></div>
 <div class="jumbotron dashboard">
     <div class="container">
-        <h1>RFI Follow-up</h1>
+        <h1><span ng-show="allFETPs">RFI Follow-up</span> <span ng-show="!allFETPs">RFI Response Follow-up</span></h1>
     </div>
 </div>
 
@@ -15,9 +15,9 @@
                     <strong>Title:</strong> {{eventsList.title}}<br>
                     <strong>Date:</strong> {{eventsList.create_date}}
                     </p>
-                    <p>Send a follow up message to
-                    <span ng-show="allFETPs">all members you originally contacted for this RFI</span>
-                    <span ng-show="!allFETPs">the selected members</span></p>
+                    <p>
+                    <span ng-show="allFETPs">Send a follow up message to all members you originally contacted for this RFI</span>
+                    <span ng-show="!allFETPs">Respond to the selected member</span></p>
 
                 <!-- FOLLOWUP FORM (for owner of event) -->
                 <form name="sendRequestForm">

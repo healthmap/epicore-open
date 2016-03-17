@@ -38,7 +38,7 @@
             <!-- Followup messages for one FETP in same organization (Moderator only)-->
             <div  class="show-message-mod" ng-if="(history_item.person_id == userInfo.uid) || (history_item.organization_id == userInfo.organization_id)">
                 <a href="" class="inherit" ng-click="isCollapsed = !isCollapsed"><i class="fa fa-plus"></i></a>
-                {{history_item.person}} sent followup to 1 Member, {{history_item.date}}
+                {{history_item.person}} sent followup to Member {{history_item.fetp_id}}, {{history_item.date}}
                 <div class="show-response" ng-show="isCollapsed">
                     <p ng-bind-html="history_item.text | to_trusted"></p>
                 </div>

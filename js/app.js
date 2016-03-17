@@ -60,7 +60,7 @@ app.run(['$rootScope', '$location', '$window', function($rootScope, $location, $
 app.directive('siteHeader', function () {
     return {
         restrict: 'E',
-        template: '<button class="btn btn-default"><i class="fa fa-arrow-circle-left"></i> {{back}} to EpiCore Dashboard</button>',
+        template: '<button class="btn btn-default"><i class="fa fa-arrow-circle-left"></i> {{back}} to Your EpiCore Dashboard</button>',
         scope: {
             back: '@back',
             icons: '@icons'
