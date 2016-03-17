@@ -12,10 +12,9 @@
             <ul class="nav navbar-nav">
                 <li class="text-uppercase" ng-show="{{userInfo.isPromed}}"><a href="http://promedmail.org/dashboard" target="_blank"><img src="img/promed.png"> ProMED Dashboard <i class="fa fa-arrow-circle-right"></i></a>&nbsp;&nbsp;</li>
                 <li class="text-uppercase" ng-if="userInfo.active=='Y'"><a href="#/events" ng-class="getClass('/events')">Epicore Dashboard</a></li>
-                <li class="text-uppercase" ng-show="{{userInfo.isOrganization}}"><a href="#/request" ng-class="getClass('/request')">Send Request</a></li>
+                <li class="text-uppercase" ng-show="{{userInfo.isOrganization}}"><a href="#/request" ng-class="getClass('/request')">Send RFI</a></li>
                 <li class="text-uppercase" ng-if="userInfo.active=='N'"><a href="#/welcome" ng-class="getClass('/welcome')">Welcome</a></li>
                 <li class="text-uppercase"><a ng-href="#/home" ng-click="userLogout()">Log out [{{userInfo.uname}}]</a></li>
-                <li class="text-uppercase"><a ng-show="userInfo.fetp_id" ng-href="#/application/{{userInfo.fetp_id}}/edit/fetp" >Edit Profile</a></li>
             </ul>
         </div><!-- /.navbar-collapse -->
     </div><!-- /.container -->

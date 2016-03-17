@@ -1,7 +1,7 @@
 <div ng-include src="'header.html'"></div>
 <div class="jumbotron dashboard">
     <div class="container">
-        <h1><span>Request For Information Details</span></h1>
+        <h1><span>RFI Details</span></h1>
     </div>
 </div>
 
@@ -16,7 +16,7 @@
         <!-- REPLY FORM (for FETPS only who received the event) -->
         <div ng-show="!isOrganization && isAuthorizedFETP">
             <p>Do you have anything to contribute regarding this outbreak?</p>
-            <a href="#/reply/{{id}}" class="btn btn-primary">Yes, respond to this request</a>
+            <a href="#/reply/{{id}}" class="btn btn-primary">Yes, respond to this RFI</a>
             <span ng-if="changeStatusText == 'Close'">
                 <a href ng-click="sendResponse({response_permission: '0'})" class="btn btn-primary">No, not at this time</a>
             </span>

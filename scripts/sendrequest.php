@@ -43,7 +43,7 @@ foreach($fetp_emails as $fetp_id => $recipient) {
     $aws_resp = AWSMail::mailfunc($recipient, "EPICORE Request For Information", $custom_emailtext, EMAIL_NOREPLY, $extra_headers);
 
 }
-
+/*
 // build copy email
 $proin_emailtext = $ei->buildEmailForEvent($event_info, 'rfi_proin', '', 'text');
 $moderator = $ei->getEventPerson($event_id); // get event moderator name
@@ -63,7 +63,7 @@ if ($moderator['organization_id'] == PROMED_ID){
 $idlist[0] = EPICORE_ID;
 $extra_headers['user_ids'] = $idlist;
 $aws_resp = AWSMail::mailfunc(EMAIL_INFO_EPICORE, "EPICORE Request For Information", $custom_emailtext_proin, EMAIL_NOREPLY, $extra_headers);
-
+*/
 print json_encode(array('status' => 'success', 'fetps' => $fetp_ids));
 
 ?>
