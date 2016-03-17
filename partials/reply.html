@@ -10,7 +10,7 @@
 <div class="container">
     <div class="row" ng-show="isAuthorizedFETP" >
         <div id="form-container" class="col-xs-12 col-md-8">
-        <p><a href="#/events" class="btn btn-default"><i class="fa fa-arrow-circle-left"></i> Back to listing</a></p>
+        <p><a href="#/events" class="btn btn-default"><i class="fa fa-arrow-circle-left"></i> Back to EpiCore Dashboard</a></p>
 
             <p>
             <strong>Title:</strong> {{eventsList.title}}<br>
@@ -26,13 +26,13 @@
                <label for="response_permission">EpiCore Moderators may:</label>
             <div class="radio">
                 <label>
-                    <input type="radio" ng-model="formData.response_permission" name="response_permission" value="1" required> paraphrase this response when reporting on the event in other forums.
+                    <input type="radio" ng-model="formData.response_permission" name="response_permission" value="1" required> (red) Paraphrase / do not use direct quotes from this response, mask any identifying information referenced in the response text and do not provide any details on my identity  
                     </label>
                 <label>
-                    <input type="radio" ng-model="formData.response_permission" name="response_permission" value="2" required> quote this response but may not provide any details on my identity (location, position, etc.)
+                    <input type="radio" ng-model="formData.response_permission" name="response_permission" value="2" required> (yellow) Quote this response but mask any identifying information referenced in the response text and do not provide any details on my identity 
                     </label>
                 <label>
-                    <input type="radio" ng-model="formData.response_permission" name="response_permission" value="3" required> quote this response and attribute it to me [insert name and title in your response text as you wish to be cited]
+                    <input type="radio" ng-model="formData.response_permission" name="response_permission" value="3" required> Quote this response and attribute it to me
                 </label>
             </div>
 

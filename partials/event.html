@@ -15,7 +15,7 @@
 
         <!-- REPLY FORM (for FETPS only who received the event) -->
         <div ng-show="!isOrganization && isAuthorizedFETP">
-            <p>Do you have anything to contribute regarding this outbreak?</p>
+            <p>Do you have anything to contribute for this outbreak?</p>
             <a href="#/reply/{{id}}" class="btn btn-primary">Yes, respond to this RFI</a>
             <span ng-if="changeStatusText == 'Close'">
                 <a href ng-click="sendResponse({response_permission: '0'})" class="btn btn-primary">No, not at this time</a>

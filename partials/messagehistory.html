@@ -1,4 +1,4 @@
-<h4>Event Message History</h4>
+<h4>RFI Message History</h4>
 
 <div ng-if="!userInfo.fetp_id">
 <b>Permissions:</b><br>
@@ -94,7 +94,7 @@
     <!-- Original Event Request Message in same organization (Moderator or FETP)-->
     <div  class="show-message-mod" ng-if="(history_item.type == 'Event Request') && (history_item.organization_id == userInfo.organization_id)">
         <a href="" class="inherit" ng-click="isCollapsed = !isCollapsed"><i class="fa fa-plus"></i></a>
-        {{history_item.person}} sent original event request, {{history_item.date}}
+        {{history_item.person}} sent original RFI, {{history_item.date}}
         <div class="show-response" ng-show="isCollapsed">
             <p><strong>Title:</strong> {{history_item.title}}<br>
                 <strong>Location:</strong> {{history_item.location}}</p>
@@ -106,7 +106,7 @@
     <!-- Original Event Request Message not in same organization (Moderator)-->
     <div  class="show-message-mod" ng-if="(history_item.type == 'Event Request') && (history_item.organization_id != userInfo.organization_id)">
         <a href="" class="inherit" ng-click="isCollapsed = !isCollapsed"><i class="fa fa-plus"></i></a>
-        original event request sent, {{history_item.date}}
+        original RFI sent, {{history_item.date}}
         <div class="show-response" ng-show="isCollapsed">
             <p><strong>Title:</strong> {{history_item.title}}<br>
                 <strong>Location:</strong> {{history_item.location}}</p>

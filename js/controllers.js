@@ -963,7 +963,7 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
         $scope.userInfo = $cookieStore.get('epiUserInfo');
         var messages = {};
         messages[1] = "You have been signed up.";
-        messages[2] = "Your response has been sent to the moderator who initiated the request.";
+        messages[2] = 'The moderator who initiated the request has been notified. If you get any information on this RFI in the future, please come back to this RFI and click on "Yes, respond to this RFI"';
         messages[3] = "Your request has been sent to the selected members.";
         messages[4] = "Your request has been closed and an email has gone out to the original members contacted.";
         messages[5] = "Your request has been reopened and an email has gone out to the original members contacted.";
