@@ -15,6 +15,9 @@ if(is_numeric($event_id)) {
     $dbdata['responder_id'] = isset($formvars->anonymous) ? 0 : (int)$formvars->fetp_id;
     $dbdata['response'] = strip_tags($formvars->reply);
     $dbdata['response_permission'] = (int)$formvars->response_permission;
+    $response_member = strip_tags($formvars->response_member);
+    $dbdata['response'] = $response_member ? $dbdata['response'] . "\n\n Responding Member: " . $response_member : $dbdata['response'];
+
 
     // insert into response table
     $ei = new EventInfo($event_id);

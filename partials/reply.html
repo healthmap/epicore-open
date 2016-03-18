@@ -32,7 +32,8 @@
                     <input type="radio" ng-model="formData.response_permission" name="response_permission" value="2" required> <i class="fa fa-circle perm2"></i> Quote this response but mask any identifying information referenced in the response text and do not provide any details on my identity
                     </label>
                 <label>
-                    <input type="radio" ng-model="formData.response_permission" name="response_permission" value="3" required> <i class="fa fa-circle perm3"></i> Quote this response and attribute it to me [remember to insert your name and title in the response text]
+                    <input type="radio" ng-model="formData.response_permission" name="response_permission" value="3" required> <i class="fa fa-circle perm3"></i> Quote this response and attribute it to me
+                    <input type="text" class="form-control" ng-model = "formData.response_member" ng-if="(formData.response_permission == 3)" placeholder="Enter your name, title, organization etc." ng-required="(formData.response_permission == 3)">
                 </label>
             </div>
 
