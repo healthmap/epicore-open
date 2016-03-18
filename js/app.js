@@ -90,3 +90,11 @@ app.directive('myYoutube', function($sce) {
         }
     };
 });
+
+app.directive('chosen-select', function() {
+    return {
+        link: function(scope) {
+            $('.chosen-select').chosen();
+        } 
+    };
+});
