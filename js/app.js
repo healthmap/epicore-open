@@ -91,10 +91,18 @@ app.directive('myYoutube', function($sce) {
     };
 });
 
-app.directive('chosen-select', function() {
+/* chosen directive */
+app.directive('chosen', function($timeout) {
+
+    var linker = function(scope, element, attr) {
+
+        $timeout(function () {
+            element.chosen();
+        }, 0, false);
+    };
+
     return {
-        link: function(scope) {
-            $('.chosen-select').chosen();
-        } 
+        restrict: 'A',
+        link: linker
     };
 });

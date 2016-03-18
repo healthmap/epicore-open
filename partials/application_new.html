@@ -41,7 +41,7 @@
 
                 <div class="form-group">
                     <label class="form-label" for="country">Country</label>
-                    <select chosen-select class="chosen-select" ng-model="uservals.country" name="country" required placeholder="Country">
+                    <select chosen="" ng-model="uservals.country" name="country" data-placeholder="Choose a country..." class="chosen-select form-control" required>
                         <option value=""></option>
                         <option ng-repeat="country in countries" value="{{country.code}}">{{country.name}}</option>
                     </select>
@@ -88,8 +88,8 @@
 
                 <div class="form-group">
                     <label class="form-label" for="school_country1">Country</label>
-                    <select ng-model="uservals.school_country1" name="school_country1" required>
-                        <option value="">-- select --</option>
+                    <select chosen="" ng-model="uservals.school_country1" name="school_country1" data-placeholder="Choose a country..." class="chosen-select form-control" required>
+                        <option value=""></option>
                         <option ng-repeat="country in countries" value="{{country.code}}">{{country.name}}</option>
                     </select>
                 </div>
@@ -127,8 +127,8 @@
 
                     <div class="form-group">
                         <label class="form-label" for="school_country2">Country</label>
-                        <select ng-model="uservals.school_country2" name="school_country2" required>
-                            <option value="">-- select --</option>
+                        <select chosen="" ng-model="uservals.school_country2" name="school_country2" data-placeholder="Choose a country..." class="chosen-select form-control" required>
+                            <option value=""></option>
                             <option ng-repeat="country in countries" value="{{country.code}}">{{country.name}}</option>
                         </select>
                     </div>
@@ -168,91 +168,15 @@
 
                     <div class="form-group">
                         <label class="form-label" for="school_country3">Country</label>
-                        <select ng-model="uservals.school_country3" name="school_country3" required>
-                            <option value="">-- select --</option>
+                        <select chosen="" ng-model="uservals.school_country3" name="school_country3" data-placeholder="Choose a country..." class="chosen-select form-control" required>
+                            <option value=""></option>
                             <option ng-repeat="country in countries" value="{{country.code}}">{{country.name}}</option>
                         </select>
                     </div>
 
                 </div>
 
-                <!--
-                    <div class="form-group">
-                        <br>
-                        <h3>Knowledge and Experience</h3>
-                        <h5 class="form-label">Basic Knowledge (Please select all that apply and at least one.)</h5>
-                        <span ng-show="!uservals.clinical_med_adult && !uservals.clinical_med_pediatric && !uservals.clinical_med_vet && !uservals.research &&
-                                !uservals.microbiology && !uservals.virology && !uservals.parasitology && !uservals.vaccinology && !uservals.epidemiology &&
-                                !uservals.biotechnology && !uservals.pharmacy && !uservals.publichealth && !uservals.disease_surv && !uservals.informatics &&
-                                !uservals.biostatistics && !uservals.other_knowledge && attempted" class="error">Must select at least one</span>
 
-                    <div class="checkbox">
-                        <label> <input type="checkbox"  ng-true-value="1" ng-model="uservals.clinical_med_adult"> Clinical Medicine – Adult</label>
-                    </div>
-
-                    <div class="checkbox">
-                        <label> <input type="checkbox"  ng-true-value="1" ng-model="uservals.clinical_med_pediatric"> Clinical Medicine – Pediatric</label>
-                    </div>
-
-                    <div class="checkbox">
-                        <label> <input type="checkbox"  ng-true-value="1" ng-model="uservals.clinical_med_vet"> Clinical Medicine – Veterinary</label>
-                    </div>
-
-                    <div class="checkbox">
-                        <label> <input type="checkbox"  ng-true-value="1" ng-model="uservals.research"> Research</label>
-                    </div>
-
-                    <div class="checkbox">
-                        <label> <input type="checkbox"  ng-true-value="1" ng-model="uservals.microbiology"> Microbiology</label>
-                    </div>
-
-                    <div class="checkbox">
-                        <label> <input type="checkbox"  ng-true-value="1" ng-model="uservals.virology"> Virology</label>
-                    </div>
-
-                    <div class="checkbox">
-                        <label> <input type="checkbox"  ng-true-value="1" ng-model="uservals.parasitology"> Parasitology</label>
-                    </div>
-
-                    <div class="checkbox">
-                        <label> <input type="checkbox"  ng-true-value="1" ng-model="uservals.vaccinology"> Vaccinology</label>
-                    </div>
-
-                    <div class="checkbox">
-                        <label> <input type="checkbox"  ng-true-value="1" ng-model="uservals.epidemiology"> Epidemiology</label>
-                    </div>
-
-                    <div class="checkbox">
-                        <label> <input type="checkbox"  ng-true-value="1" ng-model="uservals.biotechnology"> Biotechnology</label>
-                    </div>
-
-                    <div class="checkbox">
-                        <label> <input type="checkbox"  ng-true-value="1" ng-model="uservals.pharmacy"> Pharmacy (Drug Development)</label>
-                    </div>
-
-                    <div class="checkbox">
-                        <label> <input type="checkbox"  ng-true-value="1" ng-model="uservals.publichealth"> Public Health</label>
-                    </div>
-
-                    <div class="checkbox">
-                        <label> <input type="checkbox"  ng-true-value="1" ng-model="uservals.disease_surv"> Disease Surveillance</label>
-                    </div>
-
-                    <div class="checkbox">
-                        <label> <input type="checkbox"  ng-true-value="1" ng-model="uservals.informatics"> Informatics</label>
-                    </div>
-
-                    <div class="checkbox">
-                        <label> <input type="checkbox"  ng-true-value="1" ng-model="uservals.biostatistics"> Biostatistics</label>
-                    </div>
-
-                    <div class="checkbox">
-                        <label> <input type="checkbox"  ng-true-value="1" name="other_knowledge" ng-model="uservals.other_knowledge" > Other</label>
-                        <label ><input type="text" class="form-control" ng-model="uservals.other_knowledge_type" name="other_knowledge_type" ng-if="uservals.other_knowledge" required></label>
-                    </div>
-
-                    </div>
--->
                     <div class="form-group">
                     <h5 class="form-label">Have you successfully completed a field epidemiology training program with TEPHINET or any other TEPHINET-affiliated regional network?</h5>
                         <span ng-show="!uservals.training && attempted" class="error">Must select one</span>
@@ -261,15 +185,7 @@
                         <label class="radio-inline"> <input type="radio" ng-model="uservals.training" value="0" > No</label>
                         <input type="text" class="form-control" name="training" ng-model = "uservals.fetp_training" ng-if="uservals.training" placeholder="What FETP program and where?" ng-required="uservals.training">
                 </div>
-<!--
-                <div ng-show="uservals.training">
-                    <div class="form-group">
-                    <h5>Would you like to receive the TEPHINET newsletter?</h5>
-                        <label class="radio-inline"> <input type="radio" ng-model="uservals.tephinet_news" value="1" > Yes</label>
-                        <label class="radio-inline"> <input type="radio" ng-model="uservals.tephinet_news" value="0" > No</label>
-                    </div>
-                </div>
--->
+
                 <div class="form-group">
                     <h5 class="form-label">How many years of experience do you have in human and/or animal health?</h5>
                         <span ng-show="!uservals.health_exp && attempted" class="error">Must select one</span>
@@ -426,6 +342,7 @@
 </div><!--wrapper-->
 <script>
         // form validation
+        $.validator.setDefaults({ ignore: ":hidden:not(select)" }); //for all select
         $("#applyForm").validate(
                 {
                     rules: {
