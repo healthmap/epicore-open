@@ -314,7 +314,7 @@ class UserInfo
                         training=?, fetp_training=?, health_exp=?, human_health=?, animal_health=?, env_health=?, health_exp_none=?,
                         job_title=?, organization=?, sector=?, health_org_university=?, health_org_doh=?, health_org_clinic=?, health_org_other=?, health_org_none=?,
                         epicoreworkshop=?, epicoreworkshop_type=?, conference=?, conference_type=?, promoemail=?, promoemail_type=?,
-                        othercontact=?, othercontact_type=?, info_accurate=?, rfi_agreement=?
+                        othercontact=?, othercontact_type=?, online_course=?, inperson_course=?, info_accurate=?, rfi_agreement=?
                         WHERE maillist_id = ?",
                         array($pvals['email'], $pvals['firstname'], $pvals['lastname'], $pvals['country'], $pvals['city'], $pvals['state'],
                             $pvals['university1'], $pvals['major1'], $pvals['degree1'], $pvals['other_degree1'], $pvals['school_country1'],
@@ -323,7 +323,7 @@ class UserInfo
                             $pvals['training'], $pvals['fetp_training'], $pvals['health_exp'], $pvals['human_health'], $pvals['animal_health'], $pvals['env_health'], $pvals['health_exp_none'],
                             $pvals['job_title'], $pvals['organization'], $pvals['sector'], $pvals['health_org_university'], $pvals['health_org_doh'], $pvals['health_org_clinic'], $pvals['health_org_other'],$pvals['health_org_none'],
                             $pvals['epicoreworkshop'], $pvals['epicoreworkshop_type'],$pvals['conference'], $pvals['conference_type'], $pvals['promoemail'], $pvals['promoemail_type'],
-                            $pvals['othercontact'], $pvals['othercontact_type'], $pvals['info_accurate'], $pvals['rfi_agreement'], $pvals['maillist_id']));
+                            $pvals['othercontact'], $pvals['othercontact_type'], $pvals['online_course'], $pvals['inperson_course'], $pvals['info_accurate'], $pvals['rfi_agreement'], $pvals['maillist_id']));
 
             // check that result is not an error
             if (PEAR::isError($q)) {

@@ -155,8 +155,9 @@
                     <td>{{applicant.country}}</td>
                     <td>{{applicant.pword}}</td>
                     <td>
-                        <span ng-show="applicant.online_course">Online</span>
-                        <span ng-show="applicant.inperson_course">Inperson</span>
+                        <span ng-show="(applicant.online_course == 1) && (applicant.inperson_course == 0)">Online</span>
+                        <span ng-show="(applicant.inperson_course == 1) && (applicant.online_course == 0)">Inperson</span>
+                        <span ng-show="(applicant.inperson_course == 1) && (applicant.online_course == 1)">Inperson & Online</span>
                     </td>
                     <td>
                         <span ng_show="applicant.status == 'Pending'">Accepted</span>
