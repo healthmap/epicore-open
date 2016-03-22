@@ -70,9 +70,9 @@
                         Member {{history_item.fetp_id}} Response,
                         {{history_item.country}},
                                     <span ng-if="history_item.permission == 0"><i class="fa fa-circle perm0"></i> no contribution</span>
-                                    <span ng-if="history_item.permission == 1"><i class="fa fa-circle perm1"></i> paraphrase / don't affiliate</span>
-                                    <span ng-if="history_item.permission == 2"><i class="fa fa-circle perm2"></i> quote / don't affiliate</span>
-                                    <span ng-if="history_item.permission == 3"><i class="fa fa-circle perm3"></i> quote / affiliate</span>,
+                                    <span ng-if="history_item.permission == 1"><i class="fa fa-circle perm1"></i> paraphrase / don't attribute</span>
+                                    <span ng-if="history_item.permission == 2"><i class="fa fa-circle perm2"></i> quote / don't attribute</span>
+                                    <span ng-if="history_item.permission == 3"><i class="fa fa-circle perm3"></i> quote / attribute</span>,
                         {{history_item.date}}
                     </span>
                     <span ng-if="userInfo.fetp_id">
