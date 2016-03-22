@@ -4,8 +4,8 @@
 @light-gray: #878c8d;
 @dark-blue: #063342;
 @green: #0abc7e;
-@red: #cc064a;
-@yellow: yellow;
+@red: #dd4553;
+@yellow: #e6bc07;
 
 @transition: all 0.25s ease-out;
     
@@ -341,6 +341,11 @@ a.btn-default, .btn-default {
     background-color: @dark-blue;
     border-color: @dark-blue;
     color: #fff;
+    }
+
+.btn-primary.disabled.focus, .btn-primary.disabled:focus, .btn-primary.disabled:hover, .btn-primary[disabled].focus, .btn-primary[disabled]:focus, .btn-primary[disabled]:hover, fieldset[disabled] .btn-primary.focus, fieldset[disabled] .btn-primary:focus, fieldset[disabled] .btn-primary:hover {
+    background-color: @light-gray;
+    border-color: @light-gray;
     }
 
 .btn:focus, .btn:hover, .btn:active {
