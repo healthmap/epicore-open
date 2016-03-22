@@ -74,10 +74,10 @@
                                 <span ng_show="applicant.sector == 'P'">Private / For-Profit</span>
                             </li>
                             <li><b>Organization Category:</b>
-                                <span ng_show="applicant.health_org_university && !applicant.health_org_none">University or any academic or research institution</span>
-                                <span ng_show="applicant.health_org_doh && !applicant.health_org_none">Ministry / Department of Health</span>
-                                <span ng_show="applicant.health_org_clinic && !applicant.health_org_none">Medical clinic</span>
-                                <span ng_show="applicant.health_org_other && !applicant.health_org_none">Other health-related organizations</span>
+                                <span ng_show="applicant.health_org_university">University or any academic or research institution</span>
+                                <span ng_show="applicant.health_org_doh">Ministry / Department of Health</span>
+                                <span ng_show="applicant.health_org_clinic">Medical clinic</span>
+                                <span ng_show="applicant.health_org_other">Other health-related organizations</span>
                                 <span ng_show="applicant.health_org_none">No category applies</span>
                             </li>
                             <li ng-show="applicant.bachelors_type || applicant.gradstudent_type || applicant.masters_type || applicant.medical_type || applicant.doctorate_type || applicant.otherdegree_type"><b>Degrees:</b>
