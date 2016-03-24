@@ -40,7 +40,7 @@ app.config(function($routeProvider) {
         when("/application/:id/:action/:idtype", {templateUrl: "partials/application_new.html", controller: "userController"}).
         when("/approval", {templateUrl: "partials/approval.html", controller: "approvalController"}).
         when("/login", {templateUrl: "partials/login.html"}).
-        when("/welcome", {templateUrl: "partials/welcome.html", controller: "fetpController"}).
+        //when("/welcome", {templateUrl: "partials/welcome.html", controller: "fetpController"}).
         //when("/welcome", {templateUrl: "partials/welcome_new.html", controller: "fetpController"}).
         when("/setpassword", {templateUrl: "partials/setpassword.html"}).
         when("/resetpassword", {templateUrl: "partials/resetpassword.html"}).
