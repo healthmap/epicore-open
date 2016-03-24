@@ -7,6 +7,8 @@ p{margin:0 0 1.5em 0}
 .small,small{font-size:.875em}
 .link{cursor:pointer}
 .black,label i.black{color:#2e3335}
+.blue,label i.blue{color:#195b72}
+.green,label i.green{color:#0abc7e}
 .red{color:#dd4553}
 .correct{color:#0abc7e}
 .incorrect{color:#dd4553}
