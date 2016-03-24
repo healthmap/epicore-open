@@ -90,7 +90,7 @@ if(is_numeric($event_id) && is_numeric($user_id)) {
         if ($status_type == 're-opened')
             $status_type_new = 're-opened_proin';
         else
-            $status_type_new = 'closed';
+            $status_type_new = 'closed_proin';
 
         $emailtext_event = $ei->buildEmailForEvent($event_info, $status_type_new, $custom_vars, 'text');
 
