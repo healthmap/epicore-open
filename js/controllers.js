@@ -60,7 +60,7 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
                                 !uservals.biotechnology && !uservals.pharmacy && !uservals.publichealth && !uservals.disease_surv && !uservals.informatics &&
                                 !uservals.biostatistics && !uservals.other_knowledge;
          */
-        $scope.no_health_exp = !uservals.human_health && !uservals.animanl_health && !uservals.env_health && !uservals.health_exp_none;
+        $scope.no_health_exp = !uservals.human_health && !uservals.animal_health && !uservals.env_health && !uservals.health_exp_none;
 
         $scope.no_category = !uservals.health_org_university  && !uservals.health_org_doh && !uservals.health_org_clinic
                                 && !uservals.health_org_other && !uservals.health_org_none;
