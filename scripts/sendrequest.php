@@ -49,7 +49,8 @@ $proin_emailtext = $ei->buildEmailForEvent($event_info, 'rfi_proin', '', 'text')
 $moderator = $ei->getEventPerson($event_id); // get event moderator name
 $name = $moderator['name'];
 $email = $moderator['email'];
-$modfetp = "Moderator: $name ($email) sent the following RFI";
+//$modfetp = "Moderator: $name ($email) sent the following RFI";
+$modfetp = "Moderator: $name sent the following RFI";
 $custom_emailtext_proin = trim(str_replace("[PRO_IN]", $modfetp, $proin_emailtext));
 
 // send copy to pro-in for ProMED moderators only

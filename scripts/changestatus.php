@@ -97,7 +97,8 @@ if(is_numeric($event_id) && is_numeric($user_id)) {
         if (!empty($tolist)) {
             $name = $moderator['name'];
             $email = $moderator['email'];
-            $modfetp = "Moderator: $name ($email) $status_type an RFI";
+            //$modfetp = "Moderator: $name ($email) $status_type an RFI";
+            $modfetp = "Moderator: $name $status_type an RFI";
             $emailtext = trim(str_replace("[EVENT_HISTORY]", $history, $emailtext_event));
             $custom_emailtext_mods = trim(str_replace("[PRO_IN]", $modfetp, $emailtext));
             $extra_headers['user_ids'] = $idlist;
