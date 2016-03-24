@@ -19,24 +19,22 @@
             to Accepted, Denied, or Approved.</p>
 
             <p>
-            <b>Accepted</b>: user has been accepted to take the training course.<br>
-            <b>Approved</b>: user has taken the training course and is approved to use the Epicore platform.<br>
-            <b>Inactive</b>: user has not been accepted to take the training course yet, and does not have access to the Epicore platform.<br>
-            <b>Denied</b>: user was denied, and does not have access to the Epicore platform.<br>
-            <b>Unsubscribed</b>: user was de-activated and does not have access to the Epicore platform.</p>
+            <strong>Accept <i alt="accept" class="fa fa-check"></i></strong> : user has been accepted to take the training course.<br>
+            <strong>Approve <i alt="approve" class="fa fa-certificate"></i></strong> : user has taken the training course and is approved to use the Epicore platform.<br>
+            <strong>Deny <i alt="deny" class="fa fa-minus"></i></strong> : user was denied, and does not have access to the Epicore platform.<br>
+            <strong>Unsubscribe <i alt="unsubscribe" class="fa fa-times"></i></strong> : user was de-activated and does not have access to the Epicore platform.<br>
+            <strong>Inactive</strong> : user has not been accepted to take the training course yet, and does not have access to the Epicore platform.</p>
 
-            <p>
-            <a href="data/approval.csv" class="btn btn-tab btn-default"><i class="fa fa-download"></i> Member Info</a>
-            <a href="data/rfistats.csv" class="btn btn-tab btn-default"><i class="fa fa-download"></i> Event Stats</a>
-            </p>
-            <h4>Send Reminder Email Options:</h4>
-            <button type="button" class="btn btn-secondary secondary-color btn-tab" ng-click="sendReminder('preapprove_reminder')">Set Password (Pre-approved)</button>
-            <button type="button" class="btn btn-secondary secondary-color btn-tab" ng-click="sendReminder('setpassword_reminder')">Set Password (Accepted)</button>
-            <button type="button" class="btn btn-secondary secondary-color btn-tab" ng-click="sendReminder('training_reminder')">Finish Training</button>
-            <button type="button" class="btn btn-secondary secondary-color btn-tab" ng-click="sendReminder('launch_reminder')">Epicore Launched</button><br><br>
+            <a href="data/approval.csv" class="btn btn-tab btn-default mb24"><i class="fa fa-download"></i> Member Info</a>
+            <a href="data/rfistats.csv" class="btn btn-tab btn-default mb24"><i class="fa fa-download"></i> Event Stats</a>
+            <h4>Send Reminder Options:</h4>
+            <button type="button" class="btn btn-secondary secondary-color btn-tab mb24" ng-click="sendReminder('preapprove_reminder')">Set Password (Pre-approved)</button>
+            <button type="button" class="btn btn-secondary secondary-color btn-tab mb24" ng-click="sendReminder('setpassword_reminder')">Set Password (Accepted)</button>
+            <button type="button" class="btn btn-secondary secondary-color btn-tab mb24" ng-click="sendReminder('training_reminder')">Finish Training</button>
+            <button type="button" class="btn btn-secondary secondary-color btn-tab mb24" ng-click="sendReminder('launch_reminder')">Epicore Launched</button>
 
-            Click on a table heading to sort the table or filter the table using the search tool.<br><br>
-            <i class="fa fa-search"></i> <input ng-model="query"> <br> <br>
+            <p>Click on a table heading to sort the table or filter the table using the search tool.</p>
+            <p><i class="fa fa-search"></i> <input ng-model="query"></p>
             <table class='table table-hover table-bordered text-small'>
                 <tr>
                     <th>#</th>

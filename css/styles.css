@@ -7,6 +7,7 @@ p{margin:0 0 1.5em 0}
 .small,small{font-size:.875em}
 .link{cursor:pointer}
 .black,label i.black{color:#2e3335}
+.red{color:#dd4553}
 .correct{color:#0abc7e}
 .incorrect{color:#dd4553}
 .error{color:#dd4553}

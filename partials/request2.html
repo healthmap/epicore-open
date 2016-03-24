@@ -12,7 +12,8 @@
             <form>
             <div class="intro">
                 <h3>Step 2 of 3:</h3> 
-                <h4>You can select recipient members either by moving the bounding box (currently {{numFetps}} members) or by selecting countries in the menu below</h4>
+                <h4>You can select recipient members either by moving the bounding box or by selecting countries in the menu below.</h4>
+                <p class="red">{{numFetps}} members selected</p>
             </div>
 
             <div class="form-group">
@@ -29,7 +30,6 @@
             </div>
 
             <div class="form-group">
-            <br>
             <div class="radio"><label><input type="radio" name="filtertype" ng-value="country" ng-click="recalcUsers(formData, 'country');" ng-checked="!radiussel">Selecting recipient members in a country or countries:<br><span class="smtext" ng-if="!radiussel">* hold down ctrl key (windows) or command key (mac) to select multiple</span></label></div>
                     <select class="form-control" ng-change="recalcUsers(formData, 'country');" ng-model="formData.countries" id="countries" name="countries" multiple ng-if="!radiussel">
 
@@ -306,7 +306,6 @@
 -->
 
             <div class="form-group">
-                <p>Sending the RFI to <strong><span>{{numFetps}}</span></strong> Members</p>
                 <button type="submit" ng-click="buildEmailText(formData)" ng-disabled="submitDisabled" class="submit btn btn-primary">Step 3: Review & Send <i class="fa fa-arrow-circle-right"></i></button>
             </div>
             
