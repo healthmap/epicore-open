@@ -32,9 +32,9 @@ $response_permission_lu = array(
 // permission traffic light icons
 $permission_img = array(
     "0"  => '',
-    "1" => '<img src="'. EPICORE_URL. '/img/redlight.png" alt="traffic light" style="vertical-align:middle;height:48px;margin-left: 3px;">',
-    "2" => '<img src="'. EPICORE_URL. '/img/yellowlight.png" alt="traffic light" style="vertical-align:middle;height:48px;margin-left: 3px;">',
-    "3" => '<img src="'. EPICORE_URL. '/img/greenlight.png" alt="traffic light" style="vertical-align:middle;height:48px;margin-left: 3px;">'
+    "1" => '<img src="'. EPICORE_URL. '/img/redlight.png" height="48" alt="traffic light" style="vertical-align:middle;height:48px;margin-left: 3px;">',
+    "2" => '<img src="'. EPICORE_URL. '/img/yellowlight.png" height="48" alt="traffic light" style="vertical-align:middle;height:48px;margin-left: 3px;">',
+    "3" => '<img src="'. EPICORE_URL. '/img/greenlight.png" height="48" alt="traffic light" style="vertical-align:middle;height:48px;margin-left: 3px;">'
 );
 
 $reason_lu = array(
