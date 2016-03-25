@@ -21,8 +21,9 @@
             <p>
             <strong>Accept <i alt="accept" class="fa fa-check"></i></strong> : user has been accepted to take the training course.<br>
             <strong>Approve <i alt="approve" class="fa fa-certificate"></i></strong> : user has taken the training course and is approved to use the Epicore platform.<br>
+                <strong>Pre-approve <i alt="approve" class="fa fa-thumbs-o-up"></i></strong> : user has taken the training course and is pre-approved to use the Epicore platform.<br>
             <strong>Deny <i alt="deny" class="fa fa-minus"></i></strong> : user was denied, and does not have access to the Epicore platform.<br>
-            <strong>Unsubscribe <i alt="unsubscribe" class="fa fa-times"></i></strong> : user was de-activated and does not have access to the Epicore platform.<br>
+            <!--<strong>Unsubscribe <i alt="unsubscribe" class="fa fa-times"></i></strong> : user was de-activated and does not have access to the Epicore platform.<br>-->
             <strong>Inactive</strong> : user has not been accepted to take the training course yet, and does not have access to the Epicore platform.</p>
 
             <a href="data/approval.csv" class="btn btn-tab btn-default mb24"><i class="fa fa-download"></i> Member Info</a>
@@ -48,7 +49,7 @@
                     <th>Course Type</th>
                     <th><a href="" ng-click="predicate = 'status'; reverse=!reverse">User Status</a></th>
                     <th width="100px">Accept or Approve</th>
-                    <th width="100px">Deny or Unsubscribe</th>
+                    <th width="100px">Deny</th>
                     <th width="100px">Edit or Delete</th>
                 </tr>
                 <tr ng-repeat="applicant in applicants | filter:query | orderBy:predicate:reverse" >
@@ -164,10 +165,11 @@
                     <td>
                         <button type="button" ng-click="approveApplicant(applicant.maillist_id,'pending')" class="btn btn-default btn-sm stacked"><i alt="accept" class="fa fa-check"></i></button>
                         <button type="button" ng-click="approveApplicant(applicant.maillist_id,'approved')" class="btn btn-default btn-sm stacked"><i alt="approve" class="fa fa-certificate"></i></a></button>
+                        <button type="button" ng-click="approveApplicant(applicant.maillist_id,'pending_preapproved')" class="btn btn-default btn-sm stacked"><i alt="pre-approve" class="fa fa-thumbs-o-up"></i></a></button>
                     </td>
                     <td>
                         <button type="button" ng-click="approveApplicant(applicant.maillist_id,'declined')" class="btn btn-default btn-sm stacked"><i alt="deny" class="fa fa-minus"></i></button>
-                        <button type="button" ng-click="approveApplicant(applicant.maillist_id,'unsubscribed')" class="btn btn-default btn-sm stacked"><i alt="unsubscribe" class="fa fa-times"></i></button>
+                        <!--<button type="button" ng-click="approveApplicant(applicant.maillist_id,'unsubscribed')" class="btn btn-default btn-sm stacked"><i alt="unsubscribe" class="fa fa-times"></i></button>-->
                     </td>
                     <td>
                         <button class="btn btn-default btn-sm stacked" type="button" ng-click="editApplicant(applicant.maillist_id,'edit')"><i class="fa fa-pencil-square-o"></i></button>

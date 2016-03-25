@@ -26,7 +26,7 @@ if(is_numeric($authfetp['fetp_id']) && ($authfetp['fetp_id'] > 0) && $emailmatch
             UserInfo::geocodeFETP($fetpinfo['email']);
         }
 
-        // set user active for unsubsrcribed users
+        // set user active for pending_preapproved users (active = N, status = A)
         if (($fetpinfo['active'] == 'N') && ($fetpinfo['status'] == 'A')){
             $uinfo = UserInfo::getUserInfobyEmail($fetpinfo['email']);
             UserInfo::setUserStatus($uinfo['maillist_id'], 'preapproved');

@@ -498,8 +498,8 @@ class UserInfo
             return false;
     }
 
-    // sets fetp status to pending, approved, or unsubscribed.
-    // also sends email for pending and approved status.
+    // sets fetp status to pending, approved, pending_preapproved, preapproved or unsubscribed.
+    // also sends email for pending, pending_preapproved, and approved status.
     static function setUserStatus($approve_id, $status)
     {
         $db = getDB();
@@ -532,6 +532,31 @@ class UserInfo
                 $db->commit();
                 $fetp_id = UserInfo::getFETPid($approve_email);
                 sendMail($approve_email, $approve_name, "EpiCore Application Decision", $status, $fetp_id);
+
+            }
+            else if ($status == 'pending_preapproved') {
+
+                // copy maillist to new fetp if it does not exist and set to pending_preapproved (active = N, status = A)
+                $fetpemail = $db->getOne("select email from fetp where email='$approve_email'");
+                if (!$fetpemail) {
+                    $db->query("INSERT INTO fetp (email, countrycode, active, status, maillist_id)
+                        VALUES ('$approve_email', '$approve_countrycode', 'N','A', '$approve_id')");
+                    $db->commit();
+
+                    // geocode fetp
+                    UserInfo::geocodeFETP($approve_email);
+                }
+                else{
+                    $db->query("update fetp set active='N', status='A' where email='$approve_email'");
+                    $db->commit();
+                }
+
+                $accept_date = date('Y-m-d H:i:s', strtotime('now'));
+                $db->query("update maillist set accept_date='$accept_date', approvestatus='Y' where maillist_id=$approve_id");
+                $db->commit();
+                $fetp_id = UserInfo::getFETPid($approve_email);
+                $status = 'preapproved';
+                sendMail($approve_email, $approve_name, "We heartily welcome our new EpiCore Member!", $status, $fetp_id);
 
             }
             else if (($status == 'approved') ||($status == 'preapproved')) {
@@ -611,11 +636,11 @@ class UserInfo
 
         // set all applicants status based on applicant approvestatus and fetp active/status fields
         // approvestatus    fetp-active  fetp-status     app-status
-        // 'N'              x               x             Declined
-        //  not N           null            null          Inactive
-        //  not N           'N'              P            Pending         Pending training
-        //  not N           'Y'              A            Approved        Finished training
-        //  not N           'N'              A            Unsubscribed    Unsubscribed
+        // 'N'              x               x             Denied          Application denied
+        //  not N           null            null          Inactive        Applied
+        //  Y              'N'              P            Pending         Pending training and needs to set password
+        //  Y               'Y'              A            Approved        Finished training and set password
+        //  Y               'N'              A            Pre-approved    Finished training and needs to set password
 
         $n = 0;
         foreach ($applicants as $applicant){
@@ -627,7 +652,7 @@ class UserInfo
                 foreach ($fetps as $fetp) {
                     $emailmatch = (strcasecmp($fetp['email'], $applicant['email']) == 0);
                     if ($emailmatch && ($fetp['active'] == 'N') && ($fetp['status'] == "A")) {
-                        $applicants[$n]['status'] = "Unsubscribed";
+                        $applicants[$n]['status'] = "Pre-approved";
                     } else if ($emailmatch && ($fetp['active'] == 'N') && ($fetp['status'] == "P")) {
                         $applicants[$n]['status'] = "Pending";
                     } else if ($emailmatch && ($fetp['active'] == 'Y') && ($fetp['status'] == "A")) {
