@@ -979,6 +979,8 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
         $scope.userInfo = $cookieStore.get('epiUserInfo');
         $scope.superuser = (typeof($scope.userInfo) != "undefined") ? $scope.userInfo.superuser: false;
         $scope.showpage = false;
+        $scope.membersavailable = false;
+        $scope.eventsavailable = false;
 
         var data = {};
             $http({ url: 'scripts/approval.php', method: "POST", data: data
@@ -995,6 +997,20 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
             $http({ url: 'scripts/approval.php', method: "POST", data: data
             }).success(function (respdata, status, headers, config) {
                 $scope.applicants = respdata;
+            });
+        };
+
+        $scope.downloadMembers = function(){
+            $http({ url: 'scripts/downloadMembers.php', method: "POST"
+            }).success(function (respdata, status, headers, config) {
+                $scope.membersavailable = true;
+            });
+        };
+
+        $scope.downloadEvents = function(){
+            $http({ url: 'scripts/downloadEventStats.php', method: "POST"
+            }).success(function (respdata, status, headers, config) {
+                $scope.eventsavailable = true;
             });
         };
 
