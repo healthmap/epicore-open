@@ -678,6 +678,25 @@ class UserInfo
         return $applicants;
 
     }
+    
+    static function getMemberStatus($member_id){
+
+        $db = getDB();
+        $member = $db->getRow("SELECT approvestatus, active, status FROM maillist m, fetp f WHERE m.maillist_id='$member_id' AND f.maillist_id='$member_id'");
+
+        if ($member['approvestatus'] != 'Y'){
+            $mstatus = 'Denied';
+        } else if (($member['active'] == 'N') && ($member['status'] == "A")) {
+            $mstatus = "Pre-approved";
+        } else if (($member['active'] == 'N') && ($member['status'] == "P")) {
+            $mstatus = "Pending";
+        } else if (($member['active'] == 'Y') && ($member['status'] == "A")) {
+            $mstatus = "Approved";
+        } else {
+            $mstatus = 'Inactive';
+        }
+        return $mstatus;
+    }
 
     // get all members for csv file
     static function getMembersInfo($members) {

@@ -994,9 +994,17 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
 
         $scope.approveApplicant = function(maillist_id, action){
             data = {maillist_id: maillist_id, action:action};
-            $http({ url: 'scripts/approval.php', method: "POST", data: data
+            $http({ url: 'scripts/setMemberStatus.php', method: "POST", data: data
             }).success(function (respdata, status, headers, config) {
-                $scope.applicants = respdata;
+                if (respdata['status'] == 'success'){
+                    for (var n in $scope.applicants){
+                        if ($scope.applicants[n].maillist_id == maillist_id){
+                            $scope.applicants[n].status = respdata['member_status'];
+                        }
+                    }
+                } else {
+                    alert(respdata['message']);
+                }
             });
         };
 

@@ -3,8 +3,7 @@
  * User: jeffandre
  * Date: 9/22/15
  *
- * Sets user status and sends email.
- * Returns all users info.
+ * Returns all members.
  *
  */
 
@@ -19,16 +18,8 @@ if (!$validated) {
     header('HTTP/1.0 401 Unauthorized');
     die ("Not authorized");
 }
-
-// set member status
 require_once 'UserInfo.class.php';
-$data = json_decode(file_get_contents("php://input"));
-$approve_id = (string)$data->maillist_id;
-$approve_status = (string)$data->action;
-UserInfo::setUserStatus($approve_id, $approve_status);
-
-
-// get all members
 $members = UserInfo::getMembers();
-// return all applicants
+
+// return all members
 print json_encode($members);
