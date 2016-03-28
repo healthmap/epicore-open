@@ -1001,16 +1001,20 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
         };
 
         $scope.downloadMembers = function(){
+            $scope.isRouteLoading = true;
             $http({ url: 'scripts/downloadMembers.php', method: "POST"
             }).success(function (respdata, status, headers, config) {
                 $scope.membersavailable = true;
+                $scope.isRouteLoading = false;
             });
         };
 
         $scope.downloadEvents = function(){
+            $scope.isRouteLoading = true;
             $http({ url: 'scripts/downloadEventStats.php', method: "POST"
             }).success(function (respdata, status, headers, config) {
                 $scope.eventsavailable = true;
+                $scope.isRouteLoading = false;
             });
         };
 
