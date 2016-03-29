@@ -1,4 +1,4 @@
-<div ng-include src="'header_lp.html'"></div>
+<div ng-include src="'header_lp.html'" ng-init="lpevent=['application clicks', 'button click', 'educator']"></div>
 
 <div class="jumbotron lp">
 <div class="gradient-overlay"></div>
@@ -68,7 +68,7 @@
                 <h2>Apply Now to Become a Certified EpiCore Member</h2>
             </div>
             <div class="col-xs-12 col-md-4">
-                <a href="#/application" class="btn btn-primary inherit">Apply Now</a>
+                <a href="#/application" class="btn btn-primary inherit" ga-track-event="['application clicks', 'button click', 'educator']" >Apply Now</a>
             </div>
         </div>
     </div>

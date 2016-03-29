@@ -4,7 +4,8 @@ var app = angular.module('EpicoreApp', [
     'ngCookies',
     'ngRoute',
     'ngSanitize',
-    'uiGmapgoogle-maps'
+    'uiGmapgoogle-maps',
+    'angular-google-analytics'
 ]);
 
 app.config(function($routeProvider) {
@@ -55,6 +56,21 @@ app.run(['$rootScope', '$location', '$window', function($rootScope, $location, $
                 $window.ga('send', 'pageview', { page: $location.path() });
             });
     }]);
+
+app.config(function (AnalyticsProvider) {
+    // Add configuration code as desired - see below
+    // Set a single account
+    AnalyticsProvider.setAccount('UA-72336136-1');
+
+    // Use ga.js (classic) instead of analytics.js (universal)
+    // By default, universal analytics is used, unless this is called with a falsey value.
+    AnalyticsProvider.useAnalytics(false);
+
+    // track all routes/states (or not)
+    //AnalyticsProvider.trackPages(true);
+});
+
+//app.run(function(Analytics){});
 
 /* back button directive used on Event.html*/
 app.directive('siteHeader', function () {
