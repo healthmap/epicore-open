@@ -49,21 +49,22 @@
 
             <p>Click on a table heading to sort the table or filter the table using the search tool.</p>
             <p><i class="fa fa-search"></i> <input ng-model="query"></p>
+            <div class="table-responsive">
             <table class='small table table-hover table-bordered'>
                 <tr>
-                    <th>#</th>
-                    <th width="110px"><a href="" ng-click="predicate = 'apply_date_iso'; reverse=!reverse">Application Date</a></th>
-                    <th width="110px"><a href="" ng-click="predicate = 'approve_date_iso'; reverse=!reverse">Approval Date </a></th>
-                    <th width="110px"><a href="" ng-click="predicate = 'accept_date_iso'; reverse=!reverse">Acceptance Date</a></th>
-                    <th><a href="" ng-click="predicate = 'member_id'; reverse=!reverse">Member #</a></th>
-                    <th width="180px"><a href="" ng-click="predicate = 'lastname'; reverse=!reverse">Name</a></th>
-                    <th ><a href="" ng-click="predicate = 'country'; reverse=!reverse">Country</a></th>
-                    <th ><a href="" ng-click="predicate = 'pword'; reverse=!reverse">Pword<br> Set</a></th>
-                    <th>Course Type</th>
-                    <th><a href="" ng-click="predicate = 'status'; reverse=!reverse">Member Status</a></th>
-                    <th width="150px">Accept, Approve, Preapprove</th>
-                    <th width="50px">Deny</th>
-                    <th width="110px">Edit or Delete</th>
+                    <th style="width:30px;">#</th>
+                    <th style="width:70px;"><a href="" ng-click="predicate = 'apply_date_iso'; reverse=!reverse">Application Date</a></th>
+                    <th style="width:70px;"><a href="" ng-click="predicate = 'approve_date_iso'; reverse=!reverse">Approval Date </a></th>
+                    <th style="width:70px;"><a href="" ng-click="predicate = 'accept_date_iso'; reverse=!reverse">Acceptance Date</a></th>
+                    <th style="width:30px;"><a href="" ng-click="predicate = 'member_id'; reverse=!reverse">M#</a></th>
+                    <th style="width:200px;"><a href="" ng-click="predicate = 'lastname'; reverse=!reverse">Name</a></th>
+                    <th style="width:110px;"><a href="" ng-click="predicate = 'country'; reverse=!reverse">Country</a></th>
+                    <th style="width:30px;"><a href="" ng-click="predicate = 'pword'; reverse=!reverse">Pword</a></th>
+                    <th style="width:110px;">Course Type</th>
+                    <th style="width:110px;"><a href="" ng-click="predicate = 'status'; reverse=!reverse">Member Status</a></th>
+                    <th style="width:300px;">Accept, Approve, Preapprove</th>
+                    <th style="width:7px;">Deny</th>
+                    <th style="width:300px;">Edit or Delete</th>
                 </tr>
                 <tr ng-repeat="applicant in applicants | filter:query | orderBy:predicate:reverse" >
                     <td>{{$index+1}}</td>
@@ -191,6 +192,7 @@
 
                 </tr>
             </table>
-        </div><!--wbg-->
+            </div>
+</div>
 </div><!--container-->
 </div><!--wrapper-->
