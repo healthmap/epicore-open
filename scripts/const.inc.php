@@ -289,4 +289,6 @@ $countries = array("AF" => "Afghanistan",
     "ZW" => "Zimbabwe"
 );
 
+define ('COUNTRIES', serialize($countries));
+
 ?>

@@ -671,6 +671,7 @@ class UserInfo
             $applicants[$n]['apply_date'] = date('j-M-Y', strtotime($applicants[$n]['apply_date']));
             $applicants[$n]['approve_date'] = $applicants[$n]['approve_date'] ?  date('j-M-Y', strtotime($applicants[$n]['approve_date'])) : $applicants[$n]['approve_date'];
             $applicants[$n]['accept_date'] = $applicants[$n]['accept_date'] ?  date('j-M-Y', strtotime($applicants[$n]['accept_date'])) : $applicants[$n]['accept_date'];
+            $applicants[$n]['country_code'] = $applicants[$n]['country'];
             $applicants[$n]['country'] = $countries[$applicants[$n]['country']];
             $n++;
         }
@@ -700,6 +701,8 @@ class UserInfo
 
     // get all members for csv file
     static function getMembersInfo($members) {
+        $std_countries = unserialize(COUNTRIES);
+
 
         // save all member info
         $user = array();
@@ -713,7 +716,7 @@ class UserInfo
             $user['Member ID'] = $applicant['member_id'];
             $user['City'] = $applicant['city'];
             $user['State/Province'] = $applicant['state'];
-            $user['Country'] = $applicant['country'];
+            $user['Member Country'] = $std_countries[$applicant['country_code']];
             $user['Job Title'] = $applicant['job_title'];
             $user['Organization'] = $applicant['organization'];
             //Sector
@@ -758,15 +761,15 @@ class UserInfo
 
             // Universities 1-3
             $user['University1'] = $applicant['university1'];
-            $user['Country1'] = $applicant['school_country1'];
+            $user['Country1'] = $std_countries[$applicant['school_country1']];
             $user['Major1'] = $applicant['major1'];
             $user['Degree1'] = $applicant['degree1'] ? $applicant['degree1']: $applicant['other_degree1'];
             $user['University2'] = $applicant['university2'];
-            $user['Country2'] = $applicant['school_country2'];
+            $user['Country2'] = $std_countries[$applicant['school_country2']];
             $user['Major2'] = $applicant['major2'];
             $user['Degree2'] = $applicant['degree2'] ? $applicant['degree2']: $applicant['other_degree2'];
             $user['University3'] = $applicant['university3'];
-            $user['Country3'] = $applicant['school_country3'];
+            $user['Country3'] = $std_countries[$applicant['school_country3']];
             $user['Major3'] = $applicant['major3'];
             $user['Degree3'] = $applicant['degree3'] ? $applicant['degree3']: $applicant['other_degree3'];
 
