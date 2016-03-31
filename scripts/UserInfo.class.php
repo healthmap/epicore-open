@@ -668,9 +668,9 @@ class UserInfo
             $applicants[$n]['apply_date_iso'] = $applicants[$n]['apply_date'];
             $applicants[$n]['approve_date_iso'] = $applicants[$n]['approve_date'];
             $applicants[$n]['accept_date_iso'] = $applicants[$n]['accept_date'];
-            $applicants[$n]['apply_date'] = date('j-M-Y', strtotime($applicants[$n]['apply_date']));
-            $applicants[$n]['approve_date'] = $applicants[$n]['approve_date'] ?  date('j-M-Y', strtotime($applicants[$n]['approve_date'])) : $applicants[$n]['approve_date'];
-            $applicants[$n]['accept_date'] = $applicants[$n]['accept_date'] ?  date('j-M-Y', strtotime($applicants[$n]['accept_date'])) : $applicants[$n]['accept_date'];
+            $applicants[$n]['apply_date'] = date('m.d.y', strtotime($applicants[$n]['apply_date']));
+            $applicants[$n]['approve_date'] = $applicants[$n]['approve_date'] ?  date('m.d.y', strtotime($applicants[$n]['approve_date'])) : $applicants[$n]['approve_date'];
+            $applicants[$n]['accept_date'] = $applicants[$n]['accept_date'] ?  date('m.d.y', strtotime($applicants[$n]['accept_date'])) : $applicants[$n]['accept_date'];
             $applicants[$n]['country_code'] = $applicants[$n]['country'];
             $applicants[$n]['country'] = $countries[$applicants[$n]['country']];
             $n++;

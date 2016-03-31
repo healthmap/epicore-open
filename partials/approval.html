@@ -53,9 +53,10 @@
             <table class='small table table-hover table-bordered'>
                 <tr>
                     <th style="width:30px;">#</th>
-                    <th style="width:70px;"><a href="" ng-click="predicate = 'apply_date_iso'; reverse=!reverse">Application Date</a></th>
-                    <th style="width:70px;"><a href="" ng-click="predicate = 'approve_date_iso'; reverse=!reverse">Approval Date </a></th>
-                    <th style="width:70px;"><a href="" ng-click="predicate = 'accept_date_iso'; reverse=!reverse">Acceptance Date</a></th>
+                    <th style="width:70px;"><a href="" ng-click="predicate = 'apply_date_iso'; reverse=!reverse">Appl. Date</a></th>
+                    <th style="width:70px;"><a href="" ng-click="predicate = 'approve_date_iso'; reverse=!reverse">Approve Date </a></th>
+                    <th style="width:70px;"><a href="" ng-click="predicate = 'accept_date_iso'; reverse=!reverse">Accept Date</a></th>
+                    <th style="width:30px;"><a href="" ng-click="predicate = 'maillist_id'; reverse=!reverse">A#</a></th>
                     <th style="width:30px;"><a href="" ng-click="predicate = 'member_id'; reverse=!reverse">M#</a></th>
                     <th style="width:200px;"><a href="" ng-click="predicate = 'lastname'; reverse=!reverse">Name</a></th>
                     <th style="width:110px;"><a href="" ng-click="predicate = 'country'; reverse=!reverse">Country</a></th>
@@ -72,6 +73,7 @@
                     <td>{{applicant.approve_date}}</td>
                     <td>{{applicant.accept_date}}</td>
                     <td>{{applicant.member_id}}</td>
+                    <td>{{applicant.maillist_id}}</td>
                     <td>{{applicant.firstname}} {{applicant.lastname}}
                         <a href="" ng-click="isCollapsed1 = !isCollapsed1"><i class="fa fa-plus"></i></a>
                         <ul ng-show="isCollapsed1" class="list-unstyled">
