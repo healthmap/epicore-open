@@ -9,7 +9,7 @@
 
 <div class="container">
     <div ng-show="!showpage">
-                <i class="fa fa-spinner fa-pulse"></i> Please wait...
+                <i class="fa fa-spinner fa-spin"></i> Please wait...
     </div>
     <div ng-show="!superuser">
         <h3>You do not have access to this page.</h3>
@@ -24,7 +24,7 @@
             <a ng-show="eventsavailable" href="data/rfistats.csv" class="btn btn-tab btn-default mb24"><i class="fa fa-download"></i> Download RFI Report</a>
             <br>
             <span ng-show="isRouteLoading">
-                <i class="fa fa-spinner fa-pulse"></i> Please wait...
+                <i class="fa fa-spinner fa-spin"></i> Please wait...
             </span>
             <br><br>
 
@@ -53,27 +53,30 @@
             <table class='small table table-hover table-bordered'>
                 <tr>
                     <th style="width:30px;">#</th>
-                    <th style="width:70px;"><a href="" ng-click="predicate = 'apply_date_iso'; reverse=!reverse">Appl. Date</a></th>
-                    <th style="width:70px;"><a href="" ng-click="predicate = 'approve_date_iso'; reverse=!reverse">Approve Date </a></th>
-                    <th style="width:70px;"><a href="" ng-click="predicate = 'accept_date_iso'; reverse=!reverse">Accept Date</a></th>
+                    <th style="width:30px;"><a href="" ng-click="predicate = 'apply_date_iso'; reverse=!reverse">Appl. Date</a></th>
+                    <th style="width:30px;"><a href="" ng-click="predicate = 'approve_date_iso'; reverse=!reverse">Approve Date </a></th>
+                    <th style="width:30px;"><a href="" ng-click="predicate = 'accept_date_iso'; reverse=!reverse">Accept Date</a></th>
                     <th style="width:30px;"><a href="" ng-click="predicate = 'maillist_id'; reverse=!reverse">A#</a></th>
                     <th style="width:30px;"><a href="" ng-click="predicate = 'member_id'; reverse=!reverse">M#</a></th>
-                    <th style="width:200px;"><a href="" ng-click="predicate = 'lastname'; reverse=!reverse">Name</a></th>
-                    <th style="width:110px;"><a href="" ng-click="predicate = 'country'; reverse=!reverse">Country</a></th>
-                    <th style="width:30px;"><a href="" ng-click="predicate = 'pword'; reverse=!reverse">Pword</a></th>
-                    <th style="width:110px;">Course Type</th>
-                    <th style="width:110px;"><a href="" ng-click="predicate = 'status'; reverse=!reverse">Member Status</a></th>
-                    <th style="width:300px;">Accept, Approve, Preapprove</th>
-                    <th style="width:7px;">Deny</th>
-                    <th style="width:300px;">Edit or Delete</th>
+                    <th style="width:300px;"><a href="" ng-click="predicate = 'lastname'; reverse=!reverse">Name</a></th>
+                    <th style="width:50px;"><a href="" ng-click="predicate = 'country'; reverse=!reverse">Country</a></th>
+                    <th style="width:10px;"><a href="" ng-click="predicate = 'pword'; reverse=!reverse">PW</a></th>
+                    <th style="width:10px;">Crs</th>
+                    <th style="width:30px;"><a href="" ng-click="predicate = 'status'; reverse=!reverse">Stat</a></th>
+                    <th style="width:10px;">Acc</th>
+                    <th style="width:10px;">Appr</th>
+                    <th style="width:10px;">Pre</th>
+                    <th style="width:10px;">Deny</th>
+                    <th style="width:10px;">Edit</th>
+                    <th style="width:10px;">Del</th>
                 </tr>
                 <tr ng-repeat="applicant in applicants | filter:query | orderBy:predicate:reverse" >
                     <td>{{$index+1}}</td>
                     <td>{{applicant.apply_date}}</td>
                     <td>{{applicant.approve_date}}</td>
                     <td>{{applicant.accept_date}}</td>
-                    <td>{{applicant.member_id}}</td>
                     <td>{{applicant.maillist_id}}</td>
+                    <td>{{applicant.member_id}}</td>
                     <td>{{applicant.firstname}} {{applicant.lastname}}
                         <a href="" ng-click="isCollapsed1 = !isCollapsed1"><i class="fa fa-plus"></i></a>
                         <ul ng-show="isCollapsed1" class="list-unstyled">
@@ -170,17 +173,24 @@
                     <td>{{applicant.country}}</td>
                     <td>{{applicant.pword}}</td>
                     <td>
-                        <span ng-show="(applicant.online_course == 1) && (applicant.inperson_course == 0)">Online</span>
-                        <span ng-show="(applicant.inperson_course == 1) && (applicant.online_course == 0)">Inperson</span>
-                        <span ng-show="(applicant.inperson_course == 1) && (applicant.online_course == 1)">Inperson & Online</span>
+                        <span ng-show="(applicant.online_course == 1) && (applicant.inperson_course == 0)">O</span>
+                        <span ng-show="(applicant.inperson_course == 1) && (applicant.online_course == 0)">I</span>
+                        <span ng-show="(applicant.inperson_course == 1) && (applicant.online_course == 1)">I&O</span>
                     </td>
                     <td>
-                        <span ng_show="applicant.status == 'Pending'">Accepted</span>
-                        <span ng_show="applicant.status != 'Pending'">{{applicant.status}}</span>
+                        <span ng_show="applicant.status == 'Pending'">Acc</span>
+                        <span ng_show="applicant.status == 'Inactive'">Ina</span>
+                        <span ng_show="applicant.status == 'Approved'">App</span>
+                        <span ng_show="applicant.status == 'Denied'">Den</span>
+                        <span ng_show="applicant.status == 'Pre-approved'">Pre</span>
                     </td>
                     <td>
                         <button type="button" ng-click="approveApplicant(applicant.maillist_id,'pending')" class="btn btn-default btn-sm stacked"><i alt="accept" class="fa fa-check"></i></button>
+                    </td>
+                    <td>
                         <button type="button" ng-click="approveApplicant(applicant.maillist_id,'approved')" class="btn btn-default btn-sm stacked"><i alt="approve" class="fa fa-certificate"></i></a></button>
+                    </td>
+                    <td>
                         <button type="button" ng-click="approveApplicant(applicant.maillist_id,'pending_preapproved')" class="btn btn-default btn-sm stacked"><i alt="pre-approve" class="fa fa-thumbs-o-up"></i></a></button>
                     </td>
                     <td>
@@ -189,6 +199,8 @@
                     </td>
                     <td>
                         <button class="btn btn-default btn-sm stacked" type="button" ng-click="editApplicant(applicant.maillist_id,'edit')"><i class="fa fa-pencil-square-o"></i></button>
+                    </td>
+                    <td>
                         <button  class="btn btn-default btn-sm stacked" type="button" ng-click="deleteApplicant(applicant.maillist_id)"><i class="fa fa-trash-o"></i></button>
                     </td>
 
