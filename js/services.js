@@ -15,7 +15,7 @@ angular.module('EpicoreApp.services', [])
             }
             // if user is authenticated and on homepage or fetp login page, go to events listing, or redirect location
             var redirloc = urlarr[1] == "fetp" && typeof(urlarr[3]) != "undefined" ? '/events/'+urlarr[3] : '/events';
-            redirloc = ($rootScope.userinfo['fetp_id'] && ($rootScope.userinfo['active'] == 'N')) ? "welcome" : redirloc; // go to welcome page if not active fetp
+            redirloc = ($rootScope.userinfo['fetp_id'] && ($rootScope.userinfo['active'] == 'N')) ? "home" : redirloc; // go to home page if not active fetp
             if(authService.isAuthenticated() && ($location.path() == "/home" || urlarr[1] == "fetp")) $location.path(redirloc);
         });
     }])
