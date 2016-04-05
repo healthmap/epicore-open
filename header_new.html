@@ -1,4 +1,4 @@
-<nav class="navbar navbar-default" role="navigation">
+<nav class="navbar navbar-default" role="navigation" ng-controller="headerController">
     <div class="container">
         <div class="navbar-header">
             <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar-collapse">
@@ -13,9 +13,9 @@
                 <!--<li ng-show="{{userInfo.isPromed}}"><a href="http://promedmail.org/dashboard"><img src="img/promed.png"> Dashboard <i class="fa fa-arrow-circle-right"></i></a>&nbsp;&nbsp;</li>
                 <li><a href="#/application" ng-class="getClass('/application')">Apply</a></li>
                 <li><a href="#/login" ng-class="getClass('/login')">Login</a></li>-->
-                <li class="text-uppercase"><a href="#/about">About</a></li>
-                <li class="text-uppercase"><a href="#/how">How it works</a></li>
-                <li class="text-uppercase"><a href="#/who">Who can apply</a></li>
+                <li ng-class="{ active: isActive('/about')}" class="text-uppercase"><a href="#/about">About</a></li>
+                <li ng-class="{ active: isActive('/how')}" class="text-uppercase"><a href="#/how">How it works</a></li>
+                <li ng-class="{ active: isActive('/who')}" class="text-uppercase"><a href="#/who">Who can apply</a></li>
                 <li class="text-uppercase"><a class="btn btn-secondary" href="#/login">log in</a></li>
                 <li class="hidden-lg hidden-md text-uppercase"><a class="btn btn-secondary btn-inverted" href="#/application">Apply</a></li>
             </ul>

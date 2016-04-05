@@ -527,6 +527,12 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
             }
         });
 
+/* FOR ADDING ACTIVE CLASS TO NAV */
+}).controller('headerController', function($scope, $location) {
+     $scope.isActive = function (viewLocation) { 
+        return viewLocation === $location.path();
+    };
+
 /* FETP controller */
 }).controller('fetpController', function($scope, $cookieStore) {
         $scope.userInfo = $cookieStore.get('epiUserInfo');
