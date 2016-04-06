@@ -1001,14 +1001,36 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
         $scope.showpage = false;
         $scope.membersavailable = false;
         $scope.eventsavailable = false;
+        $scope.num_applicants = 0;
+        $scope.num_accepted = 0;
+        $scope.num_approved = 0;
+        $scope.num_inactive = 0;
+        $scope.num_denied = 0;
+        $scope.num_preapproved = 0;
 
         var data = {};
             $http({ url: 'scripts/approval.php', method: "POST", data: data
             }).success(function (respdata, status, headers, config) {
                 for (var n in respdata){
                     respdata[n]['member_id'] = parseInt(respdata[n]['member_id']);  // use int so orberby works
+                    if (respdata[n]['status'] == 'Pending'){
+                        $scope.num_accepted++;
+                    }
+                    if (respdata[n]['status'] == 'Approved'){
+                        $scope.num_approved++;
+                    }
+                    if (respdata[n]['status'] == 'Inactive'){
+                        $scope.num_inactive++;
+                    }
+                    if (respdata[n]['status'] == 'Denied'){
+                        $scope.num_denied++;
+                    }
+                    if (respdata[n]['status'] == 'Pre-approved'){
+                        $scope.num_preapproved++;
+                    }
                 }
                 $scope.applicants = respdata;
+                $scope.num_applicants = $scope.applicants.length;
                 $scope.showpage = true;
             });
 
