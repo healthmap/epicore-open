@@ -8,13 +8,13 @@
 <div class="wrapper dashboard">
     <div class="container">
 
-        <div ng-show="!showpage">
+        <div ng-if="!showpage">
             <i class="fa fa-spinner fa-spin"></i> Please wait...
         </div>
-        <div ng-show="!superuser">
+        <div ng-if="!superuser">
             <h3>You do not have access to this page.</h3>
         </div>
-        <div ng-show="superuser && showpage" >
+        <div ng-hide="!superuser">
             {{numMembers}} Members
             <ui-gmap-google-map center="map.center" zoom="map.zoom" options="options"  id="member-map">
                 <ui-gmap-markers models="markers" coords="'self'" icon="'icon'" click="'onClick'">
