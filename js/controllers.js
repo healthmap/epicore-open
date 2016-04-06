@@ -514,19 +514,32 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
             {name: 'Zimbabwe', code: 'ZW'}
         ];
 
-}).controller('mapController', function($scope, $http) {
-        $scope.map = { center: { latitude: 15, longitude: 18 }, zoom: 3 }
-        $scope.options = {scrollwheel: false};
-        $scope.markers = [];
-        // only show FETPs on a map to super-users
-        var query = {};
-        query['uid'] = $scope.userInfo.uid;
-        $http({ url: 'scripts/getmarkers.php', method: "POST", data: query
-        }).success(function (data, status, headers, config) {
+}).controller('mapController', function($scope, $http, $cookieStore) {
+    // only allow superusers for admin
+    $scope.userInfo = $cookieStore.get('epiUserInfo');
+    $scope.superuser = (typeof($scope.userInfo) != "undefined") ? $scope.userInfo.superuser: false;
+    $scope.showpage = false;
+
+    // set map options
+    $scope.map = { center: { latitude: 15, longitude: 18 }, zoom: 2 };
+    $scope.options = {scrollwheel: true};
+
+    // map height
+    $scope.$on('$viewContentLoaded', function () {
+        var mapHeight = 500; // or any other calculated value
+        $("#member-map .angular-google-map-container").height(mapHeight);
+    });
+
+    $scope.markers = [];
+    $scope.numMembers = '';
+    $http({ url: 'scripts/getallmarkers.php', method: "POST"
+    }).success(function (data, status, headers, config) {
             if(data['status'] == "success") {
                 $scope.markers = data['markers'];
+                $scope.showpage = true;
+                $scope.numMembers = $scope.markers.length;
             }
-        });
+    });
 
 /* FOR ADDING ACTIVE CLASS TO NAV */
 }).controller('headerController', function($scope, $location) {

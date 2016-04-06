@@ -1,9 +1,28 @@
 <div ng-include src="'header.html'"></div>
-    <google-map center="map.center" zoom="map.zoom" draggable="true" options="options" bounds="map.bounds">
-        <markers models="markers" coords="'self'" icon="'icon'" click="'onClick'">
-            <windows show="show">
-                <div ng-non-bindable>{{title}}</div>
-            </windows>
-        </markers>
-    </google-map>
+<div class="jumbotron dashboard">
+    <div class="container">
+        <h1>Member Map</h1>
+    </div>
+</div>
+
+<div class="wrapper dashboard">
+    <div class="container">
+
+        <div ng-show="!showpage">
+            <i class="fa fa-spinner fa-spin"></i> Please wait...
+        </div>
+        <div ng-show="!superuser">
+            <h3>You do not have access to this page.</h3>
+        </div>
+        <div ng-show="superuser && showpage" >
+            {{numMembers}} Members
+            <ui-gmap-google-map center="map.center" zoom="map.zoom" options="options"  id="member-map">
+                <ui-gmap-markers models="markers" coords="'self'" icon="'icon'" click="'onClick'">
+                    <windows show="show">
+                        <div ng-non-bindable>{{title}}</div>
+                    </windows>
+                </ui-gmap-markers>
+            </ui-gmap-google-map>
+        </div>
+    </div>
 </div>
