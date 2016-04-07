@@ -1007,6 +1007,7 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
         $scope.num_inactive = 0;
         $scope.num_denied = 0;
         $scope.num_preapproved = 0;
+        $scope.num_setpassword = 0;
 
         var data = {};
             $http({ url: 'scripts/approval.php', method: "POST", data: data
@@ -1027,6 +1028,9 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
                     }
                     if (respdata[n]['status'] == 'Pre-approved'){
                         $scope.num_preapproved++;
+                    }
+                    if (respdata[n]['pword'] == 'Yes'){
+                        $scope.num_setpassword++;
                     }
                 }
                 $scope.applicants = respdata;
