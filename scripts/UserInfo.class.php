@@ -711,7 +711,9 @@ class UserInfo
             $user['Application Date'] = $applicant['apply_date'];
             $user['Approval Date'] = $applicant['approve_date'];
             $user['Acceptance Date'] = $applicant['accept_date'];
-            $user['Name'] = $applicant['firstname'] . ' ' . $applicant['lastname'];
+            //$user['Name'] = $applicant['firstname'] . ' ' . $applicant['lastname'];
+            $user['First name'] = $applicant['firstname'];
+            $user['Last name'] = $applicant['lastname'];
             $user['email'] = $applicant['email'];
             $user['Member ID'] = $applicant['member_id'];
             $user['City'] = $applicant['city'];
