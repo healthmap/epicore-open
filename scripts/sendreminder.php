@@ -13,19 +13,20 @@ $data = json_decode(file_get_contents("php://input"));
 $action = (string)$data->action;
 
 $maillist = '';
-// unsubscribed/pre-approved members with no password
+// unsubscribed/pre-approved members with no password and accepted at least one week ago
 if ($action == 'preapprove_reminder') {
-    $maillist = $db->getAll("select fetp_id, f.email,firstname from fetp as f, maillist as m  where f.email=m.email and active='N' and status='A' and pword_hash is null");
+    $maillist = $db->getAll("select fetp_id, f.email,firstname from fetp as f, maillist as m  where f.email=m.email 
+                            and active='N' and status='A' and pword_hash is null AND accept_date <= NOW() - INTERVAL 1 WEEK");
     foreach ($maillist as $member) {
         sendMail($member['email'], $member['firstname'], "Reminder | You're almost there!", $action, $member['fetp_id']);
     }
     sendMail('info@epicore.org', 'Info', "Reminder | You're almost there!", $action, '0');
 }
 
-// get accepted members with no password
+// get accepted members with no password and accepted at least one week ago
 if ($action == 'setpassword_reminder') {
     $maillist = $db->getAll("select fetp_id, f.email,firstname from fetp as f, maillist as m  where f.email=m.email and active='N'
-                            and status='P' and pword_hash is null");
+                            and status='P' and pword_hash is null AND accept_date <= NOW() - INTERVAL 1 WEEK");
     foreach ($maillist as $member) {
         sendMail($member['email'], $member['firstname'], "Reminder | You're almost there!", $action, $member['fetp_id']);
     }
