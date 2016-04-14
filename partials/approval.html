@@ -150,9 +150,10 @@
                                 <span ng-show="applicant.biostatistics">biostatistics, </span>
                                 <span ng-show="applicant.other_knowledge">{{applicant.other_knowledge_type}}</span>
                             </li>
-                            <li><b>FETP Training:</b>
-                                <span ng_show="applicant.training == 0">none</span>
-                                <span ng_show="applicant.fetp_training">{{applicant.fetp_training}}</span>
+                            <li><b>FETP Training: </b>
+                                <span ng_show="(applicant.training != 1) && (applicant.other_training != 1)">none</span>
+                                <span ng_show="applicant.fetp_training">{{applicant.fetp_training}} (TEPHINET)</span>
+                                <span ng_show="applicant.other_fetp_training">{{applicant.other_fetp_training}} (outside TEPHINET)</span>
                             </li>
                             <li><b>Years of Experience:</b>
                                 <span ng_show="applicant.health_exp == 'A'">none</span>

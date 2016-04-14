@@ -67,14 +67,12 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
 
         $scope.no_notification = !uservals.epicoreworkshop && !uservals.conference && !uservals.promoemail && !uservals.othercontact;
 
-        // validate radio buttons
-        $scope.no_training = !uservals.training;
 
         // check email
         var regex = /^([a-zA-Z0-9_.+-])+\@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/;
         var isemail = regex.test(uservals.email);
 
-        if (!isValid || !isemail || $scope.no_health_exp || $scope.no_category || $scope.no_notification || !uservals.training
+        if (!isValid || !isemail || $scope.no_health_exp || $scope.no_category || $scope.no_notification || !uservals.training || !uservals.other_training
             || !uservals.health_exp || !uservals.sector){
 
             $scope.signup_message = 'Form not complete. Please correct the errors above in red, and then submit again.';

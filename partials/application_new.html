@@ -178,12 +178,21 @@
 
 
                     <div class="form-group">
-                    <h5 class="form-label">Have you successfully completed a field epidemiology training program with TEPHINET or any other TEPHINET-affiliated regional network?</h5>
+                        <h5 class="form-label">Have you successfully completed a field epidemiology training program with TEPHINET or any other TEPHINET-affiliated regional network?</h5>
                         <span ng-show="!uservals.training && attempted" class="error">Must select one</span>
 
                         <label class="radio-inline"> <input type="radio" ng-model="uservals.training" value="1" > Yes</label>
                         <label class="radio-inline"> <input type="radio" ng-model="uservals.training" value="0" > No</label>
                         <input type="text" class="form-control" name="training" ng-model = "uservals.fetp_training" ng-if="uservals.training" placeholder="What FETP program and where?" ng-required="uservals.training">
+                    </div>
+
+                <div class="form-group">
+                    <h5 class="form-label">Have you completed any other field epidemiology training (outside of TEPHINET)?</h5>
+                    <span ng-show="!uservals.other_training && attempted" class="error">Must select one</span>
+
+                    <label class="radio-inline"> <input type="radio" ng-model="uservals.other_training" value="1" > Yes</label>
+                    <label class="radio-inline"> <input type="radio" ng-model="uservals.other_training" value="0" > No</label>
+                    <input type="text" class="form-control" name="other_training" ng-model = "uservals.other_fetp_training" ng-if="uservals.other_training" placeholder="What FETP program and where?" ng-required="uservals.other_training">
                 </div>
 
                 <div class="form-group">

@@ -311,7 +311,7 @@ class UserInfo
                         university1 =?, major1=?, degree1=?, other_degree1=?, school_country1=?,
                         university2 =?, major2=?, degree2=?, other_degree2=?, school_country2=?,
                         university3 =?, major3=?, degree3=?, other_degree3=?, school_country3=?,
-                        training=?, fetp_training=?, health_exp=?, human_health=?, animal_health=?, env_health=?, health_exp_none=?,
+                        training=?, fetp_training=?, other_training=?, other_fetp_training=?, health_exp=?, human_health=?, animal_health=?, env_health=?, health_exp_none=?,
                         job_title=?, organization=?, sector=?, health_org_university=?, health_org_doh=?, health_org_clinic=?, health_org_other=?, health_org_none=?,
                         epicoreworkshop=?, epicoreworkshop_type=?, conference=?, conference_type=?, promoemail=?, promoemail_type=?,
                         othercontact=?, othercontact_type=?, online_course=?, inperson_course=?, info_accurate=?, rfi_agreement=?
@@ -320,7 +320,7 @@ class UserInfo
                             $pvals['university1'], $pvals['major1'], $pvals['degree1'], $pvals['other_degree1'], $pvals['school_country1'],
                             $pvals['university2'], $pvals['major2'], $pvals['degree2'], $pvals['other_degree2'], $pvals['school_country2'],
                             $pvals['university3'], $pvals['major3'], $pvals['degree3'], $pvals['other_degree3'], $pvals['school_country3'],
-                            $pvals['training'], $pvals['fetp_training'], $pvals['health_exp'], $pvals['human_health'], $pvals['animal_health'], $pvals['env_health'], $pvals['health_exp_none'],
+                            $pvals['training'], $pvals['fetp_training'], $pvals['other_training'], $pvals['other_fetp_training'], $pvals['health_exp'], $pvals['human_health'], $pvals['animal_health'], $pvals['env_health'], $pvals['health_exp_none'],
                             $pvals['job_title'], $pvals['organization'], $pvals['sector'], $pvals['health_org_university'], $pvals['health_org_doh'], $pvals['health_org_clinic'], $pvals['health_org_other'],$pvals['health_org_none'],
                             $pvals['epicoreworkshop'], $pvals['epicoreworkshop_type'],$pvals['conference'], $pvals['conference_type'], $pvals['promoemail'], $pvals['promoemail_type'],
                             $pvals['othercontact'], $pvals['othercontact_type'], $pvals['online_course'], $pvals['inperson_course'], $pvals['info_accurate'], $pvals['rfi_agreement'], $pvals['maillist_id']));
@@ -821,7 +821,8 @@ class UserInfo
             if ($applicant['other_knowledge'])
                 $user['Basic Knowledge'] .= $applicant['other_knowledge_type'];
             // fetp training
-            $user['FETP Training'] = $applicant['fetp_training'] ? $applicant['fetp_training']: 'none';
+            $user['FETP Training (TEPHINET)'] = $applicant['fetp_training'] ? $applicant['fetp_training']: 'none';
+            $user['FETP Training (outside TEPHINET)'] = $applicant['other_fetp_training'] ? $applicant['other_fetp_training']: 'none';
             // years experience
             $user['Years of Experience'] = '';
             if ($applicant['health_exp'] == 'A')
