@@ -1,6 +1,6 @@
 <h4>RFI Message History</h4>
 
-<div ng-if="!userInfo.fetp_id">
+<div>
 <p>
 <strong>Permissions:</strong><br>
 <span><i class="fa fa-circle perm0"></i> No contribution</span><br>
@@ -76,7 +76,12 @@
                         {{history_item.date}}
                     </span>
                     <span ng-if="userInfo.fetp_id">
-                        your response, {{history_item.date}}
+                        your response,
+                        <span ng-if="history_item.permission == 0"><i class="fa fa-circle perm0"></i> no contribution</span>
+                        <span ng-if="history_item.permission == 1"><i class="fa fa-circle perm1"></i> paraphrase / don't attribute</span>
+                        <span ng-if="history_item.permission == 2"><i class="fa fa-circle perm2"></i> quote / don't attribute</span>
+                        <span ng-if="history_item.permission == 3"><i class="fa fa-circle perm3"></i> quote / attribute</span>,
+                        {{history_item.date}}
                     </span>
         <!-- show reply button -->
         <a ng-if="!closerfi && (history_item.organization_id == userInfo.organization_id) " class="pull-right btn btn-default btn-sm" href="#/followup/{{id}}/{{history_item.response_id}}">Reply</a>
