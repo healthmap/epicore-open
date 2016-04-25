@@ -1,5 +1,5 @@
 <?php
-define('EMAIL_NOREPLY', 'mod@healthmap.org');
+define('EMAIL_NOREPLY', 'mod@epicore.org');
 define('LAT_LON_PRECISION', 2);
 define('EPICORE_URL', 'http://epicore.org');
 define('DEFAULT_RADIUS', 400); // in km
