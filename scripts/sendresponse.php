@@ -24,53 +24,55 @@ if(is_numeric($event_id)) {
     $event_info = $ei->getInfo();
     $response_id = $ei->insertResponse($dbdata);
 
-    // do this so you get the perm and text formatted correctly for the email
-    $response_info = EventInfo::getResponse($response_id);
-    $custom_vars['RESPONSE_PERMISSION'] = $response_info['response_permission'];
-    $custom_vars['RESPONSE_TEXT'] = $response_info['response'];
-    $custom_vars['RESPONSE_ID'] = $response_id;
+    // send response to moderators if member had something to contribute
+    if ($dbdata['response_permission']  != 0) {
+        // do this so you get the permission and text formatted correctly for the email
+        $response_info = EventInfo::getResponse($response_id);
+        $custom_vars['RESPONSE_PERMISSION'] = $response_info['response_permission'];
+        $custom_vars['RESPONSE_TEXT'] = $response_info['response'];
+        $custom_vars['RESPONSE_ID'] = $response_id;
 
-    $msg = $ei->buildEmailForEvent($event_info, 'response', $custom_vars, 'text');
+        // build email
+        $msg = $ei->buildEmailForEvent($event_info, 'response', $custom_vars, 'text');
+        $emailtext = trim(str_replace("[EVENT_HISTORY]", $history, $msg));
+        $extra_headers['text_or_html'] = "html";
+        require_once "AWSMail.class.php";
 
-    // get the person who initiated the event request
-    $initiator = $ei->getInitiatorEmail();
+        // get moderator who initiated the event request
+        $initiator = $ei->getInitiatorEmail();
 
-    // get all moderators that sent followups for the event
-    $moderators = $ei->getFollowupEmail();
+        // get all moderators that sent followups for the event
+        $moderators = $ei->getFollowupEmail();
 
-    // make email to: list, and id list
-    $tolist[0] = $initiator['email'];
-    $idlist[0] = $initiator['user_id'];
-    $i = 1;
-    foreach ($moderators as $moderator){
-        if ($moderator['email'] != $initiator['email']) {
-            $tolist[$i] = $moderator['email'];
-            $idlist[$i++] = $moderator['user_id'];
+        // make email to: list, and id list
+        $tolist[0] = $initiator['email'];
+        $idlist[0] = $initiator['user_id'];
+        $i = 1;
+        foreach ($moderators as $moderator) {
+            if ($moderator['email'] != $initiator['email']) {
+                $tolist[$i] = $moderator['email'];
+                $idlist[$i++] = $moderator['user_id'];
+            }
         }
+
+        //get all fetp messages
+        $history = $ei->getEventHistoryAll($event_id);
+
+        // get event moderator info
+        $emoderator = $ei->getEventPerson($event_id);
+        // send a modified copy to pro-in for ProMED event moderator only
+        if ($emoderator['organization_id'] == PROMED_ID) {
+            array_push($tolist, EMAIL_PROIN);
+            array_push($idlist, PROMED_ID);
+
+        }
+        // send copy to epicore info
+        array_push($tolist, EMAIL_INFO_EPICORE);
+        array_push($idlist, EPICORE_ID);
+
+        $extra_headers['user_ids'] = $idlist;
+        AWSMail::mailfunc($tolist, "EPICORE Member response", $emailtext, EMAIL_NOREPLY, $extra_headers);
     }
-
-    //get all fetp messages
-    $history = $ei->getEventHistoryAll($event_id);
-
-    // send email to all moderators
-    $emailtext = trim(str_replace("[EVENT_HISTORY]", $history, $msg));
-    $extra_headers['text_or_html'] = "html";
-    require_once "AWSMail.class.php";
-
-    // get event moderator info
-    $emoderator = $ei->getEventPerson($event_id);
-    // send a modified copy to pro-in for ProMED event moderator only
-    if ($emoderator['organization_id'] == PROMED_ID){
-        array_push($tolist, EMAIL_PROIN);
-        array_push($idlist, PROMED_ID);
-
-    }
-    // send copy to epicore info
-    array_push($tolist, EMAIL_INFO_EPICORE);
-    array_push($idlist, EPICORE_ID);
-
-    $extra_headers['user_ids'] = $idlist;
-    AWSMail::mailfunc($tolist, "EPICORE Member response", $emailtext, EMAIL_NOREPLY, $extra_headers);
 
     $status = "success";
     $path = "success/2";
