@@ -4,6 +4,7 @@ Git clone
 example. git clone https://github.com/healthmap/epicore.git destination_dir
 
 Additional steps
+
 1. copy data files and set permissions
 sudo cp -R /var/www/html/epicore.org/data/ destination_dir/
 cd destination_dir/data
