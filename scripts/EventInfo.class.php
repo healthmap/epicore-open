@@ -533,14 +533,14 @@ class EventInfo
         $db = getDB();
         if ($fetp_id) { //  get followup sent to single fetp
             $followups = $db->getAll("SELECT text, action_date, requester_id, fetp_id, f.followup_id, count(fetp_id) as fetp_count FROM followup f, event_fetp fe WHERE f.event_id=fe.event_id
-                        AND f.followup_id=fe.followup_id AND f.event_id = ? AND fetp_id = ?  GROUP BY text ORDER BY action_date", array($event_id, $fetp_id));
+                        AND f.followup_id=fe.followup_id AND f.event_id = ? AND fetp_id = ?  GROUP BY fe.followup_id ORDER BY action_date", array($event_id, $fetp_id));
             // get fetp response from single fetp
             $responses = $db->getAll("SELECT response, responder_id, response_date, response_permission, useful from response WHERE event_id = ? AND responder_id = ?
                                   ORDER BY response_date", array($event_id, $fetp_id));
         }
         else{   // get followups sent to all fetps
             $followups = $db->getAll("SELECT text, action_date, requester_id, fetp_id, f.followup_id, count(fetp_id) as fetp_count FROM followup f, event_fetp fe WHERE f.event_id=fe.event_id
-                        AND f.followup_id=fe.followup_id AND f.event_id = ? GROUP BY text ORDER BY action_date", array($event_id));
+                        AND f.followup_id=fe.followup_id AND f.event_id = ? GROUP BY fe.followup_id ORDER BY action_date", array($event_id));
             // get fetp responses from all fetps
             $responses = $db->getAll("SELECT response, response_id, responder_id, response_date, response_permission, useful, countrycode from response, fetp WHERE fetp_id = responder_id AND event_id = ?
                                   ORDER BY response_date", array($event_id));
