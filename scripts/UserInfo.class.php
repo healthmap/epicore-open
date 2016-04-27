@@ -718,7 +718,7 @@ class UserInfo
             $user['Member ID'] = $applicant['member_id'];
             $user['City'] = $applicant['city'];
             $user['State/Province'] = $applicant['state'];
-            $user['Member Country'] = $std_countries[$applicant['country_code']];
+            $user['Country'] = $std_countries[$applicant['country_code']];
             $user['Job Title'] = $applicant['job_title'];
             $user['Organization'] = $applicant['organization'];
             //Sector
