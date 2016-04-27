@@ -37,7 +37,7 @@
             </div>
 
             <div class="form-group" ng-init>
-                <button ng-click="changeRequestStatus(formData, 'Close', changeStatusForm.$valid)" type="submit" class="submit btn btn-primary">Close RFI</button>
+                <button ng-click="changeRequestStatus(formData, 'Close', changeStatusForm.$valid)" ng-disabled="submitDisabled" type="submit" class="submit btn btn-primary">Close RFI</button>
             </div><!-- /input-group -->
         </form>
 

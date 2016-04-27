@@ -24,7 +24,7 @@
             </div>
 
             <div class="form-group">
-                <button ng-click="changeRequestStatus(formData, 'Reopen', changeStatusForm.$valid)" type="submit" class="submit btn btn-primary">Re-open request</button>
+                <button ng-click="changeRequestStatus(formData, 'Reopen', changeStatusForm.$valid)" ng-disabled="submitDisabled" type="submit" class="submit btn btn-primary">Re-open request</button>
             </div><!-- /input-group -->
         </form>
 

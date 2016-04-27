@@ -589,6 +589,7 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
 
         $scope.sendFollowup = function(formData, isValid) {
             if(isValid) {
+                $scope.submitDisabled = true;
                 formData['uid'] = $scope.userInfo.uid;
                 formData['event_id'] = $routeParams.id;
                 if($routeParams.response_id) {
@@ -596,6 +597,7 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
                 }
                 $http({ url: 'scripts/sendfollowup.php', method: "POST", data: formData
                 }).success(function (data, status, headers, config) {
+                    $scope.submitDisabled = false;
                     $location.path('/success/3');
                 });
             }
@@ -632,6 +634,7 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
                 }
             }
             if(isValid) {
+                $scope.submitDisabled = true;
                 formData['event_id'] = $routeParams.id;
                 formData['uid'] = $scope.userInfo.uid;
                 formData['thestatus'] = thestatus;
@@ -640,6 +643,7 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
                 formData['notuseful_rids'] = notuseful_rids.toString();
                 $http({ url: 'scripts/changestatus.php', method: "POST", data: formData
                 }).success(function (data, status, headers, config) {
+                    $scope.submitDisabled = false;
                     var pathid = thestatus == "Reopen" ? 5 : 4;
                     $location.path('/success/'+pathid);
                 });
