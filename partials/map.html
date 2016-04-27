@@ -15,7 +15,7 @@
             <h3>You do not have access to this page.</h3>
         </div>
         <div ng-hide="!superuser">
-            {{numMembers}} Members
+            {{numMembers}} Members in {{numCountries}} Countries
             <ui-gmap-google-map center="map.center" zoom="map.zoom" options="options"  id="member-map">
                 <ui-gmap-markers models="markers" coords="'self'" icon="'icon'" click="'onClick'">
                     <windows show="show">
@@ -23,6 +23,21 @@
                     </windows>
                 </ui-gmap-markers>
             </ui-gmap-google-map>
+        </div>
+
+
+        <br>
+        <div class="table-responsive col-xs-4">
+            <table class='table table-hover table-bordered'>
+                <tr>
+                    <th>Country</th>
+                    <th># Members</th>
+                </tr>
+                <tr ng-repeat="(key, value) in country_members" >
+                    <td>{{key}}</td>
+                    <td>{{value}}</td>
+                </tr>
+            </table>
         </div>
     </div>
 </div>

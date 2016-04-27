@@ -536,6 +536,8 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
                 $scope.markers = data['markers'];
                 $scope.showpage = true;
                 $scope.numMembers = $scope.markers.length;
+                $scope.country_members = data['country_members'];
+                $scope.numCountries = Object.keys($scope.country_members).length;
             }
     });
 
