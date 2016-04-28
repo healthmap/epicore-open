@@ -513,9 +513,10 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
         ];
 
 }).controller('mapController', function($scope, $http, $cookieStore) {
-    // only allow superusers for admin
+    // only allow moderators
     $scope.userInfo = $cookieStore.get('epiUserInfo');
-    $scope.superuser = (typeof($scope.userInfo) != "undefined") ? $scope.userInfo.superuser: false;
+    //$scope.superuser = (typeof($scope.userInfo) != "undefined") ? $scope.userInfo.superuser: false;
+    $scope.isOrganization = $scope.userInfo.isOrganization;
     $scope.showpage = false;
 
     // set map options

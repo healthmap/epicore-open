@@ -11,10 +11,10 @@
         <div ng-if="!showpage">
             <i class="fa fa-spinner fa-spin"></i> Please wait...
         </div>
-        <div ng-if="!superuser">
+        <div ng-if="!isOrganization">
             <h3>You do not have access to this page.</h3>
         </div>
-        <div ng-hide="!superuser">
+        <div ng-hide="!isOrganization">
             {{numMembers}} Members in {{numCountries}} Countries <a href="" ng-click="isCollapsed = !isCollapsed"><i class="fa fa-plus"></i></a>
             <div ng-show="!isCollapsed">
             <ui-gmap-google-map center="map.center" zoom="map.zoom" options="options"  id="member-map">
