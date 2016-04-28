@@ -15,7 +15,8 @@
             <h3>You do not have access to this page.</h3>
         </div>
         <div ng-hide="!superuser">
-            {{numMembers}} Members in {{numCountries}} Countries
+            {{numMembers}} Members in {{numCountries}} Countries <a href="" ng-click="isCollapsed = !isCollapsed"><i class="fa fa-plus"></i></a>
+            <div ng-show="!isCollapsed">
             <ui-gmap-google-map center="map.center" zoom="map.zoom" options="options"  id="member-map">
                 <ui-gmap-markers models="markers" coords="'self'" icon="'icon'" click="'onClick'">
                     <windows show="show">
@@ -23,11 +24,10 @@
                     </windows>
                 </ui-gmap-markers>
             </ui-gmap-google-map>
+            </div>
         </div>
-
-
-        <br>
-        <div class="table-responsive col-xs-4">
+        <div class="table-responsive col-xs-4" ng-show="isCollapsed">
+            <br><br>
             <table class='table table-hover table-bordered'>
                 <tr>
                     <th>Country</th>
@@ -39,5 +39,9 @@
                 </tr>
             </table>
         </div>
+
+
+        <br>
+
     </div>
 </div>
