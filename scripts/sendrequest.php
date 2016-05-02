@@ -26,6 +26,7 @@ $event_info['alert_id'] = (int)$formvars->alert_id;
 
 $event_id = EventInfo::insertEvent($event_info);
 $ei = new EventInfo($event_id);
+$subject = "EPICORE Request For Information, " . $event_info['disease'] . ", " . $event_info['location'];
 
 // now send it to each FETP individually as they each need unique login token id
 $fetp_ids = explode(",", $formvars->fetp_ids);
@@ -40,7 +41,7 @@ foreach($fetp_emails as $fetp_id => $recipient) {
     $extra_headers['user_ids'] = $idlist;
     $recipient = trim($recipient);
     $custom_emailtext = trim(str_replace("[TOKEN]", $tokens[$fetp_id], $emailtext));
-    $aws_resp = AWSMail::mailfunc($recipient, "EPICORE Request For Information", $custom_emailtext, EMAIL_NOREPLY, $extra_headers);
+    $aws_resp = AWSMail::mailfunc($recipient, $subject, $custom_emailtext, EMAIL_NOREPLY, $extra_headers);
 
 }
 
@@ -57,13 +58,13 @@ $custom_emailtext_proin = trim(str_replace("[PRO_IN]", $modfetp, $proin_emailtex
 if ($moderator['organization_id'] == PROMED_ID){
     $idlist[0] = PROMED_ID;
     $extra_headers['user_ids'] = $idlist;
-    $aws_resp = AWSMail::mailfunc(EMAIL_PROIN, "EPICORE Request For Information", $custom_emailtext_proin, EMAIL_NOREPLY, $extra_headers);
+    $aws_resp = AWSMail::mailfunc(EMAIL_PROIN, $subject, $custom_emailtext_proin, EMAIL_NOREPLY, $extra_headers);
 }
 
 // send copy to epicore info
 $idlist[0] = EPICORE_ID;
 $extra_headers['user_ids'] = $idlist;
-$aws_resp = AWSMail::mailfunc(EMAIL_INFO_EPICORE, "EPICORE Request For Information", $custom_emailtext_proin, EMAIL_NOREPLY, $extra_headers);
+$aws_resp = AWSMail::mailfunc(EMAIL_INFO_EPICORE, $subject, $custom_emailtext_proin, EMAIL_NOREPLY, $extra_headers);
 
 print json_encode(array('status' => 'success', 'fetps' => $fetp_ids));
 
