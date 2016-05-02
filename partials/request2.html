@@ -8,7 +8,7 @@
 <div class="wrapper dashboard">
 <div class="container">
     <div class="row">
-        <div id="form-container" class="col-xs-12 col-md-8">
+        <div id="form-container" class="col-xs-12">
             <form>
             <div class="intro">
                 <h3>Step 2 of 3:</h3> 
@@ -17,21 +17,20 @@
             </div>
 
             <div class="form-group">
-            <div class="radio"><label><input type="radio" name="filtertype" ng-value="radius" ng-click="recalcUsers(formData, 'radius');" ng-checked="radiussel">Selecting recipient members within the bounding box (surrounding the event location '{{formData.location}}'):</label></div>
-    <ui-gmap-google-map center="map.center" zoom="map.zoom" draggable="true" options="options" bounds="map.bounds" ng-if="radiussel" >
-        <ui-gmap-rectangle bounds="rectangle.bounds" stroke="rectangle.stroke" visible="true" fill="rectangle.fill" fit="false" editable="true" draggable="true" events="eventsRectangle">
-        </ui-gmap-rectangle>
-        <ui-gmap-markers models="markers" coords="'self'" icon="'icon'" click="'onClick'">
-            <windows show="show">
-                <div ng-non-bindable>{{title}}</div>
-            </windows>
-        </ui-gmap-markers>
-    </ui-gmap-google-map>
-            </div>
+                <div class="radio"><label><input type="radio" name="filtertype" ng-value="radius" ng-click="recalcUsers(formData, 'radius');" ng-checked="radiussel">Selecting recipient members within the bounding box (surrounding the event location '{{formData.location}}'):</label></div>
+                <div class="radio"><label><input type="radio" name="filtertype" ng-value="country" ng-click="recalcUsers(formData, 'country');" ng-checked="!radiussel">Selecting recipient members in a country or countries:<br><span class="smtext" ng-if="!radiussel">* select multiple countries by clicking on (or entering) each country</span></label></div>
 
-            <div class="form-group">
-            <div class="radio"><label><input type="radio" name="filtertype" ng-value="country" ng-click="recalcUsers(formData, 'country');" ng-checked="!radiussel">Selecting recipient members in a country or countries:<br><span class="smtext" ng-if="!radiussel">* hold down ctrl key (windows) or command key (mac) to select multiple</span></label></div>
-                    <select class="form-control" ng-change="recalcUsers(formData, 'country');" ng-model="formData.countries" id="countries" name="countries" multiple ng-if="!radiussel">
+                <ui-gmap-google-map center="map.center" zoom="map.zoom" draggable="true" options="options" bounds="map.bounds" ng-if="radiussel" >
+                    <ui-gmap-rectangle bounds="rectangle.bounds" stroke="rectangle.stroke" visible="true" fill="rectangle.fill" fit="false" editable="true" draggable="true" events="eventsRectangle">
+                    </ui-gmap-rectangle>
+                    <ui-gmap-markers models="markers" coords="'self'" icon="'icon'" click="'onClick'">
+                        <windows show="show">
+                            <div ng-non-bindable>{{title}}</div>
+                        </windows>
+                    </ui-gmap-markers>
+                </ui-gmap-google-map>
+
+                <select chosen="" class="chosen-select form-control" ng-change="recalcUsers(formData, 'country');" ng-model="formData.countries" id="countries" name="countries" multiple ng-if="!radiussel">
 
 <option value="AF">Afghanistan</option> 
 <option value="AX">Åland Islands</option>
@@ -46,9 +45,7 @@
 <option value="AR">Argentina</option>
 <option value="AM">Armenia</option>
 <option value="AW">Aruba</option>
-
 <option value="AU">Australia</option>
-
 <option value="AT">Austria</option>
 <option value="AZ">Azerbaijan</option>
 <option value="BS">Bahamas</option>
@@ -148,9 +145,7 @@
 <option value="JE">Jersey</option>
 <option value="JO">Jordan</option>
 <option value="KZ">Kazakhstan</option>
-
 <option value="KE">Kenya</option>
-
 <option value="KI">Kiribati</option>
 <option value="KP">Korea, Democratic People's Republic of</option>
 <option value="KR">Korea, Republic of</option>
@@ -252,9 +247,7 @@
 <option value="TW">Taiwan</option>
 <option value="TJ">Tajikistan</option>
 <option value="TZ">Tanzania, United Republic of</option>
-
 <option value="TH">Thailand</option>
-
 <option value="TL">Timor-leste</option>
 <option value="TG">Togo</option>
 <option value="TK">Tokelau</option>
@@ -269,9 +262,7 @@
 <option value="UA">Ukraine</option>
 <option value="AE">United Arab Emirates</option>
 <option value="GB">United Kingdom</option>
-
 <option value="US">United States</option>
-
 <option value="UM">United States Minor Outlying Islands</option>
 <option value="UY">Uruguay</option>
 <option value="UZ">Uzbekistan</option>
