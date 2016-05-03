@@ -576,6 +576,9 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
                 if (response.EventsList.fetp_ids != null && response.EventsList.fetp_ids.indexOf($scope.userInfo.fetp_id) != -1) {
                     $scope.isAuthorizedFETP = true;
                 }
+                if (response.EventsList.fetp_ids){
+                    $scope.num_fetp = response.EventsList.fetp_ids.length;
+                }
             }
 
             $scope.eventsList = response.EventsList;
