@@ -65,7 +65,7 @@
 
     <!-- FETP Response Messages (Moderator or FETP)-->
     <div  class="show-message-fetp" ng-if="(history_item.type == 'Member Response') && (userInfo.uid || (history_item.fetp_id == userInfo.fetp_id)) && !(closerfi && (history_item.permission == 0))">
-        <a href="" class="inherit" ng-click="isCollapsed = !isCollapsed"><i class="fa fa-plus"></i></a>
+        <a href="" class="inherit" ng-click="isCollapsed = !isCollapsed"><span ng-if="history_item.permission != 0"><i class="fa fa-plus"></i></span></a>
                     <span ng-if="userInfo.uid">
                         Member {{history_item.fetp_id}} Response,
                         {{history_item.country}},
