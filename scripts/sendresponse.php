@@ -24,6 +24,9 @@ if(is_numeric($event_id)) {
     $event_info = $ei->getInfo();
     $response_id = $ei->insertResponse($dbdata);
 
+    $subject = "EPICORE RFI Response - " . $event_info['disease'] . ", " . $event_info['location'];
+
+
     // send response to moderators if member had something to contribute
     if ($dbdata['response_permission']  != 0) {
         // do this so you get the permission and text formatted correctly for the email
@@ -71,7 +74,7 @@ if(is_numeric($event_id)) {
         array_push($idlist, EPICORE_ID);
 
         $extra_headers['user_ids'] = $idlist;
-        AWSMail::mailfunc($tolist, "EPICORE Member response", $emailtext, EMAIL_NOREPLY, $extra_headers);
+        AWSMail::mailfunc($tolist, $subject, $emailtext, EMAIL_NOREPLY, $extra_headers);
     }
 
     $status = "success";

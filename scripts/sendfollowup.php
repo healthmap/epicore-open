@@ -43,10 +43,12 @@ if(isset($formvars->response_id) && is_numeric($formvars->response_id))  {
     $followupText = $ei->buildEmailForEvent($event_info, "followup-specific", $custom_vars, 'text');
     $followupText_proin = $ei->buildEmailForEvent($event_info, "followup-specific_proin", $custom_vars, 'text');
     $followup_info['response_id'] = $formvars->response_id;
+    $subject = "EPICORE Mod Response - " . $event_info['disease'] . ", " . $event_info['location'];
 } else { // if no respsonse_id (follow-up to all), get fetp_ids from database for that event
     $fetp_ids = $ei->getFETPRecipients();
     $followupText = $ei->buildEmailForEvent($event_info, "followup", $custom_vars, 'text');
     $followupText_proin = $ei->buildEmailForEvent($event_info, "followup_proin", $custom_vars, 'text');
+    $subject = "EPICORE RFI Follow-up - " . $event_info['disease'] . ", " . $event_info['location'];
 }
 
 // save the fetp_ids in the event_fetp table
@@ -75,7 +77,7 @@ foreach($fetp_emails as $fetp_id => $recipient) {
     $history = $ei->getEventHistoryFETP($fetp_id, $event_id);
     $emailtext = trim(str_replace("[EVENT_HISTORY]", $history, $followupText));
     $emailtext = trim(str_replace("[TOKEN]", $tokens[$fetp_id], $emailtext));
-    $retval = AWSMail::mailfunc($recipient, "EPICORE Request For Information", $emailtext, EMAIL_NOREPLY, $extra_headers);
+    $retval = AWSMail::mailfunc($recipient, $subject, $emailtext, EMAIL_NOREPLY, $extra_headers);
 }
 
 // send email to all moderators for the event /////////////////////
@@ -124,7 +126,7 @@ if (!empty($tolist)) {
     $proin_emailtext = trim(str_replace("[EVENT_HISTORY]", $history, $followupText_proin));
     $custom_emailtext_proin = trim(str_replace("[PRO_IN]", $modfetp, $proin_emailtext));
     $extra_headers['user_ids'] = $idlist;
-    $retval = AWSMail::mailfunc($tolist, "EPICORE Request For Information", $custom_emailtext_proin, EMAIL_NOREPLY, $extra_headers);
+    $retval = AWSMail::mailfunc($tolist, $subject, $custom_emailtext_proin, EMAIL_NOREPLY, $extra_headers);
 }
 
 print json_encode(array('status' => 'success', 'fetps' => $fetp_ids));
