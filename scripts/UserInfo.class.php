@@ -27,12 +27,13 @@ class UserInfo
         return $this->db->getOne("SELECT organization_id FROM user WHERE user_id = ?", array($this->id));
     }
 
-    function getFETPRequests($status)
+    function getFETPRequests($status, $fetp_id = '')
     {
+        $member_id = $fetp_id ? $fetp_id : $this->id;
         $q = $this->db->query("SELECT event.event_id, event.title, event.disease, event.create_date, event_fetp.send_date, place.name AS location
                                 FROM event_fetp, event, place
                                 WHERE fetp_id = ? AND event_fetp.event_id = event.event_id AND event.place_id = place.place_id
-                                ORDER BY send_date DESC", array($this->id));
+                                ORDER BY send_date DESC", array($member_id));
         $status = $status ? $status : 'O';
         while($row = $q->fetchRow()) {
             // responses are recorded by the FETPs user id, not FETP_id
@@ -52,13 +53,15 @@ class UserInfo
                 $requests[$row['event_id']]['last_send_date'] = $requests[$row['event_id']]['iso_send_dates'][0];
                 
                 // get the FETPs responses to that event
-                $respq = $this->db->query("SELECT response_id, response_date FROM response WHERE responder_id = ? AND event_id = ? ORDER BY response_date DESC", array($this->id, $row['event_id']));
+                $respq = $this->db->query("SELECT response_id, response_date, useful FROM response WHERE responder_id = ? AND event_id = ? ORDER BY response_date DESC", array($member_id, $row['event_id']));
                 $response_dates = [];
+                $response_use = [];
                 while($resprow = $respq->fetchRow()) {
                     array_push($response_dates, date('j-M-Y H:i', strtotime($resprow['response_date'])));
-                    //$requests[$row['event_id']]['response_dates'][$resprow['response_id']] = date('n/j/Y H:i', strtotime($resprow['response_date']));
+                    array_push($response_use, $resprow['useful']);
                 }
                 $requests[$row['event_id']]['response_dates'] = array_unique($response_dates);
+                $requests[$row['event_id']]['response_use'] = $response_use;
             }
         }
         return $requests;
@@ -700,18 +703,18 @@ class UserInfo
     }
 
     // get all members for csv file
-    static function getMembersInfo($members) {
+    function getMembersInfo($members) {
         $std_countries = unserialize(COUNTRIES);
 
 
         // save all member info
         $user = array();
         $all_members = array();
-        foreach($members as $applicant){
+        foreach($members as $applicant) {
+
             $user['Application Date'] = $applicant['apply_date'];
             $user['Approval Date'] = $applicant['approve_date'];
             $user['Acceptance Date'] = $applicant['accept_date'];
-            //$user['Name'] = $applicant['firstname'] . ' ' . $applicant['lastname'];
             $user['First name'] = $applicant['firstname'];
             $user['Last name'] = $applicant['lastname'];
             $user['email'] = $applicant['email'];
@@ -860,6 +863,35 @@ class UserInfo
             // user set password
             $user['pword'] = $applicant['pword'];
 
+            // get open and closed rfi's
+            $open_rfis = $this->getFETPRequests('O', $applicant['member_id']);
+            $closed_rfis = $this->getFETPRequests('C', $applicant['member_id']);
+
+            // count rfi stats
+            $user['# RFIs'] = count($open_rfis) + count($closed_rfis);
+            $user['# Responses'] = 0;
+            $user['no contribution'] = 0;
+            $user['not helpful'] = 0;
+            $user['helpful-no promed'] = 0;
+            $user['helpful-promed'] = 0;
+            foreach ($open_rfis as $orfi) {
+                if ($orfi['response_dates']) {
+                    $user['# Responses'] += count($orfi['response_dates']);
+                    $user['no contribution'] += count(array_keys($orfi['response_use'], null));
+                    $user['not helpful'] += count(array_keys($orfi['response_use'], '0'));
+                    $user['helpful-no promed'] += count(array_keys($orfi['response_use'], '1'));
+                    $user['helpful-promed'] += count(array_keys($orfi['response_use'], '2'));
+                }
+            }
+            foreach ($closed_rfis as $crfi) {
+                if ($crfi['response_dates'])
+                    $user['# Responses'] += count($crfi['response_dates']);
+                $user['no contribution'] += count(array_keys($crfi['response_use'], null));
+                $user['not helpful'] += count(array_keys($crfi['response_use'], '0'));
+                $user['helpful-no promed'] += count(array_keys($crfi['response_use'], '1'));
+                $user['helpful-promed'] += count(array_keys($crfi['response_use'], '2'));
+            }
+            
             // save user in the array
             array_push($all_members, $user);
 

@@ -13,7 +13,8 @@ function saveMembersToCSV(){
     $members = UserInfo::getMembers();
 
     // save all members in a csv file
-    $membersInfo = UserInfo::getMembersInfo($members);
+    $uinfo = new UserInfo('1', null);
+    $membersInfo = $uinfo->getMembersInfo($members);
     $file = "../data/approval.csv";
     saveToCSV($membersInfo, $file);
 }
