@@ -1103,7 +1103,7 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
                 $http({
                     url: 'scripts/deleteuser.php', method: "POST", data: data
                 }).success(function (data, status, headers, config) {
-                    if (data['status'] = 'success')
+                    if (data['status'] == 'success')
                         $route.reload();
                     else{
                         alert(data['message']);

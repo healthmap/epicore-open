@@ -87,6 +87,9 @@ function sendMail($email, $name, $subject, $status, $user_id){
     else if($status =='launch_reminder'){
         $emailtemplate = file_get_contents("../emailtemplates/launch_reminder.html");
     }
+    else if($status =='delete'){
+        $emailtemplate = file_get_contents("../emailtemplates/delete.html");
+    }
     else{
         return false;
     }
