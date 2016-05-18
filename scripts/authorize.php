@@ -4,6 +4,9 @@ Epicore authorize with Tephinet
 This page gets hit by Tephinet when the user authorizes the request
 takes the key/secret sent by tephinet and sends it back to get the user associated with that token
 */
+// disabled Tephinet access for now. Just got to home page.
+header("Location: ../#/home");
+
 require_once "const.inc.php";
 
 // make sure request came from Tephinet
@@ -29,7 +32,8 @@ $returnval = json_decode($gurl->get($webservice));
 print_r($returnval);
 
 // turn the user id into a ticket id and redirect to fetp/:tid
-if($returnval->user) {
+// disabled Tephinet
+/*if($returnval->user) {
     $db = getDB();
     $ticket = md5(uniqid(rand(), true));
     $db->query("INSERT INTO ticket (fetp_id, val, exp) VALUES (?, ?, ?)", array($returnval->user, $ticket, date('Y-m-d H:i:s', strtotime("+10 days"))));
@@ -37,5 +41,6 @@ if($returnval->user) {
     header("Location: ../#/fetp/?t=$ticket");
 } else {
     header("Location: ../#/home");
-}
+}*/
+
 ?>
