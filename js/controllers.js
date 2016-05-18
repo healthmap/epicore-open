@@ -598,13 +598,16 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
                 $scope.submitDisabled = true;
                 formData['uid'] = $scope.userInfo.uid;
                 formData['event_id'] = $routeParams.id;
+                if ($routeParams.id){
+                    var eid = $routeParams.id;
+                }
                 if($routeParams.response_id) {
                     formData['response_id'] = $routeParams.response_id;
                 }
                 $http({ url: 'scripts/sendfollowup.php', method: "POST", data: formData
                 }).success(function (data, status, headers, config) {
                     $scope.submitDisabled = false;
-                    $location.path('/success/3');
+                    $location.path('/success/3/' + eid);
                 });
             }
         }
@@ -1006,6 +1009,7 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
         messages[7] = "Your RFI has been deleted.";
         messages[8] = "Your RFI responses have been updated.";
         $scope.id = $routeParams.id;
+        $scope.eid = $routeParams.eid;
         $scope.messageResponse = {};
         $scope.messageResponse.text = messages[$scope.id];
 

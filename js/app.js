@@ -25,6 +25,7 @@ app.config(function($routeProvider) {
         when("/request3", {templateUrl: "partials/request3.html", controller: "requestController"}).
         when("/request_edit/:id", {templateUrl: "partials/request_edit.html", controller: "editRequestController"}).
         when("/success/:id", {templateUrl: "partials/success.html", controller: "successController"}).
+        when("/success/:id/:eid", {templateUrl: "partials/success.html", controller: "successController"}).
         when("/about", {templateUrl: "partials/about.html"}).
         when("/how", {templateUrl: "partials/howitworks.html"}).
         when("/who", {templateUrl: "partials/whocanapply.html"}).
