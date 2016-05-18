@@ -615,7 +615,7 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
             var useful_rids = [];
             var usefulpromed_rids = [];
             var notuseful_rids = [];
-            if(isValid && (thestatus == 'Close') && ($scope.validResponses > 0)) {
+            if(isValid && (thestatus == 'Close' || thestatus == 'Update') && ($scope.validResponses > 0)) {
                 for (var h in $scope.eventsList.history) {
                     var h_rid = $scope.eventsList.history[h].response_id;
                     var h_type = $scope.eventsList.history[h].type;
@@ -650,8 +650,15 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
                 $http({ url: 'scripts/changestatus.php', method: "POST", data: formData
                 }).success(function (data, status, headers, config) {
                     $scope.submitDisabled = false;
-                    var pathid = thestatus == "Reopen" ? 5 : 4;
-                    $location.path('/success/'+pathid);
+                    var pathid = 4;
+                    if (thestatus == "Update"){
+                        pathid = 8;
+                    } else if (thestatus == "Reopen"){
+                        pathid = 5;
+                    } else { // closed
+                        pathid = 4;
+                    }
+                    $location.path('/success/' + pathid);
                 });
             }
         };
@@ -997,6 +1004,7 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
         messages[5] = "Your RFI has been reopened and an email has gone out to the original members contacted.";
         messages[6] = "Your RFI has been updated.";
         messages[7] = "Your RFI has been deleted.";
+        messages[8] = "Your RFI responses have been updated.";
         $scope.id = $routeParams.id;
         $scope.messageResponse = {};
         $scope.messageResponse.text = messages[$scope.id];

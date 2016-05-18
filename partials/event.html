@@ -47,21 +47,29 @@
 
 <div class="row" ng-show="isAuthorizedFETP || (isOrganization && eventsList.event_id)">
     <div class="col-xs-12">
-        <!-- Show Event History Messages -->
+        <form name="changeStatusForm">
+            <div class="form-group">
+                <!-- Show Event History Messages -->
 
-        <div class="event-item" ng-repeat="history_item in eventsList.history">
-            <!-- Original Event Request Message in same organization (Moderator or FETP)-->
-            <div ng-if="(history_item.type == 'Event Request')">
-                    <p><strong>Title:</strong> {{history_item.title}}<br>
-                        <strong>Disease:</strong> {{history_item.disease}}<br>
-                        <strong>Location:</strong> {{history_item.location}}<br>
-                        <strong>Date:</strong> {{history_item.date}}</p>
-                        <strong>{{num_fetp}} members on RFI # {{eventsList.event_id}}:</strong> <br><br>
+                <div class="event-item" ng-repeat="history_item in eventsList.history">
+                    <!-- Original Event Request Message in same organization (Moderator or FETP)-->
+                    <div ng-if="(history_item.type == 'Event Request')">
+                            <p><strong>Title:</strong> {{history_item.title}}<br>
+                                <strong>Disease:</strong> {{history_item.disease}}<br>
+                                <strong>Location:</strong> {{history_item.location}}<br>
+                                <strong>Date:</strong> {{history_item.date}}</p>
+                                <strong>{{num_fetp}} members on RFI # {{eventsList.event_id}}:</strong> <br><br>
+                    </div>
+                </div>
+
+                <div ng-include="'partials/messagehistory.html'" ng-init="closerfi=''"></div><br>
+
+                <div class="form-group"  ng-if="(changeStatusText != 'Close') && isAuthorizedToFollowup">
+                    <button ng-click="changeRequestStatus(formData, 'Update', changeStatusForm.$valid)" ng-disabled="submitDisabled" type="submit" class="submit btn btn-primary">Update Response Ratings</button>
+                </div><!-- /input-group -->
+
             </div>
-        </div>
-
-        <div ng-include="'partials/messagehistory.html'" ng-init="closerfi=''"></div><br>
-
+        </form>
     </div>
 </div><!--row-->
 

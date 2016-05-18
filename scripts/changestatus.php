@@ -12,12 +12,32 @@ $usefulpromed_rids = $formvars->usefulpromed_rids;
 $notuseful_rids = $formvars->notuseful_rids;
 
 if(is_numeric($event_id) && is_numeric($user_id)) {
-    $thestatus = $formvars->thestatus == "Reopen" ? 'O' : 'C';
+    //$thestatus = $formvars->thestatus == "Reopen" ? 'O' : 'C';
+    if ($formvars->thestatus == "Reopen")
+        $thestatus = 'O';
+    elseif ($formvars->thestatus == "Closed")
+        $thestatus = 'C';
+    elseif ($formvars->thestatus == "Update")
+        $thestatus = 'U';
+    else
+        $thestatus = 'none';
     $ei = new EventInfo($event_id);
     $event_info = $ei->getInfo();
     // reason is one of the radio button choices on the close event form
     $reason = isset($formvars->reason) && is_numeric($formvars->reason) ? $formvars->reason : '';
-    $return_val = $ei->changeStatus($thestatus, $user_id, $formvars->notes, $reason);
+    if ($thestatus == 'O' || $thestatus == 'C') {
+        $return_val = $ei->changeStatus($thestatus, $user_id, $formvars->notes, $reason);
+    }
+    else if($thestatus == 'U') {
+        // update response status (useful or not)
+        $ei->setResponseStatus($useful_rids, 1);
+        $ei->setResponseStatus($usefulpromed_rids, 2);
+        $ei->setResponseStatus($notuseful_rids, 0);
+        $return_val = 0;
+    }
+    else{
+        $return_val = 0;
+    }
 
     if($return_val == 1) {
         // set response status (useful or not)
@@ -108,7 +128,10 @@ if(is_numeric($event_id) && is_numeric($user_id)) {
 
         print json_encode(array('status' => $status));
         exit;
-    } else {
+    } elseif ($thestatus = 'none'){
+        $error = "invalid RFI status";
+    }
+    else {
         $error = "requester and owner not the same";
     }
 } else {
