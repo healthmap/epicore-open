@@ -1167,7 +1167,7 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
                         url: 'scripts/approveUser.php', method: "POST", data: data
                     }).success(function (respdata, status, headers, config) {
                         if (respdata['status'] == 'success') {
-                            $scope.test_message = "You passed the test! <br><br> You can now login to the Epicore platform using your email and password.";
+                            $scope.test_message = "You passed the test! <br><br> You can now login to the Epicore platform using your email and password.  Your certificate of recognition is available on the training page after you login.";
                             $scope.passed = true;
                             // update cookie
                             $scope.userInfo.status = 'A';
@@ -1178,7 +1178,7 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
                         }
                     });
                 }else{ // member already approved
-                    $scope.test_message = "You passed the test! <br><br> You can now login to the Epicore platform using your email and password.";
+                    $scope.test_message = "You passed the test! <br><br> You can now login to the Epicore platform using your email and password. Your certificate of recognition is available on the training page after you login.";
                     $scope.passed = true;
                 }
             }
