@@ -1,6 +1,8 @@
 
 ## Additional Setup
 
+destination_dir is the git cloned directory.
+
 ### copy data files and set permissions
 
 sudo cp -R /var/www/html/epicore.org/data/ destination_dir/
