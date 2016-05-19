@@ -1185,6 +1185,27 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
 
         };
 
+    }).controller('certController', function($scope, $cookieStore, $http) {
+
+    //get member info
+    $scope.userInfo = $cookieStore.get('epiUserInfo');
+    var data = {};
+    data['uid'] = $scope.userInfo.fetp_id;
+    data['idtype'] = 'fetp';
+    $http({ url: 'scripts/getapplicant.php', method: "POST", data: data
+    }).success(function (data, status, headers, config) {
+
+        $scope.member_name = data.firstname + ' ' + data.lastname;
+        $scope.approve_date = data.approve_date;
+        var month = new Array("January", "February", "March",
+            "April", "May", "June", "July", "August", "September",
+            "October", "November", "December");
+        var d = new Date(data.approve_date);
+        var curr_date = d.getDate();
+        $scope.approve_date = d.getDate() + "th Day of " + month[(d.getMonth())] + ", " + d.getFullYear();
+
+    });
+
         /* filter for trusted HTML */
     }).filter('to_trusted', ['$sce', function($sce){
         return function(text) {

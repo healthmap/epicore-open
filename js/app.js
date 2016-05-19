@@ -42,14 +42,13 @@ app.config(function($routeProvider) {
         when("/application/:id/:action/:idtype", {templateUrl: "partials/application_new.html", controller: "userController"}).
         when("/approval", {templateUrl: "partials/approval.html", controller: "approvalController"}).
         when("/login", {templateUrl: "partials/login.html"}).
-        //when("/welcome", {templateUrl: "partials/welcome.html", controller: "fetpController"}).
-        //when("/welcome", {templateUrl: "partials/welcome_new.html", controller: "fetpController"}).
         when("/setpassword", {templateUrl: "partials/setpassword.html"}).
         when("/resetpassword", {templateUrl: "partials/resetpassword.html"}).
         when("/home", {templateUrl: "partials/home.html"}).
         when("/trainingvideos", {templateUrl: "partials/trainingvideos.html"}).
         when("/training", {templateUrl: "partials/test.html", controller: "testController"}).
-        otherwise({redirectTo: '/home'});
+        when("/certificate", {templateUrl: "partials/certificate.html", controller: "certController"}).
+  otherwise({redirectTo: '/home'});
     });
 
 /* google analytics */
