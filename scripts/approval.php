@@ -19,7 +19,25 @@ if (!$validated) {
     die ("Not authorized");
 }
 require_once 'UserInfo.class.php';
-$members = UserInfo::getMembers();
 
-// return all members
-print json_encode($members);
+// connect to memcache
+$mem = new Memcache();
+$mem->connect("127.0.0.1", 11211) or die ("Could not connect");
+
+// sete memcache key and expire time (in seconds)
+$cachekey = "KEY". md5('memberdata');
+$expire = 60*60*2; // 2 hours
+
+//use results from cache if available, else use from database
+$members = $mem->get($cachekey);
+if ($members) { // from cache
+    print json_encode($members->members);
+} else{ // from db
+    $members = UserInfo::getMembers();
+    $tmp_object = new stdClass;
+    $tmp_object->members = $members;
+    $status = $mem->set($cachekey, $tmp_object,false, $expire); // save members in cache
+    print json_encode($members);
+}
+
+
