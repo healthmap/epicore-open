@@ -1209,10 +1209,9 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
         var month = new Array("January", "February", "March",
             "April", "May", "June", "July", "August", "September",
             "October", "November", "December");
-        var d = new Date(data.approve_date);
-        var curr_date = d.getDate();
-        $scope.approve_date = d.getDate() + "th Day of " + month[(d.getMonth())] + ", " + d.getFullYear();
-
+        var d = data.approve_date.split(" ");
+        d = d[0].split("-");
+        $scope.approve_date = d[2] + "th Day of " + month[(Number(d[1]))-1] + ", " + d[0];
     });
 
         /* filter for trusted HTML */
