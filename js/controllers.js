@@ -673,9 +673,17 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
                 // formData comes in as object response_permissions: 0 
                 formData['event_id'] = $routeParams.id
                 formData['fetp_id'] = $scope.userInfo.fetp_id;
+                if ($routeParams.id){
+                    var eid = $routeParams.id;
+                }
                 $http({ url: 'scripts/sendresponse.php', method: "POST", data: formData
                 }).success(function (data, status, headers, config) {
-                    $location.path('/'+data['path']);
+                    if (data['status'] == 'success') {
+                        $location.path('/success/2/' + eid);
+                    } else{
+                        alert('response failed!');
+                        console.log('invalid event id.')
+                    }
                     $scope.submitDisabled = false;
                 });
             }
@@ -691,6 +699,7 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
                         $location.path('/success/7');
                     }
                     else{
+                        alert(data['reason']);
                         console.log(data['reason']);
                     }
                 }).error(function (data, status, headers, config) {

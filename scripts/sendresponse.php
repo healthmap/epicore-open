@@ -6,7 +6,6 @@ require_once "const.inc.php";
 require_once "UserInfo.class.php";
 
 $status = "error";
-$path = "success/4";
 
 $event_id = $formvars->event_id;
 
@@ -78,9 +77,8 @@ if(is_numeric($event_id)) {
     }
 
     $status = "success";
-    $path = "success/2";
 }
 
-print json_encode(array('status' => $status, 'path' => $path, 'dbdata' => $dbdata));
+print json_encode(array('status' => $status, 'dbdata' => $dbdata));
 
 ?>
