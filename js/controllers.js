@@ -1216,7 +1216,15 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
             "October", "November", "December");
         var d = data.approve_date.split(" ");
         d = d[0].split("-");
-        $scope.approve_date = d[2] + "th Day of " + month[(Number(d[1]))-1] + ", " + d[0];
+        var dayof  = 'th Day of ';
+        if (d[2] == 1 || d[2] == 21 || d[2] == 31){
+            dayof = 'st Day of ';
+        } else if (d[2] == 2 || d[2] == 22){
+            dayof = 'nd Day of ';
+        } else if (d[2] == 3 || d[2] == 23) {
+            dayof = 'rd Day of ';
+        }
+        $scope.approve_date = Number(d[2]) + dayof + month[(Number(d[1]))-1] + ", " + d[0];
     });
 
         /* filter for trusted HTML */
