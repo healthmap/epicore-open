@@ -15,7 +15,7 @@ if(is_numeric($event_id) && is_numeric($user_id)) {
     //$thestatus = $formvars->thestatus == "Reopen" ? 'O' : 'C';
     if ($formvars->thestatus == "Reopen")
         $thestatus = 'O';
-    elseif ($formvars->thestatus == "Closed")
+    elseif ($formvars->thestatus == "Close")
         $thestatus = 'C';
     elseif ($formvars->thestatus == "Update")
         $thestatus = 'U';

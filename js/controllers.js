@@ -652,16 +652,21 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
                 formData['notuseful_rids'] = notuseful_rids.toString();
                 $http({ url: 'scripts/changestatus.php', method: "POST", data: formData
                 }).success(function (data, status, headers, config) {
-                    $scope.submitDisabled = false;
-                    var pathid = 4;
-                    if (thestatus == "Update"){
-                        pathid = 8;
-                    } else if (thestatus == "Reopen"){
-                        pathid = 5;
-                    } else { // closed
-                        pathid = 4;
+                    if (data['status'] == 'success') {
+                        $scope.submitDisabled = false;
+                        var pathid = 4;
+                        if (thestatus == "Update") {
+                            pathid = 8;
+                        } else if (thestatus == "Reopen") {
+                            pathid = 5;
+                        } else { // closed
+                            pathid = 4;
+                        }
+                        $location.path('/success/' + pathid);
+                    } else {
+                        console.log(data['reason']);
+                        alert(data['reason']);
                     }
-                    $location.path('/success/' + pathid);
                 });
             }
         };
