@@ -39,9 +39,9 @@ if ($action == 'training_reminder') {
                             and status='P' and pword_hash is not null and f.email
                             in (select email from maillist where online_course is null)");
     foreach ($maillist as $member) {
-        sendMail($member['email'], $member['firstname'], "Reminder | 80% of success is showing up!", $action, $member['fetp_id']);
+        sendMail($member['email'], $member['firstname'], "80% of success is showing up!", $action, $member['fetp_id']);
     }
-    sendMail('info@epicore.org', 'Info', "Reminder | 80% of success is showing up!", $action, '0');
+    sendMail('info@epicore.org', 'Info', "80% of success is showing up!", $action, '0');
 }
 
 // original launch members that did not apply
