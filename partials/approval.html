@@ -37,7 +37,7 @@
             <strong>Accept <i alt="accept" class="fa fa-check"></i></strong> : member has been accepted to take the training course.<br>
             <strong>Approve <i alt="approve" class="fa fa-certificate"></i></strong> : member has taken the training course and is approved to use the Epicore platform.<br>
                 <strong>Pre-approve <i alt="approve" class="fa fa-thumbs-o-up"></i></strong> : member has taken the training course and is pre-approved to use the Epicore platform.<br>
-            <strong>Deny <i alt="deny" class="fa fa-minus"></i></strong> : member was denied, and does not have access to the Epicore platform.<br>
+            <strong>Deny <i alt="deny" class="fa fa-times"></i></strong> : member was denied, and does not have access to the Epicore platform.<br>
             <!--<strong>Unsubscribe <i alt="unsubscribe" class="fa fa-times"></i></strong> : member was de-activated and does not have access to the Epicore platform.<br>-->
             <strong>Inactive</strong> : member has not been accepted to take the training course yet, and does not have access to the Epicore platform.</p>
 
@@ -79,7 +79,7 @@
                     <td>{{applicant.maillist_id}}</td>
                     <td>{{applicant.member_id}}</td>
                     <td>{{applicant.firstname}} {{applicant.lastname}}
-                        <a href="" ng-click="isCollapsed1 = !isCollapsed1"><i class="fa fa-plus"></i></a>
+                        <a href="" ng-click="isCollapsed1 = !isCollapsed1"><i class="fa fa-plus" ng-show="!isCollapsed1"></i><i class="fa fa-minus" ng-show="isCollapsed1"></i></a>
                         <ul ng-show="isCollapsed1" class="list-unstyled">
                             <li><b>email:</b> {{applicant.email}}</li>
                             <li><b>City:</b> {{applicant.city}}</li>
@@ -196,7 +196,7 @@
                         <button type="button" ng-click="approveApplicant(applicant.maillist_id,'pending_preapproved')" class="btn btn-default btn-sm stacked"><i alt="pre-approve" class="fa fa-thumbs-o-up"></i></a></button>
                     </td>
                     <td>
-                        <button type="button" ng-click="approveApplicant(applicant.maillist_id,'declined')" class="btn btn-default btn-sm stacked"><i alt="deny" class="fa fa-minus"></i></button>
+                        <button type="button" ng-click="approveApplicant(applicant.maillist_id,'declined')" class="btn btn-default btn-sm stacked"><i alt="deny" class="fa fa-times"></i></button>
                         <!--<button type="button" ng-click="approveApplicant(applicant.maillist_id,'unsubscribed')" class="btn btn-default btn-sm stacked"><i alt="unsubscribe" class="fa fa-times"></i></button>-->
                     </td>
                     <td>

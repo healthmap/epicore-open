@@ -37,7 +37,7 @@
                     <th width="50px">Replies with content</th>
                     <th width="50px">Replies nothing to contribute</th>
                 </tr>
-                <tr><th colspan="10" ng-click="isCollapsed1 = !isCollapsed1" class="link"><i class="fa fa-plus"></i> Initiated by you</th></tr>
+                <tr><th colspan="10" ng-click="isCollapsed1 = !isCollapsed1" class="link"><i ng-show="isCollapsed1" class="fa fa-plus"></i><i ng-show="!isCollapsed1" class="fa fa-minus"></i> Initiated by you</th></tr>
                 <tr ng-show="!isCollapsed1" ng-repeat="event in eventsList['yours'] | filter:query | orderBy:predicate:reverse" >
                     <td>{{event.event_id_int}}</td>
                     <td><a href="#/events/{{event.event_id}}">{{event.title}}</a></td>
@@ -58,7 +58,7 @@
                         <span>{{event.num_responses_nocontent}}</span>
                     </td>
                 </tr>
-                <tr><th colspan="10" class="link" ng-click="isCollapsed2 = !isCollapsed2"><i class="fa fa-plus"></i> Initiated by your organization (<span ng-if="userInfo.organization_id != 4"> {{userInfo.organization}}</span> <span ng-if="userInfo.organization_id == 4"> ProMED </span>)</th></tr>
+                <tr><th colspan="10" class="link" ng-click="isCollapsed2 = !isCollapsed2"><i class="fa fa-plus" ng-show="isCollapsed2"></i><i ng-show="!isCollapsed2" class="fa fa-minus"></i> Initiated by your organization (<span ng-if="userInfo.organization_id != 4"> {{userInfo.organization}}</span> <span ng-if="userInfo.organization_id == 4"> ProMED </span>)</th></tr>
                 <tr ng-show="!isCollapsed2" ng-repeat="event in eventsList['yourorg'] | filter:query | orderBy:predicate:reverse">
                     <td>{{event.event_id_int}}</td>
                     <td><a href="#/events/{{event.event_id}}">{{event.title}}</a></td>
@@ -79,7 +79,7 @@
                         <span>{{event.num_responses_nocontent}}</span>
                     </td>
                 </tr>
-                <tr><th colspan="10" class="link" ng-click="isCollapsed3 = !isCollapsed3"><i class="fa fa-plus"></i> Initiated by others</th></tr>
+                <tr><th colspan="10" class="link" ng-click="isCollapsed3 = !isCollapsed3"><i class="fa fa-plus" ng-show="isCollapsed3"></i><i ng-show="!isCollapsed3" class="fa fa-minus"></i> Initiated by others</th></tr>
                 <tr ng-show="!isCollapsed3" ng-repeat="event in eventsList['other'] | filter:query | orderBy:predicate:reverse" >
                     <td>{{event.event_id_int}}</td>
                     <td><a href="#/events/{{event.event_id}}">{{event.title}}</a></td>
