@@ -26,10 +26,10 @@ $mem->connect("127.0.0.1", 11211) or die ("Could not connect");
 
 // sete memcache key and expire time (in seconds)
 $cachekey = "KEY". md5('memberdata');
-$expire = 60*60*2; // 2 hours
+$expire = 60*60*1; // 1 hour
 
 //use results from cache if available, else use from database
-$members = $mem->get($cachekey);
+//$members = $mem->get($cachekey);  // disable cache for now
 if ($members) { // from cache
     print json_encode($members->members);
 } else{ // from db
