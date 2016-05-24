@@ -93,7 +93,7 @@
 </head>
   
 <body>
-  <div class="certificate center">
+  <div class="certificate center" id="printableArea">
     <div class="certificate-inner">
       <img class="logo" src="img/logos/epicore.png" height="" alt="logo">
       <h1 class="cursive green">Certificate of Recognition</h1>
@@ -105,5 +105,17 @@
       <img src="img/seal-lg.png" alt="seal" class="right">
     </div>
   </div>
+
+  <div class="center">
+    <input type="button" onclick="printPage()" value="Print Certificate" />
+  </div>
+
+<script>
+
+  function printPage(divName) {
+    window.print();
+  }
+
+</script>
 </body>
 </html>
