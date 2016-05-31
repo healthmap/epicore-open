@@ -346,6 +346,11 @@ class EventInfo
                 continue;
             }
 
+            // get notes
+            $row['notes'] = $db->getOne("SELECT note FROM event_notes WHERE event_id = ? ORDER BY action_date DESC LIMIT 1", array($row['event_id']));
+            // get reason
+            $row['reason'] = $db->getOne("SELECT reason FROM event_notes WHERE event_id = ? ORDER BY action_date DESC LIMIT 1", array($row['event_id']));
+
             // get organization id for the event
             $row['organization_id'] = $db->getOne("SELECT organization_id FROM user WHERE user.user_id = ?", array($row['requester_id']));
 
@@ -747,6 +752,7 @@ class EventInfo
 
             // basic stats
             $event_stats['status'] = $status;
+            $event_stats['notes'] = $event['notes'];
             $event_stats['person'] = $event['person'];
             $event_stats['organization_id'] = $event['organization_id'];
             $event_stats['country'] = $event['country'];
