@@ -573,6 +573,7 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
                 $scope.changeStatusText = response.EventsList.estatus == "C" ? 'Re open' : 'Close';
                 $scope.changeStatusType = response.EventsList.estatus == "C" ? 'reopen' : 'close';
                 $scope.isAuthorizedFETP = false;
+                $scope.isRequester = response.EventsList.requester_id == $scope.userInfo.uid ? true:false;
                 if (response.EventsList.fetp_ids != null && response.EventsList.fetp_ids.indexOf($scope.userInfo.fetp_id) != -1) {
                     $scope.isAuthorizedFETP = true;
                 }

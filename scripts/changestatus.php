@@ -128,7 +128,10 @@ if(is_numeric($event_id) && is_numeric($user_id)) {
 
         print json_encode(array('status' => $status));
         exit;
-    } elseif ($thestatus = 'none'){
+    } elseif ($thestatus == 'U'){
+        print json_encode(array('status' => 'success'));
+        exit;
+    } elseif ($thestatus == 'none'){
         $error = "invalid RFI status";
     }
     else {
