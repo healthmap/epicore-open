@@ -26,7 +26,7 @@
       }
       .certificate {
         background: url('img/bg-cert.png') no-repeat !important;
-        margin: 100px auto;
+        margin: 0px auto;
         width: 900px;
         height: 693px;
         position: relative;
@@ -85,6 +85,10 @@
         bottom: 24px;
       }
       @media print {
+        @page {
+          size: landscape;
+          margin: 0px;
+        }
         body {
         -webkit-print-color-adjust: exact;
       }
@@ -93,6 +97,7 @@
 </head>
   
 <body>
+<br>
   <div class="certificate center" id="printableArea">
     <div class="certificate-inner">
       <img class="logo" src="img/logos/epicore.png" height="" alt="logo">
@@ -106,16 +111,10 @@
     </div>
   </div>
 
+<br><br><br><br><br><br>
   <div class="center">
-    <input type="button" onclick="printPage()" value="Print or Save Certificate" />
+    <input type="button" ng-click="printPage('printableArea')" value="Print or Save Certificate" />
   </div>
 
-<script>
-
-  function printPage(divName) {
-    window.print();
-  }
-
-</script>
 </body>
 </html>

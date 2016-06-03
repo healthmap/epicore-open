@@ -1227,6 +1227,10 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
         $scope.approve_date = Number(d[2]) + dayof + month[(Number(d[1]))-1] + ", " + d[0];
     });
 
+    $scope.printPage = function (divName) {
+        window.print();
+    };
+
         /* filter for trusted HTML */
     }).filter('to_trusted', ['$sce', function($sce){
         return function(text) {
