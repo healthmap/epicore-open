@@ -377,7 +377,9 @@ class EventInfo
             }
 
             foreach($num_followups as $followupnum => $datearr) {
-                $row['num_followups'][] = array('date' => $datearr[0], 'num' => count($datearr), 'text' => $text[$followupnum]);
+                $newdate = date_create_from_format('j-M-Y H:i', $datearr[0]);
+                $newdate = date_format($newdate, 'Y-m-d');
+                $row['num_followups'][] = array('date' => $datearr[0], 'num' => count($datearr), 'text' => $text[$followupnum], 'iso_date' => $newdate);
             }
             $row['iso_create_date'] = $row['create_date'];
             $row['event_id_int'] = (int)$row['event_id'];

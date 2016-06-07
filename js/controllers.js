@@ -592,6 +592,24 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
                     $scope.validResponses++;
                 }
             }
+
+            // check unclosed RFIs with no activity in the last two weeks
+            Date.prototype.yyyymmdd = function() {
+                var yyyy = this.getFullYear().toString();
+                var mm = (this.getMonth()+1).toString(); // getMonth() is zero-based
+                var dd  = this.getDate().toString();
+                return yyyy + "-" + (mm[1]?mm:"0"+mm[0]) + "-" + (dd[1]?dd:"0"+dd[0]); // padding
+            };
+            var d = new Date();
+            $scope.date = d.setDate(d.getDate() - 14); // now minus 14 days
+            $scope.unclosed = 0;
+            for (var n in $scope.eventsList.yours){
+                newdate = $scope.eventsList.yours[n].num_followups[0].iso_date;
+                if (newdate < d.yyyymmdd()) {
+                    $scope.unclosed++;
+                }
+            }
+
         });
 
         $scope.sendFollowup = function(formData, isValid) {
