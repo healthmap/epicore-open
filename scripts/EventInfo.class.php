@@ -358,6 +358,7 @@ class EventInfo
             $row['num_responses'] = $db->getOne("SELECT count(*) FROM response WHERE event_id = ?", array($row['event_id']));
             $row['num_responses_content'] = $db->getOne("SELECT count(*) FROM response WHERE event_id = ? AND response_permission <>0 ", array($row['event_id']));
             $row['num_responses_nocontent'] = $row['num_responses'] - $row['num_responses_content'];
+            $row['num_notrated_responses'] = $db->getOne("SELECT count(*) FROM response WHERE useful IS NULL AND response_permission <>0 and event_id = ?", array($row['event_id']));
             $row['num_notuseful_responses'] = $db->getOne("SELECT count(*) FROM response WHERE useful ='0' and event_id = ?", array($row['event_id']));
             $row['num_useful_responses'] = $db->getOne("SELECT count(*) FROM response WHERE useful ='1' and event_id = ?", array($row['event_id']));
             $row['num_useful_promed_responses'] = $db->getOne("SELECT count(*) FROM response WHERE useful ='2' and event_id = ?", array($row['event_id']));

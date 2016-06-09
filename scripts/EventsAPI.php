@@ -54,11 +54,14 @@ if(isset($rvars['event_id']) && is_numeric($rvars['event_id'])) {
         $indexed_array = array_values($ui->getFETPRequests($status));
     } else {
         $indexed_array = EventInfo::getAllEvents($rvars['uid'], $status);
+        if ($status == 'O') {  // get closed events to check for unrated respsonses
+            $closed_events = EventInfo::getAllEvents($rvars['uid'], 'C');
+        }
     }
 }
 
 header('content-type: application/json; charset=utf-8');
-$json = json_encode(array('EventsList' => $indexed_array));
+$json = json_encode(array('EventsList' => $indexed_array, 'closedEvents' => $closed_events));
 
 // return JSONP if it's client-side request
 print isset($_GET['callback']) ? "{$_GET['callback']}($json)" : $json;
