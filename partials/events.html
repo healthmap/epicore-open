@@ -18,8 +18,11 @@
     <div class="row">
         <div class="col-xs-12">
 
-            <p class="red" ng-if="onOpen && unclosed > 0" > * You have {{unclosed}} RFI(s) highlighted below that are past due closing </p>
-            <p class="red" ng-if="num_notrated_responses > 0"> * You have {{num_notrated_responses}} unrated response(s) in closed RFIs <span ng-if="!onOpen"> highlighted below</span></p>
+            <p class="red" ng-if="onOpen && unclosed > 0" > * You have {{unclosed}} RFI(s) highlighted below that are past due closing. </p>
+            <p class="red" ng-if="num_notrated_responses > 0">
+                <span ng-if="onOpen">* You have received responses after closing one or more RFIs that are still unrated. Please go to the "CLOSED EVENTS" tab to locate and rate these responses.</span>
+                <span ng-if="!onOpen">* Please rate the unrated responses in the RFI(s) highlighted below.</span>
+            </p>
             <p><span class="search-wrapper"><i class="fa fa-search"></i> <input ng-model="query"></span></p>
 
             <!-- view for organizations -->
