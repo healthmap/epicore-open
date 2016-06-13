@@ -10,7 +10,8 @@
 <div class="row">
     <div class="col-xs-12 mb24">
 
-        <p><a href="#/events" class="btn btn-default"><i class="fa fa-arrow-circle-left"></i> Back to EpiCore Dashboard</a></p>
+        <p ng-if="changeStatusText == 'Close'" ><a href="#/events" class="btn btn-default"><i class="fa fa-arrow-circle-left"></i> Back to EpiCore Dashboard</a></p>
+        <p  ng-if="changeStatusText != 'Close'" ><a href="#/events/closed" class="btn btn-default"><i class="fa fa-arrow-circle-left"></i> Back to EpiCore Dashboard</a></p>
 
         <!-- REPLY FORM (for FETPS only who received the event) -->
         <div ng-show="!isOrganization && isAuthorizedFETP">
