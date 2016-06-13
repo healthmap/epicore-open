@@ -553,6 +553,7 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
         $scope.userInfo = $cookieStore.get('epiUserInfo');
 /* Event(s) controller */
 }).controller('eventsController', function($scope, $routeParams, $cookieStore, $location, $http, eventAPIservice) {
+        $scope.isRouteLoading = true;
         $scope.eventsList = [];
         $scope.userInfo = $cookieStore.get('epiUserInfo');
         $scope.id = $routeParams.id ? $routeParams.id : null;
@@ -622,6 +623,7 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
                     $scope.unclosed++;
                 }
             }
+            $scope.isRouteLoading = false;
 
         });
 
