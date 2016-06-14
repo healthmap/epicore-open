@@ -19,7 +19,7 @@ define('EPICORE_ID', 0);
 
 $status_lu = array('O' => 're-opened', 'C' => 'closed');
 
-$super_users = array(1,79, 91, 94, 95, 66, 92, 99); // Sue, Zeenah, Jeff, Emily (94,95), Larry Madoff, Rachel, Nomita
+$super_users = array(1,79, 91, 94, 95, 66, 92, 99, 107); // Sue, Zeenah, Jeff, Emily (94,95), Larry Madoff, Rachel, Nomita, Jocelyn
 
 // permission text
 $response_permission_lu = array(
