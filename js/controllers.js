@@ -581,10 +581,11 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
                 if (response.EventsList.fetp_ids){
                     $scope.num_fetp = response.EventsList.fetp_ids.length;
                 }
+
+                $scope.eventsList = response.EventsList;
+                $scope.filePreview = response.EventsList.filePreview ? response.EventsList.filePreview : '';
             }
 
-            $scope.eventsList = response.EventsList;
-            $scope.filePreview = response.EventsList.filePreview ? response.EventsList.filePreview : '';
             $scope.closedEvents = response.closedEvents;
 
             // count unrated responses in closed events
