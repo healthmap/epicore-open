@@ -26,7 +26,7 @@ $event_info['alert_id'] = (int)$formvars->alert_id;
 
 $event_id = EventInfo::insertEvent($event_info);
 $ei = new EventInfo($event_id);
-$subject = "EPICORE RFI - " . $event_info['disease'] . ", " . $event_info['location'];
+$subject = "EPICORE RFI #" . $event_id. " - " . $event_info['disease'] . ", " . $event_info['location'];
 
 // now send it to each FETP individually as they each need unique login token id
 $fetp_ids = explode(",", $formvars->fetp_ids);

@@ -63,7 +63,7 @@ if(is_numeric($event_id) && is_numeric($user_id)) {
         $status_type_member = $formvars->thestatus == "Reopen" ? 're-opened' : 'closed_member';
         $emailtext_event = $ei->buildEmailForEvent($event_info, $status_type_member, $custom_vars, 'text');
         $extra_headers['text_or_html'] = "html";
-        $subject = "Epicore RFI $status_type - " . $event_info['disease'] . ", " . $event_info['location'];
+        $subject = "Epicore RFI #". $event_id . " - " . $status_type . ": " . $event_info['disease'] . ", " . $event_info['location'];
         foreach($fetp_emails as $fetp_id => $recipient) {
             $idlist[0] = $fetp_id;
             $extra_headers['user_ids'] = $idlist;

@@ -23,7 +23,7 @@ if(is_numeric($event_id)) {
     $event_info = $ei->getInfo();
     $response_id = $ei->insertResponse($dbdata);
 
-    $subject = "EPICORE RFI Response - " . $event_info['disease'] . ", " . $event_info['location'];
+    $subject = "EPICORE RFI #" . $event_id .  " - Response: " . $event_info['disease'] . ", " . $event_info['location'];
 
 
     // send response to moderators if member had something to contribute
