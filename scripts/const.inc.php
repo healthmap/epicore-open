@@ -1,5 +1,5 @@
 <?php
-define('EMAIL_NOREPLY', "NO-REPLY <mod@epicore.org>");
+define('EMAIL_NOREPLY', "Mod-EpiCore <no-reply@epicore.org>");
 define('LAT_LON_PRECISION', 2);
 define('EPICORE_URL', 'http://epicore.org');
 define('DEFAULT_RADIUS', 400); // in km
