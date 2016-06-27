@@ -641,7 +641,6 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
                 }
             }
             $scope.isRouteLoading = false;
-            console.log($scope.eventsList);
         });
 
         $scope.sendFollowup = function(formData, isValid) {
