@@ -319,6 +319,7 @@ class EventInfo
         $response_info['response_date'] = date('n/j/Y H:i', strtotime($response_info['response_date']));
         $response_info['event_date'] = date('n/j/Y H:i', strtotime($response_info['create_date']));
         // response perm of 0 means the FETP responded that he/she had no response
+        $response_info['response_permission_id'] = $response_info['response_permission'];
         if($response_info['response_permission'] == 0) {
             $response_info['response_permission'] = '';
             $response_info['response'] = $response_permission_lu[0];

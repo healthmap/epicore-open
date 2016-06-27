@@ -588,6 +588,22 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
 
             $scope.closedEvents = response.closedEvents;
 
+            // get response
+            $scope.response_text = '';
+            if ($routeParams.response_id){
+                var formData = {};
+                formData['uid'] = $scope.userInfo.uid;
+                formData['org_id'] = $scope.userInfo.organization_id;
+                formData['fetp_id'] = $scope.userInfo.fetp_id;
+                formData['response_id'] = $routeParams.response_id;
+                $http({ url: 'scripts/getresponse.php', method: "POST", data: formData
+                }).success(function (respdata, status, headers, config) {
+                    $scope.response_text = respdata['response'];
+                    $scope.responder_id = respdata['responder_id'];
+                    $scope.permission_id = respdata['response_permission_id'];
+                });
+            }
+
             // count unrated responses in closed events
             $scope.num_notrated_responses = 0;
             if ($scope.onOpen && $scope.closedEvents) {
@@ -625,7 +641,7 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
                 }
             }
             $scope.isRouteLoading = false;
-
+            console.log($scope.eventsList);
         });
 
         $scope.sendFollowup = function(formData, isValid) {

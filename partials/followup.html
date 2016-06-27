@@ -13,12 +13,21 @@
 
             <div ng-show="isAuthorizedToFollowup">
                     <p>
-                    <strong>Title:</strong> {{eventsList.title}}<br>
+                    <strong>RFI Title:</strong> {{eventsList.title}}<br>
                     <strong>Date:</strong> {{eventsList.create_date}}
                     </p>
                     <p>
                     <span ng-show="allFETPs">Send a follow up message to all members you originally contacted for this RFI</span>
-                    <span ng-show="!allFETPs">Respond to the selected member</span></p>
+                    <span ng-show="!allFETPs">
+                        <strong>Member {{responder_id}} Response:</strong> {{response_text}}<br>
+                        <strong>Permission:</strong>
+                        <span ng-if="permission_id == 0"><i class="fa fa-circle perm0"></i> no contribution</span>
+                        <span ng-if="permission_id == 1"><i class="fa fa-circle perm1"></i> paraphrase / don't attribute</span>
+                        <span ng-if="permission_id == 2"><i class="fa fa-circle perm2"></i> quote / don't attribute</span>
+                        <span ng-if="permission_id == 3"><i class="fa fa-circle perm3"></i> quote / attribute</span>
+                        <br><br>
+                        <span>Respond to the selected member</span>
+                    </span></p>
 
                 <!-- FOLLOWUP FORM (for owner of event) -->
                 <form name="sendRequestForm">
