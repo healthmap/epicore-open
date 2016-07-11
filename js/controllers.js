@@ -1092,10 +1092,12 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
         $scope.num_denied = 0;
         $scope.num_preapproved = 0;
         $scope.num_setpassword = 0;
+        $scope.allapp = false;
 
         var data = {};
             $http({ url: 'scripts/approval.php', method: "POST", data: data
             }).success(function (respdata, status, headers, config) {
+                var inactive_applicants = [];
                 for (var n in respdata){
                     respdata[n]['member_id'] = parseInt(respdata[n]['member_id']);  // use int so orberby works
                     if (respdata[n]['status'] == 'Pending'){
@@ -1105,6 +1107,7 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
                         $scope.num_approved++;
                     }
                     if (respdata[n]['status'] == 'Inactive'){
+                        inactive_applicants.push(respdata[n]);
                         $scope.num_inactive++;
                     }
                     if (respdata[n]['status'] == 'Denied'){
@@ -1117,10 +1120,29 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
                         $scope.num_setpassword++;
                     }
                 }
-                $scope.applicants = respdata;
+                $scope.allapp = false;
+                $scope.inactive_applicants = inactive_applicants;
+                $scope.applicants = inactive_applicants;
+                $scope.all_applicants = respdata;
+                $scope.inactive_applicants = inactive_applicants;
                 $scope.num_applicants = $scope.applicants.length;
                 $scope.showpage = true;
             });
+
+        $scope.selectMembers = function (status) {
+
+            var r = confirm("Please wait a little while if you select OK");
+            if (r == true) {
+                if (status){
+                    $scope.allapp = true;
+                    $scope.applicants = $scope.all_applicants;
+                } else {
+                    $scope.allapp = false;
+                    $scope.applicants = $scope.inactive_applicants;
+                }
+            }
+
+        };
 
         $scope.approveApplicant = function(maillist_id, action){
             data = {maillist_id: maillist_id, action:action};

@@ -30,8 +30,10 @@
 
             <h4>Member Management</h4>
 
-            <p>Set the member status by clicking on one of the status buttons on the right side of the table below.  The member will be notified by email when their status is set
-            to Accepted, Denied, or Approved.</p>
+            <p>
+                Set the member status by clicking on one of the status buttons on the right side of the table below.  The member will be notified by email when their status is set to Accepted, Denied, or Approved.<br>
+                Inactive members are shown be default.  You can show all members by clicking on the the "Show All Members" buttun, but it will take a little while to display all members so please be patient.
+            </p>
 
             <p>
             <strong>Accept <i alt="accept" class="fa fa-check"></i></strong> : member has been accepted to take the training course.<br>
@@ -48,7 +50,11 @@
             <button type="button" class="btn btn-secondary secondary-color btn-tab mb24" ng-click="sendReminder('launch_reminder')">Join Epicore</button>
 
             <p>Click on a table heading to sort the table or filter the table using the search tool.</p>
-            <p><i class="fa fa-search"></i> <input ng-model="query"></p>
+            <p><i class="fa fa-search"></i> <input ng-model="query"> &nbsp;&nbsp;&nbsp;&nbsp;
+                <button ng-show="!allapp" type="button" ng-click="selectMembers(true)" class="btn btn-default btn-sm stacked">Show All Members</button>
+                <button ng-show="allapp" type="button" ng-click="selectMembers(false)" class="btn btn-default btn-sm stacked">Show Inactive Members</button>
+                {{waitmessage}}
+            </p>
             {{num_applicants}} Applicants, {{num_accepted}} Accepted, {{num_approved}} Approved, {{num_preapproved}} Pre-approved, {{num_inactive}} Inactive, {{num_denied}} Denied, {{num_setpassword}} Set password
             <div class="table-responsive">
             <table class='small table table-hover table-bordered'>
