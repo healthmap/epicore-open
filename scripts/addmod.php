@@ -24,7 +24,7 @@ if ($mod_email && $mod_org_id) {
     }
 } else{
     $status = 'failed';
-    $message = 'invalid paramters';
+    $message = 'invalid parameters';
 }
 
 // return mod id or error status

@@ -50,7 +50,7 @@ class UserInfo
                     return "org id out of range";
 
             } else
-                return "email address not found";
+                return "healthmap email address not found";
         } else
             return "invalid parameters";
     }
