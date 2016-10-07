@@ -36,10 +36,15 @@ class UserInfo
                 $db2 = getDB();
                 $max_org_id = 4;
                 if ($org_id >=1 and $org_id <= $max_org_id) {
-                    $db2->query("INSERT INTO user (organization_id, hmu_id) VALUES (?,'$hmu_id')", array($org_id));
-                    $user_id = $db2->getOne("SELECT LAST_INSERT_ID()");
-                    $db2->commit();
-                    return $user_id;
+                    $hid = $db2->getOne("SELECT hmu_id FROM user WHERE hmu_id ='$hmu_id' ");
+                    if ($hid != $hmu_id) {
+                        $db2->query("INSERT INTO user (organization_id, hmu_id) VALUES (?,'$hmu_id')", array($org_id));
+                        $user_id = $db2->getOne("SELECT LAST_INSERT_ID()");
+                        $db2->commit();
+                        return $user_id;
+                    } else {
+                        return "moderator is already in the system";
+                    }
                 }
                 else
                     return "org id out of range";
