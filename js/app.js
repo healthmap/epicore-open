@@ -48,6 +48,7 @@ app.config(function($routeProvider) {
         when("/trainingvideos", {templateUrl: "partials/trainingvideos.html"}).
         when("/training", {templateUrl: "partials/test.html", controller: "testController"}).
         when("/certificate", {templateUrl: "partials/certificate.html", controller: "certController"}).
+        when("/modaccess", {templateUrl: "partials/modaccess.html", controller: "modaccessController"}).
   otherwise({redirectTo: '/home'});
     });
 

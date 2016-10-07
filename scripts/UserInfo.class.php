@@ -27,6 +27,29 @@ class UserInfo
         return $this->db->getOne("SELECT organization_id FROM user WHERE user_id = ?", array($this->id));
     }
 
+    static function addMod($email, $org_id){
+
+        if ($email && is_numeric($org_id)) {
+            $db1 = getDB('hm');
+            $hmu_id = $db1->getOne("SELECT hmu_id FROM hmu WHERE email = ?", array($email));
+            if ($hmu_id) {
+                $db2 = getDB();
+                $max_org_id = 4;
+                if ($org_id >=1 and $org_id <= $max_org_id) {
+                    $db2->query("INSERT INTO user (organization_id, hmu_id) VALUES (?,'$hmu_id')", array($org_id));
+                    $user_id = $db2->getOne("SELECT LAST_INSERT_ID()");
+                    $db2->commit();
+                    return $user_id;
+                }
+                else
+                    return "org id out of range";
+
+            } else
+                return "email address not found";
+        } else
+            return "invalid parameters";
+    }
+
     function getFETPRequests($status, $fetp_id = '')
     {
         $member_id = $fetp_id ? $fetp_id : $this->id;

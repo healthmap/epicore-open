@@ -1303,7 +1303,38 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
         window.print();
     };
 
-        /* filter for trusted HTML */
+
+    }). controller('modaccessController', function($scope, $cookieStore, $http) {
+
+    var data = {};
+    $scope.showpage = false;
+    $http({ url: 'scripts/modaccess.php', method: "POST", data: data
+    }).success(function (respdata, status, headers, config) {
+        $scope.showpage = true;
+    });
+
+    // only allow superusers
+    $scope.userInfo = $cookieStore.get('epiUserInfo');
+    $scope.superuser = (typeof($scope.userInfo) != "undefined") ? $scope.userInfo.superuser: false;
+    $scope.message = '';
+
+    $scope.addMod = function(mod_email, mod_org_id){
+
+        var mod_data = {mod_email: mod_email, mod_org_id:mod_org_id};
+        console.log(mod_data);
+        $http({ url: 'scripts/addmod.php', method: "POST", data: mod_data
+        }).success(function (respdata, status, headers, config) {
+            console.log(respdata);
+            if (respdata['status'] == 'success'){
+                $scope.message = "Successfully added new moderator"
+
+            } else {
+                $scope.message = respdata['message'];
+            }
+        });
+    };
+
+    /* filter for trusted HTML */
     }).filter('to_trusted', ['$sce', function($sce){
         return function(text) {
             return $sce.trustAsHtml(text);
