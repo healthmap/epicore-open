@@ -25,16 +25,7 @@ sudo mkdir rfi
 
 sudo chown www-data:sudo *
 
-### point to live database, if desired
+### copy config file to scripts/conf dir
 
-sudo vi epicore.org/scripts/da.ini.php
+scripts/conf/da.ini.php
 
-database = epicore
-
-###  change EPICORE_URL to make email work with new_url, if desired
-
-example:
-
-sudo vi scripts/const.inc.php
-
-define('EPICORE_URL', 'http://epicore.org/new_url');

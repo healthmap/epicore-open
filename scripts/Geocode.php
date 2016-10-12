@@ -1,12 +1,12 @@
 <?php
-define('CRYPTOKEY', 'mb5BGwIsWSGX4C8PpQ5263uz1yI=');
+require_once 'const.inc.php';
 
 class Geocode {
 
 
     static function getLocationDetail($lutype, $lookup)
     {
-        $geo = self::signUrl('http://maps.googleapis.com/maps/api/geocode/json?sensor=false&client=gme-childrenshospital&' . $lutype . '=' . urlencode($lookup), CRYPTOKEY);
+        $geo = self::signUrl('http://maps.googleapis.com/maps/api/geocode/json?sensor=false&client='.CLIENTID. '&' . $lutype . '=' . urlencode($lookup), CRYPTOKEY);
         $json = file_get_contents($geo);
         $results = json_decode($json, true);
         $formatted_address = $results['results'][0]['formatted_address'];

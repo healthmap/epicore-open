@@ -11,7 +11,7 @@ function getDB($which = '')
 {
     static $db;
     if(!is_object($db)) {
-        $opts = parse_ini_file(dirname(__FILE__) . '/da.ini.php', true);
+        $opts = parse_ini_file(dirname(__FILE__) . '/conf/da.ini.php', true);
         $which = $which ? $which : 'epicore_db';
         $dsn = $opts[$which];
         $db =& DB::connect($dsn);

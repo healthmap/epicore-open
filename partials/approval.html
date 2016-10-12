@@ -15,6 +15,9 @@
         <h3>You do not have access to this page.</h3>
     </div>
         <div ng-show="superuser && showpage" ng-controller="approvalController" ng-init="predicate='apply_date_iso'; reverse=!reverse" >
+
+            <h4><a href="#/modaccess"> Moderator Access <i class="fa fa-arrow-circle-right"></i></a></h4>
+
             <h4>Member and RFI Reports</h4>
             <p>Select Member and/or RFI Report to get the latest update, and then download the csv file.</p>
             <a href="" class="btn btn-tab btn-default mb24" ng-click="downloadMembers()"> Member Report</a>

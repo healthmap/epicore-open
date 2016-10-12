@@ -1308,7 +1308,7 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
 
     var data = {};
     $scope.showpage = false;
-    $http({ url: 'scripts/modaccess.php', method: "POST", data: data
+    $http({ url: 'scripts/approveaccess.php', method: "POST", data: data
     }).success(function (respdata, status, headers, config) {
         $scope.showpage = true;
     });

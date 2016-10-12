@@ -1,25 +1,37 @@
 <?php
-define('EMAIL_NOREPLY', "Mod-EpiCore <no-reply@epicore.org>");
-define('LAT_LON_PRECISION', 2);
-define('EPICORE_URL', 'http://epicore.org');
-define('DEFAULT_RADIUS', 400); // in km
+// get config file
+$conf = parse_ini_file(dirname(__FILE__) . '/conf/da.ini.php', true);
 
-define('EMAILPREVIEWS', 'emailtemplates/temp/');
+// approval username and password
+define('APPROVAL_USERNAME', $conf['approval']['username']);
+define('APPROVAL_PASSWORD', $conf['approval']['password']);
 
-//define('TEPHINET_BASE', 'http://tftephinetdev.devcloud.acquia-sites.com/');
-//define('TEPHINET_BASE', 'http://tftephinettest.devcloud.acquia-sites.com/');
-define('TEPHINET_BASE', 'http://www.tephinet.org/');
-define('TEPHINET_CONSUMER_KEY', 'EJL7rbQR3YTQXPb8ku6zEQbmRSXzLRtd');
-define('TEPHINET_CONSUMER_SECRET', 'Nr8TTVMoAvm4X86jjzbp65aE7kTmR2WN');
-define('EMAIL_PROIN', 'promed@promedmail.org');
-define('PROMED_ID', 4);
-define('EMAIL_INFO_EPICORE', 'info@epicore.org');
+// google api
+define('CRYPTOKEY', $conf['googleapi']['key']);
+define('CLIENTID', $conf['googleapi']['clientid']);
+
+// Epicore
+define('EPICORE_URL', $conf['epicore_info']['baseurl']);
+define('EMAIL_NOREPLY', $conf['epicore_info']['emailnoreply']);
+define('EMAIL_INFO_EPICORE', $conf['epicore_info']['emailinfo']);
 define('EPICORE_ID', 0);
 
+// Tephinet
+define('TEPHINET_BASE', $conf['tephinet']['baseurl']);
+define('TEPHINET_CONSUMER_KEY', $conf['tephinet']['consumerkey']);
+define('TEPHINET_CONSUMER_SECRET', $conf['tephinet']['consumersecret']);
+
+// ProMed
+define('EMAIL_PROIN', $conf['promed_info']['emailproin']);
+define('PROMED_ID', 4);
+
+define('LAT_LON_PRECISION', 2);
+define('DEFAULT_RADIUS', 400); // in km
+define('EMAILPREVIEWS', 'emailtemplates/temp/');
 
 $status_lu = array('O' => 're-opened', 'C' => 'closed');
 
-$super_users = array(1,79, 91, 94, 95, 66, 92, 99, 107); // Sue, Zeenah, Jeff, Emily (94,95), Larry Madoff, Rachel, Nomita, Jocelyn
+$super_users = explode(',', $conf['superusers']['userids']);
 
 // permission text
 $response_permission_lu = array(
