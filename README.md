@@ -30,3 +30,4 @@ sudo chown www-data:sudo *
 ### create and copy config file to scripts/conf dir
 
 cp da.ini.php scripts/conf/da.ini.php
+
