@@ -764,8 +764,10 @@ class EventInfo
             $event_stats['disease'] = $event['disease'];
             $event_stats['title'] = $event['title'];
             $event_stats['create_date'] = $event['create_date'];
-            $event_stats['requester_id'] = $event['requester_id'];
             $event_stats['location'] = $event['location'];
+            $event_stats['description'] = $event['description'];
+            $event_stats['personalized_text'] = $event['personalized_text'];
+            $event_stats['requester_id'] = $event['requester_id'];
             $event_stats['num_responses'] = $event['num_responses'];
             $event_stats['num_responses_content'] = $event['num_responses_content'];
             $event_stats['num_responses_nocontent'] = $event['num_responses_nocontent'];
