@@ -1,19 +1,21 @@
 
 ## Additional Setup
 
-destination_dir is the git cloned directory.
+clone_dir is the git cloned directory.
 
 ### copy data files and set permissions
 
-sudo cp -R /var/www/html/epicore.org/data/ destination_dir/
+sudo cp -R /var/www/html/epicore.org/data/ clone_dir/
 
-cd destination_dir/data
+cd clone_dir/data
 
 sudo chown www-data:sudo *.csv
 
-### set permissions for temp directory
+### create temp directory in emailtemplates
 
-cd destination_dir
+cd clone_dir
+
+cd emailtemplates
 
 sudo mkdir temp
 
@@ -25,7 +27,6 @@ sudo mkdir rfi
 
 sudo chown www-data:sudo *
 
-### copy config file to scripts/conf dir
+### create and copy config file to scripts/conf dir
 
-scripts/conf/da.ini.php
-
+cp da.ini.php scripts/conf/da.ini.php
