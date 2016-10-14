@@ -1,22 +1,21 @@
 ## Deployment
 
-Epicore uses Deploybot for deployment to development and production environments.
+Epicore uses Deploybot (https://deploybot.com/) for deployment to development and production environments.
 
 ### Development Environment
 
-All commits to the epicore git repo are automatically deployed to the development environment.
-
 The development URL is at https://epicore.org/~dev
 
-[![Deployment status from DeployBot](https://boston-childrens-hosptial.deploybot.com/badge/23779030056625/85433.svg)](http://deploybot.com)
+All commits to the epicore git repo are automatically deployed to the development environment.
+
+Development Deployment stats: [![Deployment status from DeployBot](https://boston-childrens-hosptial.deploybot.com/badge/23779030056625/85433.svg)](http://deploybot.com)
 
 
 ### Production Environment
 
-Deployment to the production environment is manual and must be done by authorized users from the Deploybot dashboard.
+Only authorized users can deploy to the production environment using the Deploybot dashboard.
 
-[![Deployment status from DeployBot](https://boston-childrens-hosptial.deploybot.com/badge/02267418033975/87596.svg)](http://deploybot.com)
-
+Production deployment status: [![Deployment status from DeployBot](https://boston-childrens-hosptial.deploybot.com/badge/02267418033975/87596.svg)](http://deploybot.com)
 
 
 
