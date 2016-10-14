@@ -1,14 +1,16 @@
 ## Deployment
 
-Epicore uses Deploybot (https://deploybot.com/) for deployment to development and production environments.
+Epicore uses Deploybot (https://deploybot.com/) for deployment to both development and production environments.
 
 ### Development Environment
 
 The development URL is at https://epicore.org/~dev
 
-All commits to the epicore git repo are automatically deployed to the development environment.
+The development environment is identical to the  production environment, except it uses a test database.  This allows testing of all functionality without effecting production.
 
-Development Deployment stats: [![Deployment status from DeployBot](https://boston-childrens-hosptial.deploybot.com/badge/23779030056625/85433.svg)](http://deploybot.com)
+All commits to the epicore git repo are automatically deployed to the development environment, so you don't need to do anything to see your changes.  
+
+Development deployment status: [![Deployment status from DeployBot](https://boston-childrens-hosptial.deploybot.com/badge/23779030056625/85433.svg)](http://deploybot.com)
 
 
 ### Production Environment
@@ -21,12 +23,10 @@ Production deployment status: [![Deployment status from DeployBot](https://bosto
 
 ## Configuration and additional setup
 
-```sh
 epicore_root is the epicore root directory.
  
 The following steps must be done after the epicore root directory is created from git clone or for the root directory on a web server.
 
-```
 
 ### copy data files and set permissions
 
