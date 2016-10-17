@@ -27,17 +27,17 @@ Production deployment status: [![Deployment status from DeployBot](https://bosto
 The following steps must be done after the epicore root directory is created from git clone or for the root directory on a web server.
 
 
-### copy data files and set permissions
+### Copy data files and set permissions
 
 ```sh
-sudo cp -R /var/www/html/prod.epicore.org/data/ epicore_root/.
+sudo cp -R /var/www/html/dev.epicore.org/data/ epicore_root/.
 
 cd epicore_root/data
 
 sudo chown www-data:sudo *.csv
 ```
 
-### create temp directory in emailtemplates
+### Create temp directory in emailtemplates
 
 ```sh
 cd epicore_root
@@ -55,7 +55,7 @@ sudo mkdir rfi
 sudo chown www-data:sudo *
 ```
 
-### create and copy config file to scripts/conf dir
+### Create and copy config file to scripts/conf dir
 
 ```sh
 cd epicore_root/scripts
