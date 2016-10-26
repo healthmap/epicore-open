@@ -64,4 +64,6 @@ mkdir conf
 
 cp da.ini.php epicore_root/scripts/conf/.
 
+*Contact Epicore admin for a copy of the da.ini.php file.
+
 ```
