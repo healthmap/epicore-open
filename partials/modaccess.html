@@ -44,6 +44,28 @@
                     </div>
                 </div><!-- /input-group -->
             </form>
+            <br>
+
+            <div ng-init="predicate='name'; reverse=reverse" >
+                <h4>Moderators</h4>
+                <p>These are the moderators that have access to the Epicore system.</p>
+                <p><i class="fa fa-search"></i> <input ng-model="query"> &nbsp;&nbsp;&nbsp;&nbsp;
+                <div class="table-responsive">
+                    <table class='small table table-hover table-bordered'>
+                        <tr>
+                            <th style="width:30px;">#</th>
+                            <th style="width:30px;"><a href="" ng-click="predicate = 'name'; reverse=!reverse">Name</a></th>
+                            <th style="width:30px;"><a href="" ng-click="predicate = 'email'; reverse=!reverse">email </a></th>
+                        </tr>
+                        <tr ng-repeat="mod in mods | filter:query | orderBy:predicate:reverse" >
+                            <td>{{$index+1}}</td>
+                            <td>{{mod.name}}</td>
+                            <td>{{mod.email}}</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+
 
         </div>
     </div><!--container-->

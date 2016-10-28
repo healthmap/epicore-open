@@ -1334,6 +1334,16 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
         });
     };
 
+    $scope.mods = '';
+    $http({ url: 'scripts/getmods.php', method: "POST"
+    }).success(function (respdata, status, headers, config) {
+        if (respdata['status'] == 'success'){
+            $scope.mods = respdata['mods'];
+        } else {
+
+        }
+    });
+
     /* filter for trusted HTML */
     }).filter('to_trusted', ['$sce', function($sce){
         return function(text) {

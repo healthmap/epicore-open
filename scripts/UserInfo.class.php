@@ -55,6 +55,31 @@ class UserInfo
             return "invalid parameters";
     }
 
+    static function getMods(){
+
+        // get hmu id's from Epicore Moderators
+        $db1 = getDB('');
+        $users = $db1->getAll("SELECT hmu_id, organization_id  FROM user");
+        $hmuids = array();
+        foreach ($users as $user){
+            array_push($hmuids, $user['hmu_id']);
+        }
+        $hmuid_list = implode(",",array_filter($hmuids));
+
+        // get name, email of Epicore mods from healthmap hmu table
+        if ($users){
+            $db2 = getDB('hm');
+            $mods = $db2->getAll("SELECT hmu_id, email, name FROM hmu WHERE hmu_id in ($hmuid_list)");
+            if ($mods) {
+                return $mods;
+            }
+            else
+                return false;
+        }
+        else
+            return false;
+    }
+
     function getFETPRequests($status, $fetp_id = '')
     {
         $member_id = $fetp_id ? $fetp_id : $this->id;
