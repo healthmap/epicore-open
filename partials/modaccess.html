@@ -7,12 +7,13 @@
 
 <div class="wrapper dashboard">
 
-    <div class="container">
+    <div class="container" >
         <div ng-show="!superuser">
             <h3>You do not have access to this page.</h3>
         </div>
         <div ng-show="superuser && showpage" ng-controller="modaccessController" >
 
+            <div id="form-container" class="row">
             <form name="modaccessForm" role="form" id="modaccessForm" class="col-xs-12 col-md-8">
                 <h4>Add Moderator</h4>
                 <p>The moderator must first sign up for a Healthmap account and provide you with their email address they used to sign up with.</p>
@@ -44,9 +45,9 @@
                     </div>
                 </div><!-- /input-group -->
             </form>
-            <br>
+            </div>
 
-            <div ng-init="predicate='name'; reverse=reverse" >
+            <div ng-init="predicate='name'; reverse=reverse" class="row col-xs-12 col-md-8" >
                 <h4>Moderators</h4>
                 <p>These are the moderators that have access to the Epicore system.</p>
                 <p><i class="fa fa-search"></i> <input ng-model="query"> &nbsp;&nbsp;&nbsp;&nbsp;
