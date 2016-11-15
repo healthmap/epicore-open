@@ -347,6 +347,16 @@ class EventInfo
                 continue;
             }
 
+            // get fetp (member) ids
+            $q1 = $db->query("SELECT DISTINCT(fetp_id) FROM event_fetp WHERE event_id = ?", array($row['event_id']));
+            $fetp_ids = array();
+            while($row1 = $q1->fetchRow()) {
+                $fetp_ids[] = $row1['fetp_id'];
+            }
+            $row['member_ids'] = implode(',', $fetp_ids);
+
+            // get date of first response
+            $row['first_response_date'] = $db->getOne("SELECT MIN(response_date) FROM response WHERE event_id = ?", array($row['event_id']));
             // get notes
             $row['notes'] = $db->getOne("SELECT note FROM event_notes WHERE event_id = ? ORDER BY action_date DESC LIMIT 1", array($row['event_id']));
             // get reason
@@ -774,6 +784,8 @@ class EventInfo
             $event_stats['num_notuseful_responses'] = $event['num_notuseful_responses'];
             $event_stats['num_useful_responses'] = $event['num_useful_responses'];
             $event_stats['num_useful_promed_responses'] = $event['num_useful_promed_responses'];
+            $event_stats['member_ids'] = $event["member_ids"];
+            $event_stats['first_response_date'] = $event["first_response_date"];
 
             // not useful responses
             $notuseful = $event['notuseful_responses'];
