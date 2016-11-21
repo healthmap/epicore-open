@@ -11,7 +11,7 @@ $bbox = '';
 
 if($formvars->filtertype == "country") {
     if (!isset($formvars->countries) || empty($formvars->countries)) {
-        $userinfo = array( array('sending' => 0, 'all' => 0, 'ddd' => 0, 'graduate' => 0, 'na' => 0, 'trainee' => 0, 'unspecified' => 0), array());
+        $userinfo = array( array('sending' => 0, 'all' => 0, 'ddd' => 0, 'graduate' => 0, 'na' => 0, 'trainee' => 0, 'unspecified' => 0), array(), array());
     } else {
         $userinfo = UserInfo::getFETPsInLocation('countries', $formvars->countries);
     }
@@ -31,6 +31,6 @@ if($formvars->filtertype == "country") {
     $userinfo = UserInfo::getFETPsInLocation('radius', $bbox);
 }
 
-print json_encode(array('status' => 'success', 'calledfrom' => $calledfrom, 'bbox' => $bbox, 'userList' => $userinfo[0], 'userIds' => $userinfo[1]));
+print json_encode(array('status' => 'success', 'calledfrom' => $calledfrom, 'bbox' => $bbox, 'userList' => $userinfo[0], 'userIds' => $userinfo[1], 'uniqueList' => $userinfo[2]));
 
 ?>

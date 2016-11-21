@@ -143,7 +143,7 @@ class UserInfo
             // first try the MOD user table.  If none, try the FETP user table.
             $uinfo = $db->getRow("SELECT user.*, organization.name AS orgname FROM user LEFT JOIN organization ON user.organization_id = organization.organization_id WHERE email = ?", array($email));
             if(!$uinfo['user_id']) {
-                $uinfo = $db->getRow("SELECT fetp_id, pword_hash, lat, lon, countrycode, active, email, status FROM fetp WHERE email = ?", array($email));
+                $uinfo = $db->getRow("SELECT fetp_id, pword_hash, lat, lon, countrycode, active, email, status, locations FROM fetp WHERE email = ?", array($email));
                 $uinfo['username'] = "Member ".$uinfo['fetp_id'];
             }
             if($uinfo['user_id'] || $uinfo['fetp_id']) {
@@ -188,6 +188,9 @@ class UserInfo
         ------------------- END WEBSERVICE */
 
         $db = getDB();
+        $location_send_ids = array();
+        $send_ids = array();
+        // get fetps within radius (box) or countries
         if($filtertype == "radius") {
             $q = $db->query("SELECT fetp_id FROM fetp WHERE active = 'Y' AND lat > ? AND lat < ? AND lon > ? AND lon < ?", $filterval);
         } else {
@@ -197,11 +200,24 @@ class UserInfo
         while($row = $q->fetchRow()) {
             $send_ids[] = $row['fetp_id'];
         }
+        // get other fetp locations within radius (box) or countries
+        if($filtertype == "radius") {
+            $q = $db->query("SELECT l.fetp_id FROM member_location l, fetp f WHERE l.fetp_id = f.fetp_id AND f.active = 'Y' AND l.lat > ? AND l.lat < ? AND l.lon > ? AND l.lon < ?", $filterval);
+        } else {
+            $qmarks = join(",", array_fill(0, count($filterval), '?'));
+            $q = $db->query("SELECT l.fetp_id FROM member_location l, fetp f WHERE l.fetp_id = f.fetp_id AND f.active = 'Y' AND l.countrycode in ($qmarks)", $filterval);
+        }
+        while($row = $q->fetchRow()) {
+            $location_send_ids[] = $row['fetp_id'];
+        }
         $send_ids = array_unique($send_ids);
+        $location_send_ids = array_unique($location_send_ids);
         // if we ever apply filter on training, this will be what we send back
         //$userlist = array('sending' => count($send_ids), 'all' => count($unique_users), 'ddd' => count($ddd_trained), 'graduate' => count($training_status['Graduate']), 'na' => count($training_status['N/A']), 'trainee' => count($training_status['Trainee']), 'unspecified' => count($training_status['unspecified']));
-        $userlist = array('sending' => count($send_ids));
-        return array($userlist, $send_ids);
+        $userlist = array('sending' => (count($send_ids) + count($location_send_ids)));
+        $unique_send_ids = array_unique(array_merge($send_ids, $location_send_ids));
+        $unique_userlist = array(('sending') => (count($unique_send_ids)));
+        return array($userlist, $unique_send_ids, $unique_userlist);
     }
 
     /* 
@@ -716,8 +732,8 @@ class UserInfo
                     }
                     if ($emailmatch) {
                         $applicants[$n]['pword'] = $fetp['pword_hash'] ? 'Yes' : null;
-                        $applicants[$n]['member_id'] = $fetp['fetp_id'];;
-
+                        $applicants[$n]['member_id'] = $fetp['fetp_id'];
+                        $applicants[$n]['locations'] = $fetp['locations'];
                     }
                 }
             }
@@ -753,6 +769,103 @@ class UserInfo
             $mstatus = 'Inactive';
         }
         return $mstatus;
+    }
+
+    // returns location id if location is inserted and false if location already exists.
+    static function addLocation($pvals)
+    {
+        $db = getDB();
+        // check if locations exists
+        $location_id = $db->getOne("SELECT location_id FROM member_location WHERE fetp_id = ? AND city = ? AND state = ? AND countrycode = ?", 
+            array($pvals['fetp_id'], $pvals['city'], $pvals['state'], $pvals['countrycode']));
+        if(!$location_id) { // insert if not
+            //geocode location
+            $address = $pvals['city'] . ', ' . $pvals['state'] . ', ' . $pvals['country'];
+            $position = Geocode::getLocationDetail('address', $address);
+            $pvals['lat'] = $position[0];
+            $pvals['lon'] = $position[1];
+
+            //insert location
+            $key_vals = join(",", array_keys($pvals));
+            $qmarks = join(",", array_fill(0, count($pvals), '?'));
+            $qvals = array_values($pvals);
+            $db->query("INSERT IGNORE INTO member_location ($key_vals) VALUES ($qmarks)", $qvals);
+            $location_id = $db->getOne("SELECT LAST_INSERT_ID()");
+            $db->commit();
+            return $location_id;
+        }
+        else
+            return false;
+    }
+
+    static function getLocations($fetp_id = '') {
+        $db = getDB();
+        $locations = $db->getAll("SELECT * FROM member_location WHERE fetp_id = ?", array($fetp_id));
+        if ($locations){
+            return $locations;
+        } else {
+            return false;
+        }
+    }
+
+    static function getAllLocations() {
+        $db = getDB();
+        $locations = $db->getAll("SELECT * FROM member_location ");
+        if ($locations){
+            return $locations;
+        } else {
+            return false;
+        }
+    }
+
+    static function deleteLocation($lid)
+    {
+        $db = getDB();
+        $location_id = $db->getOne("SELECT location_id FROM member_location WHERE location_id = ?", array($lid));
+
+        // delete
+        $message = '';
+        $status = '';
+        if ($location_id) {
+            $q = $db->query("DELETE FROM member_location WHERE location_id = ?", array($lid));
+
+            // check that result is not an error
+            if (PEAR::isError($q)) {
+                //die($res->getMessage());
+                $status = 'failed';
+                $message = 'failed to delete location';
+            } else {
+                $message = 'deleted location';
+                $status = 'success';
+                $db->commit();
+            }
+        }
+        else{
+            $status = 'failed';
+            $message = 'location does not exist';
+        }
+        return array('status' => $status, 'message' =>$message);
+    }
+
+    static  function setLocationStatus($member_id, $action){
+        $db = getDB();
+        $mid = $db->getOne("SELECT maillist_id FROM fetp WEHRE maillist_id = ?", array($member_id));
+
+        if ($mid) {
+            if ($action == 'enable') {
+                $db->query("update fetp set locations='1' where maillist_id = ?", array($member_id));
+                $db->commit();
+                return $member_id;
+            } elseif ($action == 'disable') {
+                $db->query("update fetp set locations='0' where maillist_id = ?", array($member_id));
+                $db->commit();
+                return $member_id;
+            } else {
+                return false;   // unrecognized action
+            }
+        } else {
+            return false; // member does not exist
+        }
     }
 
     // get all members for csv file

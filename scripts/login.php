@@ -14,6 +14,7 @@ if(isset($formvars->ticket_id) && $formvars->usertype == "fetp") { // ticket sys
     $uinfo['username'] = "Member $user_id";
     $fetpinfo = UserInfo::getFETP($user_id);
     $uinfo['status'] = $fetpinfo['status'];
+    $uinfo['locations'] = $fetpinfo['locations'];
 } else {
     if($formvars->ticket_id) { // ticket system for mods coming from dashboard
         $uinfo = UserInfo::authenticateMod($formvars->ticket_id);

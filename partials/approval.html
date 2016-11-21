@@ -90,6 +90,8 @@
                     <td>{{applicant.firstname}} {{applicant.lastname}}
                         <a href="" ng-click="isCollapsed1 = !isCollapsed1"><i class="fa fa-plus" ng-show="!isCollapsed1"></i><i class="fa fa-minus" ng-show="isCollapsed1"></i></a>
                         <ul ng-show="isCollapsed1" class="list-unstyled">
+                            <li ng-show="!applicant.locations || applicant.locations == 0"><b>Enable more locations: </b><button type="button" ng-click="setLocationStatus(applicant.maillist_id,'enable')" ><i alt="accept" class="fa fa-check"></i></button></li>
+                            <li ng-show="applicant.locations"><b>Disable more locations: </b><button type="button" ng-click="setLocationStatus(applicant.maillist_id,'disable')" ><i alt="accept" class="fa fa-times"></i></button></li>
                             <li><b>email:</b> {{applicant.email}}</li>
                             <li><b>City:</b> {{applicant.city}}</li>
                             <li><b>State/Province:</b> {{applicant.state}}</li>

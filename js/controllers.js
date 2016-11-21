@@ -5,7 +5,7 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
 
     $scope.isRouteLoading = false;
     var querystr = $location.search() ? $location.search() : '';
-
+    
     /* get the active state of page you're on */
     $scope.getClass = function(path) {
         if(path == $location.path()) {
@@ -148,9 +148,11 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
                 $rootScope.isOrganization = data['uinfo']['organization_id'] > 0 ? true : false;
                 var isPromed = data['uinfo']['organization_id'] == 4 ? true : false;
                 var isActive = typeof(data['uinfo']['active']) != "undefined" ? data['uinfo']['active'] : 'Y';
+                var memberLocations = typeof(data['uinfo']['active']) != "undefined" ? data['uinfo']['locations'] : false;
                 $cookieStore.put('epiUserInfo', {'uid':data['uinfo']['user_id'], 'isPromed':isPromed, 'isOrganization':$rootScope.isOrganization,
                     'organization_id':data['uinfo']['organization_id'], 'organization':data['uinfo']['orgname'], 'fetp_id':data['uinfo']['fetp_id'],
-                    'email':data['uinfo']['email'], 'uname':data['uinfo']['username'], 'active':isActive, 'status':data['uinfo']['status'], 'superuser':data['uinfo']['superuser']});
+                    'email':data['uinfo']['email'], 'uname':data['uinfo']['username'], 'active':isActive, 'status':data['uinfo']['status'],
+                    'superuser':data['uinfo']['superuser'], 'locations':memberLocations });
                 $rootScope.error_message = 'false';
                 // FETPs that aren't activated yet don't get review page
                 if(data['uinfo']['fetp_id'] && data['uinfo']['active'] == 'N') {
@@ -260,10 +262,10 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
                 });
             }
         }
-
+    
     /* get user cookie info */
     $scope.userInfo = $rootScope.userInfo = $cookieStore.get('epiUserInfo');
-
+    
         /* countries and codes */
         $scope.countries = [
             {name: 'Afghanistan', code: 'AF'},
@@ -844,6 +846,7 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
                     }).success(function (data, status, headers, config) {
                         $window.sessionStorage.userIds = data['userIds'];
                         $window.sessionStorage.numFetps = data['userList']['sending'];
+                        $window.sessionStorage.numUniqueFetps = data['uniqueList']['sending'];
                         $window.sessionStorage.searchBox = data['bbox'];
                         $window.sessionStorage.searchType = 'radius';
                         $location.path('/request2');
@@ -857,6 +860,7 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
     };
 
     $scope.numFetps = $window.sessionStorage.numFetps;
+    $scope.numUniqueFetps = $window.sessionStorage.numUniqueFetps;
     $scope.filePreview = $window.sessionStorage.filePreview;
 
     /* step 2: Filter FETP: calculate the number of users based on check & uncheck */
@@ -908,6 +912,7 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
                          $window.sessionStorage.searchBox = filtereddata['bbox'];
                          $window.sessionStorage.userIds = filtereddata['userIds'];
                          $window.sessionStorage.numFetps = $scope.numFetps = filtereddata['userList']['sending'];
+                         $window.sessionStorage.numUniqueFetps = $scope.numUniqueFetps = filtereddata['uniqueList']['sending'];
                          $scope.submitDisabled = $scope.numFetps > 0 ? false : true;
                       });
             }
@@ -929,6 +934,7 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
             }).success(function (filtereddata, status, headers, config) {
                 $window.sessionStorage.userIds = filtereddata['userIds'];
                 $window.sessionStorage.numFetps = $scope.numFetps = filtereddata['userList']['sending'];
+                $window.sessionStorage.numUniqueFetps = $scope.numUniqueFetps = filtereddata['uniqueList']['sending'];
                 $scope.submitDisabled = $scope.numFetps > 0 ? false : true;
                 if(filtereddata['bbox']) {
                     $window.sessionStorage.searchBox = filtereddata['bbox'];
@@ -1129,6 +1135,22 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
                 $scope.showpage = true;
             });
 
+        $scope.setLocationStatus = function (maillist_id, action) {
+            data = {maillist_id: maillist_id, action:action};
+            $http({ url: 'scripts/setLocationStatus.php', method: "POST", data: data
+            }).success(function (respdata, status, headers, config) {
+                if (respdata['status'] == 'success'){
+                    for (var n in $scope.applicants){
+                        if ($scope.applicants[n].maillist_id == maillist_id){
+                            $scope.applicants[n].locations = (action == 'enable') ? '1':'0';
+                        }
+                    }
+                } else {
+                    alert(respdata['message']);
+                }
+            });
+        };
+    
         $scope.selectMembers = function (status) {
 
             var r = confirm("Please wait a little while if you select OK");
@@ -1324,7 +1346,6 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
         console.log(mod_data);
         $http({ url: 'scripts/addmod.php', method: "POST", data: mod_data
         }).success(function (respdata, status, headers, config) {
-            console.log(respdata);
             if (respdata['status'] == 'success'){
                 $scope.message = "Successfully added new moderator"
 
@@ -1344,6 +1365,66 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
         }
     });
 
+    }). controller('memberLocationsController', function($scope, $cookieStore, $http) {
+
+
+    $scope.userInfo = $cookieStore.get('epiUserInfo');
+    $scope.locationaccess = (typeof($scope.userInfo.locations) != "undefined") ? $scope.userInfo.locations: false;
+    $scope.fetp_id = (typeof($scope.userInfo.fetp_id) != "undefined") ? $scope.userInfo.fetp_id: false;
+    $scope.showpage = true;
+    $scope.message = '';
+    $scope.error_message = '';
+
+    $scope.addLocation = function(member){
+
+        if (typeof(member.countrycode) == "undefined"){
+            $scope.error_message = 'Please select a country.';
+            return false;
+        }
+
+        var location = {city: member.city, state:member.state, countrycode:member.countrycode, fetp_id:$scope.fetp_id};
+        $http({ url: 'scripts/addlocation.php', method: "POST", data: location
+        }).success(function (respdata, status, headers, config) {
+            if (respdata['status'] == 'success'){
+                $scope.message = "Successfully added new location";
+                $scope.error_message = '';
+                $scope.locations = getLocations($scope.fetp_id);
+
+            } else {
+                $scope.message = '';
+                $scope.error_message = respdata['message'];
+            }
+        });
+    };
+
+    $scope.locations = getLocations($scope.fetp_id);
+
+    function getLocations(fetp_id){
+        var member = {fetp_id:fetp_id};
+        $http({ url: 'scripts/getlocations.php', method: "POST", data: member
+        }).success(function (respdata, status, headers, config) {
+            if (respdata['status'] == 'success'){
+                $scope.locations = respdata['locations'];
+            } else {
+                $scope.message = '';
+                $scope.error_message = respdata['message'];
+            }
+        });
+    }
+    $scope.deleteLocation = function (location_id){
+        var location = {location_id:location_id};
+        $http({ url: 'scripts/deletelocation.php', method: "POST", data: location
+        }).success(function (respdata, status, headers, config) {
+            if (respdata['status'] == 'success'){
+                $scope.message = respdata['message'];
+                $scope.locations = getLocations($scope.fetp_id);
+            } else {
+                $scope.message = '';
+                $scope.error_message = respdata['message'];
+            }
+        });
+    };
+
     /* filter for trusted HTML */
     }).filter('to_trusted', ['$sce', function($sce){
         return function(text) {
@@ -1351,4 +1432,3 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
         };
 
     }]);
-
