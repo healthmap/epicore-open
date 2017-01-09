@@ -159,6 +159,16 @@ class EventInfo
         return $respvals;
     }
 
+    static function getAllResponses() {
+        $db = getDB();
+        return $db->getAll("SELECT * FROM response ORDER BY event_id");
+    }
+
+    static function getAllFollowups() {
+        $db = getDB();
+        return $db->getAll("SELECT * FROM followup ORDER BY event_id");
+    }
+
     function getFETPRecipients() {
         $q = $this->db->query("SELECT DISTINCT(fetp_id) FROM event_fetp WHERE event_id = ?", array($this->id));
         while($row = $q->fetchRow()) {

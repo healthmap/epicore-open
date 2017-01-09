@@ -31,6 +31,20 @@ function saveEventStatsToCSV() {
 
 }
 
+function saveResponsesToCSV() {
+    require_once 'EventInfo.class.php';
+    $filename = '../data/responses.csv';
+    $responses = EventInfo::getAllResponses();
+    saveToCSV($responses, $filename);
+}
+
+function saveFollowupsToCSV() {
+    require_once 'EventInfo.class.php';
+    $filename = '../data/followups.csv';
+    $followups = EventInfo::getAllFollowups();
+    saveToCSV($followups, $filename);
+}
+
 // save data to a csv file using keys as header values
 function saveToCSV($data, $filename){
 
