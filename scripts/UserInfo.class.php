@@ -871,6 +871,7 @@ class UserInfo
     // get all members for csv file
     function getMembersInfo($members) {
         $std_countries = unserialize(COUNTRIES);
+        $std_who_map = unserialize(WHOMAP);
 
 
         // save all member info
@@ -888,8 +889,10 @@ class UserInfo
             $user['City'] = $applicant['city'];
             $user['State/Province'] = $applicant['state'];
             $user['Country'] = $std_countries[$applicant['country_code']];
+            $user['WHO Region'] = $std_who_map[$applicant['country_code']];
             $user['Job Title'] = $applicant['job_title'];
             $user['Organization'] = $applicant['organization'];
+            
             //Sector
             $user['Sector'] = '';
             if ($applicant['sector'] == 'G')
@@ -898,6 +901,7 @@ class UserInfo
                 $user['Sector'] = 'Non-governmental/Nonprofit';
             elseif ($applicant['sector'] == 'P')
                 $user['Sector'] = 'Private';
+            
             // Organization Category
             $user['Organization Category'] = '';
             if ($applicant['health_org_university'])
