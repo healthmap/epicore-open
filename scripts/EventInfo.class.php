@@ -794,7 +794,7 @@ class EventInfo
             $event_stats['num_notuseful_responses'] = $event['num_notuseful_responses'];
             $event_stats['num_useful_responses'] = $event['num_useful_responses'];
             $event_stats['num_useful_promed_responses'] = $event['num_useful_promed_responses'];
-            $event_stats['member_ids'] = $event["member_ids"];
+            $event_stats['member_ids'] = '"' . $event["member_ids"] . '"';
             $event_stats['first_response_date'] = $event["first_response_date"];
 
             // not useful responses
@@ -803,6 +803,7 @@ class EventInfo
             foreach ($notuseful as $nu) {
                 $event_stats['notuseful_ids'] .= ($event_stats['notuseful_ids'] == '') ? $nu['responder_id'] : ',' . $nu['responder_id'];
             }
+            $event_stats['notuseful_ids'] = '"' . $event_stats['notuseful_ids'] . '"';
 
             // useful responses
             $useful = $event['useful_responses'];
@@ -810,6 +811,7 @@ class EventInfo
             foreach ($useful as $u) {
                 $event_stats['useful_ids'] .= ($event_stats['useful_ids'] == '') ? $u['responder_id'] : ',' . $u['responder_id'];
             }
+            $event_stats['useful_ids'] = '"'. $event_stats['useful_ids'] . '"';
 
             // useful promed responses
             $promed = $event['useful_promed_responses'];
@@ -817,6 +819,7 @@ class EventInfo
             foreach ($promed as $p) {
                 $event_stats['promed_ids'] .= ($event_stats['promed_ids'] == '') ? $p['responder_id'] : ',' . $p['responder_id'];
             }
+            $event_stats['promed_ids'] = '"' . $event_stats['promed_ids'] . '"';
 
             // followups
             $followups = $event['num_followups'];
