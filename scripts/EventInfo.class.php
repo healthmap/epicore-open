@@ -438,6 +438,26 @@ class EventInfo
         return $events;
     }
 
+    static function getNumNotRatedResponses($uid = '')
+    {
+        if(!is_numeric($uid)) {
+            return 0;
+        }
+        $db = getDB();
+        $q = $db->query("SELECT * FROM event where requester_id = ?", array($uid));
+        $num_notrated_responses = 0;
+        while($row = $q->fetchRow()) {
+            // get the current status - open or closed
+            $status = $db->getOne("SELECT status FROM event_notes WHERE event_id = ? ORDER BY action_date DESC LIMIT 1", array($row['event_id']));
+            $status = $status ? $status : 'O'; // if no value for status, it's open
+            if ($status == 'C') {
+                $num_notrated_responses += $db->getOne("SELECT count(*) FROM response WHERE useful IS NULL AND response_permission <>0 and event_id = ?", array($row['event_id']));
+            }
+
+        }
+        return $num_notrated_responses;
+    }
+
     static function insertEvent($data_arr) 
     {
         $db = getDB();

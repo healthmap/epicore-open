@@ -49,19 +49,20 @@ if(isset($rvars['event_id']) && is_numeric($rvars['event_id'])) {
     require_once "UserInfo.class.php";
     $ui = new UserInfo($rvars['uid'], $rvars['fetp_id']);
     $status = isset($rvars['detail']) && $rvars['detail'] == "closed" ? 'C' : 'O';
+    $num_notrated_repsonses = 0;
     if($rvars['fetp_id']) {
         // array values will lop off the array key b/c angular reorders the object
         $indexed_array = array_values($ui->getFETPRequests($status));
     } else {
         $indexed_array = EventInfo::getAllEvents($rvars['uid'], $status);
-        if ($status == 'O') {  // get closed events to check for unrated respsonses
-            $closed_events = EventInfo::getAllEvents($rvars['uid'], 'C');
+        if ($status == 'O') {  // check for unrated respsonses
+            $num_notrated_repsonses = EventInfo::getNumNotRatedResponses($rvars['uid']);
         }
     }
 }
 
 header('content-type: application/json; charset=utf-8');
-$json = json_encode(array('EventsList' => $indexed_array, 'closedEvents' => $closed_events));
+$json = json_encode(array('EventsList' => $indexed_array, 'closedEvents' => $closed_events, 'numNotRatedResponses' => $num_notrated_repsonses));
 
 // return JSONP if it's client-side request
 print isset($_GET['callback']) ? "{$_GET['callback']}($json)" : $json;

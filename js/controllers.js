@@ -588,7 +588,7 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
                 $scope.filePreview = response.EventsList.filePreview ? response.EventsList.filePreview : '';
             }
 
-            $scope.closedEvents = response.closedEvents;
+            //$scope.closedEvents = response.closedEvents;
 
             // get response
             $scope.response_text = '';
@@ -608,10 +608,8 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
 
             // count unrated responses in closed events
             $scope.num_notrated_responses = 0;
-            if ($scope.onOpen && $scope.closedEvents) {
-                for (var n in $scope.closedEvents.yours) {
-                    $scope.num_notrated_responses += parseInt($scope.closedEvents.yours[n].num_notrated_responses);
-                }
+            if ($scope.onOpen) {
+                $scope.num_notrated_responses = response.numNotRatedResponses;
             } else if ($scope.eventsList){
                 for (var n in $scope.eventsList.yours) {
                     $scope.num_notrated_responses += parseInt($scope.eventsList.yours[n].num_notrated_responses);
