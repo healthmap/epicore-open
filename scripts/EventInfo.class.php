@@ -8,6 +8,7 @@
 require_once 'db.function.php';
 require_once 'const.inc.php';
 require_once 'PlaceInfo.class.php';
+require_once 'UserInfo.class.php';
 
 class EventInfo
 {
@@ -456,6 +457,59 @@ class EventInfo
 
         }
         return $num_notrated_responses;
+    }
+
+    static function getInactiveEvents($uid = '', $date = '')
+    {
+        if(!is_numeric($uid)) {
+            return 0;
+        }
+        $db = getDB();
+        $q = $db->query("SELECT * FROM event where requester_id = ?", array($uid));
+        $notactive_events = array();
+        $responses = 0;
+        while($row = $q->fetchRow()) {
+            // get the current status - open or closed
+            $status = $db->getOne("SELECT status FROM event_notes WHERE event_id = ? ORDER BY action_date DESC LIMIT 1", array($row['event_id']));
+            $status = $status ? $status : 'O'; // if no value for status, it's open
+
+            // save event id if open and not active
+            if ($status == 'O') {
+                // check for active responses and followups
+                $active_response_ids = $db->getAll("SELECT response_id FROM response WHERE event_id = ? AND response_date >= ?", array($row['event_id'], $date));
+                $response_ids = $db->getAll("SELECT response_id FROM response WHERE event_id = ?", array($row['event_id']));
+                $active_follwup_ids = $db->getAll("SELECT followup_id FROM followup WHERE event_id = ? AND action_date >= ? ", array($row['event_id'], $date));
+                $active_event_ids = $db->getAll("SELECT event_id FROM event WHERE event_id = ? AND create_date >= ? ", array($row['event_id'], $date));
+                // save event id if not active
+                if (!($active_event_ids || $active_response_ids || $active_follwup_ids)){
+                    if ($response_ids){
+                        $responses = count($response_ids);
+                    }
+                    $notactive_events[] = array('event_id' => $row['event_id'], 'title'=> $row['title'], 'date'=> $row['create_date'], 'responses' => $responses);
+                }
+            }
+        }
+        return $notactive_events;
+    }
+
+    static function getModsWithInactiveEvents($active_date){
+        $db = getDB();
+        $all_mods = UserInfo::getMods();
+
+        $inactive_mods = array();
+        foreach($all_mods as $mod){
+            $hmuid = $mod['hmu_id'];
+            $uid = $db->getOne("SELECT user_id FROM user WHERE hmu_id = '$hmuid'");
+            $events = self::getInactiveEvents($uid, $active_date);
+            if ($events) {
+                $inactive_mods[] = array('email'=> $mod['email'], 'name' => $mod['name'], 'user_id' => $uid, 'events' => $events);
+            }
+        }
+        if ($inactive_mods)
+            return $inactive_mods;
+        else
+            return false;
+
     }
 
     static function insertEvent($data_arr) 
