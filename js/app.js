@@ -12,7 +12,7 @@ var app = angular.module('EpicoreApp', [
 // mobile_prod - for mobile app with production backend
 // mobile_dev - for mobile app with dev backend
 // web - for web app (production and dev)
-var app_mode = 'mobile_dev';
+var app_mode = 'web';
 var homeUrl = "partials/home.html";
 if (app_mode == 'mobile_prod') {
     app.value('urlBase', 'https://epicore.org/'); // use full url for mobile api calls
