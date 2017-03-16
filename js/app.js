@@ -8,6 +8,29 @@ var app = angular.module('EpicoreApp', [
     'angular-google-analytics'
 ]);
 
+// app_mode settings to select web or mobile app
+// mobile_prod - for mobile app with production backend
+// mobile_dev - for mobile app with dev backend
+// web - for web app (production and dev)
+var app_mode = 'mobile_dev';
+var homeUrl = "partials/home.html";
+if (app_mode == 'mobile_prod') {
+    app.value('urlBase', 'https://epicore.org/'); // use full url for mobile api calls
+    app.value('epicoreMode', 'mobile');
+    homeUrl = "partials/home_mobile.html";
+  }
+else if ( app_mode == 'mobile_dev') { // use full url for mobile api calls
+    app.value('urlBase', 'https://epicore.org/dev/');
+    app.value('epicoreMode', 'mobile');
+    homeUrl = "partials/home_mobile.html";
+  }
+else { // use relative url for web app
+    app.value('urlBase', '');
+    app.value('epicoreMode', 'web');
+    homeUrl = "partials/home.html";
+  }
+
+
 app.config(function($routeProvider) {
   $routeProvider.
         when("/events", {templateUrl: "partials/events.html", controller: "eventsController"}).
@@ -44,7 +67,7 @@ app.config(function($routeProvider) {
         when("/login", {templateUrl: "partials/login.html"}).
         when("/setpassword", {templateUrl: "partials/setpassword.html"}).
         when("/resetpassword", {templateUrl: "partials/resetpassword.html"}).
-        when("/home", {templateUrl: "partials/home.html"}).
+        when("/home", {templateUrl: homeUrl}).
         when("/trainingvideos", {templateUrl: "partials/trainingvideos.html"}).
         when("/training", {templateUrl: "partials/test.html", controller: "testController"}).
         when("/certificate", {templateUrl: "partials/certificate.html", controller: "certController"}).

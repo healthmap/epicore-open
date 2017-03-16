@@ -1,5 +1,6 @@
-<div ng-show="!uid" ng-include src="'header_new.html'"></div>
-<div ng-show="uid" ng-include src="'header.html'"></div>
+<div ng-show="!uid && !mobile" ng-include src="'header_new.html'"></div>
+<div ng-show="uid && !mobile" ng-include src="'header.html'"></div>
+<div ng-if="mobile" ng-include src="'header_mobile.html'"></div>
 
 <div class="jumbotron page">
 <div class="gradient-overlay light"></div>
@@ -266,13 +267,13 @@
                         <h5 class="form-label">Which sector does your organization best fall under</h5>
                         <span ng-show="!uservals.sector && attempted" class="error">Must select one</span>
 
-                        <div class="radio"> 
+                        <div class="radio">
                             <label><input type="radio" ng-model="uservals.sector" value="G" > Governmental</label>
                         </div>
-                        <div class="radio"> 
+                        <div class="radio">
                             <label> <input type="radio" ng-model="uservals.sector" value="N" > Nongovernmental / Nonprofit </label>
                         </div>
-                        <div class="radio"> 
+                        <div class="radio">
                             <label> <input type="radio" name="sector" ng-model="uservals.sector" value="P" > Private / For-Profit</label>
                         </div>
                     </div>

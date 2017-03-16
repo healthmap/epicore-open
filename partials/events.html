@@ -1,10 +1,11 @@
-<div ng-include src="'header.html'"></div>
+<div ng-if="!mobile"ng-include src="'header.html'"></div>
+<div ng-if="mobile"ng-include src="'header_mobile.html'"></div>
 <div class="jumbotron dashboard">
     <div class="container">
         <h1><span>RFI List</span></h1>
     </div>
 </div>
-        
+
 <div class="wrapper secondary-nav">
     <div class="container">
         <span ng-show="onOpen" class="text-uppercase"><span class="border-bottom tab">Open events</span><span class="tab"><a href="#/events/closed" class="inherit">Closed events</a></span></span>

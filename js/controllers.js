@@ -1,11 +1,13 @@
 angular.module('EpicoreApp.controllers', []).
 
 /* User - includes signup, Reset password, Login & Logout */
-controller('userController', function($rootScope, $routeParams, $scope, $route, $cookies, $cookieStore, $location, $http, $window) {
+controller('userController', function($rootScope, $routeParams, $scope, $route, $cookies, $cookieStore, $location, $http, $window, urlBase , epicoreMode) {
+
+    $scope.mobile = (epicoreMode == 'mobile') ? true: false;
 
     $scope.isRouteLoading = false;
     var querystr = $location.search() ? $location.search() : '';
-    
+
     /* get the active state of page you're on */
     $scope.getClass = function(path) {
         if(path == $location.path()) {
@@ -30,7 +32,7 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
             data['uid'] = $scope.uid;
             data['action'] = $scope.action;
             data['idtype'] = $scope.idtype;
-            $http({ url: 'scripts/getapplicant.php', method: "POST", data: data
+            $http({ url: urlBase + 'scripts/getapplicant.php', method: "POST", data: data
             }).success(function (data, status, headers, config) {
                 $scope.uservals = data; // this pre-populates the values on the form
                 if ($scope.uservals.university2) {
@@ -81,7 +83,7 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
         else {
             if($scope.action == 'edit'){
                 $http({
-                    url: 'scripts/updateuser.php', method: "POST", data: uservals
+                    url: urlBase + 'scripts/updateuser.php', method: "POST", data: uservals
                 }).success(function (data, status, headers, config) {
                     if (data['status'] == "success") {
                         if($scope.idtype == 'fetp'){
@@ -98,7 +100,7 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
             }
             else {
                 $http({
-                    url: 'scripts/signup.php', method: "POST", data: uservals
+                    url: urlBase + 'scripts/signup.php', method: "POST", data: uservals
                 }).success(function (data, status, headers, config) {
                     if (data['status'] == "success") {
                         if (data['exists'] == 1) {
@@ -115,7 +117,7 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
     };
 
     /* set some global variables for Tephinet integration */
-    $http({ url: 'scripts/getvars.php', method: "POST"
+    $http({ url: urlBase + 'scripts/getvars.php', method: "POST"
         }).success(function (data, status, headers, config) {
         $rootScope.tephinetBase = data['tephinet_base'];
     });
@@ -136,12 +138,12 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
             // if it's an fetp, may be coming in with ticket and event id for which they will respond
             formData['event_id'] = $routeParams.eid ? $routeParams.eid : null;
             formData['usertype'] = $location.path().indexOf("/fetp") == 0 ? 'fetp' : '';
-        } 
+        }
         if(!formData['ticket_id'] && !formData['alert_id'] && !formData['event_id'] && !$scope.loginForm.$valid) {
             $scope.isRouteLoading = false;
             return;
         }
-        $http({ url: 'scripts/login.php', method: "POST", data: formData
+        $http({ url: urlBase + 'scripts/login.php', method: "POST", data: formData
         }).success(function (data, status, headers, config) {
             if(data['status'] == "success") {
                 // determines if user is an organization or FETP
@@ -198,7 +200,7 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
             }
             else {
                 $http({
-                    url: 'scripts/setpassword.php', method: "POST", data: formData
+                    url: urlBase + 'scripts/setpassword.php', method: "POST", data: formData
                 }).success(function (data, status, headers, config) {
                     if (data['status'] == "success") {
                         var isActive = typeof(data['uinfo']['active']) != "undefined" ? data['uinfo']['active'] : 'Y';
@@ -245,7 +247,7 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
             }
             else {
                 $http({
-                    url: 'scripts/resetpassword.php', method: "POST", data: formData
+                    url: urlBase + 'scripts/resetpassword.php', method: "POST", data: formData
                 }).success(function (data, status, headers, config) {
                     if (data['status'] == "success") {
                         $scope.isRouteLoading = false;
@@ -262,10 +264,10 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
                 });
             }
         }
-    
+
     /* get user cookie info */
     $scope.userInfo = $rootScope.userInfo = $cookieStore.get('epiUserInfo');
-    
+
         /* countries and codes */
         $scope.countries = [
             {name: 'Afghanistan', code: 'AF'},
@@ -514,7 +516,7 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
             {name: 'Zimbabwe', code: 'ZW'}
         ];
 
-}).controller('mapController', function($scope, $http, $cookieStore) {
+}).controller('mapController', function($scope, $http, $cookieStore, urlBase) {
     // only allow moderators
     $scope.userInfo = $cookieStore.get('epiUserInfo');
     //$scope.superuser = (typeof($scope.userInfo) != "undefined") ? $scope.userInfo.superuser: false;
@@ -533,7 +535,7 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
 
     $scope.markers = [];
     $scope.numMembers = '';
-    $http({ url: 'scripts/getallmarkers.php', method: "POST"
+    $http({ url: urlBase + 'scripts/getallmarkers.php', method: "POST"
     }).success(function (data, status, headers, config) {
             if(data['status'] == "success") {
                 $scope.markers = data['markers'];
@@ -546,7 +548,7 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
 
 /* FOR ADDING ACTIVE CLASS TO NAV */
 }).controller('headerController', function($scope, $location) {
-     $scope.isActive = function (viewLocation) { 
+     $scope.isActive = function (viewLocation) {
         return viewLocation === $location.path();
     };
 
@@ -554,7 +556,9 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
 }).controller('fetpController', function($scope, $cookieStore) {
         $scope.userInfo = $cookieStore.get('epiUserInfo');
 /* Event(s) controller */
-}).controller('eventsController', function($scope, $routeParams, $cookieStore, $location, $http, eventAPIservice) {
+}).controller('eventsController', function($scope, $routeParams, $cookieStore, $location, $http, eventAPIservice, urlBase, epicoreMode) {
+
+        $scope.mobile = (epicoreMode == 'mobile') ? true: false;
         $scope.isRouteLoading = true;
         $scope.eventsList = [];
         $scope.userInfo = $cookieStore.get('epiUserInfo');
@@ -598,7 +602,7 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
                 formData['org_id'] = $scope.userInfo.organization_id;
                 formData['fetp_id'] = $scope.userInfo.fetp_id;
                 formData['response_id'] = $routeParams.response_id;
-                $http({ url: 'scripts/getresponse.php', method: "POST", data: formData
+                $http({ url: urlBase + 'scripts/getresponse.php', method: "POST", data: formData
                 }).success(function (respdata, status, headers, config) {
                     $scope.response_text = respdata['response'];
                     $scope.responder_id = respdata['responder_id'];
@@ -654,7 +658,7 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
                 if($routeParams.response_id) {
                     formData['response_id'] = $routeParams.response_id;
                 }
-                $http({ url: 'scripts/sendfollowup.php', method: "POST", data: formData
+                $http({ url: urlBase + 'scripts/sendfollowup.php', method: "POST", data: formData
                 }).success(function (data, status, headers, config) {
                     $scope.submitDisabled = false;
                     $location.path('/success/3/' + eid);
@@ -700,7 +704,7 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
                 formData['useful_rids'] = useful_rids.toString();
                 formData['usefulpromed_rids'] = usefulpromed_rids.toString();
                 formData['notuseful_rids'] = notuseful_rids.toString();
-                $http({ url: 'scripts/changestatus.php', method: "POST", data: formData
+                $http({ url: urlBase + 'scripts/changestatus.php', method: "POST", data: formData
                 }).success(function (data, status, headers, config) {
                     if (data['status'] == 'success') {
                         $scope.submitDisabled = false;
@@ -724,14 +728,14 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
         $scope.sendResponse = function(formData, isValid) {
             if(formData['response_permission'] == 0 || isValid) {
                 $scope.submitDisabled = true;
-                // if user has chosen "I have nothing to contribute" button, 
-                // formData comes in as object response_permissions: 0 
+                // if user has chosen "I have nothing to contribute" button,
+                // formData comes in as object response_permissions: 0
                 formData['event_id'] = $routeParams.id
                 formData['fetp_id'] = $scope.userInfo.fetp_id;
                 if ($routeParams.id){
                     var eid = $routeParams.id;
                 }
-                $http({ url: 'scripts/sendresponse.php', method: "POST", data: formData
+                $http({ url: urlBase + 'scripts/sendresponse.php', method: "POST", data: formData
                 }).success(function (data, status, headers, config) {
                     if (data['status'] == 'success') {
                         $location.path('/success/2/' + eid);
@@ -748,7 +752,7 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
             if (confirm('Are you sure you want to delete this event?')) {
                 data = {eid: eid, superuser: $scope.userInfo.superuser};
                 $http({
-                    url: 'scripts/deleteEvent.php', method: "POST", data: data
+                    url: urlBase + 'scripts/deleteEvent.php', method: "POST", data: data
                 }).success(function (data, status, headers, config) {
                     if (data['status'] == 'success') {
                         $location.path('/success/7');
@@ -767,7 +771,7 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
 /* Request (RFI)
   this is the process to send an RFI. Store all values in window session
   and wipe session after added to db */
-}).controller('requestController', function($rootScope, $window, $scope, $routeParams, $cookieStore, $location, $http) {
+}).controller('requestController', function($rootScope, $window, $scope, $routeParams, $cookieStore, $location, $http, urlBase) {
 
             $scope.userInfo = $rootScope.userInfo = $cookieStore.get('epiUserInfo');
 
@@ -788,7 +792,7 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
         $window.sessionStorage.alertid = $scope.alertid;
         var alertData = {};
         alertData['alert_id'] = $scope.alertid;
-        $http({ url: 'scripts/getalert.php', method: "POST", data: alertData
+        $http({ url: urlBase + 'scripts/getalert.php', method: "POST", data: alertData
             }).success(function (data, status, headers, config) {
                 $scope.formData = data; // this pre-populates the values on the form
                 $scope.formData.additionalText = '';
@@ -813,7 +817,7 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
     }
 
 
-    /* step 1: save the event information in session variable, and 
+    /* step 1: save the event information in session variable, and
     filter FETPs for next screen based on location chosen */
     $scope.storeEvent = function(formData, isValid) {
         if(isValid) {
@@ -840,7 +844,7 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
                 $window.sessionStorage.location = formData['location'];
                 $window.sessionStorage.latlon = formData['latlon'];
 
-                $http({ url: 'scripts/filter.php', method: "POST", data: formData 
+                $http({ url: urlBase + 'scripts/filter.php', method: "POST", data: formData
                     }).success(function (data, status, headers, config) {
                         $window.sessionStorage.userIds = data['userIds'];
                         $window.sessionStorage.numFetps = data['userList']['sending'];
@@ -889,7 +893,7 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
         query['uid'] = $scope.userInfo.uid;
         query['centerlat'] = latlonarr[0];
         query['centerlon'] = latlonarr[1];
-        $http({ url: 'scripts/getmarkers.php', method: "POST", data: query
+        $http({ url: urlBase + 'scripts/getmarkers.php', method: "POST", data: query
                  }).success(function (data, status, headers, config) {
                  if(data['status'] == "success") {
                     $scope.markers = data['markers'];
@@ -905,7 +909,7 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
                 $scope.radiussel = true; // if radius changes without changing radio button
                 $window.sessionStorage.searchType = 'radius';
                 filterData['bbox'] = new Array(southwest.lat(), northeast.lat(), southwest.lng(), northeast.lng());
-                $http({ url: 'scripts/filter.php', method: "POST", data: filterData 
+                $http({ url: urlBase + 'scripts/filter.php', method: "POST", data: filterData
                       }).success(function (filtereddata, status, headers, config) {
                          $window.sessionStorage.searchBox = filtereddata['bbox'];
                          $window.sessionStorage.userIds = filtereddata['userIds'];
@@ -921,14 +925,14 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
     $scope.recalcUsers = function(filterData, whichclicked) {
         $window.sessionStorage.searchType = filterData['filtertype'] = whichclicked;
         if(whichclicked == "country") {
-            // select the right radio button if a country is selected without changing radio 
+            // select the right radio button if a country is selected without changing radio
             $scope.radiussel = false;
             $window.sessionStorage.countries = filterData['countries'];
         } else {
             filterData['bbox'] = $window.sessionStorage.searchBox.split(",");
             $scope.radiussel = true;
         }
-        $http({ url: 'scripts/filter.php', method: "POST", data: filterData 
+        $http({ url: urlBase + 'scripts/filter.php', method: "POST", data: filterData
             }).success(function (filtereddata, status, headers, config) {
                 $window.sessionStorage.userIds = filtereddata['userIds'];
                 $window.sessionStorage.numFetps = $scope.numFetps = filtereddata['userList']['sending'];
@@ -951,7 +955,7 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
         if(typeof($window.sessionStorage.filePreview) != "undefined") {
             formData['file_preview'] = $window.sessionStorage.filePreview;
         }
-        $http({ url: 'scripts/buildrequest.php', method: "POST", data: formData 
+        $http({ url: urlBase + 'scripts/buildrequest.php', method: "POST", data: formData
         }).success(function (respdata, status, headers, config) {
             $window.sessionStorage.filePreview = respdata['file_preview'];
             $location.path('/request3');
@@ -976,7 +980,7 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
             formData['additionalText'] = $window.sessionStorage.additionalText;
             formData['disease'] = $window.sessionStorage.disease;
             formData['alert_id'] = $window.sessionStorage.alertid;
-            $http({ url: 'scripts/sendrequest.php', method: "POST", data: formData 
+            $http({ url: urlBase + 'scripts/sendrequest.php', method: "POST", data: formData
             }).success(function (respdata, status, headers, config) {
                 // empty out the form values since you've submitted so they aren't prefilled next time
                 $window.sessionStorage.clear();
@@ -1004,7 +1008,7 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
         }
 
         /* edit request by owner or superuser */
-    }).controller('editRequestController', function($rootScope, $window, $scope, $routeParams, $cookieStore, $location, $http) {
+    }).controller('editRequestController', function($rootScope, $window, $scope, $routeParams, $cookieStore, $location, $http, urlBase) {
 
         $scope.userInfo = $rootScope.userInfo = $cookieStore.get('epiUserInfo');
 
@@ -1013,7 +1017,7 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
         if($scope.eventid) {
             var eventData = {};
             eventData['event_id'] = $scope.eventid;
-            $http({ url: 'scripts/getrequest.php', method: "POST", data: eventData
+            $http({ url: urlBase + 'scripts/getrequest.php', method: "POST", data: eventData
             }).success(function (data, status, headers, config) {
                 $scope.formData = data; // this pre-populates the values on the form
                 $scope.formData.additionalText = data['personalized_text'];
@@ -1033,7 +1037,7 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
                 }
 
                 // update event
-                $http({ url: 'scripts/updaterequest.php', method: "POST", data: formData
+                $http({ url: urlBase + 'scripts/updaterequest.php', method: "POST", data: formData
                 }).success(function (data, status, headers, config) {
                     if (data['status'] == 'success'){
                         $location.path('/success/6');
@@ -1048,14 +1052,14 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
             }
         };
 
-    }).controller('responseController', function($scope, $location, $routeParams, $cookieStore, $http) {
+    }).controller('responseController', function($scope, $location, $routeParams, $cookieStore, $http, urlBase) {
         $scope.userInfo = $cookieStore.get('epiUserInfo');
         var formData = {};
         formData['uid'] = $scope.userInfo.uid;
         formData['org_id'] = $scope.userInfo.organization_id;
         formData['fetp_id'] = $scope.userInfo.fetp_id;
         formData['response_id'] = $routeParams.response_id;
-        $http({ url: 'scripts/getresponse.php', method: "POST", data: formData 
+        $http({ url: urlBase + 'scripts/getresponse.php', method: "POST", data: formData
             }).success(function (respdata, status, headers, config) {
                 $scope.isAuthorizedToSee = respdata['status'] == "failed" ? false : true;
                 $scope.isAuthorizedToFollowup = respdata['authorized_to_followup'] ? true : false;
@@ -1081,7 +1085,7 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
         $scope.messageResponse = {};
         $scope.messageResponse.text = messages[$scope.id];
 
-    }).controller('approvalController', function($scope, $http, $location, $route, $cookieStore) {
+    }).controller('approvalController', function($scope, $http, $location, $route, $cookieStore, urlBase) {
 
         // only allow superusers for admin
         $scope.userInfo = $cookieStore.get('epiUserInfo');
@@ -1099,7 +1103,7 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
         $scope.allapp = false;
 
         var data = {};
-            $http({ url: 'scripts/approval.php', method: "POST", data: data
+            $http({ url: urlBase + 'scripts/approval.php', method: "POST", data: data
             }).success(function (respdata, status, headers, config) {
                 var inactive_applicants = [];
                 for (var n in respdata){
@@ -1135,7 +1139,7 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
 
         $scope.setLocationStatus = function (maillist_id, action) {
             data = {maillist_id: maillist_id, action:action};
-            $http({ url: 'scripts/setLocationStatus.php', method: "POST", data: data
+            $http({ url: urlBase + 'scripts/setLocationStatus.php', method: "POST", data: data
             }).success(function (respdata, status, headers, config) {
                 if (respdata['status'] == 'success'){
                     for (var n in $scope.applicants){
@@ -1148,7 +1152,7 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
                 }
             });
         };
-    
+
         $scope.selectMembers = function (status) {
 
             var r = confirm("Please wait a little while if you select OK");
@@ -1166,7 +1170,7 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
 
         $scope.approveApplicant = function(maillist_id, action){
             data = {maillist_id: maillist_id, action:action};
-            $http({ url: 'scripts/setMemberStatus.php', method: "POST", data: data
+            $http({ url: urlBase  + 'scripts/setMemberStatus.php', method: "POST", data: data
             }).success(function (respdata, status, headers, config) {
                 if (respdata['status'] == 'success'){
                     for (var n in $scope.applicants){
@@ -1182,7 +1186,7 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
 
         $scope.downloadMembers = function(){
             $scope.isRouteLoading = true;
-            $http({ url: 'scripts/downloadMembers.php', method: "POST"
+            $http({ url: ulrBase + 'scripts/downloadMembers.php', method: "POST"
             }).success(function (respdata, status, headers, config) {
                 $scope.membersavailable = true;
                 $scope.isRouteLoading = false;
@@ -1191,7 +1195,7 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
 
         $scope.downloadEvents = function(){
             $scope.isRouteLoading = true;
-            $http({ url: 'scripts/downloadEventStats.php', method: "POST"
+            $http({ url: urlBase + 'scripts/downloadEventStats.php', method: "POST"
             }).success(function (respdata, status, headers, config) {
                 $scope.eventsavailable = true;
                 $scope.isRouteLoading = false;
@@ -1202,7 +1206,7 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
             if (confirm('Are you sure you want to send reminder emails?')) {
                 data = {action: action};
                 $http({
-                    url: 'scripts/sendreminder.php', method: "POST", data: data
+                    url: urlBase + 'scripts/sendreminder.php', method: "POST", data: data
                 }).success(function (respdata, status, headers, config) {
                     alert(respdata.length + ' emails sent.');
                 });
@@ -1219,7 +1223,7 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
             if (confirm('Are you sure you want to delete this user?')) {
                 data = {uid: uid};
                 $http({
-                    url: 'scripts/deleteuser.php', method: "POST", data: data
+                    url: urlBase + 'scripts/deleteuser.php', method: "POST", data: data
                 }).success(function (data, status, headers, config) {
                     if (data['status'] == 'success')
                         $route.reload();
@@ -1234,7 +1238,7 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
             }
         };
 
-    }).controller('testController', function($scope, $cookieStore, $http, $location) {
+    }).controller('testController', function($scope, $cookieStore, $http, $location, urlBase) {
 
         // youtube codes
         $scope.code1 = 'LYgaHDL00x0'; // Introduction to Innovative Disease Surveillance Course
@@ -1270,7 +1274,7 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
                     var status = 'approved';
                     var data = {fetp_id: $scope.userInfo.fetp_id, status: status};
                     $http({
-                        url: 'scripts/approveUser.php', method: "POST", data: data
+                        url: urlBase + 'scripts/approveUser.php', method: "POST", data: data
                     }).success(function (respdata, status, headers, config) {
                         if (respdata['status'] == 'success') {
                             $scope.test_message = "You passed the test! <br><br> You can now login to the Epicore platform using your email and password.  Your certificate of recognition is available on the training page after you login.";
@@ -1291,14 +1295,14 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
 
         };
 
-    }).controller('certController', function($scope, $cookieStore, $http) {
+    }).controller('certController', function($scope, $cookieStore, $http, urlBase) {
 
     //get member info
     $scope.userInfo = $cookieStore.get('epiUserInfo');
     var data = {};
     data['uid'] = $scope.userInfo.fetp_id;
     data['idtype'] = 'fetp';
-    $http({ url: 'scripts/getapplicant.php', method: "POST", data: data
+    $http({ url: urlBase + 'scripts/getapplicant.php', method: "POST", data: data
     }).success(function (data, status, headers, config) {
 
         $scope.member_name = data.firstname + ' ' + data.lastname;
@@ -1324,11 +1328,11 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
     };
 
 
-    }). controller('modaccessController', function($scope, $cookieStore, $http) {
+    }). controller('modaccessController', function($scope, $cookieStore, $http, urlBase) {
 
     var data = {};
     $scope.showpage = false;
-    $http({ url: 'scripts/approveaccess.php', method: "POST", data: data
+    $http({ url: urlBase + 'scripts/approveaccess.php', method: "POST", data: data
     }).success(function (respdata, status, headers, config) {
         $scope.showpage = true;
     });
@@ -1342,7 +1346,7 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
 
         var mod_data = {mod_email: mod_email, mod_org_id:mod_org_id};
         console.log(mod_data);
-        $http({ url: 'scripts/addmod.php', method: "POST", data: mod_data
+        $http({ url: urlBase + 'scripts/addmod.php', method: "POST", data: mod_data
         }).success(function (respdata, status, headers, config) {
             if (respdata['status'] == 'success'){
                 $scope.message = "Successfully added new moderator"
@@ -1354,7 +1358,7 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
     };
 
     $scope.mods = '';
-    $http({ url: 'scripts/getmods.php', method: "POST"
+    $http({ url: urlBase + 'scripts/getmods.php', method: "POST"
     }).success(function (respdata, status, headers, config) {
         if (respdata['status'] == 'success'){
             $scope.mods = respdata['mods'];
@@ -1363,7 +1367,7 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
         }
     });
 
-    }). controller('memberLocationsController', function($scope, $cookieStore, $http) {
+    }). controller('memberLocationsController', function($scope, $cookieStore, $http, urlBase) {
 
 
     $scope.userInfo = $cookieStore.get('epiUserInfo');
@@ -1381,7 +1385,7 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
         }
 
         var location = {city: member.city, state:member.state, countrycode:member.countrycode, fetp_id:$scope.fetp_id};
-        $http({ url: 'scripts/addlocation.php', method: "POST", data: location
+        $http({ url: urlBase + 'scripts/addlocation.php', method: "POST", data: location
         }).success(function (respdata, status, headers, config) {
             if (respdata['status'] == 'success'){
                 $scope.message = "Successfully added new location";
@@ -1399,7 +1403,7 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
 
     function getLocations(fetp_id){
         var member = {fetp_id:fetp_id};
-        $http({ url: 'scripts/getlocations.php', method: "POST", data: member
+        $http({ url: urlBase + 'scripts/getlocations.php', method: "POST", data: member
         }).success(function (respdata, status, headers, config) {
             if (respdata['status'] == 'success'){
                 $scope.locations = respdata['locations'];
@@ -1411,7 +1415,7 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
     }
     $scope.deleteLocation = function (location_id){
         var location = {location_id:location_id};
-        $http({ url: 'scripts/deletelocation.php', method: "POST", data: location
+        $http({ url: urlBase + 'scripts/deletelocation.php', method: "POST", data: location
         }).success(function (respdata, status, headers, config) {
             if (respdata['status'] == 'success'){
                 $scope.message = respdata['message'];

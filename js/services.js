@@ -28,7 +28,7 @@ angular.module('EpicoreApp.services', [])
             }
         }
     })
-    .factory('eventAPIservice', function($http, $rootScope, $location) {
+    .factory('eventAPIservice', function($http, $rootScope, $location, urlBase) {
         var eventAPI = {};
         eventAPI.getEvents = function(event_id) {
             var qs = event_id ? '&event_id='+event_id : '';
@@ -44,8 +44,8 @@ angular.module('EpicoreApp.services', [])
                 qs += "&detail="+urlarr[2]; // closed
             }
             return $http({
-                method: 'JSONP', 
-                url: 'scripts/EventsAPI.php?auth=true&callback=JSON_CALLBACK'+qs
+                method: 'JSONP',
+                url: urlBase + 'scripts/EventsAPI.php?auth=true&callback=JSON_CALLBACK'+qs
             });
         }
         return eventAPI;

@@ -1,0 +1,16 @@
+<div class="container">
+        <div class="navbar-header">
+
+          <a class="logo" href="#/home"><img src="img/logos/epicore.png" height="60px" alt="Epicore" style="display:block;float:left;margin-top:18px;margin-right:6px;">
+            <span ng-if="!userInfo.fetp_id" class="text-uppercase">Epicore</span>
+            <span ng-if="userInfo.fetp_id" class="text-uppercase">Epicore Dashboard</span>
+          </a>
+
+           <div >
+                 <a ng-if="!userInfo.fetp_id" ng-href="#/login" class="btn text-uppercase">Login</a>
+                 <a ng-if="userInfo.active=='Y' && userInfo.fetp_id" ng-href="#/home" ng-click="userLogout()" class="btn text-uppercase">Log out</a>
+                 <a ng-if="userInfo.active=='Y' && userInfo.fetp_id" ng-href="#/application/{{userInfo.fetp_id}}/edit/fetp" class="btn text-uppercase">Edit Profile</a>
+           </div>
+
+        </div>
+</div><!-- /.container -->
