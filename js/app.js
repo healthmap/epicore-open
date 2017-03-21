@@ -18,11 +18,13 @@ if (app_mode == 'mobile_prod') {
     app.value('urlBase', 'https://epicore.org/'); // use full url for mobile api calls
     app.value('epicoreMode', 'mobile');
     homeUrl = "partials/home_mobile.html";
+    document.addEventListener("deviceready",onDeviceReady,false);
   }
 else if ( app_mode == 'mobile_dev') { // use full url for mobile api calls
     app.value('urlBase', 'https://epicore.org/dev/');
     app.value('epicoreMode', 'mobile');
     homeUrl = "partials/home_mobile.html";
+    document.addEventListener("deviceready",onDeviceReady,false);
   }
 else { // use relative url for web app
     app.value('urlBase', '');
