@@ -23,8 +23,6 @@
     <script src="js/html5shiv.js"></script>
     <script src="js/respond.min.js"></script>
     <![endif]-->
-    <!-- phonegap push notifications -->
-    <script type="text/javascript" src="js/pushnotifications.js"></script>
     <script src="js/bootstrap.min.js"></script>
     <script src="js/jquery.validate.min.js"></script>
     <script src="js/chosen.jquery.min.js"></script>
@@ -45,7 +43,12 @@
     <script src="js/lodash-min.js"></script>
     <script src="js/angular-google-maps.min.js"></script>
 
-<!-- cordova script (this will be a 404 during development) -->
+    <!-- bower components -->
+    <script src="bower_components/ngstorage/ngStorage.min.js"></script>
+    <script src="bower_components/ngCordova/dist/ng-cordova.min.js"></script>
+
+
+    <!-- cordova script for mobile -->
     <script src="cordova.js"></script>
 
 
@@ -91,15 +94,5 @@
 
 <ng-view></ng-view>
 
-<!--<div class="wrapper footer">
-<footer id="footer" class="grayscale text-center">
-<div class="container">
-<a href="http://www.healthmap.org/en"><img src="img/logos/hm.png" alt="HealthMap" height="30"></a>
-<a href="http://promedmail.org"><img src="img/logos/promed.gif" alt="ProMED" height="40"></a>
-<a href="http://www.skollglobalthreats.org"><img src="img/logos/skoll.png" alt="Skoll" height="50">
-<a href="http://www.tephinet.org"><img src="img/logos/tephinet.png" alt="Tephinet" height="50"></a>
-</div>
-</footer>
-</div>-->
 </body>
 </html>

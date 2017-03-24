@@ -5,7 +5,9 @@ var app = angular.module('EpicoreApp', [
     'ngRoute',
     'ngSanitize',
     'uiGmapgoogle-maps',
-    'angular-google-analytics'
+    'angular-google-analytics',
+    'ngCordova',
+    'ngStorage'
 ]);
 
 // app_mode settings to select web or mobile app
@@ -18,13 +20,11 @@ if (app_mode == 'mobile_prod') {
     app.value('urlBase', 'https://epicore.org/'); // use full url for mobile api calls
     app.value('epicoreMode', 'mobile');
     homeUrl = "partials/home_mobile.html";
-    document.addEventListener("deviceready",onDeviceReady,false);
   }
 else if ( app_mode == 'mobile_dev') { // use full url for mobile api calls
     app.value('urlBase', 'https://epicore.org/dev/');
     app.value('epicoreMode', 'mobile');
     homeUrl = "partials/home_mobile.html";
-    document.addEventListener("deviceready",onDeviceReady,false);
   }
 else { // use relative url for web app
     app.value('urlBase', '');
@@ -85,6 +85,74 @@ app.run(['$rootScope', '$location', '$window', function($rootScope, $location, $
             });
     }]);
 
+/* push notifications listener */
+if ((app_mode == 'mobile_dev') || (app_mode == 'mobile_prod')) {
+    app.run(function ($http, $cordovaPushV5, $rootScope, $cordovaDevice, $localStorage) {
+
+        document.addEventListener("deviceready", function () {
+
+            var options = {
+                android: {
+                    senderID: "808458117906"
+                },
+                ios: {
+                    alert: "true",
+                    badge: "true",
+                    sound: "true",
+                    clearBadge: "true"  // clears badge on app startup
+                },
+                browser: {
+                    pushServiceURL: 'http://push.api.phonegap.com/v1/push'
+                },
+                windows: {}
+            };
+
+            // initialize
+            $cordovaPushV5.initialize(options).then(function () {
+                // start listening for new notifications
+                $cordovaPushV5.onNotification();
+                // start listening for errors
+                $cordovaPushV5.onError();
+
+                // register to get registrationId
+                $cordovaPushV5.register().then(function (registrationId) {
+                    // save `registrationId` somewhere;
+                    //alert("RegId: " +registrationId);
+                    $localStorage.registrationId = registrationId;
+
+                })
+            });
+
+            // triggered every time notification received
+            $rootScope.$on('$cordovaPushV5:notificationReceived', function (event, data) {
+                // data.message,
+                // data.title,
+                // data.count,
+                // data.sound,
+                // data.image,
+                // data.additionalData
+
+                $localStorage.pushMessage = data.message;
+                //alert("Notification: " +data.message);
+
+            });
+
+            // triggered every time error occurs
+            $rootScope.$on('$cordovaPushV5:errorOcurred', function (event, e) {
+                // e.message
+                //alert(e.message);
+                $localStorage.pushError = e.message;
+            });
+
+            // get device info
+            $localStorage.mobile_model = $cordovaDevice.getModel(); // eg. iPhone 6
+            $localStorage.mobile_platform = $cordovaDevice.getPlatform(); // eg. iOS, Android
+            $localStorage.mobile_os_version = $cordovaDevice.getVersion(); // eg iOS 10.2
+
+        }, false);
+
+    });
+}
 app.config(function (AnalyticsProvider) {
     // Add configuration code as desired - see below
     // Set a single account

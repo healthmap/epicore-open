@@ -1,7 +1,7 @@
 angular.module('EpicoreApp.controllers', []).
 
 /* User - includes signup, Reset password, Login & Logout */
-controller('userController', function($rootScope, $routeParams, $scope, $route, $cookies, $cookieStore, $location, $http, $window, urlBase , epicoreMode) {
+controller('userController', function($rootScope, $routeParams, $scope, $route, $cookies, $cookieStore, $location, $http, $window, urlBase , epicoreMode, $localStorage) {
 
     $scope.mobile = (epicoreMode == 'mobile') ? true: false;
 
@@ -57,11 +57,6 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
         $scope.attempted = true;
 
         // validate checkboxes
-        /*$scope.no_knowledge = !uservals.clinical_med_adult && !uservals.clinical_med_pediatric && !uservals.clinical_med_vet && !uservals.research &&
-                                !uservals.microbiology && !uservals.virology && !uservals.parasitology && !uservals.vaccinology && !uservals.epidemiology &&
-                                !uservals.biotechnology && !uservals.pharmacy && !uservals.publichealth && !uservals.disease_surv && !uservals.informatics &&
-                                !uservals.biostatistics && !uservals.other_knowledge;
-         */
         $scope.no_health_exp = !uservals.human_health && !uservals.animal_health && !uservals.env_health && !uservals.health_exp_none;
 
         $scope.no_category = !uservals.health_org_university  && !uservals.health_org_doh && !uservals.health_org_clinic
@@ -138,6 +133,15 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
             // if it's an fetp, may be coming in with ticket and event id for which they will respond
             formData['event_id'] = $routeParams.eid ? $routeParams.eid : null;
             formData['usertype'] = $location.path().indexOf("/fetp") == 0 ? 'fetp' : '';
+            // save mobile or web platform info
+            if ($scope.mobile) {
+                formData['registration_id'] = $localStorage.registrationId; // regstration id for push notifications
+                formData['model'] = $localStorage.mobile_model; // eg. iPhone 6
+                formData['platform'] = $localStorage.mobile_platform; // eg. iOS, Android
+                formData['os_version'] = $localStorage.mobile_os_version; // eg iOS 10.2
+            } else { // web
+                formData['platform'] = 'web';
+            }
         }
         if(!formData['ticket_id'] && !formData['alert_id'] && !formData['event_id'] && !$scope.loginForm.$valid) {
             $scope.isRouteLoading = false;
@@ -151,10 +155,17 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
                 var isPromed = data['uinfo']['organization_id'] == 4 ? true : false;
                 var isActive = typeof(data['uinfo']['active']) != "undefined" ? data['uinfo']['active'] : 'Y';
                 var memberLocations = typeof(data['uinfo']['active']) != "undefined" ? data['uinfo']['locations'] : false;
-                $cookieStore.put('epiUserInfo', {'uid':data['uinfo']['user_id'], 'isPromed':isPromed, 'isOrganization':$rootScope.isOrganization,
+                var newUserInfo = {'uid':data['uinfo']['user_id'], 'isPromed':isPromed, 'isOrganization':$rootScope.isOrganization,
                     'organization_id':data['uinfo']['organization_id'], 'organization':data['uinfo']['orgname'], 'fetp_id':data['uinfo']['fetp_id'],
                     'email':data['uinfo']['email'], 'uname':data['uinfo']['username'], 'active':isActive, 'status':data['uinfo']['status'],
-                    'superuser':data['uinfo']['superuser'], 'locations':memberLocations });
+                    'superuser':data['uinfo']['superuser'], 'locations':memberLocations };
+
+                // save user in cookie
+                $cookieStore.put('epiUserInfo', newUserInfo);
+
+                // save user in local storage for mobile app
+                $localStorage.user = newUserInfo;
+
                 $rootScope.error_message = 'false';
                 // FETPs that aren't activated yet don't get review page
                 if(data['uinfo']['fetp_id'] && data['uinfo']['active'] == 'N') {
@@ -162,6 +173,7 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
                 } else {
                     var redirpath = typeof(querystr['redir']) != "undefined" ? querystr['redir'] : '/'+data['path'];
                 }
+
                 /*
                 var redirpath = '/welcome';
                 // FETPs that are activated and approved status get to review page
