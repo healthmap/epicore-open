@@ -11,10 +11,10 @@
 <div class="wrapper">
 <div class="container">
 <div class="row">
-    <div id="form-container" class="col-xs-12 col-md-6">
-        <form name="loginForm" ng-controller="userController">
-         <p id="error_message" ng-show="{{error_message}}"><strong class="red">Authentication failed!</strong><br><br>
-                 <a href="#/resetpassword">Forgot your password? <i class="fa fa-arrow-circle-right"></i></a>
+    <div id="form-container" class="col-xs-12 col-md-6" ng-controller="userController">
+        <form name="loginForm"  ng-show="!autologin">
+         <p id="error_message" ng-show="error_message"><strong class="red">Authentication failed!</strong><br><br>
+                 <!--<a href="#/resetpassword">Forgot your password? <i class="fa fa-arrow-circle-right"></i></a>-->
             </p>
 
 			<div class="form-group">
@@ -37,14 +37,16 @@
             </span>
                 <button ng-click="userLogin(formData)" type="submit" class="submit btn btn-primary">Login</button>
             </div><!-- /input-group -->
-       </form>
 
-            <p>
-                <span ng-if="!error_message">
-                    <!--<a href="{{tephinetBase}}epicore/oauth_request/EJL7rbQR3YTQXPb8ku6zEQbmRSXzLRtd/Nr8TTVMoAvm4X86jjzbp65aE7kTmR2WN">Log in with your Tephinet account <i class="fa fa-arrow-circle-right"></i></a><br>-->
+            <span >
                     <a href="#/resetpassword">Forgot your password?</a>
-                </span>
-            </p>
+            </span>
+        </form>
+
+        <span ng-show="autologin">
+                    <i class="fa fa-spinner fa-spin"></i> Please wait...
+        </span>
+
   </div><!--form-container-->
 
 </div><!--row-->

@@ -1,11 +1,12 @@
 angular.module('EpicoreApp.controllers', []).
 
 /* User - includes signup, Reset password, Login & Logout */
-controller('userController', function($rootScope, $routeParams, $scope, $route, $cookies, $cookieStore, $location, $http, $window, urlBase , epicoreMode, $localStorage) {
+controller('userController', function($rootScope, $routeParams, $scope, $route, $cookies, $cookieStore, $location, $http, $window, urlBase , epicoreMode, $localStorage, epicoreCountries) {
 
     $scope.mobile = (epicoreMode == 'mobile') ? true: false;
 
     $scope.isRouteLoading = false;
+    $scope.autologin = false;
     var querystr = $location.search() ? $location.search() : '';
 
     /* get the active state of page you're on */
@@ -21,36 +22,55 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
         $location.path(path);
     }
 
-        // prepopulate application form
-        $scope.uid = $routeParams.id;
-        $scope.action = $routeParams.action;
-        $scope.idtype = $routeParams.idtype;
-        if($scope.uid && ($scope.action == 'edit')) {
-            $scope.more_schools1 = true;
-            $scope.more_schools2 = true;
-            var data = {};
-            data['uid'] = $scope.uid;
-            data['action'] = $scope.action;
-            data['idtype'] = $scope.idtype;
-            $http({ url: urlBase + 'scripts/getapplicant.php', method: "POST", data: data
-            }).success(function (data, status, headers, config) {
-                $scope.uservals = data; // this pre-populates the values on the form
-                if ($scope.uservals.university2) {
-                    $scope.more_schools1 = true;
-                    $scope.uservals.school_country2 = data['school_country2'];
-                }
-                else{
-                    $scope.more_schools1 = false;
-                }
-                if ($scope.uservals.university3) {
-                    $scope.more_schools2 = true;
-                    $scope.uservals.school_country3 = data['school_country3'];
-                }
-                else{
-                    $scope.more_schools2 = false;
-                }
-            });
-        }
+    /* pre-populate application form */
+    $scope.uid = $routeParams.id;
+    $scope.action = $routeParams.action;
+    $scope.idtype = $routeParams.idtype;
+    if($scope.uid && ($scope.action == 'edit')) {
+        $scope.more_schools1 = true;
+        $scope.more_schools2 = true;
+        var data = {};
+        data['uid'] = $scope.uid;
+        data['action'] = $scope.action;
+        data['idtype'] = $scope.idtype;
+        $http({ url: urlBase + 'scripts/getapplicant.php', method: "POST", data: data
+        }).success(function (data, status, headers, config) {
+            $scope.uservals = data; // this pre-populates the values on the form
+            if ($scope.uservals.university2) {
+                $scope.more_schools1 = true;
+                $scope.uservals.school_country2 = data['school_country2'];
+            }
+            else{
+                $scope.more_schools1 = false;
+            }
+            if ($scope.uservals.university3) {
+                $scope.more_schools2 = true;
+                $scope.uservals.school_country3 = data['school_country3'];
+            }
+            else{
+                $scope.more_schools2 = false;
+            }
+        });
+    }
+
+    /* get user cookie info */
+    $scope.userInfo = $rootScope.userInfo = $cookieStore.get('epiUserInfo');
+
+    /* countries and codes */
+    $scope.countries = epicoreCountries;
+
+    // pre-populate saved username and password for mobile app
+    if ($scope.mobile && (typeof($localStorage.username) != 'undefined') && (typeof($localStorage.password) != "undefined") ){
+        $scope.formData = {};
+        $scope.formData.username = $localStorage.username;
+        $scope.formData.password = $localStorage.password;
+    }
+
+    /* set some global variables for Tephinet integration */
+    /*$http({ url: urlBase + 'scripts/getvars.php', method: "POST"
+     }).success(function (data, status, headers, config) {
+     $rootScope.tephinetBase = data['tephinet_base'];
+     });*/
 
     $scope.signup = function(uservals, isValid) {
 
@@ -111,18 +131,12 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
         }
     };
 
-    /* set some global variables for Tephinet integration */
-    $http({ url: urlBase + 'scripts/getvars.php', method: "POST"
-        }).success(function (data, status, headers, config) {
-        $rootScope.tephinetBase = data['tephinet_base'];
-    });
-
     /* log in */
     $scope.userLogin = function(formData) {
         $scope.isRouteLoading = true;
-        // came in from fetp log in, no formdata passed, get ticket id and (optional) event_id from URL
+        // no formdata passed, get ticket id and (optional) event_id from URL
         if(typeof(formData) == "undefined") {
-            var formData = {};
+            formData = {};
             if(typeof(querystr['t']) != "undefined") {
                 formData['ticket_id'] = querystr['t'];
             } else if ($routeParams.tid) {
@@ -133,20 +147,25 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
             // if it's an fetp, may be coming in with ticket and event id for which they will respond
             formData['event_id'] = $routeParams.eid ? $routeParams.eid : null;
             formData['usertype'] = $location.path().indexOf("/fetp") == 0 ? 'fetp' : '';
+            formData['app'] = 'web';
+
+        } else { // from login page
             // save mobile or web platform info
             if ($scope.mobile) {
-                formData['registration_id'] = $localStorage.registrationId; // regstration id for push notifications
+                formData['reg_id'] = $localStorage.registrationId; // regstration id for push notifications
                 formData['model'] = $localStorage.mobile_model; // eg. iPhone 6
                 formData['platform'] = $localStorage.mobile_platform; // eg. iOS, Android
                 formData['os_version'] = $localStorage.mobile_os_version; // eg iOS 10.2
-            } else { // web
-                formData['platform'] = 'web';
+                formData['app'] = 'mobile';
+                formData['event_id'] = $localStorage.event_id; // event_id from push notification
+                $localStorage.event_id = null; // clear event_id for next login
             }
         }
         if(!formData['ticket_id'] && !formData['alert_id'] && !formData['event_id'] && !$scope.loginForm.$valid) {
             $scope.isRouteLoading = false;
             return;
         }
+
         $http({ url: urlBase + 'scripts/login.php', method: "POST", data: formData
         }).success(function (data, status, headers, config) {
             if(data['status'] == "success") {
@@ -160,13 +179,18 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
                     'email':data['uinfo']['email'], 'uname':data['uinfo']['username'], 'active':isActive, 'status':data['uinfo']['status'],
                     'superuser':data['uinfo']['superuser'], 'locations':memberLocations };
 
+
+                // save username and password
+                $localStorage.username = formData['username'];
+                $localStorage.password = formData['password'];
+
                 // save user in cookie
                 $cookieStore.put('epiUserInfo', newUserInfo);
 
                 // save user in local storage for mobile app
                 $localStorage.user = newUserInfo;
 
-                $rootScope.error_message = 'false';
+                $rootScope.error_message = false;
                 // FETPs that aren't activated yet don't get review page
                 if(data['uinfo']['fetp_id'] && data['uinfo']['active'] == 'N') {
                     var redirpath = '/training';
@@ -174,33 +198,32 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
                     var redirpath = typeof(querystr['redir']) != "undefined" ? querystr['redir'] : '/'+data['path'];
                 }
 
-                /*
-                var redirpath = '/welcome';
-                // FETPs that are activated and approved status get to review page
-                if(data['uinfo']['fetp_id'] && data['uinfo']['active'] == 'Y') {
-                    redirpath = typeof(querystr['redir']) != "undefined" ? querystr['redir'] : '/'+data['path'];
-                }
-                */
                 $scope.isRouteLoading = false;
+                $scope.autologin = false;
                 $location.path(redirpath);
+
             } else {
                 $scope.isRouteLoading = false;
-                $rootScope.error_message = 'true';
+                $rootScope.error_message = true;
+                $scope.autologin = false;
                 $route.reload();
+
             }
         }).error(function (data, status, headers, config) {
             $scope.isRouteLoading = false;
+            $scope.autologin = false;
             console.log(status);
         });
     }
+
     /* log out */
     $scope.userLogout = function() {
         $cookieStore.remove('epiUserInfo');
         $window.sessionStorage.clear();
     }
 
-        /* set password */
-        $scope.setPassword = function(formData) {
+    /* set password */
+    $scope.setPassword = function(formData) {
             $scope.isRouteLoading = true;
             if(typeof(querystr['t']) != "undefined") {
                 formData['ticket_id'] = querystr['t'];
@@ -228,7 +251,7 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
                             'active': isActive,
                             'status': data['uinfo']['status']
                         });
-                        $rootScope.error_message = 'false';
+                        $rootScope.error_message = false;
                         var redirpath = '/training';
                         // FETPs that are activated and approved status get to review page
                         if (data['uinfo']['fetp_id'] && data['uinfo']['active'] == 'Y') {
@@ -246,12 +269,11 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
                     console.log(status);
                 });
 
-
             }
-        }
+    }
 
-        /* Reset password */
-        $scope.resetPassword = function(formData) {
+    /* Reset password */
+    $scope.resetPassword = function(formData) {
             if (!$scope.setpwForm.$valid){
                 $scope.isRouteLoading = false;
                 $rootScope.error_message = 'Invalid email address';
@@ -275,258 +297,15 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
                     console.log(status);
                 });
             }
-        }
+    }
 
-    /* get user cookie info */
-    $scope.userInfo = $rootScope.userInfo = $cookieStore.get('epiUserInfo');
 
-        /* countries and codes */
-        $scope.countries = [
-            {name: 'Afghanistan', code: 'AF'},
-            {name: 'Åland Islands', code: 'AX'},
-            {name: 'Albania', code: 'AL'},
-            {name: 'Algeria', code: 'DZ'},
-            {name: 'American Samoa', code: 'AS'},
-            {name: 'Andorra', code: 'AD'},
-            {name: 'Angola', code: 'AO'},
-            {name: 'Anguilla', code: 'AI'},
-            {name: 'Antarctica', code: 'AQ'},
-            {name: 'Antigua and Barbuda', code: 'AG'},
-            {name: 'Argentina', code: 'AR'},
-            {name: 'Armenia', code: 'AM'},
-            {name: 'Aruba', code: 'AW'},
-            {name: 'Australia', code: 'AU'},
-            {name: 'Austria', code: 'AT'},
-            {name: 'Azerbaijan', code: 'AZ'},
-            {name: 'Bahamas', code: 'BS'},
-            {name: 'Bahrain', code: 'BH'},
-            {name: 'Bangladesh', code: 'BD'},
-            {name: 'Barbados', code: 'BB'},
-            {name: 'Belarus', code: 'BY'},
-            {name: 'Belgium', code: 'BE'},
-            {name: 'Belize', code: 'BZ'},
-            {name: 'Benin', code: 'BJ'},
-            {name: 'Bermuda', code: 'BM'},
-            {name: 'Bhutan', code: 'BT'},
-            {name: 'Bolivia', code: 'BO'},
-            {name: 'Bosnia and Herzegovina', code: 'BA'},
-            {name: 'Botswana', code: 'BW'},
-            {name: 'Bouvet Island', code: 'BV'},
-            {name: 'Brazil', code: 'BR'},
-            {name: 'British Indian Ocean Territory', code: 'IO'},
-            {name: 'Brunei Darussalam', code: 'BN'},
-            {name: 'Bulgaria', code: 'BG'},
-            {name: 'Burkina Faso', code: 'BF'},
-            {name: 'Burundi', code: 'BI'},
-            {name: 'Cambodia', code: 'KH'},
-            {name: 'Cameroon', code: 'CM'},
-            {name: 'Canada', code: 'CA'},
-            {name: 'Cape Verde', code: 'CV'},
-            {name: 'Cayman Islands', code: 'KY'},
-            {name: 'Central African Republic', code: 'CF'},
-            {name: 'Chad', code: 'TD'},
-            {name: 'Chile', code: 'CL'},
-            {name: 'China', code: 'CN'},
-            {name: 'Christmas Island', code: 'CX'},
-            {name: 'Cocos (Keeling) Islands', code: 'CC'},
-            {name: 'Colombia', code: 'CO'},
-            {name: 'Comoros', code: 'KM'},
-            {name: 'Congo, Republic of the', code: 'CG'},
-            {name: 'Congo, The Democratic Republic of the', code: 'CD'},
-            {name: 'Cook Islands', code: 'CK'},
-            {name: 'Costa Rica', code: 'CR'},
-            {name: 'Cote D\'Ivoire', code: 'CI'},
-            {name: 'Croatia', code: 'HR'},
-            {name: 'Cuba', code: 'CU'},
-            {name: 'Cyprus', code: 'CY'},
-            {name: 'Czech Republic', code: 'CZ'},
-            {name: 'Denmark', code: 'DK'},
-            {name: 'Djibouti', code: 'DJ'},
-            {name: 'Dominica', code: 'DM'},
-            {name: 'Dominican Republic', code: 'DO'},
-            {name: 'Ecuador', code: 'EC'},
-            {name: 'Egypt', code: 'EG'},
-            {name: 'El Salvador', code: 'SV'},
-            {name: 'Equatorial Guinea', code: 'GQ'},
-            {name: 'Eritrea', code: 'ER'},
-            {name: 'Estonia', code: 'EE'},
-            {name: 'Ethiopia', code: 'ET'},
-            {name: 'Falkland Islands (Malvinas)', code: 'FK'},
-            {name: 'Faroe Islands', code: 'FO'},
-            {name: 'Fiji', code: 'FJ'},
-            {name: 'Finland', code: 'FI'},
-            {name: 'France', code: 'FR'},
-            {name: 'French Guiana', code: 'GF'},
-            {name: 'French Polynesia', code: 'PF'},
-            {name: 'French Southern Territories', code: 'TF'},
-            {name: 'Gabon', code: 'GA'},
-            {name: 'Gambia', code: 'GM'},
-            {name: 'Georgia', code: 'GE'},
-            {name: 'Germany', code: 'DE'},
-            {name: 'Ghana', code: 'GH'},
-            {name: 'Gibraltar', code: 'GI'},
-            {name: 'Greece', code: 'GR'},
-            {name: 'Greenland', code: 'GL'},
-            {name: 'Grenada', code: 'GD'},
-            {name: 'Guadeloupe', code: 'GP'},
-            {name: 'Guam', code: 'GU'},
-            {name: 'Guatemala', code: 'GT'},
-            {name: 'Guernsey', code: 'GG'},
-            {name: 'Guinea', code: 'GN'},
-            {name: 'Guinea-Bissau', code: 'GW'},
-            {name: 'Guyana', code: 'GY'},
-            {name: 'Haiti', code: 'HT'},
-            {name: 'Heard Island and Mcdonald Islands', code: 'HM'},
-            {name: 'Holy See (Vatican City State)', code: 'VA'},
-            {name: 'Honduras', code: 'HN'},
-            {name: 'Hong Kong', code: 'HK'},
-            {name: 'Hungary', code: 'HU'},
-            {name: 'Iceland', code: 'IS'},
-            {name: 'India', code: 'IN'},
-            {name: 'Indonesia', code: 'ID'},
-            {name: 'Iran, Islamic Republic Of', code: 'IR'},
-            {name: 'Iraq', code: 'IQ'},
-            {name: 'Ireland', code: 'IE'},
-            {name: 'Isle of Man', code: 'IM'},
-            {name: 'Israel', code: 'IL'},
-            {name: 'Italy', code: 'IT'},
-            {name: 'Jamaica', code: 'JM'},
-            {name: 'Japan', code: 'JP'},
-            {name: 'Jersey', code: 'JE'},
-            {name: 'Jordan', code: 'JO'},
-            {name: 'Kazakhstan', code: 'KZ'},
-            {name: 'Kenya', code: 'KE'},
-            {name: 'Kiribati', code: 'KI'},
-            {name: 'Korea, Democratic People\'s Republic of', code: 'KP'},
-            {name: 'Korea, Republic of', code: 'KR'},
-            {name: 'Kuwait', code: 'KW'},
-            {name: 'Kyrgyzstan', code: 'KG'},
-            {name: 'Lao People\'s Democratic Republic', code: 'LA'},
-            {name: 'Latvia', code: 'LV'},
-            {name: 'Lebanon', code: 'LB'},
-            {name: 'Lesotho', code: 'LS'},
-            {name: 'Liberia', code: 'LR'},
-            {name: 'Libyan Arab Jamahiriya', code: 'LY'},
-            {name: 'Liechtenstein', code: 'LI'},
-            {name: 'Lithuania', code: 'LT'},
-            {name: 'Luxembourg', code: 'LU'},
-            {name: 'Macao', code: 'MO'},
-            {name: 'Macedonia, The Former Yugoslav Republic of', code: 'MK'},
-            {name: 'Madagascar', code: 'MG'},
-            {name: 'Malawi', code: 'MW'},
-            {name: 'Malaysia', code: 'MY'},
-            {name: 'Maldives', code: 'MV'},
-            {name: 'Mali', code: 'ML'},
-            {name: 'Malta', code: 'MT'},
-            {name: 'Marshall Islands', code: 'MH'},
-            {name: 'Martinique', code: 'MQ'},
-            {name: 'Mauritania', code: 'MR'},
-            {name: 'Mauritius', code: 'MU'},
-            {name: 'Mayotte', code: 'YT'},
-            {name: 'Mexico', code: 'MX'},
-            {name: 'Micronesia, Federated States of', code: 'FM'},
-            {name: 'Moldova, Republic of', code: 'MD'},
-            {name: 'Monaco', code: 'MC'},
-            {name: 'Mongolia', code: 'MN'},
-            {name: 'Montenegro', code: 'ME'},
-            {name: 'Montserrat', code: 'MS'},
-            {name: 'Morocco', code: 'MA'},
-            {name: 'Mozambique', code: 'MZ'},
-            {name: 'Myanmar', code: 'MM'},
-            {name: 'Namibia', code: 'NA'},
-            {name: 'Nauru', code: 'NR'},
-            {name: 'Nepal', code: 'NP'},
-            {name: 'Netherlands', code: 'NL'},
-            {name: 'Netherlands Antilles', code: 'AN'},
-            {name: 'New Caledonia', code: 'NC'},
-            {name: 'New Zealand', code: 'NZ'},
-            {name: 'Nicaragua', code: 'NI'},
-            {name: 'Niger', code: 'NE'},
-            {name: 'Nigeria', code: 'NG'},
-            {name: 'Niue', code: 'NU'},
-            {name: 'Norfolk Island', code: 'NF'},
-            {name: 'Northern Mariana Islands', code: 'MP'},
-            {name: 'Norway', code: 'NO'},
-            {name: 'Oman', code: 'OM'},
-            {name: 'Pakistan', code: 'PK'},
-            {name: 'Palau', code: 'PW'},
-            {name: 'Palestinian Territory', code: 'PS'},
-            {name: 'Panama', code: 'PA'},
-            {name: 'Papua New Guinea', code: 'PG'},
-            {name: 'Paraguay', code: 'PY'},
-            {name: 'Peru', code: 'PE'},
-            {name: 'Philippines', code: 'PH'},
-            {name: 'Pitcairn', code: 'PN'},
-            {name: 'Poland', code: 'PL'},
-            {name: 'Portugal', code: 'PT'},
-            {name: 'Puerto Rico', code: 'PR'},
-            {name: 'Qatar', code: 'QA'},
-            {name: 'Reunion', code: 'RE'},
-            {name: 'Romania', code: 'RO'},
-            {name: 'Russian Federation', code: 'RU'},
-            {name: 'Rwanda', code: 'RW'},
-            {name: 'Saint Helena', code: 'SH'},
-            {name: 'Saint Kitts and Nevis', code: 'KN'},
-            {name: 'Saint Lucia', code: 'LC'},
-            {name: 'Saint Pierre and Miquelon', code: 'PM'},
-            {name: 'Saint Vincent and the Grenadines', code: 'VC'},
-            {name: 'Samoa', code: 'WS'},
-            {name: 'San Marino', code: 'SM'},
-            {name: 'Sao Tome and Principe', code: 'ST'},
-            {name: 'Saudi Arabia', code: 'SA'},
-            {name: 'Senegal', code: 'SN'},
-            {name: 'Serbia', code: 'RS'},
-            {name: 'Seychelles', code: 'SC'},
-            {name: 'Sierra Leone', code: 'SL'},
-            {name: 'Singapore', code: 'SG'},
-            {name: 'Slovakia', code: 'SK'},
-            {name: 'Slovenia', code: 'SI'},
-            {name: 'Solomon Islands', code: 'SB'},
-            {name: 'Somalia', code: 'SO'},
-            {name: 'South Africa', code: 'ZA'},
-            {name: 'South Georgia and the South Sandwich Islands', code: 'GS'},
-            {name: 'Spain', code: 'ES'},
-            {name: 'Sri Lanka', code: 'LK'},
-            {name: 'Sudan', code: 'SD'},
-            {name: 'Suriname', code: 'SR'},
-            {name: 'Svalbard and Jan Mayen', code: 'SJ'},
-            {name: 'Swaziland', code: 'SZ'},
-            {name: 'Sweden', code: 'SE'},
-            {name: 'Switzerland', code: 'CH'},
-            {name: 'Syrian Arab Republic', code: 'SY'},
-            {name: 'Taiwan', code: 'TW'},
-            {name: 'Tajikistan', code: 'TJ'},
-            {name: 'Tanzania, United Republic of', code: 'TZ'},
-            {name: 'Thailand', code: 'TH'},
-            {name: 'Timor-Leste', code: 'TL'},
-            {name: 'Togo', code: 'TG'},
-            {name: 'Tokelau', code: 'TK'},
-            {name: 'Tonga', code: 'TO'},
-            {name: 'Trinidad and Tobago', code: 'TT'},
-            {name: 'Tunisia', code: 'TN'},
-            {name: 'Turkey', code: 'TR'},
-            {name: 'Turkmenistan', code: 'TM'},
-            {name: 'Turks and Caicos Islands', code: 'TC'},
-            {name: 'Tuvalu', code: 'TV'},
-            {name: 'Uganda', code: 'UG'},
-            {name: 'Ukraine', code: 'UA'},
-            {name: 'United Arab Emirates', code: 'AE'},
-            {name: 'United Kingdom', code: 'GB'},
-            {name: 'United States', code: 'US'},
-            {name: 'United States Minor Outlying Islands', code: 'UM'},
-            {name: 'Uruguay', code: 'UY'},
-            {name: 'Uzbekistan', code: 'UZ'},
-            {name: 'Vanuatu', code: 'VU'},
-            {name: 'Venezuela', code: 'VE'},
-            {name: 'Vietnam', code: 'VN'},
-            {name: 'Virgin Islands, British', code: 'VG'},
-            {name: 'Virgin Islands, U.S.', code: 'VI'},
-            {name: 'Wallis and Futuna', code: 'WF'},
-            {name: 'Western Sahara', code: 'EH'},
-            {name: 'Yemen', code: 'YE'},
-            {name: 'Zambia', code: 'ZM'},
-            {name: 'Zimbabwe', code: 'ZW'}
-        ];
+    // auto-login with mobile push notification
+    // This needs to be last in the controller
+    if ($scope.mobile && (typeof($localStorage.event_id) != 'undefined') && parseInt($localStorage.event_id) > 0) {
+        $scope.autologin = true;
+        $scope.userLogin($scope.formData);
+    }
 
 }).controller('mapController', function($scope, $http, $cookieStore, urlBase) {
     // only allow moderators
