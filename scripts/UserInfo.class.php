@@ -798,6 +798,45 @@ class UserInfo
             return false;
     }
 
+    // add/update mobile device
+    // returns new or updated mobile_id if added/updated, or false if not
+    static function addMobileDevice($pvals){
+
+        if ($pvals['fetp_id'] && $pvals['reg_id']) {
+            $db = getDB();
+            $mobile_info = $db->getRow("SELECT mobile_id, reg_id FROM mobile where fetp_id = ?", array($pvals['fetp_id']));
+            $pvals['reg_date'] = date('Y-m-d H:i:s', strtotime('now'));
+            if (!$mobile_info['mobile_id']) { // add mobile device if none
+
+                //insert mobile device
+                $key_vals = join(",", array_keys($pvals));
+                $qmarks = join(",", array_fill(0, count($pvals), '?'));
+                $qvals = array_values($pvals);
+                $db->query("INSERT INTO mobile ($key_vals) VALUES ($qmarks)", $qvals);
+                $mobile_id = $db->getOne("SELECT LAST_INSERT_ID()");
+                $db->commit();
+                return $mobile_id;
+
+            } else if (strcmp($mobile_info['reg_id'], $pvals['reg_id']) != 0) { // update reg id if different
+
+                $db->query("UPDATE mobile SET reg_id=?, reg_date = ? WHERE fetp_id = ?", array($pvals['reg_id'], $pvals['reg_date'], $pvals['fetp_id']));
+                $db->commit();
+                return $mobile_info['mobile_id'];
+            } else { // not added or updated
+                return false;
+            }
+        }else // no fetp_id or reg_id
+            return false;
+
+    }
+
+    // get member mobile id
+    static  function getMemberMobileId($fetp_id){
+        $db = getDB();
+        $mobile_id = $db->getOne("SELECT reg_id FROM mobile WHERE fetp_id = ?", array($fetp_id));
+        return $mobile_id;
+    }
+
     static function getLocations($fetp_id = '') {
         $db = getDB();
         $locations = $db->getAll("SELECT * FROM member_location WHERE fetp_id = ?", array($fetp_id));

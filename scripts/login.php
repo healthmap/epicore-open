@@ -34,6 +34,27 @@ if(is_numeric($user_id) && $user_id > 0) {
     //    $ui->getFETPEligible();
     //}
     $status = "success";
+
+    $mdata = array();
+    // if mobile app, add/update info
+    if ($formvars->app == 'mobile'){
+        $mdata['reg_id'] = strip_tags($formvars->reg_id);
+        $mdata['model'] = strip_tags($formvars->model);
+        $mdata['platform'] = strip_tags($formvars->platform);
+        $mdata['os_version'] = strip_tags($formvars->os_version);
+
+        // mobile can be from fetp or mod
+        if (isset($uinfo['fetp_id']))
+            $mdata['fetp_id'] = $user_id;   // fetp (member)
+        else
+            $mdata['user_id'] = $user_id;   // mode
+
+        // add mobile device
+        $mobile_id = UserInfo::addMobileDevice($mdata);  // mobile_id or false if error
+
+    }
+
+    // if it was a mobile device with event id, go directly to the "respond" page
     // if it was a ticket with an event id, go directly to the "respond" page
     // if it was a ticket with an alert id, go directly to the "request" page
     if(isset($formvars->event_id) && is_numeric($formvars->event_id)) {
