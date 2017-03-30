@@ -302,7 +302,7 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
 
     // auto-login with mobile push notification
     // This needs to be last in the controller
-    if ($scope.mobile && (typeof($localStorage.event_id) != 'undefined') && parseInt($localStorage.event_id) > 0) {
+    if ($scope.mobile && ($localStorage.event_id !== null) && (typeof $localStorage.event_id !== 'undefined') && (parseInt($localStorage.event_id) > 0)) {
         $scope.autologin = true;
         $scope.userLogin($scope.formData);
     }

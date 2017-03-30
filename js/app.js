@@ -13,6 +13,7 @@ var app = angular.module('EpicoreApp', [
 // app_mode settings to select web or mobile app
 // mobile_prod - for mobile app with production backend
 // mobile_dev - for mobile app with dev backend
+// mobile_jandre - for mobile app with jandre's sandbox backend
 // web - for web app (production and dev)
 var app_mode = 'web';
 var homeUrl = "partials/home.html";
@@ -159,9 +160,6 @@ if ((app_mode == 'mobile_dev') || (app_mode == 'mobile_prod') || (app_mode == 'm
             $localStorage.mobile_model = $cordovaDevice.getModel(); // eg. iPhone 6
             $localStorage.mobile_platform = $cordovaDevice.getPlatform(); // eg. iOS, Android
             $localStorage.mobile_os_version = $cordovaDevice.getVersion(); // eg iOS 10.2
-
-            // initialize event_id
-            $localStorage.event_id = null;
 
         }, false);
 
