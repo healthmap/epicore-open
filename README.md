@@ -46,7 +46,7 @@ sudo mkdir rfi
 sudo chown www-data:sudo *
 ```
 
-### Create and copy config file to scripts/conf dir
+### Create and copy config files to scripts/conf dir
 
 ```sh
 cd epicore_root/scripts
@@ -54,11 +54,19 @@ cd epicore_root/scripts
 mkdir conf
 
 cp da.ini.php epicore_root/scripts/conf/.
-
-*Contact Epicore admin for a copy of the da.ini.php file.
+cp push-epicore.pem epicore_root/scripts/conf/.
 
 ```
+*Contact Epicore admin for a copy of the config files.
 
+### Install library for Mobile Push Notifications
+
+```sh
+cd epicore_root
+composer require sly/notification-pusher
+```
+
+*see https://github.com/Ph3nol/NotificationPusher
 
 ## Deployment
 
@@ -80,3 +88,4 @@ Staging deployment status: [![Deployment status from DeployBot](https://boston-c
 Only authorized users can deploy to production using the Deploybot dashboard.
 
 Production deployment status: [![Deployment status from DeployBot](https://boston-childrens-hosptial.deploybot.com/badge/02267418033975/87596.svg)](http://deploybot.com)
+

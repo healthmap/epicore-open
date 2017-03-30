@@ -5,3 +5,5 @@
 /emailtemplates/temp
 /scripts/conf/
 .idea
+/vendor
+composer.*
