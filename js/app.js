@@ -15,7 +15,7 @@ var app = angular.module('EpicoreApp', [
 // mobile_dev - for mobile app with dev backend
 // mobile_jandre - for mobile app with jandre's sandbox backend
 // web - for web app (production and dev)
-var app_mode = 'mobile_dev';
+var app_mode = 'web';
 if (app_mode == 'mobile_prod') {
     app.value('urlBase', 'https://epicore.org/'); // use full url for mobile api calls
     app.value('epicoreMode', 'mobile');
