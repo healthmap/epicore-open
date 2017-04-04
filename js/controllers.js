@@ -977,7 +977,7 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
 
         $scope.downloadMembers = function(){
             $scope.isRouteLoading = true;
-            $http({ url: ulrBase + 'scripts/downloadMembers.php', method: "POST"
+            $http({ url: urlBase + 'scripts/downloadMembers.php', method: "POST"
             }).success(function (respdata, status, headers, config) {
                 $scope.membersavailable = true;
                 $scope.isRouteLoading = false;
