@@ -10,12 +10,8 @@ var app = angular.module('EpicoreApp', [
     'ngStorage'
 ]);
 
-// app_mode settings to select web or mobile app
-// mobile_prod - for mobile app with production backend
-// mobile_dev - for mobile app with dev backend
-// mobile_jandre - for mobile app with jandre's sandbox backend
-// web - for web app (production and dev)
-var app_mode = 'web';
+// select web or mobile app
+var app_mode = epicore_config.app_mode;
 if (app_mode == 'mobile_prod') {
     app.value('urlBase', 'https://epicore.org/'); // use full url for mobile api calls
     app.value('epicoreMode', 'mobile');
@@ -93,7 +89,7 @@ if ((app_mode == 'mobile_dev') || (app_mode == 'mobile_prod') || (app_mode == 'm
 
             var options = {
                 android: {
-                    senderID: "808458117906"
+                    senderID: epicore_config.android_senderId
                 },
                 ios: {
                     alert: "true",
