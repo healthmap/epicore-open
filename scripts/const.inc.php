@@ -9,6 +9,8 @@ define('APPROVAL_PASSWORD', $conf['approval']['password']);
 // google api
 define('CRYPTOKEY', $conf['googleapi']['key']);
 define('CLIENTID', $conf['googleapi']['clientid']);
+define('FCM_SERVER_KEY', $conf['googleapi']['fcm_server_key']);
+define('FCM_SEND_URL', $conf['googleapi']['fcm_send_url']);
 
 // Epicore
 define('EPICORE_URL', $conf['epicore_info']['baseurl']);

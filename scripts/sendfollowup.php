@@ -7,6 +7,7 @@ $formvars = json_decode(file_get_contents("php://input"));
 require_once "const.inc.php";
 require_once "EventInfo.class.php";
 require_once "UserInfo.class.php";
+require_once 'ePush.class.php';
 
 $event_id = $formvars->event_id;
 $requester_id = $formvars->uid;
@@ -67,17 +68,29 @@ $followup_id = EventInfo::insertFollowup($followup_info);
 // return an array of fetp_id => token_id for auto_login
 $tokens = $ei->insertFetpsReceivingEmail($fetp_ids, $followup_id);
 
+// set up push notification
+$push = new ePush();
+$pushevent['id'] = $event_id;
+$pushevent['title'] = $event_info['title'];
+$pushevent['type'] = 'FOLLOWUP';
+
 // now send it to each FETP individually as they each need unique login token id
 require_once "AWSMail.class.php";
 $fetp_emails = UserInfo::getFETPEmails($fetp_ids);
 $extra_headers['text_or_html'] = "html";
 foreach($fetp_emails as $fetp_id => $recipient) {
+
+    // send email
     $idlist[0] = $fetp_id;
     $extra_headers['user_ids'] = $idlist;
     $history = $ei->getEventHistoryFETP($fetp_id, $event_id);
     $emailtext = trim(str_replace("[EVENT_HISTORY]", $history, $followupText));
     $emailtext = trim(str_replace("[TOKEN]", $tokens[$fetp_id], $emailtext));
     $retval = AWSMail::mailfunc($recipient, $subject, $emailtext, EMAIL_NOREPLY, $extra_headers);
+
+    // send push notification
+    $push->sendPush($pushevent, $fetp_id);
+
 }
 
 // send email to all moderators for the event /////////////////////

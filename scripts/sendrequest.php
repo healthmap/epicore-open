@@ -8,6 +8,7 @@ require_once "const.inc.php";
 require_once "EventInfo.class.php";
 require_once "UserInfo.class.php";
 require_once "AWSMail.class.php";
+require_once 'ePush.class.php';
 
 $formvars = json_decode(file_get_contents("php://input"));
 
@@ -36,12 +37,22 @@ $extra_headers['text_or_html'] = "html";
 
 $emailtext = $ei->buildEmailForEvent($event_info, 'rfi', '', 'text');
 
+// set up push notification
+$push = new ePush();
+$pushevent['id'] = $event_id;
+$pushevent['title'] = $event_info['title'];
+$pushevent['type'] = 'RFI';
+
 foreach($fetp_emails as $fetp_id => $recipient) {
+    // send email
     $idlist[0] = $fetp_id;
     $extra_headers['user_ids'] = $idlist;
     $recipient = trim($recipient);
     $custom_emailtext = trim(str_replace("[TOKEN]", $tokens[$fetp_id], $emailtext));
     $aws_resp = AWSMail::mailfunc($recipient, $subject, $custom_emailtext, EMAIL_NOREPLY, $extra_headers);
+
+    // send push notification
+    $push->sendPush($pushevent, $fetp_id);
 
 }
 

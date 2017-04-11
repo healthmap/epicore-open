@@ -837,6 +837,17 @@ class UserInfo
         return $mobile_id;
     }
 
+    // get member mobile info
+    static  function getMemberMobileInfo($fetp_id){
+        $db = getDB();
+        $mobileinfo = $db->getRow("SELECT * FROM mobile WHERE fetp_id = ?", array($fetp_id));
+        if ($mobileinfo) {
+            return $mobileinfo;
+        } else {
+            return false;
+        }
+    }
+
     static function getLocations($fetp_id = '') {
         $db = getDB();
         $locations = $db->getAll("SELECT * FROM member_location WHERE fetp_id = ?", array($fetp_id));

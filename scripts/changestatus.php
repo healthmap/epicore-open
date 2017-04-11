@@ -4,6 +4,7 @@ $formvars = json_decode(file_get_contents("php://input"));
 require_once "EventInfo.class.php";
 require_once "UserInfo.class.php";
 require_once "const.inc.php";
+require_once 'ePush.class.php';
 
 $event_id = $formvars->event_id;
 $user_id = $formvars->uid;
@@ -64,7 +65,16 @@ if(is_numeric($event_id) && is_numeric($user_id)) {
         $emailtext_event = $ei->buildEmailForEvent($event_info, $status_type_member, $custom_vars, 'text');
         $extra_headers['text_or_html'] = "html";
         $subject = "Epicore RFI #". $event_id . " - " . $status_type . ": " . $event_info['disease'] . ", " . $event_info['location'];
+
+        // set up push notification
+        $push = new ePush();
+        $pushevent['id'] = $event_id;
+        $pushevent['title'] = $event_info['title'];
+        $pushevent['type'] = $formvars->thestatus == "Reopen" ? 'REOPENED' : 'CLOSED';
+
+
         foreach($fetp_emails as $fetp_id => $recipient) {
+            // send email
             $idlist[0] = $fetp_id;
             $extra_headers['user_ids'] = $idlist;
             $history = $ei->getEventHistoryFETP($fetp_id, $event_id);
@@ -72,6 +82,10 @@ if(is_numeric($event_id) && is_numeric($user_id)) {
             $next_emailtext = trim(str_replace("[EVENT_HISTORY]", $history, $emailtext));
             $custom_emailtext = trim(str_replace("[TOKEN]", $tokens[$fetp_id], $next_emailtext));
             AWSMail::mailfunc($recipient, $subject, $custom_emailtext, EMAIL_NOREPLY, $extra_headers);
+
+            // send push notification
+            $push->sendPush($pushevent, $fetp_id);
+
         }
 
         // send email to all moderators for the event /////////////////////
