@@ -439,6 +439,23 @@ class EventInfo
         return $events;
     }
 
+    // get events from cache or database
+    // user_id ('#'), status ('C', 'O'), source ('cache', 'database')
+    static function getEventsCache($user_id, $status, $source) {
+
+        // generate cache file name
+        $cachekey = md5('events'. $user_id . $status);
+        $events_file = "../cache/epicore" . $cachekey. ".json";
+
+        if (file_exists($events_file) && ($source == 'cache')) { // from cache
+            $events = json_decode(file_get_contents($events_file));
+        } else { // from database
+            $events = EventInfo::getAllEvents($user_id, $status);
+            file_put_contents("$events_file", json_encode($events));
+        }
+        return $events;
+    }
+
     static function getNumNotRatedResponses($uid = '')
     {
         if(!is_numeric($uid)) {
