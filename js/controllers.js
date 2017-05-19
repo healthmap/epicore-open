@@ -657,7 +657,7 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
     $scope.filePreview = $window.sessionStorage.filePreview;
 
     /* step 2: Filter FETP: calculate the number of users based on check & uncheck */
-    if($location.path() == "/request2") {
+    if($location.path() == "/request2" || $location.path() == "/members") {
 
         // initialize default radio buttons - radius select checked by default
         // unless it's a back-button, then take from session

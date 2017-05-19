@@ -1,0 +1,58 @@
+<div ng-include src="'header.html'"></div>
+<div class="jumbotron dashboard">
+    <div class="container">
+        <h1>RFI - Location and Time</h1>
+    </div>
+</div>
+
+<div class="wrapper dashboard">
+<div class="container">
+    <div class="row">
+        <div id="form-container" class="col-xs-12 col-md-8">
+            <form name="requestForm">
+
+                <div class="intro">
+
+                </div>
+
+                <div class="form-group">
+                    <label class="" for="location">Event Location</label>
+                    <input type="text" class="form-control" ng-model="location.location" name="location" id="searchTextField" placeholder="" value="" required>
+                    <input type="hidden" name="latlon" ng-model="location.latlon" id="default_location" value="{{location.latlon}}">
+                </div>
+
+                <div class="form-group">
+                    <label class="" for="population_description" data-toggle="tooltip" title=" This section should include details about the subnational level location of the event:">Location details</label>
+                    <textarea class="form-control" style="height:50px" ng-model="location.location_details" id="population_description" placeholder="Available details..." required></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label class="" for="event_date" >Event Date</label>
+                    <input type="text" class="form-control" ng-model="location.event_date" name="event_date" id="event_date" data-provide="datepicker" required>
+                </div>
+
+                <div class="form-group">
+                    <!--<button ng-click="" type="submit" class="submit btn btn-primary"><i class="fa fa-arrow-circle-left"></i> Back </button> &nbsp; &nbsp;-->
+                    <!--<button ng-click="" type="submit" class="submit btn btn-primary">Next <i class="fa fa-arrow-circle-right"></i></button>-->
+                    <p>
+                        <a href="#/population" class="btn btn-default"><i class="fa fa-arrow-circle-left"></i> Back</a>&nbsp; &nbsp;
+                        <a href="#/purpose" class="btn btn-default"> Next <i class="fa fa-arrow-circle-right"></i></a>
+                    </p>
+                </div><!-- /input-group -->
+            </form>
+
+        </div><!--col-->
+    </div><!--row-->
+</div><!--container-->
+</div><!--wrapper-->
+<script>
+
+    // google places for auto-suggester
+    initialize_googleplaces();
+
+    // form validation
+    $("form").validate();
+
+    // TOOLTIP
+    $('[data-toggle="tooltip"]').tooltip( {html: true,trigger:'hover'});
+</script>

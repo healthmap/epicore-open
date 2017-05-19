@@ -1,0 +1,72 @@
+<div ng-include src="'header.html'"></div>
+<div class="jumbotron dashboard">
+    <div class="container">
+        <h1>RFI - Affected Population</h1>
+    </div>
+</div>
+
+<div class="wrapper dashboard">
+<div class="container">
+    <div class="row">
+        <div id="form-container" class="col-xs-12 col-md-8">
+            <form name="requestForm">
+
+                <div class="intro">
+                    <h5>Requesters should consider all details available from their information sources and choose one or more among the following options:</h5>
+                </div>
+
+                <div class="form-group">
+                    <div class="checkbox">
+                        <label > <input type="checkbox" name="human_population" ng-model="population.human_population"> Human population</label>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="checkbox">
+                        <label > <input type="checkbox" name="animal_population" ng-model="population.animal_population"> Animal population</label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="checkbox">
+                        <label > <input type="checkbox" name="environment_population" ng-model="population.environment_population"> Environmental contamination</label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="checkbox">
+                        <label > <input type="checkbox" name="uknown_population" ng-model="population.uknown_population"> Unknown population</label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="" for="other_population" >Other:</label>
+                    <input type="text" class="form-control" ng-model="condition.other_population" name="other_population" id="other_population" placeholder='other population' value="" >
+                </div>
+
+                <div class="form-group">
+                    <label class="" for="population_description" data-toggle="tooltip" title=" This section should include all additional details available about the specific population affected (e.g. animal and/or human population affected, specific age-groups, at-risk populations):">Affected population</label>
+                    <textarea class="form-control" style="height:50px" ng-model="population.population_description" id="population_description" placeholder="Available details..." required></textarea>
+                </div>
+
+
+                <div class="form-group">
+                    <!--<button ng-click="" type="submit" class="submit btn btn-primary"><i class="fa fa-arrow-circle-left"></i> Back </button> &nbsp; &nbsp;-->
+                    <!--<button ng-click="" type="submit" class="submit btn btn-primary">Next <i class="fa fa-arrow-circle-right"></i></button>-->
+                    <p>
+                        <a href="#/condition" class="btn btn-default"><i class="fa fa-arrow-circle-left"></i> Back</a>&nbsp; &nbsp;
+                        <a href="#/location" class="btn btn-default"> Next <i class="fa fa-arrow-circle-right"></i></a>
+                    </p>
+                </div><!-- /input-group -->
+            </form>
+
+        </div><!--col-->
+    </div><!--row-->
+</div><!--container-->
+</div><!--wrapper-->
+<script>
+    // form validation
+    $("form").validate();
+
+    // TOOLTIP
+    $('[data-toggle="tooltip"]').tooltip( {html: true,trigger:'hover'});
+</script>

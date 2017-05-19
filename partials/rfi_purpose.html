@@ -1,0 +1,108 @@
+<div ng-include src="'header.html'"></div>
+<div class="jumbotron dashboard">
+    <div class="container">
+        <h1>RFI - Purpose</h1>
+    </div>
+</div>
+
+<div class="wrapper dashboard">
+<div class="container">
+    <div class="row">
+        <div id="form-container" class="col-xs-12 col-md-8">
+            <form name="requestForm">
+
+                <div class="intro">
+                    <h3>Verification or Update</h3>
+                    <h4></h4>
+                </div>
+
+                <div class="form-group">
+                    <h5>Select Verification if this is the first report of a PHE (or officially reported) or Update to gather additional details on an ongoing verified or officially confirmed PHE</h5>
+
+                    <div class="form-group">
+                        <label class="radio-inline"> <input type="radio" ng-model="purpose.purpose" value="V" > Verification</label>
+                        <label class="radio-inline"> <input type="radio" ng-model="purpose.purpose" value="U" > Update</label>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="checkbox">
+                            <label > <input type="checkbox" name="causal_agent" ng-model="purpose.causal_agent"> <b>PHE Causal Agent:</b> information on identified/hypothetical causal agent</label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="checkbox">
+                            <label > <input type="checkbox" name="epidemiology" ng-model="purpose.epidemiology"> <b>PHE Epidemiology:</b> information on the epidemiology including patterns of disease transmission, incubation period</label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="checkbox">
+                            <label > <input type="checkbox" name="pop_affected" ng-model="purpose.pop_affected"> <b>PHE population affected:</b> information on involved population (e.g. human/animal) or specific community
+                            </label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="checkbox">
+                            <label > <input type="checkbox" name="location" ng-model="purpose.location"> <b>PHE Location:</b> information on location of cases or locations at risk for disease spread
+                            </label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="checkbox">
+                            <label > <input type="checkbox" name="size" ng-model="purpose.size"> <b>PHE Size:</b> information on number of cases  (suspected, confirmed, fatalities etc)
+                            </label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="checkbox">
+                            <label > <input type="checkbox" name="test" ng-model="purpose.test"> <b>PHE Test Results:</b> information on test results</label>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="" for="other"><b>Other (please specify):</b> information on aspects not reflected in the other categories</label>
+                        <input type="text" class="form-control" ng-model="purpose.other" name="other" id="other" placeholder='other information...' value="" >
+                    </div>
+
+
+
+                    <div class="form-group">
+                        <h3>Public Health Relevance</h3>
+                        <h5>Requesters should define the rationale behind an RFI sent in a simple way in order to help Responders in the collection of the most appropriate information.</h5>
+                        <div class="radio">
+                            <label class="radio" data-toggle="tooltip" title="The PHE, if confirmed, may represent a public health risk at international level (e.g. direct/indirect spread to other countries, pandemic potential, diseases under elimination, emerging diseases etc.)">
+                                <input type="radio" ng-model="purpose.relevance" value="I" > International relevance</label>
+                        </div>
+                        <div class="radio">
+                            <label class="radio" data-toggle="tooltip" title="The PHE, if confirmed, may represent a public health risk at national (e.g. risk of spread within a country with limited response capacities) or local level (event in an area with limited response capacities, access etc.)">
+                                <input type="radio" ng-model="purpose.relevance" value="N" > National/subnational relevance</label>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="" for="other">Relevance details</label>
+                        <input type="text" class="form-control" ng-model="purpose.relevance_details" name="other" id="other" placeholder='details...' value=""  required>
+                    </div>
+
+                    <div class="form-group">
+                        <!--<button ng-click="" type="submit" class="submit btn btn-primary"><i class="fa fa-arrow-circle-left"></i> Back </button> &nbsp; &nbsp;-->
+                        <!--<button ng-click="" type="submit" class="submit btn btn-primary">Next <i class="fa fa-arrow-circle-right"></i></button>-->
+                        <a href="#/location" class="btn btn-default"><i class="fa fa-arrow-circle-left"></i> Back</a>&nbsp; &nbsp;
+                        <a href="#/source" class="btn btn-default"> Next <i class="fa fa-arrow-circle-right"></i></a>
+                    </div>
+
+
+                </div>
+
+            </form>
+
+        </div><!--col-->
+    </div><!--row-->
+</div><!--container-->
+</div><!--wrapper-->
+<script>
+    // form validation
+    $("form").validate();
+
+    // TOOLTIP
+    $('[data-toggle="tooltip"]').tooltip( {html: true,trigger:'hover'});
+</script>
