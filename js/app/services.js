@@ -49,4 +49,16 @@ angular.module('EpicoreApp.services', [])
             });
         }
         return eventAPI;
+    })
+    .factory("rfiForm", function () { // questions form variables object (persistance)
+        var questions = {};
+        return{
+            set: function () {
+                for (var member in questions) delete questions[member];
+            },
+            get: function () {
+                return questions;
+            }
+        };
+
     });

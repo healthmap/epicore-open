@@ -1,6 +1,7 @@
 var app = angular.module('EpicoreApp', [
     'EpicoreApp.services',
     'EpicoreApp.controllers',
+    'EpicoreApp.controllers2',
     'ngCookies',
     'ngRoute',
     'ngSanitize',
@@ -40,12 +41,13 @@ app.config(function($routeProvider) {
         when("/reopen/:id", {templateUrl: "partials/reopen.html", controller: "eventsController"}).
         when("/followup/:id", {templateUrl: "partials/followup.html", controller: "eventsController"}).
         when("/followup/:id/:response_id", {templateUrl: "partials/followup.html", controller: "eventsController"}).
-        when("/condition", {templateUrl: "partials/rfi_condition.html", controller: "requestController"}).
-        when("/population", {templateUrl: "partials/rfi_population.html", controller: "requestController"}).
-        when("/location", {templateUrl: "partials/rfi_location.html", controller: "requestController"}).
-        when("/purpose", {templateUrl: "partials/rfi_purpose.html", controller: "requestController"}).
-        when("/source", {templateUrl: "partials/rfi_source.html", controller: "requestController"}).
-        when("/members", {templateUrl: "partials/rfi_members.html", controller: "requestController"}).
+        when("/condition", {templateUrl: "partials/rfi_condition.html", controller: "requestController2"}).
+        when("/population", {templateUrl: "partials/rfi_population.html", controller: "requestController2"}).
+        when("/location", {templateUrl: "partials/rfi_location.html", controller: "requestController2"}).
+        when("/purpose", {templateUrl: "partials/rfi_purpose.html", controller: "requestController2"}).
+        when("/source", {templateUrl: "partials/rfi_source.html", controller: "requestController2"}).
+        when("/members", {templateUrl: "partials/rfi_members.html", controller: "requestController2"}).
+        when("/sendrequest", {templateUrl: "partials/rfi_sendrequest.html", controller: "requestController2"}).
         when("/request", {templateUrl: "partials/request.html", controller: "requestController"}).
         when("/request/:alertid", {templateUrl: "partials/request.html", controller: "requestController"}).
         when("/request2", {templateUrl: "partials/request2.html", controller: "requestController"}).
