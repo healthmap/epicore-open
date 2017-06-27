@@ -30,6 +30,21 @@ class PlaceInfo
         return $place_id;
     }
 
+    static function insertLocation2($latlon = '', $locname = '', $locdetails = '') {
+        $db = getDB();
+        list($lat,$lon) = split(",", $latlon);
+        if(!is_numeric($lat) || !is_numeric($lon)) {
+            return 0;
+        }
+        $llhash = md5(round($lat, LAT_LON_PRECISION) .",". round($lon, LAT_LON_PRECISION) . "," . $locdetails);
+        $place_id = $db->getOne("SELECT place_id FROM place WHERE latlon_hash = ?", array($llhash));
+        if(!$place_id) {
+            $q = $db->query("INSERT INTO place (name, lat, lon, latlon_hash, location_details) VALUES (?, ?, ?, ?, ?)", array($locname, $lat, $lon, $llhash, $locdetails ));
+            $place_id = $db->getOne("SELECT LAST_INSERT_ID()");
+            $db->commit();
+        }
+        return $place_id;
+    }
     static function updateLocation($place_id, $latlon = '', $locname = '') {
         $db = getDB();
         list($lat,$lon) = split(",", $latlon);

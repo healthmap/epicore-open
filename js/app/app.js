@@ -48,6 +48,7 @@ app.config(function($routeProvider) {
         when("/source", {templateUrl: "partials/rfi_source.html", controller: "requestController2"}).
         when("/members", {templateUrl: "partials/rfi_members.html", controller: "requestController2"}).
         when("/sendrequest", {templateUrl: "partials/rfi_sendrequest.html", controller: "requestController2"}).
+        when("/sent", {templateUrl: "partials/rfi_sent.html", controller: "requestController2"}).
         when("/request", {templateUrl: "partials/request.html", controller: "requestController"}).
         when("/request/:alertid", {templateUrl: "partials/request.html", controller: "requestController"}).
         when("/request2", {templateUrl: "partials/request2.html", controller: "requestController"}).

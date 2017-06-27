@@ -8,91 +8,17 @@ controller('requestController2', function($rootScope, $window, $scope, $routePar
     // get persistant RFI form
     $scope.rfiData = rfiForm.get();
 
-    //////////////////////////  Affected Population //////////////////////////////
-    $scope.pop_attempted = false;
-    $scope.pop_error_message = '';
-    $scope.pop_error_message1 = '';
-    $scope.savePopulation = function (direction) {
-        // checkbox validation
-        $scope.pop_valid = $scope.rfiData.population.human || $scope.rfiData.population.animal || $scope.rfiData.population.environment || $scope.rfiData.population.unknown|| $scope.rfiData.population.other;
-        $scope.pop_attempted = true;
-
-        // next
-        if ($scope.pop_valid && $scope.rfiData.population.description) { // validation
-            if (direction === 'next') {
-                $location.path('/condition');
-            }
-            $scope.clearPopError();
-        } else {
-            $scope.pop_error_message = 'Missing parameters above.';
-            $scope.pop_error_message1 = $scope.pop_valid ? '' : 'Must select one or more of the above options.';
-        }
-    };
-
-    // clear population
-    $scope.clearPopulation = function () {
-        $scope.rfiData.population.human = false;
-        $scope.rfiData.population.animal = false;
-        $scope.rfiData.population.environment = false;
-    };
-    // clear error
-    $scope.clearPopError = function () {
-        $scope.pop_error_message = '';
-        $scope.pop_error_message1 = '';
-    };
-
-    //////////////////////////////////////// Health Condition ////////////////////////////////
-    $scope.hc_attempted = false;
-    $scope.hc_error_message = '';
-    $scope.hc_error_message1 = '';
-    $scope.saveCondition = function (direction) {
-
-        // checkbox validation
-        $scope.health_condition_valid = $scope.rfiData.health_condition.respiratory || $scope.rfiData.health_condition.gastrointestinal || $scope.rfiData.health_condition.fever_rash || $scope.rfiData.health_condition.jaundice
-            || $scope.rfiData.health_condition.h_fever || $scope.rfiData.health_condition.paralysis || $scope.rfiData.health_condition.other_neurological || $scope.rfiData.health_condition.fever_unknown
-            || $scope.rfiData.health_condition.unknown || $scope.rfiData.health_condition.other;
-        $scope.hc_attempted = true;
-
-
-        if ($scope.health_condition_valid && $scope.rfiData.health_condition.disease_details ) { // validation
-
-            // next or back
-            if (direction === 'next') {
-                $location.path('/location');
-            } else if (direction === 'back'){
-                $location.path('/population');
-            }
-            $scope.clearhcError();
-        } else {
-            $scope.hc_error_message = 'Missing parameters above.';
-            $scope.hc_error_message1 = $scope.health_condition_valid ? '' : 'Must select one or more of the above options.';
-        }
-    };
-
-    // clear health conditions
-    $scope.clearCondition = function () {
-        $scope.rfiData.health_condition.respiratory = false;
-        $scope.rfiData.health_condition.gastrointestinal = false;
-        $scope.rfiData.health_condition.fever_rash = false;
-        $scope.rfiData.health_condition.jaundice = false;
-        $scope.rfiData.health_condition.h_fever = false;
-        $scope.rfiData.health_condition.paralysis = false;
-        $scope.rfiData.health_condition.other_neurological = false;
-        $scope.rfiData.health_condition.fever_unknown = false;
-    };
-    // clear error
-    $scope.clearhcError = function () {
-        $scope.hc_error_message = '';
-        $scope.hc_error_message1 = '';
-    };
-
     /////////////////////////////////////////////// Location & Time ////////////////////////////////
     $scope.location_error_message = '';
     $scope.saveLocation = function (direction) {
 
         // jquery hack to get the latlon hidden value and autocomplete for location (angular bug)
         $scope.rfiData.location.latlon = $("#default_location").val();
-        $scope.rfiData.location.location = $("#searchTextField").val();
+        $scope.rfiData.location.location = $("#searchTextField").val(); // format: "country" or "state, country" or "city, state, country"
+        $scope.rfiData.default_city = $("#default_city").val();
+        $scope.rfiData.default_state = $("#default_state").val();
+        $scope.rfiData.default_country = $("#default_country").val();
+
         if(!$scope.rfiData.location.latlon) {
             $scope.rfiData.location.location_error_message = 'Geolocation failed - please scroll down and select a location from the auto-suggester in the location field so that we have the coordinates of the event.';
             $scope.rfiData.location.location = '';
@@ -137,9 +63,8 @@ controller('requestController2', function($rootScope, $window, $scope, $routePar
                     $location.path('/members');
                 }
 
-            } else if (direction === 'back'){
-                $location.path('/condition');
             }
+
             $scope.location_error_message = '';
 
         } else {
@@ -223,11 +148,103 @@ controller('requestController2', function($rootScope, $window, $scope, $routePar
 
         // next or back
         if (direction === 'next') {
-            $location.path('/purpose');
+            $location.path('/population');
         } else if (direction === 'back'){
             $location.path('/location');
         }
     };
+
+    //////////////////////////  Affected Population //////////////////////////////
+    $scope.pop_error_message = '';
+    $scope.savePopulation = function (direction) {
+
+        // validation
+        var valid_other_animal = ($scope.rfiData.population.animal_type != 'O') || $scope.rfiData.population.other_animal;
+        var valid_animal = ($scope.rfiData.population.type != 'A') || ($scope.rfiData.population.animal_type && valid_other_animal);
+        var valid_other = ($scope.rfiData.population.type != 'O') || $scope.rfiData.population.other;
+        var valid_population = $scope.rfiData.population.type && valid_other;
+
+        if (valid_population && valid_animal && $scope.rfiData.population.description){
+
+            if (direction === 'next') {
+                $location.path('/condition');
+            } else if (direction === 'back'){
+                $location.path('/members');
+            }
+            $scope.pop_error_message = '';
+        } else {
+            $scope.pop_error_message = 'Missing parameters above.';
+        }
+    };
+
+    //////////////////////////////////////// Health Condition ////////////////////////////////
+    $scope.hc_error_message = '';
+    $scope.hc_error_message1 = '';
+    $scope.saveCondition = function (direction) {
+
+        // checkbox validation
+        var valid_other = (!$scope.rfiData.health_condition.other || $scope.rfiData.health_condition.other_description);
+        var health_condition_human_valid = ($scope.rfiData.health_condition.respiratory || $scope.rfiData.health_condition.gastrointestinal || $scope.rfiData.health_condition.fever_rash || $scope.rfiData.health_condition.jaundice
+            || $scope.rfiData.health_condition.h_fever || $scope.rfiData.health_condition.paralysis || $scope.rfiData.health_condition.other_neurological || $scope.rfiData.health_condition.fever_unknown || $scope.rfiData.health_condition.renal
+            || $scope.rfiData.health_condition.unknown || $scope.rfiData.health_condition.other) && valid_other;
+
+        var valid_other_animal = (!$scope.rfiData.health_condition.other_animal || $scope.rfiData.health_condition.other_animal_description);
+        var health_condition_animal_valid = ($scope.rfiData.health_condition.respiratory_animal || $scope.rfiData.health_condition.neurological_animal || $scope.rfiData.health_condition.hemorrhagic_animal
+            || $scope.rfiData.health_condition.vesicular_animal || $scope.rfiData.health_condition.reproductive_animal || $scope.rfiData.health_condition.gastrointestinal_animal || $scope.rfiData.health_condition.multisystemic_animal
+            || $scope.rfiData.health_condition.unknown_animal || $scope.rfiData.health_condition.other_animal) && valid_other_animal;
+
+        var health_condition_ok = !(($scope.rfiData.population.type == 'H') && !health_condition_human_valid) && !(($scope.rfiData.population.type == 'A') && !health_condition_animal_valid);
+
+        if (health_condition_ok && $scope.rfiData.health_condition.disease_details ) { // validation
+
+            // next or back
+            if (direction === 'next') {
+                $location.path('/purpose');
+            } else if (direction === 'back'){
+                $location.path('/population');
+            }
+            // clear errors
+            $scope.hc_error_message = '';
+            $scope.hc_error_message1 = '';
+        } else if (!health_condition_ok){
+            $scope.hc_error_message1 =  (valid_other && valid_other_animal) ? 'Must select one or more of the above options ' : '' ;
+            $scope.hc_error_message = 'Missing parameters above.';
+        } else {
+            $scope.hc_error_message = 'Missing parameters above.';
+            $scope.hc_error_message1 = '';
+        }
+    };
+
+    // clear health conditions
+    $scope.clearCondition = function () {
+        $scope.rfiData.health_condition.respiratory = false;
+        $scope.rfiData.health_condition.gastrointestinal = false;
+        $scope.rfiData.health_condition.fever_rash = false;
+        $scope.rfiData.health_condition.jaundice = false;
+        $scope.rfiData.health_condition.h_fever = false;
+        $scope.rfiData.health_condition.paralysis = false;
+        $scope.rfiData.health_condition.other_neurological = false;
+        $scope.rfiData.health_condition.fever_unknown = false;
+        $scope.rfiData.health_condition.renal = false;
+
+    };
+    $scope.clearCondition2 = function () {
+        $scope.rfiData.health_condition.respiratory_animal = false;
+        $scope.rfiData.health_condition.neurological_animal = false;
+        $scope.rfiData.health_condition.hemorrhagic_animal = false;
+        $scope.rfiData.health_condition.vesicular_animal = false;
+        $scope.rfiData.health_condition.reproductive_animal = false;
+        $scope.rfiData.health_condition.gastrointestinal_animal = false;
+        $scope.rfiData.health_condition.multisystemic_animal = false;
+    };
+    // clear error
+    $scope.clearhcError = function () {
+        $scope.hc_error_message2 = '';
+    };
+    $scope.clearhcError2 = function () {
+        $scope.hc_error_message2 = '';
+    };
+
 
     ////////////////////////////////////////////// Purpose ////////////////////////////////////////
     $scope.purpose_error_message = '';
@@ -235,11 +252,13 @@ controller('requestController2', function($rootScope, $window, $scope, $routePar
     $scope.savePurpose = function (direction) {
 
         // checkbox validation
-        $scope.purpose_valid = $scope.rfiData.purpose.causal_agent || $scope.rfiData.purpose.epidemiology || $scope.rfiData.purpose.pop_affected || $scope.rfiData.purpose.location
+        var valid_purpose = $scope.rfiData.purpose.causal_agent || $scope.rfiData.purpose.epidemiology || $scope.rfiData.purpose.pop_affected || $scope.rfiData.purpose.location
             || $scope.rfiData.purpose.size || $scope.rfiData.purpose.test || $scope.rfiData.purpose.other_category;
+        var valid_other_purpose = !$scope.rfiData.purpose.other_category || $scope.rfiData.purpose.other;
 
         // next
-        if ($scope.purpose_valid && $scope.rfiData.purpose.purpose && $scope.rfiData.purpose.relevance && $scope.rfiData.purpose.relevance_details) { // validation
+        //if (valid_purpose && valid_other_purpose && $scope.rfiData.purpose.purpose && $scope.rfiData.purpose.relevance && $scope.rfiData.purpose.relevance_details) { // validation
+        if (valid_purpose && valid_other_purpose && $scope.rfiData.purpose.purpose) { // validation
             if (direction === 'next') {
                 $location.path('/source');
             } else if (direction === 'back'){
@@ -248,9 +267,16 @@ controller('requestController2', function($rootScope, $window, $scope, $routePar
 
             $scope.purpose_error_message = '';
             $scope.purpose_error_message1 = '';
+        } else if (!valid_other_purpose) {
+            $scope.purpose_error_message = 'Missing parameters above.';
+            $scope.purpose_error_message1 = '';
+        }
+        else if (!valid_purpose){
+                $scope.purpose_error_message = 'Missing parameters above.';
+                $scope.purpose_error_message1 = 'Must select one or more of the above options.';
         } else {
             $scope.purpose_error_message = 'Missing parameters above.';
-            $scope.purpose_error_message1 = $scope.purpose_valid ? '' : 'Must select one or more of the above options.';
+            $scope.purpose_error_message1 = '';
         }
     };
 
@@ -261,8 +287,17 @@ controller('requestController2', function($rootScope, $window, $scope, $routePar
         if ($scope.rfiData.source.source && $scope.rfiData.source.details){
             if (direction === 'next') {
 
+                // save RFI details for review
+                $scope.rfiData.event_location = getLocation();
+                $scope.rfiData.event_population = getPopulation();
+                $scope.rfiData.event_conditions = getConditions();
+                $scope.rfiData.event_title = $scope.rfiData.event_population + ', ' + $scope.rfiData.event_conditions + ' - ' + $scope.rfiData.event_location + $scope.rfiData.location.event_date;
+                $scope.rfiData.event_purpose = getPurpose();
+                $scope.rfiData.event_source = getSource();
+                $location.path('/sendrequest');
+
                 // build and review request email
-                buildEmailText();
+                //buildEmailText();
 
             } else if (direction === 'back'){
                 $location.path('/purpose');
@@ -274,14 +309,12 @@ controller('requestController2', function($rootScope, $window, $scope, $routePar
 
     };
 
-    /* build and review request email*/
+    // buildEmailText is not used for now
     $scope.filePreview = $window.sessionStorage.filePreview;
     buildEmailText = function() {
+
         var formData = {};
-        formData['additionalText'] =  $scope.rfiData.population.description;
-        formData['title'] =  $scope.rfiData.health_condition.disease_details;
-        formData['location'] = $scope.rfiData.location.location;
-        formData['description'] = $scope.rfiData.health_condition.disease_details;
+        formData['title'] =  $scope.rfiData.event_title;
         // overwrite the old file preview if it exists
         if(typeof($window.sessionStorage.filePreview) != "undefined") {
             formData['file_preview'] = $window.sessionStorage.filePreview;
@@ -291,38 +324,219 @@ controller('requestController2', function($rootScope, $window, $scope, $routePar
             $window.sessionStorage.filePreview = respdata['file_preview'];
             $location.path('/sendrequest');
         });
+    };
+
+    function getSource() {
+        if ($scope.rfiData.source.source == "MR")
+            return "Media Report";
+        else if ($scope.rfiData.source.source == "OR")
+            return "Official Report";
+        else if ($scope.rfiData.source.source == "OC")
+            return "Other Communication";
+        else
+            return "none";
+    }
+
+    function getPurpose() {
+
+        var purpose = $scope.rfiData.purpose.purpose == "V" ? "Verification" : "Update";
+        var type = [];
+
+        if ($scope.rfiData.purpose.causal_agent)
+            type.push("PHE Causal Agent");
+        if ($scope.rfiData.purpose.epidemiology)
+            type.push("PHE Epidemiology");
+        if ($scope.rfiData.purpose.pop_affected)
+            type.push("PHE population affected");
+        if ($scope.rfiData.purpose.location)
+            type.push("PHE Location");
+        if ($scope.rfiData.purpose.size)
+            type.push("PHE Size");
+        if ($scope.rfiData.purpose.test)
+            type.push("PHE Test Results");
+        if ($scope.rfiData.purpose.other_category)
+            type.push($scope.rfiData.purpose.other);
+
+        return purpose + ": " + type.toString();
+    }
+
+    function getLocation() {
+        var subnational = '';
+        if ($scope.rfiData.default_city){
+            subnational = $scope.rfiData.default_city + ',' +$scope.rfiData.default_state;
+        } else if ($scope.rfiData.default_state) {
+            subnational = $scope.rfiData.default_state;
+        }
+        return $scope.rfiData.default_country + ' (' + subnational + '), ';
+    }
+
+    function getPopulation() {
+        var population = '';
+        switch ($scope.rfiData.population.type) {
+            case "H":
+                population = 'Human';
+                break;
+            case "A":
+                population = getAnimal();
+                break;
+            case "E":
+                population = 'Environmental';
+                break;
+            case "U":
+                population = 'Unknown';
+                break;
+            case "O":
+                population = $scope.rfiData.population.other;
+                break;
+        }
+        return population;
+    }
+
+    function getAnimal() {
+
+        var animal = '';
+        switch ($scope.rfiData.population.animal_type) {
+            case "B":
+                animal = "Birds/Poultry";
+                break;
+            case "P":
+                animal = "Pigs/Swine";
+                break;
+            case "C":
+                animal = "Cattle";
+                break;
+            case "G":
+                animal = "Goats/Sheep";
+                break;
+            case "D":
+                animal = "Dogs/Cats";
+                break;
+            case "H":
+                animal = "Horses/Equines";
+                break;
+            case "O":
+                animal = $scope.rfiData.population.other_animal;
+                break;
+            default:
+                break;
+
+        }
+        return animal;
+    }
+
+    function getConditions() {
+
+        var species = '';
+
+        if ($scope.rfiData.population.type == "H")
+            species = 'human';
+        else if ($scope.rfiData.population.type =="A")
+            species = 'animal';
+
+        var condition = [];
+        if (species == 'human'){
+
+            if ($scope.rfiData.health_condition.respiratory)
+                condition.push("Acute Respiratory");
+            if ($scope.rfiData.health_condition.gastrointestinal)
+                condition.push("Gastrointestinal");
+            if ($scope.rfiData.health_condition.fever_rash)
+                condition.push("Fever & Rash");
+            if ($scope.rfiData.health_condition.jaundice)
+                condition.push("Acute Jaundice");
+            if ($scope.rfiData.health_condition.h_fever)
+                condition.push("Hemorrhagic Fever");
+            if ($scope.rfiData.health_condition.paralysis)
+                condition.push("Acute Flaccid paralysis");
+            if ($scope.rfiData.health_condition.other_neurological)
+                condition.push("Other neorological");
+            if ($scope.rfiData.health_condition.fever_unknown)
+                condition.push("Fever of uknown origin");
+            if ($scope.rfiData.health_condition.renal)
+                condition.push("Renal failure");
+            if ($scope.rfiData.health_condition.unknown)
+                condition.push("Unknown");
+            if ($scope.rfiData.health_condition.other)
+                condition.push($scope.rfiData.health_condition.other_description);
+
+        } else if (species == 'animal'){
+
+            if ($scope.rfiData.health_condition.respiratory_animal) {
+                condition.push("Respiratory");
+            }
+            if ($scope.rfiData.health_condition.neurological_animal) {
+                condition.push("Neurological");
+            }
+            if ($scope.rfiData.health_condition.hemorrhagic_animal) {
+                condition.push("Haemorrhagic");
+            }
+            if ($scope.rfiData.health_condition.vesicular_animal) {
+                condition.push("Vesicular");
+            }
+            if ($scope.rfiData.health_condition.reproductive_animal) {
+                condition.push("Reproductive");
+            }
+            if ($scope.rfiData.health_condition.gastrointestinal_animal) {
+                condition.push("Gastrointestinal");
+            }
+            if ($scope.rfiData.health_condition.multisystemic_animal) {
+                condition.push("Multisystemic");
+            }
+            if ($scope.rfiData.health_condition.unknown_animal) {
+                condition.push("Unknown");
+            }
+            if ($scope.rfiData.health_condition.other_animal) {
+                condition.push($scope.rfiData.health_condition.other_animal_description);
+            }
+
+        } else {
+            condition.push($scope.rfiData.health_condition.disease_details);
+        }
+        return condition.toString();
     }
 
     /* Send request */
-    $scope.sendRequest2 = function () {
+    $scope.sendRequest2 = function (direction) {
 
-        //console.log($scope.rfiData);
+        if (direction === 'next') {
+            $scope.submitDisabled = true;
+            var formData = {};
+            if ($scope.rfiData.members.searchType == "radius") {
+                formData['search_box'] = $scope.rfiData.members.searchBox.toString();
+            } else {
+                formData['search_countries'] = $scope.rfiData.members.countries.toString();
+            }
+            formData['uid'] = $scope.userInfo.uid; //requester of RFI
+            formData['fetp_ids'] = $scope.rfiData.members.userIds;
+            formData['population'] = $scope.rfiData.population;
+            formData['health_condition'] = $scope.rfiData.health_condition;
+            formData['location'] = $scope.rfiData.location;
+            formData['purpose'] = $scope.rfiData.purpose;
+            formData['source'] = $scope.rfiData.source;
 
-        $scope.submitDisabled = true;
-        var formData = {};
-        if($scope.rfiData.members.searchType == "radius") {
-            formData['search_box'] = $scope.rfiData.members.searchBox.toString();
-        } else {
-            formData['search_countries'] = $scope.rfiData.members.countries.toString();
+            $http({
+                url: urlBase + 'scripts/sendrequest2.php', method: "POST", data: formData
+            }).success(function (respdata, status, headers, config) {
+
+                // go to success page
+                $location.path('/sent');
+                $scope.submitDisabled = false;
+
+            });
+
+        } else if ( direction === 'back'){
+            $location.path('/source');
         }
-        formData['uid'] = $scope.userInfo.uid; //requester of RFI
-        formData['fetp_ids'] = $scope.rfiData.members.userIds;
-        formData['population'] = $scope.rfiData.population;
-        formData['health_condition'] = $scope.rfiData.health_condition;
-        formData['location'] = $scope.rfiData.location;
-        formData['purpose'] = $scope.rfiData.purpose;
-        formData['source'] = $scope.rfiData.source;
 
-        console.log(formData);
-        $http({ url: urlBase + 'scripts/sendrequest2.php', method: "POST", data: formData
-        }).success(function (respdata, status, headers, config) {
-            // empty out the form values since you've submitted so they aren't pre-filled next time
-            console.log(respdata);
-            $window.sessionStorage.clear();
-            $location.path('/success/3');
-            $scope.submitDisabled = false;
-        });
+    }
 
+    /* Sent request */
+    $scope.sentRFI = function () {
+
+        // empty out the form values since you've submitted so they aren't pre-filled next time
+        $window.sessionStorage.clear();
+        rfiForm.clear();
+        $location.path('/events');
     }
 
     });

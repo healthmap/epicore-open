@@ -67,13 +67,28 @@
     // google places
     function initialize_googleplaces() {
         var input = document.getElementById('searchTextField');
-//        var options = {types: ['(cities)']};
-//        autocomplete = new google.maps.places.Autocomplete(input, options);
-        autocomplete = new google.maps.places.Autocomplete(input);
+        //var options = {types: ['(cities)']}; // search by city,region,country
+        var options = {types: ['(regions)']}; // search by region, country
+        autocomplete = new google.maps.places.Autocomplete(input, options);
+//        autocomplete = new google.maps.places.Autocomplete(input);
         google.maps.event.addListener(autocomplete, 'place_changed', function() {
             placeinfo = autocomplete.getPlace();
             default_location = placeinfo.geometry.location.lat() + ',' + placeinfo.geometry.location.lng();
             $('#default_location').val(default_location);
+
+            // get city, state, country
+            for (var i = 0; i < placeinfo.address_components.length; i++){
+                var type = placeinfo.address_components[i].types[0];
+                var place = placeinfo.address_components[i].long_name;
+                if (type == 'locality'){
+                    $('#default_city').val(place);
+                } else if(type == 'administrative_area_level_1'){
+                    $('#default_state').val(place);
+                } else if (type == 'country'){
+                    $('#default_country').val(place);
+                }
+            }
+
         });
     }
 

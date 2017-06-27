@@ -9,36 +9,45 @@
 <div class="container">
     <div class="row">
         <div id="form-container" class="col-xs-12 col-md-8">
-            <form name="requestForm">
+            <form name="locationForm">
 
                 <div class="intro">
 
                 </div>
 
                 <div class="form-group">
-                    <label class="" for="location">Event Location</label>
-                    <input type="text" class="form-control" ng-model="location.location" name="location" id="searchTextField" placeholder="" value="" required>
-                    <input type="hidden" name="latlon" ng-model="location.latlon" id="default_location" value="{{location.latlon}}">
+                    <h4>Event Location</h4>
+                    <input type="text" class="form-control" ng-model="rfiData.location.location" name="location" id="searchTextField" placeholder="" value="" required>
+                    <input type="hidden" name="latlon" ng-model="rfiData.location.latlon" id="default_location" value="{{rfiData.location.latlon}}">
+                    <input type="hidden" name="default_city" ng-model="rfiData.default_city" id="default_city" value="{{rfiData.default_city}}">
+                    <input type="hidden" name="default_state" ng-model="rfiData.default_state" id="default_state" value="{{rfiData.default_state}}">
+                    <input type="hidden" name="default_country" ng-model="rfiData.default_country" id="default_country" value="{{rfiData.default_country}}">
+
                 </div>
 
                 <div class="form-group">
-                    <label class="" for="population_description" data-toggle="tooltip" title=" This section should include details about the subnational level location of the event:">Location details</label>
-                    <textarea class="form-control" style="height:50px" ng-model="location.location_details" id="population_description" placeholder="Available details..." required></textarea>
+                    <h4>Location Details</h4>
+                    <p>Please include details about the subnational level location of the event:</p>
+                    <textarea class="form-control" style="height:50px" ng-model="rfiData.location.location_details" id="population_description" placeholder="Available details..." required></textarea>
                 </div>
 
                 <div class="form-group">
-                    <label class="" for="event_date" >Event Date</label>
-                    <input type="text" class="form-control" ng-model="location.event_date" name="event_date" id="event_date" data-provide="datepicker" required>
+                    <h4>Date</h4>
+                    <p>Requesters should include at least month and year of the “reported occurrence” of case/s.</p>
+                    <input type="text" class="form-control" ng-model="rfiData.location.event_date" name="event_date" id="event_date" data-provide="datepicker" data-date-format="dd-MM-yyyy" required>
                 </div>
 
                 <div class="form-group">
-                    <!--<button ng-click="" type="submit" class="submit btn btn-primary"><i class="fa fa-arrow-circle-left"></i> Back </button> &nbsp; &nbsp;-->
-                    <!--<button ng-click="" type="submit" class="submit btn btn-primary">Next <i class="fa fa-arrow-circle-right"></i></button>-->
-                    <p>
-                        <a href="#/population" class="btn btn-default"><i class="fa fa-arrow-circle-left"></i> Back</a>&nbsp; &nbsp;
-                        <a href="#/purpose" class="btn btn-default"> Next <i class="fa fa-arrow-circle-right"></i></a>
-                    </p>
+                    <h4>Date Details</h4>
+                    <p>If more cases are reported in time it should be preferred to include information about reporter first cases, with a preference to onset of symptoms if possible.</p>
+                    <textarea class="form-control" style="height:50px" ng-model="rfiData.location.event_date_details" id="event_date_details" placeholder="Available details..." ></textarea>
+                </div>
+
+                <div class="form-group">&nbsp;
+                    <button ng-click="saveLocation('next')" type="submit" class="submit btn btn-primary"> Next <i class="fa fa-arrow-circle-right"></i></button>
                 </div><!-- /input-group -->
+                <span class="error">{{location_error_message}}</span>
+
             </form>
 
         </div><!--col-->
@@ -49,9 +58,6 @@
 
     // google places for auto-suggester
     initialize_googleplaces();
-
-    // form validation
-    $("form").validate();
 
     // TOOLTIP
     $('[data-toggle="tooltip"]').tooltip( {html: true,trigger:'hover'});

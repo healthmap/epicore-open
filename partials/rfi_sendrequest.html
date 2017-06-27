@@ -1,0 +1,68 @@
+<div ng-include src="'header.html'"></div>
+<div class="jumbotron dashboard">
+    <div class="container">
+        <h1>RFI - Preview & Send</h1>
+    </div>
+</div>
+
+<div class="wrapper dashboard">
+<div class="container">
+    <div class="row">
+        <div id="form-container" class="col-xs-12 col-md-8">
+            <form name="sendRequestForm">
+
+                <ul>
+                    <li> Your RFI will be routed to {{rfiData.members.numFetps}} members.</li>
+                    <li> Please review the content of your RFI as well as your RFI title.
+
+                        <ul>
+                            <li> Please page back to correct any errors </li>
+                        </ul>
+                    </li>
+                </ul>
+
+            <div class="form-group">
+            <p><a href="#/location" class="btn btn-default"><i class="fa fa-arrow-circle-left"></i> Edit RFI</a></p>
+
+                <ul>
+                    <li>Title: {{rfiData.event_title}}</li>
+                    <li>Location: {{rfiData.event_location}}</li>
+                        <ul>
+                            <li>Available Details: {{rfiData.location.location_details}}</li>
+                        </ul>
+                    <li>Date: {{rfiData.location.event_date}}
+                        <ul>
+                            <li>Available Details: {{rfiData.location.event_date_details}}</li>
+                        </ul>
+                    </li>
+                    <li>Affected Population: {{rfiData.event_population}}
+                        <ul>
+                            <li>Available Details: {{rfiData.population.description}}</li>
+                        </ul>
+                    </li>
+                    <li>Health Condition: {{rfiData.event_conditions}}
+                        <ul>
+                            <li>Other Relevant Public Health Details: {{rfiData.health_condition.ph_details}}</li>
+                        </ul>
+                    </li>
+                    <li>Purpose: {{rfiData.event_purpose}} </li>
+                    <li>Source(s): {{rfiData.event_source}}
+                        <ul>
+                            <li>Available Details: {{rfiData.source.details}}</li>
+                        </ul>
+                    </li>
+                </ul>
+
+                <!--<iframe width="800" height="400" ng-src="{{filePreview}}"></iframe>-->
+            </div>
+
+                <div class="form-group">
+                    <button ng-click="sendRequest2('back')" type="submit" class="submit btn btn-primary"><i class="fa fa-arrow-circle-left"></i> Back </button> &nbsp; &nbsp;
+                    <button ng-click="sendRequest2('next')" ng-disabled="submitDisabled" type="submit" class="submit btn btn-primary">Send RFI</button>
+                </div><!-- /input-group -->
+
+            </form>
+        </div><!--col-->
+    </div><!--row-->
+</div><!--container-->
+</div><!--wrapper-->

@@ -16,57 +16,78 @@
                 </div>
 
                 <div class="form-group">
-                    <div class="checkbox">
-                        <label > <input type="checkbox" name="human_population" ng-model="population.human_population"> Human population</label>
+                    <div class="radio">
+                        <!--<label > <input type="checkbox" name="human" ng-model="rfiData.population.human" ng-click="clearPopulation('human'); clearAnimal('all'); clearPopError();" > Human population</label>-->
+                        <label > <input type="radio" name="human" ng-model="rfiData.population.type" value="H" ng-required="!rfiData.population.type"> Human population</label>
                     </div>
                 </div>
                 <div class="form-group">
-                    <div class="checkbox">
-                        <label > <input type="checkbox" name="animal_population" ng-model="population.animal_population"> Animal population</label>
+                    <div class="radio">
+                        <label > <input type="radio" name="animal" ng-model="rfiData.population.type" value="A" ng-required="!rfiData.population.type" > Animal population</label>
+                    </div>
+                </div>
+                <div class="form-group" ng-if="rfiData.population.type == 'A'" style="margin-left: 40px">
+                    <div class="radio">
+                        <label > <input type="radio" name="birds" ng-model="rfiData.population.animal_type" value="B" ng-required="!rfiData.population.animal_type" > Birds/Poultry</label>
+                    </div>
+                    <div class="radio">
+                        <label > <input type="radio" name="pigs" ng-model="rfiData.population.animal_type" value="P" ng-required="!rfiData.population.animal_type"> Pigs/Swine</label>
+                    </div>
+                    <div class="radio">
+                        <label > <input type="radio" name="cattle" ng-model="rfiData.population.animal_type" value="C" ng-required="!rfiData.population.animal_type"> Cattle</label>
+                    </div>
+                    <div class="radio">
+                        <label > <input type="radio" name="goats" ng-model="rfiData.population.animal_type" value="G" ng-required="!rfiData.population.animal_type"> Goats/Sheep</label>
+                    </div>
+                    <div class="radio">
+                        <label > <input type="radio" name="dogs" ng-model="rfiData.population.animal_type" value="D" ng-required="!rfiData.population.animal_type"> Dogs/Cats</label>
+                    </div>
+                    <div class="radio">
+                        <label > <input type="radio" name="horses" ng-model="rfiData.population.animal_type" value="H" ng-required="!rfiData.population.animal_type"> Horses/Equines</label>
+                    </div>
+                    <div class="radio">
+                        <label > <input type="radio" name="other_animal" ng-model="rfiData.population.animal_type" value="O" ng-required="!rfiData.population.animal_type"> Other</label>
+                    </div>
+                    <div class="form-group" ng-if="rfiData.population.animal_type == 'O'">
+                        <input type="text" class="form-control" ng-model="rfiData.population.other_animal" name="other_animal" id="other_animal" placeholder='other animal description...' value="" required >
                     </div>
                 </div>
 
                 <div class="form-group">
-                    <div class="checkbox">
-                        <label > <input type="checkbox" name="environment_population" ng-model="population.environment_population"> Environmental contamination</label>
+                    <div class="radio">
+                        <label > <input type="radio" name="environment" ng-model="rfiData.population.type" value="E" ng-required="!rfiData.population.type" > Environmental</label>
                     </div>
                 </div>
 
                 <div class="form-group">
-                    <div class="checkbox">
-                        <label > <input type="checkbox" name="uknown_population" ng-model="population.uknown_population"> Unknown population</label>
+                    <div class="radio">
+                        <label > <input type="radio" name="unknown" ng-model="rfiData.population.type" value="U" ng-required="!rfiData.population.type" > Unknown</label>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="radio">
+                        <label > <input type="radio" name="open" ng-model="rfiData.population.type" value="O" ng-required="!rfiData.population.type" > Open Option</label>
+                        <input ng-if="rfiData.population.type == 'O'" type="text" class="form-control" ng-model="rfiData.population.other" name="other" id="other" placeholder='open option details...' value="" required>
                     </div>
                 </div>
 
                 <div class="form-group">
-                    <label class="" for="other_population" >Other:</label>
-                    <input type="text" class="form-control" ng-model="condition.other_population" name="other_population" id="other_population" placeholder='other population' value="" >
+                    <h4>Affected Population</h4>
+                    <p>Please include all additional details available about the specific population affected (e.g. animal and/or human population affected, specific age-groups, at-risk populations):</p>
+                    <textarea class="form-control" style="height:50px" ng-model="rfiData.population.description" id="description" placeholder="Available details..." required></textarea>
                 </div>
 
+                <!-- next/back buttons -->
                 <div class="form-group">
-                    <label class="" for="population_description" data-toggle="tooltip" title=" This section should include all additional details available about the specific population affected (e.g. animal and/or human population affected, specific age-groups, at-risk populations):">Affected population</label>
-                    <textarea class="form-control" style="height:50px" ng-model="population.population_description" id="population_description" placeholder="Available details..." required></textarea>
-                </div>
-
-
-                <div class="form-group">
-                    <!--<button ng-click="" type="submit" class="submit btn btn-primary"><i class="fa fa-arrow-circle-left"></i> Back </button> &nbsp; &nbsp;-->
-                    <!--<button ng-click="" type="submit" class="submit btn btn-primary">Next <i class="fa fa-arrow-circle-right"></i></button>-->
-                    <p>
-                        <a href="#/condition" class="btn btn-default"><i class="fa fa-arrow-circle-left"></i> Back</a>&nbsp; &nbsp;
-                        <a href="#/location" class="btn btn-default"> Next <i class="fa fa-arrow-circle-right"></i></a>
-                    </p>
+                    <button ng-click="savePopulation('back')" type="submit" class="submit btn btn-primary"><i class="fa fa-arrow-circle-left"></i> Back </button> &nbsp; &nbsp;
+                    <button ng-click="savePopulation('next')" type="submit" class="submit btn btn-primary"> Next <i class="fa fa-arrow-circle-right"></i></button>
                 </div><!-- /input-group -->
+                <span class="error">{{pop_error_message}}</span>
+
             </form>
 
         </div><!--col-->
     </div><!--row-->
 </div><!--container-->
 </div><!--wrapper-->
-<script>
-    // form validation
-    $("form").validate();
 
-    // TOOLTIP
-    $('[data-toggle="tooltip"]').tooltip( {html: true,trigger:'hover'});
-</script>

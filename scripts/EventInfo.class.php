@@ -552,6 +552,96 @@ class EventInfo
         return $event_id;
     }
 
+    // insert event and related tables
+    // returns and inserted event id if successful (status = 'success'), or status = error message
+    static function insertEvent2($event_info, $event_table)
+    {
+        $db = getDB();
+        // sanitize event info
+        $darr = array();
+        foreach($event_info as $key => $val) {
+            $darr[$key] = strip_tags($val);
+        }
+        if(!is_numeric($darr['requester_id'])) { // check valid id
+            return false;
+            exit;
+        }
+        // insert into the place table if doesn't exist
+        $place_id = PlaceInfo::insertLocation2($darr['latlon'], $darr['location'], $darr['location_details']);
+
+        // insert into the event table
+        $create_date = $darr['create_date'] ? $darr['create_date'] : date('Y-m-d H:i:s');
+        $res = $db->query("INSERT INTO event (place_id, create_date, requester_id, search_box, search_countries, event_date, event_date_details) VALUES (?, ?, ?, ?, ?, ?, ?)",
+                    array($place_id, $create_date, $darr['requester_id'], $darr['search_box'], $darr['search_countries'], $darr['event_date'], $darr['event_date_details']));
+
+        // check result is not an error
+        if (PEAR::isError($res)) {
+            //die($res->getMessage());
+            $status = 'failed to insert event';
+            $event_id = false;
+        } else {
+            $event_id = $db->getOne("SELECT LAST_INSERT_ID()");
+            $db->commit();
+            $status = 'success';
+        }
+
+        // insert related event tables
+        if ($event_id) {
+            foreach ($event_table as $table_name => $table) {
+                $table_id = EventInfo::insertEventTable($table_name, $table, $event_id);
+                if (is_numeric($table_id)) {
+                    $status = 'success';
+                } else {
+                    $status = 'failed to insert event table: ' . $table_name . ', error message: ' .$table_id;
+                    break;
+                }
+            }
+        }
+
+        return array('status'=>$status, 'event_id' =>$event_id);
+
+    }
+
+    // returns table id if inserted, or an error message if there is an insert error or the table already exists.
+    static function insertEventTable($table_name,$table, $event_id)
+    {
+        // check valid table name
+        $valid_table = ($table_name == 'population' || $table_name == 'health_condition' || $table_name == 'purpose' || $table_name == 'source');
+        if (!$valid_table) {
+            return 'invalid table name.';
+        }
+        // insert if table does not exist for the event
+        $db = getDB();
+        $q1 = "SELECT event_id FROM {$table_name} WHERE event_id = ?";
+        $eid = $db->getOne($q1, array($event_id));
+        if(!$eid) { // insert if valid table and does not exist
+            $pvals = array();
+            // sanitize table data
+            foreach($table as $key => $val) {
+                $pvals[$key] = strip_tags($val);
+            }
+            $pvals['event_id'] = strip_tags($event_id);
+
+            // insert row
+            $key_vals = join(",", array_keys($pvals));
+            $qmarks = join(",", array_fill(0, count($pvals), '?'));
+            $qvals = array_values($pvals);
+            $q2 = "INSERT IGNORE INTO {$table_name} ({$key_vals}) VALUES ({$qmarks})";
+            $res = $db->query($q2, $qvals);
+            // check that result is not an error
+            if (PEAR::isError($res)) {
+                //die($res->getMessage());
+                return 'database insert error.';
+            } else {
+                $table_id = $db->getOne("SELECT LAST_INSERT_ID()");
+                $db->commit();
+                return $table_id;
+            }
+        }
+        else
+            return 'table already exists.';
+    }
+
     static function insertFollowup($data_arr)
     {
         $db = getDB();

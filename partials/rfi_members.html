@@ -1,7 +1,7 @@
 <div ng-include src="'header.html'"></div>
 <div class="jumbotron dashboard">
     <div class="container">
-        <h1>RFI - Members</h1>
+        <h1>RFI - Location and Time</h1>
     </div>
 </div>
 
@@ -9,16 +9,16 @@
 <div class="container">
     <div class="row">
         <div id="form-container" class="col-xs-12 col-md-8">
-            <form name="requestForm">
+            <form name="memberForm">
 
                 <div class="intro">
                     <h5>You can select recipient members either by moving the bounding box or by selecting countries in the menu below.</h5>
-                    <p class="red">{{numUniqueFetps}} members at {{numFetps}} locations selected</p>
+                    <p class="red">{{rfiData.members.numUniqueFetps}} members at {{rfiData.members.numFetps}} locations selected</p>
                 </div>
 
                 <div class="form-group">
-                    <div class="radio"><label><input type="radio" name="filtertype" ng-value="radius" ng-click="recalcUsers(formData, 'radius');" ng-checked="radiussel">Selecting recipient members within the bounding box (surrounding the event location '{{formData.location}}'):</label></div>
-                    <div class="radio"><label><input type="radio" name="filtertype" ng-value="country" ng-click="recalcUsers(formData, 'country');" ng-checked="!radiussel">Selecting recipient members in a country or countries:<br><span class="smtext" ng-if="!radiussel">* select multiple countries by clicking on (or entering) each country</span></label></div>
+                    <div class="radio"><label><input type="radio" name="filtertype" ng-value="radius" ng-click="recalcUsers('radius');" ng-checked="radiussel">Selecting recipient members within the bounding box (surrounding the event location '{{rfiData.members.location}}'):</label></div>
+                    <div class="radio"><label><input type="radio" name="filtertype" ng-value="country" ng-click="recalcUsers('country');" ng-checked="!radiussel">Selecting recipient members in a country or countries:<br><span class="smtext" ng-if="!radiussel">* select multiple countries by clicking on (or entering) each country</span></label></div>
 
                     <ui-gmap-google-map center="map.center" zoom="map.zoom" draggable="true" options="options" bounds="map.bounds" ng-if="radiussel" >
                         <ui-gmap-rectangle bounds="rectangle.bounds" stroke="rectangle.stroke" visible="true" fill="rectangle.fill" fit="false" editable="true" draggable="true" events="eventsRectangle">
@@ -30,7 +30,7 @@
                         </ui-gmap-markers>
                     </ui-gmap-google-map>
 
-                    <select chosen="" class="chosen-select form-control" ng-change="recalcUsers(formData, 'country');" ng-model="formData.countries" id="countries" name="countries" multiple ng-if="!radiussel">
+                    <select chosen="" class="chosen-select form-control" ng-change="recalcUsers('country');" ng-model="rfiData.members.countries" id="countries" name="countries" multiple ng-if="!radiussel">
 
                         <option value="AF">Afghanistan</option>
                         <option value="AX">Åland Islands</option>
@@ -281,12 +281,10 @@
                 </div>
 
                 <div class="form-group">
-                    <!--<button ng-click="" type="submit" class="submit btn btn-primary"><i class="fa fa-arrow-circle-left"></i> Back </button>-->
-                    <!--<button type="submit" ng-click="buildEmailText(formData)" ng-disabled="submitDisabled" class="submit btn btn-primary">Next - Review & Send <i class="fa fa-arrow-circle-right"></i></button>-->
-                    <a href="#/source" class="btn btn-default"><i class="fa fa-arrow-circle-left"></i> Back</a>&nbsp; &nbsp;
-                    <a href="#/members" class="btn btn-default"> Next - Review & Send<i class="fa fa-arrow-circle-right"></i></a>
+                    <button ng-click="saveMembers('back')" type="submit" class="submit btn btn-primary"><i class="fa fa-arrow-circle-left"></i> Back </button> &nbsp; &nbsp;
+                    <button ng-click="saveMembers('next')" type="submit" class="submit btn btn-primary" ng-disabled="submitDisabled" > Next <i class="fa fa-arrow-circle-right"></i></button>
                 </div>
-
+                <span class="error" ng-if="submitDisabled">Must select at least one member.</span>
 
             </form>
 

@@ -53,7 +53,7 @@ angular.module('EpicoreApp.services', [])
     .factory("rfiForm", function () { // questions form variables object (persistance)
         var questions = {};
         return{
-            set: function () {
+            clear: function () {
                 for (var member in questions) delete questions[member];
             },
             get: function () {
