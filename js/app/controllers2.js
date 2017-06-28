@@ -296,7 +296,7 @@ controller('requestController2', function($rootScope, $window, $scope, $routePar
                 $scope.rfiData.event_source = getSource();
                 $location.path('/sendrequest');
 
-                // build and review request email
+                // build and review request email - not used for now
                 //buildEmailText();
 
             } else if (direction === 'back'){
@@ -309,7 +309,7 @@ controller('requestController2', function($rootScope, $window, $scope, $routePar
 
     };
 
-    // buildEmailText is not used for now
+    // buildEmailText
     $scope.filePreview = $window.sessionStorage.filePreview;
     buildEmailText = function() {
 
@@ -500,7 +500,10 @@ controller('requestController2', function($rootScope, $window, $scope, $routePar
 
         if (direction === 'next') {
             $scope.submitDisabled = true;
-            var formData = {};
+            // go to success page for testing.
+            $location.path('/sent');
+
+         /*   var formData = {};
             if ($scope.rfiData.members.searchType == "radius") {
                 formData['search_box'] = $scope.rfiData.members.searchBox.toString();
             } else {
@@ -513,6 +516,7 @@ controller('requestController2', function($rootScope, $window, $scope, $routePar
             formData['location'] = $scope.rfiData.location;
             formData['purpose'] = $scope.rfiData.purpose;
             formData['source'] = $scope.rfiData.source;
+            formData['title'] =  $scope.rfiData.event_title;
 
             $http({
                 url: urlBase + 'scripts/sendrequest2.php', method: "POST", data: formData
@@ -522,7 +526,7 @@ controller('requestController2', function($rootScope, $window, $scope, $routePar
                 $location.path('/sent');
                 $scope.submitDisabled = false;
 
-            });
+            });*/
 
         } else if ( direction === 'back'){
             $location.path('/source');
@@ -533,7 +537,7 @@ controller('requestController2', function($rootScope, $window, $scope, $routePar
     /* Sent request */
     $scope.sentRFI = function () {
 
-        // empty out the form values since you've submitted so they aren't pre-filled next time
+        // empty out the form values so they aren't pre-filled next time
         $window.sessionStorage.clear();
         rfiForm.clear();
         $location.path('/events');

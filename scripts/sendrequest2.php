@@ -14,8 +14,7 @@ require_once 'ePush.class.php';
 
 $formvars = json_decode(file_get_contents("php://input"));
 
-
-// Save RFI in database
+// Save RFI in database and send to selected members
 if ($formvars->uid && $formvars->fetp_ids && $formvars->population && $formvars->health_condition && $formvars->location && $formvars->purpose && $formvars->source) {
 
     // event info
@@ -28,7 +27,8 @@ if ($formvars->uid && $formvars->fetp_ids && $formvars->population && $formvars-
     $event_info['create_date'] = date('Y-m-d H:i:s');
     $event_info['event_date'] = date_format(date_create($formvars->location->event_date), "Y-m-d");
     $event_info['event_date_details'] = (string)$formvars->location->event_date_details;
-
+    $event_info['title'] = (string)$formvars->title;
+    $fetp_ids = $formvars->fetp_ids;
 
     // related tables
     $event_table['health_condition'] = $formvars->health_condition;
@@ -37,20 +37,71 @@ if ($formvars->uid && $formvars->fetp_ids && $formvars->population && $formvars-
     $event_table['source'] = $formvars->source;
 
     // insert event into database
-    //$event_status = EventInfo::insertEvent2($event_info, $event_table);
+    $event_result = EventInfo::insertEvent2($event_info, $event_table);
+    $event_status = $event_result['status'];
+    $event_id = $event_result['event_id'];
+    $ei = new EventInfo($event_id);
 
-    $status = 'success';
+    if ($event_status == 'success') {
+        $subject = "EPICORE RFI #" . $event_id . " : " . $event_info['title'];
+
+        // now send it to each FETP individually as they each need unique login token id
+        $tokens = $ei->insertFetpsReceivingEmail($fetp_ids, 0);
+        $fetp_emails = UserInfo::getFETPEmails($fetp_ids);
+        $extra_headers['text_or_html'] = "html";
+
+        $emailtext = $ei->buildEmailForEvent($event_info, 'rfi2', '', 'text');
+
+        // set up push notification
+        $push = new ePush();
+        $pushevent['id'] = $event_id;
+        $pushevent['title'] = $event_info['title'];
+        $pushevent['type'] = 'RFI';
+
+        foreach ($fetp_emails as $fetp_id => $recipient) {
+            // send email
+            $idlist[0] = $fetp_id;
+            $extra_headers['user_ids'] = $idlist;
+            $recipient = trim($recipient);
+            $custom_emailtext = trim(str_replace("[TOKEN]", $tokens[$fetp_id], $emailtext));
+            $aws_resp = AWSMail::mailfunc($recipient, $subject, $custom_emailtext, EMAIL_NOREPLY, $extra_headers);
+
+            // send push notification
+            $push->sendPush($pushevent, $fetp_id);
+
+        }
+
+        // build copy email
+        $proin_emailtext = $ei->buildEmailForEvent($event_info, 'rfi_proin2', '', 'text');
+        $moderator = $ei->getEventPerson($event_id); // get event moderator name
+        $name = $moderator['name'];
+        $email = $moderator['email'];
+        $modfetp = "Moderator: $name sent the following RFI";
+        $custom_emailtext_proin = trim(str_replace("[PRO_IN]", $modfetp, $proin_emailtext));
+
+        // send copy to pro-in for ProMED moderators only
+        if ($moderator['organization_id'] == PROMED_ID) {
+            $idlist[0] = PROMED_ID;
+            $extra_headers['user_ids'] = $idlist;
+            $aws_resp = AWSMail::mailfunc(EMAIL_PROIN, $subject, $custom_emailtext_proin, EMAIL_NOREPLY, $extra_headers);
+        }
+
+        // send copy to epicore info
+        $idlist[0] = EPICORE_ID;
+        $extra_headers['user_ids'] = $idlist;
+        $aws_resp = AWSMail::mailfunc(EMAIL_INFO_EPICORE, $subject, $custom_emailtext_proin, EMAIL_NOREPLY, $extra_headers);
+
+        $status = 'success';
+    } else {
+        $status = $event_status;
+        $fetp_ids = false;
+    }
+
 } else {
-
     $status = 'Missing parameters.';
-
+    $fetp_ids = false;
 }
 
-
-// Send email to selected members
-
-print json_encode(array('status' => $status, 'event'=>$event_info, 'event_table' =>$event_table, 'event_status' => $event_status));
-exit;
-
+print json_encode(array('status' => $status, 'fetps' => $fetp_ids));
 
 ?>
