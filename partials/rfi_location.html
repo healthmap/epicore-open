@@ -31,18 +31,6 @@
                     <textarea class="form-control" style="height:50px" ng-model="rfiData.location.location_details" id="population_description" placeholder="Available details..." required></textarea>
                 </div>
 
-                <div class="form-group"  data-toggle="tooltip" title=" Please enter date of onset of first case/s; if no specific date is available consider the date of the source reporting. In case of an update of an already verified PHE consider to use the date of the RFI.">
-                    <h4>Date</h4>
-                    <p>Requesters should include at least month and year of the “reported occurrence” of case/s.</p>
-                    <input type="text" class="form-control" ng-model="rfiData.location.event_date" name="event_date" id="datepicker" data-provide="datepicker" required>
-                </div>
-
-                <div class="form-group">
-                    <h4>Date Details</h4>
-                    <p>If more cases are reported in time it should be preferred to include information about reporter first cases, with a preference to onset of symptoms if possible.</p>
-                    <textarea class="form-control" style="height:50px" ng-model="rfiData.location.event_date_details" id="event_date_details" placeholder="Available details..." ></textarea>
-                </div>
-
                 <div class="form-group">&nbsp;
                     <button ng-click="saveLocation('next')" type="submit" class="submit btn btn-primary"> Next <i class="fa fa-arrow-circle-right"></i></button>
                 </div><!-- /input-group -->
@@ -55,10 +43,7 @@
 </div><!--container-->
 </div><!--wrapper-->
 <script>
-
     // google places for auto-suggester
     initialize_googleplaces();
 
-    // TOOLTIP
-    $('[data-toggle="tooltip"]').tooltip( {html: true,trigger:'hover'});
 </script>

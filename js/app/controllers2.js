@@ -8,15 +8,7 @@ controller('requestController2', function($rootScope, $window, $scope, $routePar
     // get persistant RFI form
     $scope.rfiData = rfiForm.get();
 
-    /////////////////////////////////////////////// Location & Time ////////////////////////////////
-
-    // datepicker options
-    $("#datepicker").datepicker({
-        format: "dd-MM-yyyy",
-        startDate: '-3m',
-        endDate : 'now'
-    });
-
+    /////////////////////////////////////////////// Location ////////////////////////////////
     $scope.location_error_message = '';
     $scope.saveLocation = function (direction) {
 
@@ -34,7 +26,7 @@ controller('requestController2', function($rootScope, $window, $scope, $routePar
         }
 
         // validate and go to next or back path
-        if ($scope.rfiData.location.latlon && $scope.rfiData.location.location && $scope.rfiData.location.location_details && $scope.rfiData.location.event_date){
+        if ($scope.rfiData.location.latlon && $scope.rfiData.location.location && $scope.rfiData.location.location_details ){
 
             // next or back
             if (direction === 'next') {
@@ -70,9 +62,7 @@ controller('requestController2', function($rootScope, $window, $scope, $routePar
                 } else {
                     $location.path('/members');
                 }
-
             }
-
             $scope.location_error_message = '';
 
         } else {
@@ -90,7 +80,6 @@ controller('requestController2', function($rootScope, $window, $scope, $routePar
 
         // bounding box around event location
         // show/hide the submit to next step only if there are FETPs to receive the email
-        //$scope.submitDisabled = $scope.rfiData.members.numFetps > 0 ? false : true;
         $scope.submitDisabled = $scope.rfiData.members.numFetps <= 0;
 
         $scope.bbox = $scope.rfiData.members.searchBox;
@@ -156,11 +145,38 @@ controller('requestController2', function($rootScope, $window, $scope, $routePar
 
         // next or back
         if (direction === 'next') {
-            $location.path('/population');
+            $location.path('/time');
         } else if (direction === 'back'){
             $location.path('/location');
         }
     };
+
+    ////////////////////////// Time //////////////////////////////////////////////
+    // datepicker options
+    $("#datepicker").datepicker({
+        format: "dd-MM-yyyy",
+        endDate : 'now'
+    });
+
+    $scope.time_error_message = '';
+    $scope.saveTime = function (direction) {
+
+        // validate and go to next or back path
+        if ($scope.rfiData.location.event_date){
+
+            // next or back
+            if (direction === 'next') {
+                $location.path('/population');
+                } else if (direction === 'back'){
+                    $location.path('/members');
+                }
+            $scope.time_error_message = '';
+
+        } else {
+            $scope.time_error_message = 'Missing parameters above.';
+        }
+    }
+
 
     //////////////////////////  Affected Population //////////////////////////////
     $scope.pop_error_message = '';
@@ -265,7 +281,6 @@ controller('requestController2', function($rootScope, $window, $scope, $routePar
         var valid_other_purpose = !$scope.rfiData.purpose.other_category || $scope.rfiData.purpose.other;
 
         // next
-        //if (valid_purpose && valid_other_purpose && $scope.rfiData.purpose.purpose && $scope.rfiData.purpose.relevance && $scope.rfiData.purpose.relevance_details) { // validation
         if (valid_purpose && valid_other_purpose && $scope.rfiData.purpose.purpose) { // validation
             if (direction === 'next') {
                 $location.path('/source');

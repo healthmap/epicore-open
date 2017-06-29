@@ -44,6 +44,7 @@ app.config(function($routeProvider) {
         when("/condition", {templateUrl: "partials/rfi_condition.html", controller: "requestController2"}).
         when("/population", {templateUrl: "partials/rfi_population.html", controller: "requestController2"}).
         when("/location", {templateUrl: "partials/rfi_location.html", controller: "requestController2"}).
+        when("/time", {templateUrl: "partials/rfi_time.html", controller: "requestController2"}).
         when("/purpose", {templateUrl: "partials/rfi_purpose.html", controller: "requestController2"}).
         when("/source", {templateUrl: "partials/rfi_source.html", controller: "requestController2"}).
         when("/members", {templateUrl: "partials/rfi_members.html", controller: "requestController2"}).
