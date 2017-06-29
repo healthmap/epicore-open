@@ -9,6 +9,14 @@ controller('requestController2', function($rootScope, $window, $scope, $routePar
     $scope.rfiData = rfiForm.get();
 
     /////////////////////////////////////////////// Location & Time ////////////////////////////////
+
+    // datepicker options
+    $("#datepicker").datepicker({
+        format: "dd-MM-yyyy",
+        startDate: '-3m',
+        endDate : 'now'
+    });
+
     $scope.location_error_message = '';
     $scope.saveLocation = function (direction) {
 
