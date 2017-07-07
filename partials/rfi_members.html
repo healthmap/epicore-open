@@ -12,13 +12,13 @@
             <form name="memberForm">
 
                 <div class="intro">
-                    <h5>You can select recipient members either by moving the bounding box or by selecting countries in the menu below.</h5>
-                    <p class="red">{{rfiData.members.numUniqueFetps}} members at {{rfiData.members.numFetps}} locations selected</p>
+                    <h5>You can select recipient responders either by moving the bounding box or by selecting countries in the menu below.</h5>
+                    <p class="red">{{rfiData.members.numUniqueFetps}} responders at {{rfiData.members.numFetps}} locations selected</p>
                 </div>
 
                 <div class="form-group">
-                    <div class="radio"><label><input type="radio" name="filtertype" ng-value="radius" ng-click="recalcUsers('radius');" ng-checked="radiussel">Selecting recipient members within the bounding box (surrounding the event location '{{rfiData.members.location}}'):</label></div>
-                    <div class="radio"><label><input type="radio" name="filtertype" ng-value="country" ng-click="recalcUsers('country');" ng-checked="!radiussel">Selecting recipient members in a country or countries:<br><span class="smtext" ng-if="!radiussel">* select multiple countries by clicking on (or entering) each country</span></label></div>
+                    <div class="radio"><label><input type="radio" name="filtertype" ng-value="radius" ng-click="recalcUsers('radius');" ng-checked="radiussel">Selecting recipient responders within the bounding box (surrounding the event location '{{rfiData.members.location}}'):</label></div>
+                    <div class="radio"><label><input type="radio" name="filtertype" ng-value="country" ng-click="recalcUsers('country');" ng-checked="!radiussel">Selecting recipient responders in a country or countries:<br><span class="smtext" ng-if="!radiussel">* select multiple countries by clicking on (or entering) each country</span></label></div>
 
                     <ui-gmap-google-map center="map.center" zoom="map.zoom" draggable="true" options="options" bounds="map.bounds" ng-if="radiussel" >
                         <ui-gmap-rectangle bounds="rectangle.bounds" stroke="rectangle.stroke" visible="true" fill="rectangle.fill" fit="false" editable="true" draggable="true" events="eventsRectangle">
