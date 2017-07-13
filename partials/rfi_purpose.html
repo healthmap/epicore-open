@@ -28,7 +28,7 @@
 
                     <div class="form-group">
                         <div class="checkbox">
-                            <label > <input type="checkbox" name="causal_agent" ng-model="rfiData.purpose.causal_agent"> <b>PHE Causal Agent:</b>
+                            <label > <input type="checkbox" name="causal_agent" ng-model="rfiData.purpose.causal_agent" ng-checked="rfiData.purpose.causal_agent"> <b>PHE Causal Agent:</b>
                                 <span ng-if="rfiData.purpose.purpose == 'V' ">information on identified/hypothetical causal agent</span>
                                 <span ng-if="rfiData.purpose.purpose != 'V' ">update on identified/hypothetical causal agent</span>
                             </label>
@@ -36,7 +36,7 @@
                     </div>
                     <div class="form-group">
                         <div class="checkbox">
-                            <label > <input type="checkbox" name="epidemiology" ng-model="rfiData.purpose.epidemiology"> <b>PHE Epidemiology:</b>
+                            <label > <input type="checkbox" name="epidemiology" ng-model="rfiData.purpose.epidemiology" ng-checked="rfiData.purpose.epidemiology"> <b>PHE Epidemiology:</b>
                                 <span ng-if="rfiData.purpose.purpose == 'V' ">information on the epidemiology including patterns of disease transmission, incubation period</span>
                                 <span ng-if="rfiData.purpose.purpose != 'V' ">update on disease epidemiology including patterns of transmission, incubation period etc</span>
                             </label>
@@ -44,7 +44,7 @@
                     </div>
                     <div class="form-group">
                         <div class="checkbox">
-                            <label > <input type="checkbox" name="pop_affected" ng-model="rfiData.purpose.pop_affected"> <b>PHE population affected:</b>
+                            <label > <input type="checkbox" name="pop_affected" ng-model="rfiData.purpose.pop_affected" ng-checked="rfiData.purpose.pop_affected" > <b>PHE population affected:</b>
                                 <span ng-if="rfiData.purpose.purpose == 'V' ">information on involved population (e.g. human/animal) or specific community</span>
                                 <span ng-if="rfiData.purpose.purpose != 'V' ">update on involved population (e.g. human/animal) or specific community</span>
                             </label>
@@ -52,7 +52,7 @@
                     </div>
                     <div class="form-group">
                         <div class="checkbox">
-                            <label > <input type="checkbox" name="location" ng-model="rfiData.purpose.location"> <b>PHE Location:</b>
+                            <label > <input type="checkbox" name="location" ng-model="rfiData.purpose.location" ng-checked="rfiData.purpose.location"> <b>PHE Location:</b>
                                 <span ng-if="rfiData.purpose.purpose == 'V' ">information on location of cases or locations at risk for disease spread</span>
                                 <span ng-if="rfiData.purpose.purpose != 'V' ">update in terms of geographical spread or new locations in general</span>
                             </label>
@@ -60,7 +60,7 @@
                     </div>
                     <div class="form-group">
                         <div class="checkbox">
-                            <label > <input type="checkbox" name="size" ng-model="rfiData.purpose.size"> <b>PHE Size:</b>
+                            <label > <input type="checkbox" name="size" ng-model="rfiData.purpose.size" ng-checked="rfiData.purpose.size"> <b>PHE Size:</b>
                                 <span ng-if="rfiData.purpose.purpose == 'V' ">information on number of cases  (suspected, confirmed, fatalities etc)</span>
                                 <span ng-if="rfiData.purpose.purpose != 'V' ">update in terms of number of cases (suspected, confirmed, fatalities etc)</span>
                             </label>
@@ -68,7 +68,7 @@
                     </div>
                     <div class="form-group">
                         <div class="checkbox">
-                            <label > <input type="checkbox" name="test" ng-model="rfiData.purpose.test"> <b>PHE Test Results:</b>
+                            <label > <input type="checkbox" name="test" ng-model="rfiData.purpose.test" ng-checked="rfiData.purpose.test"> <b>PHE Test Results:</b>
                                 <span ng-if="rfiData.purpose.purpose == 'V' ">information on test results</span>
                                 <span ng-if="rfiData.purpose.purpose != 'V' ">update on test results</span>
                             </label>
@@ -76,7 +76,7 @@
                     </div>
                     <div class="form-group">
                         <div class="checkbox">
-                            <label > <input type="checkbox" name="other_category" ng-model="rfiData.purpose.other_category"> <b>Other</b>
+                            <label > <input type="checkbox" name="other_category" ng-model="rfiData.purpose.other_category" ng-checked="rfiData.purpose.other_category"> <b>Other</b>
                                 <span ng-if="rfiData.purpose.purpose == 'V' ">(please specify): information on aspects not reflected in the other categories</span>
                                 <span ng-if="rfiData.purpose.purpose != 'V' ">(please specify): update on aspects not reflected in the other categories</span>
                             </label>

@@ -22,14 +22,206 @@ class EventInfo
 
         $event_person = $this->getEventPerson($this->id);
 
-        $event_info = $this->db->getRow("SELECT event.*, place.name AS location, concat(place.lat,',',place.lon) AS latlon FROM event, place WHERE event_id = ? AND event.place_id = place.place_id", array($this->id));
+        $event_info = $this->db->getRow("SELECT event.*, place.name AS location, place.location_details, concat(place.lat,',',place.lon) AS latlon FROM event, place WHERE event_id = ? AND event.place_id = place.place_id", array($this->id));
         $event_info['org_requester_id'] = self::getOrganizationOfRequester();
         $event_info['html_description'] = str_replace("\n", "<br>", $event_info['description']);
         $event_info['num_responses'] = $this->db->getOne("SELECT count(*) FROM response WHERE event_id = ?", array($this->id));
         $event_info['create_date'] = date('j-M-Y H:i', strtotime($event_info['create_date']));
+        $event_info['event_date'] = date('j-M-Y', strtotime($event_info['event_date']));
         $event_info['person'] = $event_person['name'];
 
+        $population = $this->getPopulation();
+        $event_info['population'] = $population['population'];
+        $event_info['population_details'] = $population['details'];
+        $condition = $this->getConditions($population['type']);
+        $event_info['condition'] = $condition['condition'];
+        $event_info['condition_details'] = $condition['details'];
+        $source = $this->getSource();
+        $event_info['source'] = $source['source'];
+        $event_info['source_details'] = $source['details'];
+        $event_info['purpose'] = $this->getPurpose();
+
         return $event_info;
+    }
+
+    function getConditions($type){
+        $q = $this->db->getRow("SELECT * from health_condition WHERE event_id = ?", array($this->id));
+        if ($q) {
+
+
+            $condition = array();
+            if ($type == 'H'){
+
+                if ($q['respiratory'])
+                    $condition[] = "Acute Respiratory";
+                if ($q['gastrointestinal'])
+                    $condition[] = "Gastrointestinal";
+                if ($q['fever_rash'])
+                    $condition[] = "Fever & Rash";
+                if ($q['jaundice'])
+                    $condition[] = "Acute Jaundice";
+                if ($q['h_fever'])
+                    $condition[] = "Hemorrhagic Fever";
+                if ($q['paralysis'])
+                    $condition[] = "Acute Flaccid paralysis";
+                if ($q['other_neurological'])
+                    $condition[] = "Other neorological";
+                if ($q['fever_unknown'])
+                    $condition[] = "Fever of uknown origin";
+                if ($q['renal'])
+                    $condition[] = "Renal failure";
+                if ($q['unknown'])
+                    $condition[] = "Unknown";
+                if ($q['other'])
+                    $condition[] = $q['other_description'];
+
+            } else if ($type == 'A'){
+
+                if ($q['respiratory_animal']) {
+                    $condition[] = $q["Respiratory"];
+                }
+                if ($q['neurological_animal']) {
+                    $condition[] = $q["Neurological"];
+                }
+                if ($q['hemorrhagic_animal']) {
+                    $condition[] = $q["Haemorrhagic"];
+                }
+                if ($q['vesicular_animal']) {
+                    $condition[] = $q["Vesicular"];
+                }
+                if ($q['reproductive_animal']) {
+                    $condition[] = $q["Reproductive"];
+                }
+                if ($q['gastrointestinal_animal']) {
+                    $condition[] = $q["Gastrointestinal"];
+                }
+                if ($q['multisystemic_animal']) {
+                    $condition[] = $q["Multisystemic"];
+                }
+                if ($q['unknown_animal']) {
+                    $condition[] = $q["Unknown"];
+                }
+                if ($q['other_animal']) {
+                    $condition[] = $q['other_animal_description'];
+                }
+
+            } else {
+                $condition[] = $q['disease_details'];
+            }
+            return array('condition' => implode(",", $condition), 'details' => $q['ph_details']);
+
+        }else {
+            return false;
+        }
+    }
+
+    function getPopulation(){
+        $q = $this->db->getRow("SELECT * from population WHERE event_id = ?", array($this->id));
+        if ($q) {
+
+            $population = '';
+            switch ($q['type']) {
+                case "H":
+                    $population = 'Human';
+                    break;
+                case "A":
+                    $population = $this->getAnimal($q['animal_type'], $q['other_animal']);
+                    break;
+                case "E":
+                    $population = 'Environmental';
+                    break;
+                case "U":
+                    $population = 'Unknown';
+                    break;
+                case "O":
+                    $population = $q['other'];
+                    break;
+            }
+            return array('population'=>$population, 'details'=>$q['description'], 'type'=>$q['type']);
+
+        }else {
+            return false;
+        }
+    }
+
+    function getAnimal($type, $other_animal) {
+
+        $animal = '';
+        switch ($type) {
+            case "B":
+                $animal = "Birds/Poultry";
+                break;
+            case "P":
+                $animal = "Pigs/Swine";
+                break;
+            case "C":
+                $animal = "Cattle";
+                break;
+            case "G":
+                $animal = "Goats/Sheep";
+                break;
+            case "D":
+                $animal = "Dogs/Cats";
+                break;
+            case "H":
+                $animal = "Horses/Equines";
+                break;
+            case "O":
+                $animal = $other_animal;
+                break;
+            default:
+                break;
+
+        }
+        return $animal;
+    }
+
+    function getPurpose(){
+        $q = $this->db->getRow("SELECT * from purpose WHERE event_id = ?", array($this->id));
+        if ($q) {
+
+            $action = $q['purpose'] == "V" ? "Verification" : "Update";
+            $type = array();
+            if ($q['causal_agent'])
+                $type[] = "PHE Causal Agent";
+            if ($q['epidemiology'])
+                $type[] = "PHE Epidemiology";
+            if ($q['pop_affected'])
+                $type[] = "PHE population affected";
+            if ($q['location'])
+                $type[] = "PHE Location";
+            if ($q['size'])
+                $type[] = "PHE Size";
+            if ($q['test'])
+                $type[] = "PHE Test Results";
+            if ($q['other_category'])
+                $type[] = $q['other'];
+
+            return $action . ': ' . implode(",", $type);
+
+        }else {
+            return false;
+        }
+    }
+
+    function getSource(){
+        $q = $this->db->getRow("SELECT * from source WHERE event_id = ?", array($this->id));
+
+        if ($q) {
+            if ($q['source'] == "MR")
+                $source = "Media Report";
+            else if ($q['source'] == "OR")
+                $source = "Official Report";
+            else if ($q['source'] == "OC")
+                $source = "Other Communication";
+            else
+                $source = "none";
+
+            return array("source" => $source, "details" => $q['details']);
+        }else {
+            return false;
+        }
+
     }
 
     function getOrganizationOfRequester() {
@@ -58,9 +250,19 @@ class EventInfo
         $messages[$size]['type'] = 'Event Request';
         $messages[$size]['title'] = $event_info['title'];
         $messages[$size]['location'] = $event_info['location'];
+        $messages[$size]['location_details'] = $event_info['location_details'];
         $messages[$size]['person'] = $event_info['person'];
         $messages[$size]['organization_id'] = $event_info['org_requester_id'];
         $messages[$size]['disease'] = $event_info['disease'];
+        $messages[$size]['event_date'] = date('j-M-Y', strtotime($event_info['event_date']));
+        $messages[$size]['event_date_details'] = $event_info['event_date_details'];
+        $messages[$size]['population'] = $event_info['population'];
+        $messages[$size]['population_details'] = $event_info['population_details'];
+        $messages[$size]['condition'] = $event_info['condition'];
+        $messages[$size]['condition_details'] = $event_info['condition_details'];
+        $messages[$size]['source'] = $event_info['source'];
+        $messages[$size]['source_details'] = $event_info['source_details'];
+        $messages[$size]['purpose'] = $event_info['purpose'];
 
         return $messages;
     }
@@ -110,6 +312,7 @@ class EventInfo
             $this->db->query("INSERT INTO event_notes (event_id, action_date, note, reason, status, requester_id) VALUES (?,?,?,?,?,?)",
                             array($this->id, date('Y-m-d H:i:s'), $notes, $reason, $status, $requester_id));
             $this->db->commit();
+
             return 1;
         }
         return 0;
@@ -231,6 +434,59 @@ class EventInfo
             return $eid;
         } else {
             return 'event does not exist for event id '. $eid;
+        }
+
+    }
+
+    // update event and related tables, returns event id if updated, or error message if not
+    static function updateEvent2($event_info, $event_table)
+    {
+        // sanitize the input
+        foreach($event_info as $key => $val) {
+            $darr[$key] = strip_tags($val);
+        }
+        if(!is_numeric($darr['requester_id']) || !is_numeric($darr['event_id'])) {
+            return 'invalid requester id or invalid event_id';
+        }
+
+        $db = getDB();
+        $eid = $db->getOne("SELECT event_id FROM event WHERE event_id = ? ", array($darr['event_id']));
+        if ($eid) {
+
+            // update location
+            $pid = $db->getOne("SELECT place_id FROM event WHERE event_id = ? ", array($eid));
+            $place_id = PlaceInfo::updateLocation2($pid, $darr['latlon'], $darr['location'], $darr['location_details']);
+            if ($place_id != $pid)
+                return $place_id;  // error message if error
+
+            // update the event table
+            $q = $db->query("UPDATE event SET title = ?, event_date = ?, event_date_details = ? WHERE event_id = ?",
+                array($darr['title'],$darr['event_date'],$darr['event_date_details'], $darr['event_id']));
+
+            // check that result is not an error
+            if (PEAR::isError($q)) {
+                //die($res->getMessage());
+                return 'failed update event query';
+            } else {
+                $db->commit();
+            }
+
+            // update related event tables
+            $status = 'failed event table';
+            foreach ($event_table as $table_name => $table) {
+                $table_id = EventInfo::replaceEventTable($table_name, $table);
+                if (is_numeric($table_id)) {
+                    $status = $eid;     // success
+                } else {
+                    $status = 'failed to insert event table: ' . $table_name . ', error message: ' .$table_id;
+                    break;
+                }
+            }
+
+            return $status;
+
+        } else {
+            return 'event id: '. $eid . ' does not exist!';
         }
 
     }
@@ -365,6 +621,7 @@ class EventInfo
                 $fetp_ids[] = $row1['fetp_id'];
             }
             $row['member_ids'] = implode(',', $fetp_ids);
+            $row['num_members'] = count($fetp_ids);
 
             // get date of first response
             $row['first_response_date'] = $db->getOne("SELECT MIN(response_date) FROM response WHERE event_id = ?", array($row['event_id']));
@@ -375,6 +632,9 @@ class EventInfo
 
             // get organization id for the event
             $row['organization_id'] = $db->getOne("SELECT organization_id FROM user WHERE user.user_id = ?", array($row['requester_id']));
+
+            // get organization name
+            $row['organization_name'] = $db->getOne("SELECT name FROM organization WHERE organization_id = ?", array($row['organization_id']));
 
             // get the number of requests sent for that event
             $row['num_responses'] = $db->getOne("SELECT count(*) FROM response WHERE event_id = ?", array($row['event_id']));
@@ -407,6 +667,7 @@ class EventInfo
             $row['iso_create_date'] = $row['create_date'];
             $row['event_id_int'] = (int)$row['event_id'];
             $row['create_date'] = date('j-M-Y H:i', strtotime($row['create_date']));
+            $row['event_date'] = date('j-M-Y', strtotime($row['event_date']));
 
             //$row['title'] = iconv("UTF-8", "ISO-8859-1//IGNORE", $row['title']);
 
@@ -431,11 +692,14 @@ class EventInfo
                 $oid_of_requester = $db->getOne("SELECT organization_id FROM user WHERE user_id = ?", array($row['requester_id']));
                 if($oid && $oid == $oid_of_requester) {
                     $events['yourorg'][] = $row;
+                    $events['all'][] = $row;
                 } else {
                     $events['other'][] = $row;
+                    $events['all'][] = $row;
                 }
             }
         }
+
         return $events;
     }
 
@@ -553,6 +817,35 @@ class EventInfo
         return $event_id;
     }
 
+    function getEvent2() {
+
+        // get event
+        $event = $this->db->getRow("SELECT event.*, place.name AS location, place.location_details, concat(place.lat,',',place.lon) AS latlon FROM event, place WHERE event_id = ? AND event.place_id = place.place_id", array($this->id));
+        $event['event_date'] = date('j-M-Y', strtotime($event['event_date']));
+
+        // get associated tables
+        $population = $this->db->getRow("SELECT * FROM population WHERE event_id = ?", array($this->id));
+        $condition = $this->db->getRow("SELECT * FROM health_condition WHERE event_id = ?", array($this->id));
+        $purpose = $this->db->getRow("SELECT * FROM purpose WHERE event_id = ?", array($this->id));
+        $source = $this->db->getRow("SELECT * FROM source WHERE event_id = ?", array($this->id));
+
+        // MYSQL returns tinyint as string ("1", "0") so convert to int
+        foreach ($condition as $key => $value){
+            $condition[$key] = ($condition[$key] == '1') ?  1 : $condition[$key];
+            $condition[$key] = ($condition[$key] == '0') ?  0 : $condition[$key];
+        }
+        foreach ($purpose as $key => $value){
+            $purpose[$key] = ($purpose[$key] == '1') ?  1 : $purpose[$key];
+            $purpose[$key] = ($purpose[$key] == '0') ?  0 : $purpose[$key];
+        }
+
+        if ($event && $population && $condition && $purpose && $source ) {
+            return array('event' => $event, 'population' => $population, 'health_condition' => $condition, 'purpose' => $purpose, 'source' => $source);
+        } else {
+            return false;
+        }
+    }
+
     // insert event and related tables
     // returns and inserted event id if successful (status = 'success'), or status = error message
     static function insertEvent2($event_info, $event_table)
@@ -643,6 +936,39 @@ class EventInfo
             return 'table already exists.';
     }
 
+    // returns table id if replaced, or an error message if there is an replace error.
+    static function replaceEventTable($table_name,$table)
+    {
+        // check valid table name
+        $valid_table = ($table_name == 'population' || $table_name == 'health_condition' || $table_name == 'purpose' || $table_name == 'source');
+        if (!$valid_table) {
+            return 'invalid table name.';
+        }
+
+        // sanitize table data
+        $pvals = array();
+        foreach($table as $key => $val) {
+            $pvals[$key] = strip_tags($val);
+        }
+
+        // replace row
+        $db = getDB();
+        $key_vals = join(",", array_keys($pvals));
+        $qmarks = join(",", array_fill(0, count($pvals), '?'));
+        $qvals = array_values($pvals);
+        $q2 = "REPLACE INTO {$table_name} ({$key_vals}) VALUES ({$qmarks})";
+        $res = $db->query($q2, $qvals);
+        // check that result is not an error
+        if (PEAR::isError($res)) {
+            //die($res->getMessage());
+            return 'database replace error.';
+        } else {
+            $table_id = $db->getOne("SELECT LAST_INSERT_ID()");
+            $db->commit();
+            return $table_id;
+        }
+    }
+
     static function insertFollowup($data_arr)
     {
         $db = getDB();
@@ -717,6 +1043,103 @@ class EventInfo
                     //die($res->getMessage());
                     $status = 'failed';
                     $message = 'failed to delete response';
+                } else {
+                    $db->commit();
+                }
+            }
+
+        }
+        else{
+            $status = 'failed';
+            $message = 'event does not exist';
+        }
+        return array($status, $message);
+    }
+
+    static function deleteEvent2($eid){
+        $db = getDB();
+        $event_id = $db->getOne("SELECT event_id FROM event WHERE event_id = ?", array($eid));
+
+        // delete event
+        $message = '';
+        $status = 'success';
+        if ($event_id) {
+            $q = $db->query("DELETE FROM event WHERE event_id = ?", array($event_id));
+
+            // check that result is not an error
+            if (PEAR::isError($q)) {
+                //die($res->getMessage());
+                $status = 'failed';
+                $message = 'failed to delete event';
+            } else {
+                $db->commit();
+            }
+
+            // delete associated tables
+            if($status == 'success') {
+                $q = $db->query("DELETE FROM event_notes WHERE event_id = ?", array($event_id));
+                // check that result is not an error
+                if (PEAR::isError($q)) {
+                    //die($res->getMessage());
+                    $status = 'failed';
+                    $message = 'failed to delete event notes';
+                } else {
+                    $db->commit();
+                }
+                $q = $db->query("DELETE FROM event_fetp WHERE event_id = ?", array($event_id));
+                // check that result is not an error
+                if (PEAR::isError($q)) {
+                    //die($res->getMessage());
+                    $status = 'failed';
+                    $message = 'failed to delete event fetp';
+                } else {
+                    $db->commit();
+                }
+                $q = $db->query("DELETE FROM followup WHERE event_id = ?", array($event_id));
+                if (PEAR::isError($q)) {
+                    //die($res->getMessage());
+                    $status = 'failed';
+                    $message = 'failed to delete followup';
+                } else {
+                    $db->commit();
+                }
+                $q = $db->query("DELETE FROM response WHERE event_id = ?", array($event_id));
+                if (PEAR::isError($q)) {
+                    //die($res->getMessage());
+                    $status = 'failed';
+                    $message = 'failed to delete response';
+                } else {
+                    $db->commit();
+                }
+                $q = $db->query("DELETE FROM health_condition WHERE event_id = ?", array($event_id));
+                if (PEAR::isError($q)) {
+                    //die($res->getMessage());
+                    $status = 'failed';
+                    $message = 'failed to delete health condition';
+                } else {
+                    $db->commit();
+                }
+                $q = $db->query("DELETE FROM population WHERE event_id = ?", array($event_id));
+                if (PEAR::isError($q)) {
+                    //die($res->getMessage());
+                    $status = 'failed';
+                    $message = 'failed to delete population';
+                } else {
+                    $db->commit();
+                }
+                $q = $db->query("DELETE FROM purpose WHERE event_id = ?", array($event_id));
+                if (PEAR::isError($q)) {
+                    //die($res->getMessage());
+                    $status = 'failed';
+                    $message = 'failed to delete purpose';
+                } else {
+                    $db->commit();
+                }
+                $q = $db->query("DELETE FROM source WHERE event_id = ?", array($event_id));
+                if (PEAR::isError($q)) {
+                    //die($res->getMessage());
+                    $status = 'failed';
+                    $message = 'failed to delete source';
                 } else {
                     $db->commit();
                 }

@@ -1,0 +1,170 @@
+<div ng-if="!mobile"ng-include src="'header.html'"></div>
+<div ng-if="mobile"ng-include src="'header_mobile.html'"></div>
+<div class="jumbotron dashboard">
+    <div class="container">
+        <h1><span>RFI List</span></h1>
+    </div>
+</div>
+
+<div class="wrapper secondary-nav">
+    <div class="container">
+        <span ng-show="onOpen" class="text-uppercase"><span class="border-bottom tab">Open events</span><span class="tab"><a href="#/events2/closed" class="inherit">Closed events</a></span></span>
+        <span ng-show="!onOpen" class="text-uppercase"><span class="tab"><a href="#/events2" class="inherit">Open events</a></span><span class="border-bottom tab">Closed events</span></span>
+        <span ng-show="isOrganization" class="text-uppercase"><a href="#/map" ><i class="fa fa-arrow-circle-right"></i> Members Map</a></span>
+    </div>
+</div>
+
+<div class="wrapper dashboard">
+<div class="container">
+    <div class="row">
+        <div class="col-xs-12">
+
+            <p class="red" ng-if="onOpen && unclosed > 0" > * You have {{unclosed}} RFI(s) highlighted below that are past due closing. </p>
+            <p class="red" ng-if="num_notrated_responses > 0">
+                <span ng-if="onOpen">* You have received responses after closing one or more RFIs that are still unrated. Please go to the "CLOSED EVENTS" tab to locate and rate these responses.</span>
+                <span ng-if="!onOpen">* Please rate the unrated responses in the RFI(s) highlighted below.</span>
+            </p>
+            <div class="form-group">
+                <label class="radio-inline"> <input type="radio" ng-model="eventType" value="MR" ng-click="getEvents();"> My RFIs</label>
+                <label class="radio-inline"> <input type="radio" ng-model="eventType" value="MO" ng-click="getEvents();"> My Organization</label>
+                <label class="radio-inline"> <input type="radio" ng-model="eventType" value="AO" ng-click="getEvents();"> All Organizations</label>
+            </div>
+            <p><span class="search-wrapper"><i class="fa fa-search"></i> <input ng-model="query"></span></p>
+
+            <!-- view for organizations -->
+            <div ng-show="isOrganization" ng-init="predicate = 'event_date'; reverse=!reverse">
+                <table class='small table table-hover table-bordered'>
+                    <tbody>
+                        <tr>
+                            <th width="50px" ng-click="predicate = 'event_id_int'; reverse=!reverse">ID <i class="fa fa-sort"></i></th>
+                            <th ng-click="predicate = 'title'; reverse=!reverse">Title <i class="fa fa-sort"></i></th>
+                            <th width="110px" ng-click="predicate = 'event_date'; reverse=!reverse">RFI Date <i class="fa fa-sort"></i></th>
+                            <th width="110px" ng-click="predicate = 'country'; reverse=!reverse">Location <i class="fa fa-sort"></i></th>
+                            <th width="110px" ng-click="predicate = 'person'; reverse=!reverse">Requester <i class="fa fa-sort"></i></th>
+                            <th width="50px">Total Recipients</th>
+                            <th width="50px"> <span data-toggle="tooltip" title="(number of) Responders that have already provided information about the RFI" >Contribution </span></th>
+                            <th width="50px"><span data-toggle="tooltip" title="(number of) Responders that have stated having no details to provide about the RFI but currently actively gathering information" >Active Search</span></th>
+                            <th width="50px"><span data-toggle="tooltip" title="(number of) Responders that have declared having no details to provide about the RFI and cannot conduct further verification activities">No Contribution</span></th>
+                            <th width="50px"><span data-toggle="tooltip" title="Current verfication status of the RFI">RFI Status</span></th>
+                            <th width="50px"><span data-toggle="tooltip" title="information about the final outcome of the verification process">Outcome</span></th>
+                        </tr>
+                        <tr ng-show="eventType == 'MR'" ng-repeat="event in eventsList['yours'] | filter:query | orderBy:predicate:reverse" ng-class="{selected : (onOpen && (event.iso_create_date < (date | date:'yyyy-MM-dd'))) || !onOpen && (event.num_notrated_responses > 0)}">
+                            <td>{{event.event_id_int}}</td>
+                            <td><a href="#/events2/{{event.event_id}}">{{event.title}}</a></td>
+                            <td>{{event.event_date}}</td>
+                            <td>{{event.country}}</td>
+                            <td>{{event.person}} - {{event.organization_name}}</td>
+                            <td>
+                                <span>{{event.num_members}}</span>
+                            </td>
+                            <td>
+                                <span>{{event.num_responses_content}}</span>
+                            </td>
+                            <td>
+                                <span></span>
+                            </td>
+                            <td>
+                                <span>{{event.num_responses_nocontent}}</span>
+                            </td>
+                            <td>
+                                <span></span>
+                            </td>
+                            <td>
+                                <span></span>
+                            </td>
+                        </tr>
+                        <tr ng-show="eventType == 'MO'" ng-repeat="event in eventsList['yourorg'] | filter:query | orderBy:predicate:reverse">
+                            <td>{{event.event_id_int}}</td>
+                            <td><a href="#/events2/{{event.event_id}}">{{event.title}}</a></td>
+                            <td>{{event.event_date}}</td>
+                            <td>{{event.country}}</td>
+                            <td>{{event.person}} - {{event.organization_name}}</td>
+                            <td>
+                                <span></span>
+                            </td>
+                            <td>
+                                <span>{{event.num_responses_content}}</span>
+                            </td>
+                            <td>
+                                <span></span>
+                            </td>
+                            <td>
+                                <span>{{event.num_responses_nocontent}}</span>
+                            </td>
+                            <td>
+                                <span></span>
+                            </td>
+                            <td>
+                                <span></span>
+                            </td>
+                        </tr>
+                        <tr ng-show="eventType == 'AO'" ng-repeat="event in eventsList['all'] | filter:query | orderBy:predicate:reverse" >
+                            <td>{{event.event_id_int}}</td>
+                            <td><a href="#/events2/{{event.event_id}}">{{event.title}}</a></td>
+                            <td>{{event.event_date}}</td>
+                            <td>{{event.country}}</td>
+                            <td>{{event.person}} - {{event.organization_name}}</td>
+                            <td>
+                                <span></span>
+                            </td>
+                            <td>
+                                <span>{{event.num_responses_content}}</span>
+                            </td>
+                            <td>
+                                <span></span>
+                            </td>
+                            <td>
+                                <span>{{event.num_responses_nocontent}}</span>
+                            </td>
+                            <td>
+                                <span></span>
+                            </td>
+                            <td>
+                                <span></span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- view for FETPs -->
+            <div ng-show="!isOrganization" ng-init="predicate = 'last_send_date'; reverse=reverse">
+                <table class='small table table-hover table-bordered'>
+                    <tbody>
+                        <tr>
+                            <th ng-click="predicate = 'title'; reverse=!reverse">Title <i class="fa fa-sort"></i></th>
+                            <th ng-click="predicate = 'disease'; reverse=!reverse">Disease <i class="fa fa-sort"></i></th>
+                            <th ng-click="predicate = 'location'; reverse=!reverse">Location <i class="fa fa-sort"></i></th>
+                            <th ng-click="predicate = 'last_send_date'; reverse=!reverse">Request Received Date <i class="fa fa-sort"></i></th>
+                            <th>Your Response Date</th>
+                        </tr>
+                        <tr ng-repeat="event in eventsList | filter:query | orderBy:predicate:reverse">
+                            <td><a href="#/events2/{{event.event_id}}">{{event.title}}</a></td>
+                            <td>{{event.disease}}</td>
+                            <td>{{event.location}}</td>
+                            <td>
+                                <p ng-repeat="send_date in event.send_dates">
+                                {{send_date}}
+                                </p>
+                            </td>
+                            <td>
+                                <p ng-repeat="response_date in event.response_dates">
+                                    {{response_date}}
+                                </p>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <span ng-show="isRouteLoading">
+                <i class="fa fa-spinner fa-spin"></i> Please wait...
+            </span>
+    </div>
+</div>
+</div>
+</div><!--wrapper-->
+<div ng-include src="'footer.html'"></div>
+<script>
+    // TOOLTIP
+    $('[data-toggle="tooltip"]').tooltip( {html: true,trigger:'hover'});
+</script>

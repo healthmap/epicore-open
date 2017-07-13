@@ -69,6 +69,32 @@ class PlaceInfo
 
     }
 
+    static function updateLocation2($place_id, $latlon = '', $locname = '', $location_details = '') {
+        $db = getDB();
+        list($lat,$lon) = split(",", $latlon);
+        if(!is_numeric($lat) || !is_numeric($lon)) {
+            return 'invalid lat, lon';
+        }
+        $llhash = md5(round($lat, LAT_LON_PRECISION) .",". round($lon, LAT_LON_PRECISION));
+        $pid = $db->getOne("SELECT place_id FROM place WHERE place_id = ?", array($place_id));
+        if($pid == $place_id) {
+            $q = $db->query("UPDATE place SET name = ?, lat = ?, lon = ?, latlon_hash = ?, location_details = ? WHERE place_id = ?",
+                array($locname, $lat, $lon, $llhash, $location_details, $pid));
+            // check that result is not an error
+            if (PEAR::isError($q)) {
+                //die($res->getMessage());
+                return 'failed update place query';
+            } else {
+                $db->commit();
+            }
+            return $pid;
+        }else{
+            return 'place id does not exist';
+        }
+
+    }
+
+
     static function getBoundingBox($lat,$lon,$distance,$unit='km') {
 
         $radius = isset($unit) && $unit == "miles" ? 3963.1 : 6378.1; // of earth in miles and then km

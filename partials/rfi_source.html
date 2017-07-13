@@ -48,7 +48,7 @@
 
                     <div class="form-group">
                         <button ng-click="saveSource('back')" type="submit" class="submit btn btn-primary"><i class="fa fa-arrow-circle-left"></i> Back </button> &nbsp; &nbsp;
-                        <button ng-click="saveSource('next')" type="submit" class="submit btn btn-primary"> Next - Review & Send <i class="fa fa-arrow-circle-right"></i></button>
+                        <button ng-click="saveSource('next')" type="submit" class="submit btn btn-primary"> Next <span ng-if="!rfiData.event_id">- Review & Send</span><i class="fa fa-arrow-circle-right"></i></button>
                     </div>
                     <span class="error">{{source_error_message}}</span>
 
