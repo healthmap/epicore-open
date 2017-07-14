@@ -1,7 +1,7 @@
 <div ng-include src="'header.html'"></div>
 <div class="jumbotron dashboard">
     <div class="container">
-        <h1 ng-if="!rfiData.event_id">RFI - Preview & <span ng-if="!rfiData.event_id">Send</span> <span ng-if="rfiData.event_id">Update</span></h1>
+        <h1 >RFI - Preview & <span ng-if="!rfiData.event_id">Send</span> <span ng-if="rfiData.event_id">Update</span></h1>
     </div>
 </div>
 
@@ -12,7 +12,7 @@
             <form name="sendRequestForm">
 
                 <ul>
-                    <li ng-if="!rfiData.event_id" > Your RFI will be routed to {{rfiData.members.numFetps}} members.</li>
+                    <li ng-if="!rfiData.event_id" > Your RFI will be routed to {{rfiData.members.numFetps}} responders.</li>
                     <li> Please review the content of your RFI as well as your RFI title.
 
                         <ul>

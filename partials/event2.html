@@ -32,7 +32,7 @@
         <!-- OWNER of event gets additional options to close event or send followup email -->
         <span ng-show="isAuthorizedToFollowup && eventsList.event_id">
             <span ng-if="changeStatusText == 'Close'">
-                <a href="#/followup2/{{id}}" class="btn btn-secondary btn-tab">Send follow-up message to all members</a>
+                <a href="#/followup2/{{id}}" class="btn btn-secondary btn-tab">Send follow-up message to all responders</a>
             </span>
             <span>
                 <a href="#/{{changeStatusType}}2/{{id}}" class="btn btn-secondary btn-tab" >{{changeStatusText}} RFI</a>
@@ -57,7 +57,7 @@
                 <div class="event-item" ng-repeat="history_item in eventsList.history">
                     <!-- Original Event Request Message in same organization (Moderator or FETP)-->
                     <div ng-if="(history_item.type == 'Event Request')">
-                                <strong>{{num_fetp}} members on RFI # {{eventsList.event_id}}:</strong> <br><br>
+                                <strong>{{num_fetp}} responders on RFI # {{eventsList.event_id}}:</strong> <br><br>
 
                         <ul>
                             <li>Title: {{history_item.title}}</li>
