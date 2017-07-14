@@ -11,14 +11,14 @@
         <div id="form-container" class="col-xs-12 col-md-8">
             <form name="conditionForm">
 
-                <div class="intro">
-                    <h5>Details on the health condition may be poor at initial stages. Requesters should try to classify the Public Health Event, if possible, into the syndromes suggested to avoid influencing the verification process.
-                    </h5>
-                </div>
-
                 <!-- Checkboxes for Humans -->
                 <div ng-show="rfiData.population.type == 'H'">
-                    <h4>Human Conditions</h4>
+                    <h4>Human Health Condition:</h4>
+                    <div class="intro">
+                        <h5>Details on the health condition may be poor at initial stages. Requesters should try to classify the Public Health Event, if possible, into the syndromes suggested to avoid influencing the verification process.
+                        </h5>
+                    </div>
+
                     <div class="form-group">
                         <div class="checkbox">
                             <label data-toggle="tooltip" title=" Cases presenting predominantly fever with respiratory symptoms as cough, respiratory distress, wheeze etc. - example:” 5 cases in young adults presenting respiratory distress and hospitalized” ">
@@ -92,7 +92,11 @@
 
                 <!-- Checkboxes for Animals -->
                 <div ng-show="rfiData.population.type == 'A'">
-                    <h4>Animal Conditions</h4>
+                    <h4>Animal Health Condition:</h4>
+                    <div class="intro">
+                        <h5>Details on the health condition may be poor at initial stages. Requesters should try to classify the Public Health Event, if possible, into the syndromes suggested to avoid influencing the verification process.
+                        </h5>
+                    </div>
                     <div class="form-group">
                         <div class="checkbox">
                             <label data-toggle="tooltip" title=" i.e. coughing, serous nasal and lacrimal discharge, edema cyanosis, dyspnea, respiratory distress, anorexia, depression, weakness” ">
@@ -155,14 +159,14 @@
 
                 <!-- Text input questions -->
                 <div class="form-group">
-                    <h4 >Health Condition</h4>
+                    <h4 >Health Condition Details:</h4>
                     <p>Please include all available details on the disease, including all reported symptoms, number of cases with clear classification (suspected/confirmed/fatalities) - if available:</p>
                     <textarea class="form-control" style="height:50px" ng-model="rfiData.health_condition.disease_details" id="disease_details" name="disease_details" placeholder="Available details..." required></textarea>
 
                 </div>
 
                 <div class="form-group">
-                    <h4>Other Relevant Public Health Detail</h4>
+                    <h4>Other Relevant Public Health Details:</h4>
                     <p>Please include any other relevant public health detail that could help responders in their verification process. For example details on response activities ongoing, information on lab tests results etc</p>
                     <textarea class="form-control" style="height:50px" ng-model="rfiData.health_condition.ph_details" id="ph_details" placeholder="Available details..." ></textarea>
                 </div>
