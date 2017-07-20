@@ -422,22 +422,30 @@ controller('requestController2', function($rootScope, $window, $scope, $routePar
         var purpose = $scope.rfiData.purpose.purpose == "V" ? "Verification" : "Update";
         var type = [];
 
-        if ($scope.rfiData.purpose.causal_agent)
-            type.push("PHE Causal Agent");
-        if ($scope.rfiData.purpose.epidemiology)
-            type.push("PHE Epidemiology");
-        if ($scope.rfiData.purpose.pop_affected)
-            type.push("PHE population affected");
-        if ($scope.rfiData.purpose.location)
-            type.push("PHE Location");
-        if ($scope.rfiData.purpose.size)
-            type.push("PHE Size");
-        if ($scope.rfiData.purpose.test)
-            type.push("PHE Test Results");
-        if ($scope.rfiData.purpose.other_category)
-            type.push($scope.rfiData.purpose.other);
+        var d1 = ' on identified/hypothetical causal agent';
+        var d2 = ' on the epidemiology including patterns of disease transmission, incubation period';
+        var d3 = ' on involved population (e.g. human/animal) or specific community';
+        var d4 = ' on location of cases or locations at risk for disease spread';
+        var d5 = ' on number of cases  (suspected, confirmed, fatalities etc)';
+        var d6 = ' on test results';
+        var d7 = ' on aspects not reflected in the other categories';
 
-        return purpose + ": " + type.toString();
+        if ($scope.rfiData.purpose.causal_agent)
+            type.push("PHE Causal Agent: " + purpose + d1);
+        if ($scope.rfiData.purpose.epidemiology)
+            type.push("PHE Epidemiology: " + purpose + d2);
+        if ($scope.rfiData.purpose.pop_affected)
+            type.push("PHE population affected: " + purpose + d3);
+        if ($scope.rfiData.purpose.location)
+            type.push("PHE Location: " + purpose + d4);
+        if ($scope.rfiData.purpose.size)
+            type.push("PHE Size: " + purpose + d5);
+        if ($scope.rfiData.purpose.test)
+            type.push("PHE Test Results: " + purpose + d6);
+        if ($scope.rfiData.purpose.other_category)
+            type.push("Other: " + purpose + d7 + " - " + $scope.rfiData.purpose.other);
+
+        return type.toString();
     }
 
     function getLocation() {
