@@ -67,10 +67,16 @@
                                 <span>{{event.num_responses_nocontent}}</span>
                             </td>
                             <td>
-                                <span></span>
+                                <span ng-if="onOpen">New</span>
+                                <span ng-if="!onOpen">Closed</span>
                             </td>
                             <td>
-                                <span></span>
+                                <span ng-if="event.outcome == 'VP'">Verified (+)</span>
+                                <span ng-if="event.outcome == 'VN'">Verified (-)</span>
+                                <span ng-if="event.outcome == 'UV'">Unverfied</span>
+                                <span ng-if="event.outcome == 'UP'">Updated (+)</span>
+                                <span ng-if="event.outcome == 'NU'">Updated (-)</span>
+                                <span ng-if="!event.outcome">Pending</span>
                             </td>
                         </tr>
                         <tr ng-show="eventType == 'MO'" ng-repeat="event in eventsList['yourorg'] | filter:query | orderBy:predicate:reverse">

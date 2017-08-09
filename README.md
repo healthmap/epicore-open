@@ -59,6 +59,11 @@ cp push-epicore.pem epicore_root/scripts/conf/.
 ```
 *Contact Epicore admin for a copy of the config files.
 
+### Set app version and mode
+
+Edit epicoreConfig.js
+
+
 ### Install library for Mobile Push Notifications
 
 ```sh

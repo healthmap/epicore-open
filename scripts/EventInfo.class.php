@@ -445,7 +445,7 @@ class EventInfo
             $darr[$key] = strip_tags($val);
         }
         if(!is_numeric($darr['event_id'])) {
-            return 0;
+            return 'invalid event_id';
         }
 
         $db = getDB();
@@ -465,7 +465,7 @@ class EventInfo
             }
             return 1;
         } else {
-            return 0;
+            return 'event does not exist for event id '. $eid;
         }
     }
 
@@ -666,6 +666,9 @@ class EventInfo
 
             // get organization name
             $row['organization_name'] = $db->getOne("SELECT name FROM organization WHERE organization_id = ?", array($row['organization_id']));
+
+            // get outcome
+            $row['outcome'] = $db->getOne("SELECT outcome FROM purpose WHERE event_id = ?", array($row['event_id']));
 
             // get the number of requests sent for that event
             $row['num_responses'] = $db->getOne("SELECT count(*) FROM response WHERE event_id = ?", array($row['event_id']));
@@ -1000,7 +1003,7 @@ class EventInfo
         }
     }
 
-    // updates purpose, returns true if updated
+    // updates purpose, returns true if updated or error message.
     static function updatePurpose($data_arr)
     {
         // sanitize the input
@@ -1008,7 +1011,7 @@ class EventInfo
             $darr[$key] = strip_tags($val);
         }
         if(!is_numeric($darr['event_id'])) {
-            return 0;
+            return 'invalid event_id';
         }
 
         $db = getDB();
@@ -1017,12 +1020,12 @@ class EventInfo
 
             // update the event table
             $q = $db->query("UPDATE purpose SET outcome = ?, phe_description = ?, phe_additional = ? WHERE event_id = ?",
-                array($darr['outcome'], $darr['phe_description'], $darr['phe_additional'], $darr['event_id']));
+                array($darr['outcome'], $darr['phe_description'], $darr['phe_additional']));
 
             // check that result is not an error
             if (PEAR::isError($q)) {
                 //die($res->getMessage());
-                return 0;
+                return 'failed update purpose query';
             } else {
                 $db->commit();
             }
