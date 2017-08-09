@@ -79,7 +79,7 @@ controller('requestController2', function($rootScope, $window, $scope, $routePar
         }
 
         // validate and go to next or back path
-        if ($scope.rfiData.location.latlon && $scope.rfiData.location.location && $scope.rfiData.location.location_details ){
+        if ($scope.rfiData.location.latlon && $scope.rfiData.location.location){
 
             // next or back
             if ((direction === 'next') && $scope.rfiData.event_id) {
@@ -245,7 +245,7 @@ controller('requestController2', function($rootScope, $window, $scope, $routePar
         var valid_other = ($scope.rfiData.population.type != 'O') || $scope.rfiData.population.other;
         var valid_population = $scope.rfiData.population.type && valid_other;
 
-        if (valid_population && valid_animal && $scope.rfiData.population.description){
+        if (valid_population && valid_animal){
 
             if (direction === 'next') {
                 $location.path('/condition');
