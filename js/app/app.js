@@ -11,6 +11,9 @@ var app = angular.module('EpicoreApp', [
     'ngStorage'
 ]);
 
+// set app version
+app.value('epicoreVersion', epicore_config.vers);
+
 // select web or mobile app
 var app_mode = epicore_config.app_mode;
 if (app_mode == 'mobile_prod') {

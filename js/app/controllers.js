@@ -1,7 +1,7 @@
 angular.module('EpicoreApp.controllers', []).
 
 /* User - includes signup, Reset password, Login & Logout */
-controller('userController', function($rootScope, $routeParams, $scope, $route, $cookies, $cookieStore, $location, $http, $window, urlBase , epicoreMode, $localStorage, epicoreCountries) {
+controller('userController', function($rootScope, $routeParams, $scope, $route, $cookies, $cookieStore, $location, $http, $window, urlBase , epicoreMode, $localStorage, epicoreCountries, epicoreVersion) {
 
     $scope.mobile = (epicoreMode == 'mobile') ? true: false;
 
@@ -148,6 +148,7 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
             formData['event_id'] = $routeParams.eid ? $routeParams.eid : null;
             formData['usertype'] = $location.path().indexOf("/fetp") == 0 ? 'fetp' : '';
             formData['app'] = 'web';
+            formData['epicore_version'] = epicoreVersion;
 
         } else { // from login page
             // save mobile or web platform info
@@ -160,6 +161,7 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
                 formData['event_id'] = $localStorage.event_id; // event_id from push notification
                 $localStorage.event_id = null; // clear event_id for next login
             }
+            formData['epicore_version'] = epicoreVersion;
         }
         if(!formData['ticket_id'] && !formData['alert_id'] && !formData['event_id'] && !$scope.loginForm.$valid) {
             $scope.isRouteLoading = false;

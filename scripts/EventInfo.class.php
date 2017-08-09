@@ -438,6 +438,37 @@ class EventInfo
 
     }
 
+    static function updateEventTitle($data_arr)
+    {
+        // sanitize the input
+        foreach($data_arr as $key => $val) {
+            $darr[$key] = strip_tags($val);
+        }
+        if(!is_numeric($darr['event_id'])) {
+            return 0;
+        }
+
+        $db = getDB();
+        $eid = $db->getOne("SELECT event_id FROM event WHERE event_id = ? ", array($darr['event_id']));
+        if ($eid) {
+
+            // update the event table
+            $q = $db->query("UPDATE event SET title = ? WHERE event_id = ?",
+                array($darr['title'], $darr['event_id']));
+
+            // check that result is not an error
+            if (PEAR::isError($q)) {
+                //die($res->getMessage());
+                return 'failed update event query';
+            } else {
+                $db->commit();
+            }
+            return 1;
+        } else {
+            return 0;
+        }
+    }
+
     // update event and related tables, returns event id if updated, or error message if not
     static function updateEvent2($event_info, $event_table)
     {
@@ -966,6 +997,38 @@ class EventInfo
             $table_id = $db->getOne("SELECT LAST_INSERT_ID()");
             $db->commit();
             return $table_id;
+        }
+    }
+
+    // updates purpose, returns true if updated
+    static function updatePurpose($data_arr)
+    {
+        // sanitize the input
+        foreach($data_arr as $key => $val) {
+            $darr[$key] = strip_tags($val);
+        }
+        if(!is_numeric($darr['event_id'])) {
+            return 0;
+        }
+
+        $db = getDB();
+        $eid = $db->getOne("SELECT event_id FROM purpose WHERE event_id = ? ", array($darr['event_id']));
+        if ($eid) {
+
+            // update the event table
+            $q = $db->query("UPDATE purpose SET outcome = ?, phe_description = ?, phe_additional = ? WHERE event_id = ?",
+                array($darr['outcome'], $darr['phe_description'], $darr['phe_additional'], $darr['event_id']));
+
+            // check that result is not an error
+            if (PEAR::isError($q)) {
+                //die($res->getMessage());
+                return 0;
+            } else {
+                $db->commit();
+            }
+            return 1;
+        } else {
+            return 0;
         }
     }
 

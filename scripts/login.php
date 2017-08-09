@@ -56,13 +56,21 @@ if(is_numeric($user_id) && $user_id > 0) {
 
     // if it was a mobile device with event id, go directly to the "respond" page
     // if it was a ticket with an event id, go directly to the "respond" page
-    // if it was a ticket with an alert id, go directly to the "request" page
-    if(isset($formvars->event_id) && is_numeric($formvars->event_id)) {
-        $path = "events/".$formvars->event_id;
-    } elseif (isset($formvars->alert_id) && is_numeric($formvars->alert_id)) {
-        $path = "request/".$formvars->alert_id;
+    // if it was a ticket with an alert id, go directly to the "request" page (only version 1 for ProMED alerts)
+    if (isset($formvars->epicore_version) && $formvars->epicore_version == '2') {  // app version 2
+        if (isset($formvars->event_id) && is_numeric($formvars->event_id)) {
+            $path = "events2/" . $formvars->event_id;
+        } else {
+            $path = "events2";
+        }
     } else {
-        $path = "events";
+        if (isset($formvars->event_id) && is_numeric($formvars->event_id)) {    // app version 1
+            $path = "events/" . $formvars->event_id;
+        } elseif (isset($formvars->alert_id) && is_numeric($formvars->alert_id)) {
+            $path = "request/" . $formvars->alert_id;
+        } else {
+            $path = "events";
+        }
     }
     $uinfo['superuser'] = (isset($uinfo['user_id']) && in_array($uinfo['user_id'], $super_users)) ? true: false;
 }

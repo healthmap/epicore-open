@@ -89,7 +89,7 @@
         <span ng-if=" userInfo.uid && ((history_item.permission != 0) && ((closerfi && (history_item.organization_id == userInfo.organization_id)) || (changeStatusText != 'Close')))" >
             &nbsp;&nbsp;<label><input type="radio" ng-model="history_item.useful" value="0" ng-disabled="history_item.useful && !isRequester"> <i class="fa fa-thumbs-o-down black"></i></label>&nbsp;&nbsp;
             <label><input type="radio" ng-model="history_item.useful" value="1" ng-disabled="history_item.useful && !isRequester" > <i class="fa fa-thumbs-o-up green"></i></label>&nbsp;&nbsp;
-            <label><input type="radio" ng-model="history_item.useful" value="2" ng-disabled="history_item.useful && !isRequester" > <i class="fa fa-thumbs-o-up blue">+Post </i></label>
+            <label><input type="radio" ng-model="history_item.useful" value="2" ng-disabled="history_item.useful && !isRequester" > <i class="fa fa-pencil black"></i></label>
 
         </span>
         <div class="show-response" ng-show="isCollapsed">

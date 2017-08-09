@@ -1,9 +1,11 @@
 angular.module('EpicoreApp.controllers2', []).
 
 /* Request (RFI): this is the controller that sends an RFI. */
-controller('requestController2', function($rootScope, $window, $scope, $routeParams, $cookieStore, $location, $http, urlBase, rfiForm) {
+controller('requestController2', function($rootScope, $window, $scope, $routeParams, $cookieStore, $location, $http, urlBase, rfiForm, epicoreVersion) {
 
     $scope.userInfo = $rootScope.userInfo = $cookieStore.get('epiUserInfo');
+
+    $scope.epicore_version = epicoreVersion;
 
     // get persistant RFI form
     $scope.rfiData = rfiForm.get();
@@ -673,9 +675,10 @@ controller('requestController2', function($rootScope, $window, $scope, $routePar
     }
 
     /* Requester (moderator) & Responder (member) dashboard controller */
-}).controller('eventsController2', function($scope, $routeParams, $cookieStore, $location, $http, eventAPIservice2, urlBase, epicoreMode) {
+}).controller('eventsController2', function($scope, $routeParams, $cookieStore, $location, $http, eventAPIservice2, urlBase, epicoreMode, epicoreVersion) {
 
     $scope.mobile = (epicoreMode == 'mobile') ? true: false;
+    $scope.epicore_version = epicoreVersion;
     $scope.isRouteLoading = true;
     $scope.eventsList = [];
     $scope.userInfo = $cookieStore.get('epiUserInfo');
@@ -709,7 +712,30 @@ controller('requestController2', function($rootScope, $window, $scope, $routePar
 
             $scope.eventsList = response.EventsList;
             $scope.filePreview = response.EventsList.filePreview ? response.EventsList.filePreview : '';
+
+
+
+            if($scope.eventsList.purpose) {
+                $scope.outcome = {};
+                $scope.outcome.phe_purpose = 'N';
+                if ($scope.eventsList.purpose.indexOf("Verification") >= 0) {
+                    $scope.outcome.phe_purpose = 'V';
+                } else if ($scope.eventsList.purpose.indexOf("Update") >= 0) {
+                    $scope.outcome.phe_purpose = 'U';
+                }
+                $scope.summary = {};
+                $scope.summary.phe_title = $scope.eventsList.title;
+            }
         }
+
+
+        // today's date
+        var today = new Date();
+        var dd = today.getDate();
+        var mm = today.getMonth(); //January is 0!
+        var yyyy = today.getFullYear();
+        var month = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+        $scope.today_date = dd + '-' + month[mm] + '-' + yyyy;
 
         // get response
         $scope.response_text = '';
@@ -762,6 +788,7 @@ controller('requestController2', function($rootScope, $window, $scope, $routePar
             }
         }
         $scope.isRouteLoading = false;
+
     });
 
     $scope.sendFollowup = function(formData, isValid) {
@@ -821,6 +848,14 @@ controller('requestController2', function($rootScope, $window, $scope, $routePar
             formData['useful_rids'] = useful_rids.toString();
             formData['usefulpromed_rids'] = usefulpromed_rids.toString();
             formData['notuseful_rids'] = notuseful_rids.toString();
+
+            if (thestatus == 'Close') {
+                formData['phe_outcome'] = $scope.outcome.answer;
+                formData['phe_title'] = $scope.summary.phe_title;
+                formData['phe_description'] = $scope.summary.phe_description;
+                formData['phe_additional'] = $scope.summary.phe_additional;
+            }
+
             $http({ url: urlBase + 'scripts/changestatus2.php', method: "POST", data: formData
             }).success(function (data, status, headers, config) {
                 if (data['status'] == 'success') {

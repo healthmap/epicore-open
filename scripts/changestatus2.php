@@ -11,6 +11,10 @@ $user_id = $formvars->uid;
 $useful_rids = $formvars->useful_rids;
 $usefulpromed_rids = $formvars->usefulpromed_rids;
 $notuseful_rids = $formvars->notuseful_rids;
+$phe_title = $formvars->phe_title;
+$phe_outcome = $formvars->phe_outcome;
+$phe_description = $formvars->phe_description;
+$phe_additional = $formvars->phe_additional;
 
 if(is_numeric($event_id) && is_numeric($user_id)) {
     if ($formvars->thestatus == "Reopen")
@@ -26,7 +30,30 @@ if(is_numeric($event_id) && is_numeric($user_id)) {
     // reason is one of the radio button choices on the close event form
     $reason = isset($formvars->reason) && is_numeric($formvars->reason) ? $formvars->reason : '';
     if ($thestatus == 'O' || $thestatus == 'C') {
-        $return_val = $ei->changeStatus($thestatus, $user_id, $formvars->notes, $reason);
+        $cstatus = $ei->changeStatus($thestatus, $user_id, $formvars->notes, $reason);
+
+        if ($thestatus == 'C') {
+            // save outcome, phe description, and phe additional info in purpose table
+            $purpose_table = array();
+            $purpose_table['event_id'] = $event_id;
+            $purpose_table['outcome'] = $phe_outcome;
+            $purpose_table['phe_description'] = $phe_description;
+            $purpose_table['phe_additional'] = $phe_additional;
+            $pstatus = EventInfo::updatePurpose($purpose_table);
+
+            // update event title if it's different than the original
+            $estatus = 1;
+            if ($event_info['title'] != $phe_title) {
+                $event_table = array();
+                $event_table['event_id'] = $event_id;
+                $event_table['title'] = $phe_title;
+                $estatus = EventInfo::updateEventTitle($event_table);
+            }
+
+            $return_val = $cstatus && $pstatus && $estatus;
+        } else {
+            $return_val = $cstatus;
+        }
 
         //todo: set cache flag when closed events changed
         // need to update cache with closed events
@@ -145,14 +172,21 @@ if(is_numeric($event_id) && is_numeric($user_id)) {
 
         print json_encode(array('status' => $status));
         exit;
-    } elseif ($thestatus == 'U'){
+    } else if ($thestatus == 'U'){
         print json_encode(array('status' => 'success'));
         exit;
-    } elseif ($thestatus == 'none'){
-        $error = "invalid RFI status";
+    } else if ($thestatus == 'none'){
+        if (!$cstatus){
+            $error = "invalid RFI status";
+        }else if (!$pstatus) {
+            $error = 'purpose update error';
+        } else if (!$estatus) {
+            $error = 'event title update error';
+        }
+
     }
     else {
-        $error = "requester and owner not the same";
+        $error = "requester and owner are not the same";
     }
 } else {
     $error = "invalid passed params";
