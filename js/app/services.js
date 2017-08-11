@@ -1,5 +1,5 @@
 angular.module('EpicoreApp.services', [])
-   .run(['$rootScope', '$location', 'authService', function ($rootScope, $location, authService) {
+   .run(['$rootScope', '$location', 'authService', 'epicoreVersion', function ($rootScope, $location, authService, epicoreVersion) {
         $rootScope.$on("$routeChangeStart", function (event, next, current) {
             var requesturl = $location.path();
             var urlarr = requesturl.split("/");
@@ -14,7 +14,10 @@ angular.module('EpicoreApp.services', [])
                 }
             }
             // if user is authenticated and on homepage or fetp login page, go to events listing, or redirect location
-            var redirloc = urlarr[1] == "fetp" && typeof(urlarr[3]) != "undefined" ? '/events/'+urlarr[3] : '/events';
+            var redirloc = urlarr[1] == "fetp" && typeof(urlarr[3]) != "undefined" ? '/events/' + urlarr[3] : '/events';
+            if (epicoreVersion == '2') {
+                redirloc = urlarr[1] == "fetp" && typeof(urlarr[3]) != "undefined" ? '/events2/' + urlarr[3] : '/events2';
+            }
             redirloc = ($rootScope.userinfo['fetp_id'] && ($rootScope.userinfo['active'] == 'N')) ? "home" : redirloc; // go to home page if not active fetp
             if(authService.isAuthenticated() && ($location.path() == "/home" || urlarr[1] == "fetp")) $location.path(redirloc);
         });
