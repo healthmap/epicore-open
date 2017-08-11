@@ -43,6 +43,7 @@ app.config(function($routeProvider) {
         when("/events/:id", {templateUrl: "partials/event.html", controller: "eventsController"}).
         when("/events2/:id", {templateUrl: "partials/event2.html", controller: "eventsController2"}).
         when("/reply/:id", {templateUrl: "partials/reply.html", controller: "eventsController"}).
+        when("/reply2/:id", {templateUrl: "partials/reply2.html", controller: "eventsController2"}).
         when("/close/:id", {templateUrl: "partials/close.html", controller: "eventsController"}).
         when("/close2/:id", {templateUrl: "partials/close2.html", controller: "eventsController2"}).
         when("/reopen/:id", {templateUrl: "partials/reopen.html", controller: "eventsController"}).
@@ -50,6 +51,7 @@ app.config(function($routeProvider) {
         when("/followup/:id", {templateUrl: "partials/followup.html", controller: "eventsController"}).
         when("/followup2/:id", {templateUrl: "partials/followup2.html", controller: "eventsController2"}).
         when("/followup/:id/:response_id", {templateUrl: "partials/followup.html", controller: "eventsController"}).
+        when("/followup2/:id/:response_id", {templateUrl: "partials/followup2.html", controller: "eventsController2"}).
         when("/condition", {templateUrl: "partials/rfi_condition.html", controller: "requestController2"}).
         when("/population", {templateUrl: "partials/rfi_population.html", controller: "requestController2"}).
         when("/location", {templateUrl: "partials/rfi_location.html", controller: "requestController2"}).
@@ -86,7 +88,7 @@ app.config(function($routeProvider) {
         when("/setpassword", {templateUrl: "partials/setpassword.html"}).
         when("/resetpassword", {templateUrl: "partials/resetpassword.html"}).
         when("/home", {templateUrl: "partials/home.html"}).
-        when("/trainingvideos", {templateUrl: "partials/trainingvideos.html"}).
+        when("/trainingvideos", {templateUrl: "partials/trainingvideos.html", controller: "userController"}).
         when("/training", {templateUrl: "partials/test.html", controller: "testController"}).
         when("/certificate", {templateUrl: "partials/certificate.html", controller: "certController"}).
         when("/modaccess", {templateUrl: "partials/modaccess.html", controller: "modaccessController"}).

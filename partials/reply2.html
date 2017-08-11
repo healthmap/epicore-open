@@ -1,0 +1,68 @@
+<div ng-if="!mobile"ng-include src="'header.html'"></div>
+<div ng-if="mobile"ng-include src="'header_mobile.html'"></div>
+
+<div class="jumbotron dashboard">
+    <div class="container">
+        <h1>RFI Response</h1>
+    </div>
+</div>
+
+
+<div class="wrapper">
+<div class="container">
+    <div class="row" ng-show="isAuthorizedFETP" >
+        <div id="form-container" class="col-xs-12">
+        <p><a href="#/events2/{{id}}" class="btn btn-default"><i class="fa fa-arrow-circle-left"></i> Back to RFI</a></p>
+
+            <p>
+            <strong>Title:</strong> {{eventsList.title}}<br>
+            <strong>Date:</strong> {{eventsList.event_date}}
+            </p>
+
+        <form name="sendResponseForm">
+            <div class="form-group">
+                <label class="" for="reply">Response</label>
+                <textarea ng-model="formData.reply" style="height:300px" class="form-control" name="reply" id="replyfield" required></textarea>
+            </div>
+
+               <!--<label for="response_permission">EpiCore Moderators may:</label>-->
+            <div class="radio">
+                <div>
+                    <label>
+                        <input type="radio" ng-model="formData.response_permission" name="response_permission" value="1" required> <i class="fa fa-circle perm1"></i> Don't quote, don't attribute
+                    </label>
+                </div>
+                <div>
+                    <label>
+                        <input type="radio" ng-model="formData.response_permission" name="response_permission" value="2" required> <i class="fa fa-circle perm2"></i> Can quote, don't attribute
+                    </label>
+                </div>
+                <div>
+                    <label>
+                        <input type="radio" ng-model="formData.response_permission" name="response_permission" value="3" required> <i class="fa fa-circle perm3"></i> Can quote, can attribute
+                        <input type="text" class="form-control" ng-model = "formData.response_member" ng-if="(formData.response_permission == 3)" placeholder="Enter your name, title, organization etc." ng-required="(formData.response_permission == 3)">
+                    </label>
+                </div>
+            </div>
+
+            <!--
+            <div class="form-group">
+                <label><input type="checkbox" ng-disabled="anonymous_disabled" ng-model="formData.anonymous" name="anonymous" value="1" /> Reply anonymously</label>
+            </div>
+            -->
+
+            <div class="form-group">
+                <button ng-click="sendResponse(formData, sendResponseForm.$valid)" ng-disabled="submitDisabled" type="submit" class="submit btn btn-primary">Submit</button>
+            </div><!-- /input-group -->
+        </form>
+
+        </div>
+    </div><!--row-->
+
+    <div class="row" ng-if="!isAuthorizedFETP && isAuthorizedFETP !=null">
+        <div class="col-xs-12 col-md-8" >
+            <p>You are not authorized to reply to this event.</p>
+        </div>
+    </div>
+</div><!--container-->
+</div><!--wrapper-->

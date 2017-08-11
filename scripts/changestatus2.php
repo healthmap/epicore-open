@@ -90,8 +90,10 @@ if(is_numeric($event_id) && is_numeric($user_id)) {
             $custom_vars['REASON'] = $reason_lu[$reason] ? $reason_lu[$reason] : "";
         }
         $custom_vars['NOTES'] = $formvars->notes;
+        $custom_vars['CONDITION_DETAILS'] = $formvars->condition_details;
+
         $status_type = $formvars->thestatus == "Reopen" ? 'Re-Opened' : 'Closed';
-        $status_type_member = $formvars->thestatus == "Reopen" ? 're-opened' : 'closed_member';
+        $status_type_member = $formvars->thestatus == "Reopen" ? 're-opened2' : 'closed_member2';
         $emailtext_event = $ei->buildEmailForEvent($event_info, $status_type_member, $custom_vars, 'text');
         $extra_headers['text_or_html'] = "html";
         $subject = "Epicore RFI #". $event_id . " : " . $status_type . ": " . $event_info['title'];
@@ -153,9 +155,9 @@ if(is_numeric($event_id) && is_numeric($user_id)) {
         array_push($idlist, EPICORE_ID);
 
         if ($status_type == 're-opened')
-            $status_type_new = 're-opened_proin';
+            $status_type_new = 're-opened_proin2';
         else
-            $status_type_new = 'closed_proin';
+            $status_type_new = 'closed_proin2';
 
         $emailtext_event = $ei->buildEmailForEvent($event_info, $status_type_new, $custom_vars, 'text');
 

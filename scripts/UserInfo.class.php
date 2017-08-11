@@ -80,41 +80,78 @@ class UserInfo
             return false;
     }
 
-    function getFETPRequests($status, $fetp_id = '')
+    function getFETPRequests($status, $fetp_id = '', $sdate = '')
     {
         $member_id = $fetp_id ? $fetp_id : $this->id;
-        $q = $this->db->query("SELECT event.event_id, event.title, event.disease, event.create_date, event_fetp.send_date, place.name AS location
+        $start_date = $sdate ? $sdate: '2000-01-01';
+        $q = $this->db->query("SELECT event.event_id, event.title, event.disease, event.create_date, event.event_date, event.requester_id, event_fetp.send_date, place.name AS location
                                 FROM event_fetp, event, place
-                                WHERE fetp_id = ? AND event_fetp.event_id = event.event_id AND event.place_id = place.place_id
-                                ORDER BY send_date DESC", array($member_id));
+                                WHERE fetp_id = ? AND event_fetp.event_id = event.event_id AND event.place_id = place.place_id AND event.create_date > ?
+                                ORDER BY send_date DESC", array($member_id, $start_date));
         $status = $status ? $status : 'O';
         while($row = $q->fetchRow()) {
             // responses are recorded by the FETPs user id, not FETP_id
             // get the current status of event - open or closed
             $dbstatus = $this->db->getOne("SELECT status FROM event_notes WHERE event_id = ? ORDER BY action_date DESC LIMIT 1", array($row['event_id']));
             $dbstatus = $dbstatus ? $dbstatus : 'O'; // if no value for status, it's open
+            // get event outcome
+            $event_outcome = $this->db->getOne("SELECT outcome FROM purpose WHERE event_id = ?", array($row['event_id']));
+            // get organization id for the event
+            $org_id = $this->db->getOne("SELECT organization_id FROM user WHERE user.user_id = ?", array($row['requester_id']));
+            // get organization name
+            $org_name = $this->db->getOne("SELECT name FROM organization WHERE organization_id = ?", array($org_id));
+
+            $place = explode(',',$row['location']);
+            if (sizeof($place) == 3){
+                $row['country'] = $place[2];
+            }
+            elseif(sizeof($place) == 2){
+                $row['country'] = $place[1];
+            }
+            elseif(sizeof($place) == 1){
+                $row['country'] = $place[0];
+            }
             if($dbstatus == $status) {
                 $requests[$row['event_id']]['event_id'] = $row['event_id'];
+                $requests[$row['event_id']]['event_id_int'] = (int)$row['event_id'];
                 $requests[$row['event_id']]['title'] = $row['title'];
                 $requests[$row['event_id']]['location'] = $row['location'];
+                $requests[$row['event_id']]['country'] = $row['country'];
                 $requests[$row['event_id']]['disease'] = $row['disease'];
                 $requests[$row['event_id']]['iso_create_date'] = $row['create_date'];
                 $requests[$row['event_id']]['create_date'] = date('j-M-Y H:i', strtotime($row['create_date']));
+                $requests[$row['event_id']]['event_date'] = date('j-M-Y', strtotime($row['event_date']));
+                $requests[$row['event_id']]['due_date'] = date('j-M-Y', strtotime("+7 day",strtotime($row['create_date'])));
                 // make send date an array, because there may be multiple
                 $requests[$row['event_id']]['send_dates'][] = date('j-M-Y H:i', strtotime($row['send_date']));
                 $requests[$row['event_id']]['iso_send_dates'][] = $row['send_date'];
                 $requests[$row['event_id']]['last_send_date'] = $requests[$row['event_id']]['iso_send_dates'][0];
                 
                 // get the FETPs responses to that event
-                $respq = $this->db->query("SELECT response_id, response_date, useful FROM response WHERE responder_id = ? AND event_id = ? ORDER BY response_date DESC", array($member_id, $row['event_id']));
+                $respq = $this->db->query("SELECT response_id, response_date, useful, response_permission FROM response WHERE responder_id = ? AND event_id = ? ORDER BY response_date DESC", array($member_id, $row['event_id']));
                 $response_dates = [];
                 $response_use = [];
+                $response_permission = [];
                 while($resprow = $respq->fetchRow()) {
                     array_push($response_dates, date('j-M-Y H:i', strtotime($resprow['response_date'])));
                     array_push($response_use, $resprow['useful']);
+                    array_push($response_permission, $resprow['response_permission']);
                 }
                 $requests[$row['event_id']]['response_dates'] = array_unique($response_dates);
                 $requests[$row['event_id']]['response_use'] = $response_use;
+                $requests[$row['event_id']]['outcome'] = $event_outcome;
+                $requests[$row['event_id']]['organization_name'] = $org_name;
+
+                if (in_array('1',$response_permission) || in_array('2',$response_permission) || in_array('3',$response_permission)) {
+                    $requests[$row['event_id']]['activity'] = '3';  // Contribution
+                } elseif (in_array('4',$response_permission)) {
+                    $requests[$row['event_id']]['activity'] = '2';  // Active Search
+                } elseif (in_array('0',$response_permission)) {
+                    $requests[$row['event_id']]['activity'] = '1';  // No Answer
+                } else {
+                    $requests[$row['event_id']]['activity'] = '1';
+                }
+                $requests[$row['event_id']]['response_permission'] = $response_permission;
             }
         }
         return $requests;

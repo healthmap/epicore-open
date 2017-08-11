@@ -4,6 +4,7 @@ angular.module('EpicoreApp.controllers', []).
 controller('userController', function($rootScope, $routeParams, $scope, $route, $cookies, $cookieStore, $location, $http, $window, urlBase , epicoreMode, $localStorage, epicoreCountries, epicoreVersion) {
 
     $scope.mobile = (epicoreMode == 'mobile') ? true: false;
+    $scope.epicore_version = epicoreVersion;
 
     $scope.isRouteLoading = false;
     $scope.autologin = false;
@@ -862,8 +863,10 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
 
 
 /* Success controller - for the success page */
-}).controller('successController', function($scope, $routeParams, $cookieStore) {
+}).controller('successController', function($scope, $routeParams, $cookieStore, epicoreVersion) {
         $scope.userInfo = $cookieStore.get('epiUserInfo');
+        $scope.epicore_version = epicoreVersion;
+
         var messages = {};
         messages[1] = "You have been signed up.";
         messages[2] = 'The moderator who initiated the request has been notified. If you get any information on this RFI in the future, please come back to this RFI and click on "Yes, respond to this RFI"';

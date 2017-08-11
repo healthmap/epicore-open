@@ -32,7 +32,6 @@ $db->commit();
 
 // get the events
 require_once "EventInfo.class.php";
-// if an event id is passed in, get info about specific event
 if(isset($rvars['event_id']) && is_numeric($rvars['event_id'])) {
     $ei = new EventInfo($rvars['event_id']);
     if($rvars['from'] == "responses") {
@@ -52,18 +51,18 @@ if(isset($rvars['event_id']) && is_numeric($rvars['event_id'])) {
     $num_notrated_repsonses = 0;
     if($rvars['fetp_id']) {
         // array values will lop off the array key b/c angular reorders the object
-        $indexed_array = array_values($ui->getFETPRequests($status));
+        $indexed_array = array_values($ui->getFETPRequests($status,'',V2START_DATE));
     } else {
         if ($status == 'C'){
             //$indexed_array = EventInfo::getEventsCache($rvars['uid'], 'C', 'cache');
             // use database for now until cache update is working: need to update cache when status changes.
             // Status of an event can change from the dashboard or from the auto-close cron job
-            $indexed_array = EventInfo::getEventsCache($rvars['uid'], 'C', 'database');
+            $indexed_array = EventInfo::getEventsCache($rvars['uid'], 'C', 'database', V2START_DATE);
         } else {
-            $indexed_array = EventInfo::getAllEvents($rvars['uid'], $status);
+            $indexed_array = EventInfo::getAllEvents($rvars['uid'], $status, V2START_DATE);
         }
         if ($status == 'O') {  // check for unrated respsonses
-            $num_notrated_repsonses = EventInfo::getNumNotRatedResponses($rvars['uid']);
+            $num_notrated_repsonses = EventInfo::getNumNotRatedResponses($rvars['uid'], V2START_DATE);
         }
     }
 }

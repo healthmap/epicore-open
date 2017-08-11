@@ -41,14 +41,14 @@ if(isset($formvars->response_id) && is_numeric($formvars->response_id))  {
     $custom_vars['RESPONSE_DATE'] = $response_info['response_date'];
     $custom_vars['RESPONSE_PERMISSION'] = $response_info['response_permission'];
     $custom_vars['RESPONSE_TEXT'] = $response_info['response'];
-    $followupText = $ei->buildEmailForEvent($event_info, "followup-specific", $custom_vars, 'text');
-    $followupText_proin = $ei->buildEmailForEvent($event_info, "followup-specific_proin", $custom_vars, 'text');
+    $followupText = $ei->buildEmailForEvent($event_info, "followup-specific2", $custom_vars, 'text');
+    $followupText_proin = $ei->buildEmailForEvent($event_info, "followup-specific_proin2", $custom_vars, 'text');
     $followup_info['response_id'] = $formvars->response_id;
-    $subject = "EPICORE RFI #". $event_id . " - Mod Response: " . $event_info['disease'] . ", " . $event_info['location'];
+    $subject = "EPICORE RFI #". $event_id . " - Requester Response: " . $event_info['title'];
 } else { // if no respsonse_id (follow-up to all), get fetp_ids from database for that event
     $fetp_ids = $ei->getFETPRecipients();
-    $followupText = $ei->buildEmailForEvent($event_info, "followup", $custom_vars, 'text');
-    $followupText_proin = $ei->buildEmailForEvent($event_info, "followup_proin", $custom_vars, 'text');
+    $followupText = $ei->buildEmailForEvent($event_info, "followup2", $custom_vars, 'text');
+    $followupText_proin = $ei->buildEmailForEvent($event_info, "followup_proin2", $custom_vars, 'text');
     $subject = "EPICORE RFI # " . $event_id . " Follow-up : " . $event_info['title'];
 }
 

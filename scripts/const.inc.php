@@ -30,17 +30,27 @@ define('PROMED_ID', 4);
 define('LAT_LON_PRECISION', 2);
 define('DEFAULT_RADIUS', 400); // in km
 define('EMAILPREVIEWS', 'emailtemplates/temp/');
+define('V2START_DATE', '2017-06-01');
 
 $status_lu = array('O' => 're-opened', 'C' => 'closed');
 
 $super_users = explode(',', $conf['superusers']['userids']);
 
-// permission text
-$response_permission_lu = array(
+// old permission text
+/*$response_permission_lu = array(
     "0" => " Indicated nothing to contribute to the outbreak",
     "1" => " Paraphrase / do not use direct quotes from this response, mask any identifying information referenced in the response text and do not provide any details on the responding member identity",
     "2" => " Quote this response but mask any identifying information referenced in the response text and do not provide any details on the responding member identity",
-    "3" => " Quote this response and attribute it to the responding member [name and title in response text]"
+    "3" => " Quote this response and attribute it to the responding member [name and title in response text]",
+    "4" => " Active Search"
+);*/
+// permission text
+$response_permission_lu = array(
+    "0" => " Indicated nothing to contribute to the outbreak",
+    "1" => " Don't quote, don't attribute",
+    "2" => " Can quote, don't attribute",
+    "3" => " Can quote, can attribute",
+    "4" => " Active Search"
 );
 
 // permission traffic light icons
@@ -48,7 +58,8 @@ $permission_img = array(
     "0"  => '',
     "1" => '<img src="'. EPICORE_URL. '/img/redlightnew.png" height="48" alt="traffic light" style="vertical-align:middle;height:48px;margin-left: 3px;">',
     "2" => '<img src="'. EPICORE_URL. '/img/yellowlightnew.png" height="48" alt="traffic light" style="vertical-align:middle;height:48px;margin-left: 3px;">',
-    "3" => '<img src="'. EPICORE_URL. '/img/greenlightnew.png" height="48" alt="traffic light" style="vertical-align:middle;height:48px;margin-left: 3px;">'
+    "3" => '<img src="'. EPICORE_URL. '/img/greenlightnew.png" height="48" alt="traffic light" style="vertical-align:middle;height:48px;margin-left: 3px;">',
+    "4" => ''
 );
 
 $reason_lu = array(

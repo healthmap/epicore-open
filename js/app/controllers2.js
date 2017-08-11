@@ -728,6 +728,7 @@ controller('requestController2', function($rootScope, $window, $scope, $routePar
             }
         }
 
+        console.log($scope.eventsList);
 
         // today's date
         var today = new Date();
@@ -855,7 +856,7 @@ controller('requestController2', function($rootScope, $window, $scope, $routePar
                 formData['phe_description'] = $scope.summary.phe_description;
                 formData['phe_additional'] = $scope.summary.phe_additional;
             }
-
+            formData['condition_details'] = $scope.eventsList.condition_details;
             $http({ url: urlBase + 'scripts/changestatus2.php', method: "POST", data: formData
             }).success(function (data, status, headers, config) {
                 if (data['status'] == 'success') {
@@ -878,16 +879,17 @@ controller('requestController2', function($rootScope, $window, $scope, $routePar
     };
 
     $scope.sendResponse = function(formData, isValid) {
-        if(formData['response_permission'] == 0 || isValid) {
+        if((formData['response_permission'] == 0) || (formData['response_permission'] == 4) || isValid) {
             $scope.submitDisabled = true;
             // if user has chosen "I have nothing to contribute" button,
             // formData comes in as object response_permissions: 0
+            // if user chooses "Active Search", object is response_permissions: 4
             formData['event_id'] = $routeParams.id
             formData['fetp_id'] = $scope.userInfo.fetp_id;
             if ($routeParams.id){
                 var eid = $routeParams.id;
             }
-            $http({ url: urlBase + 'scripts/sendresponse.php', method: "POST", data: formData
+            $http({ url: urlBase + 'scripts/sendresponse2.php', method: "POST", data: formData
             }).success(function (data, status, headers, config) {
                 if (data['status'] == 'success') {
                     $location.path('/success/2/' + eid);

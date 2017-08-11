@@ -4,6 +4,7 @@
 <p>
 <strong>Permissions:</strong><br>
 <span><i class="fa fa-circle perm0"></i> No contribution</span><br>
+    <span><i class="fa fa-circle perm0"></i> Active Search</span><br>
 <span><i class="fa fa-circle perm1"></i> Don't quote, don't attribute</span><br>
 <span><i class="fa fa-circle perm2"></i> Can quote, don't attribute</span><br>
 <span><i class="fa fa-circle perm3"></i> Can quote, can attribute</span>
@@ -65,11 +66,12 @@
 
     <!-- FETP Response Messages (Moderator or FETP)-->
     <div  class="show-message-fetp" ng-if="(history_item.type == 'Member Response') && (userInfo.uid || (history_item.fetp_id == userInfo.fetp_id)) && !(closerfi && (history_item.permission == 0))">
-        <a href="" class="inherit" ng-click="isCollapsed = !isCollapsed"><span ng-if="history_item.permission != 0"><i class="fa fa-plus"></i></span></a>
+        <a href="" class="inherit" ng-click="isCollapsed = !isCollapsed"><span ng-if="history_item.permission != 0 && history_item.permission != 4"><i class="fa fa-plus"></i></span></a>
                     <span ng-if="userInfo.uid">
                         Member {{history_item.fetp_id}} Response,
                         {{history_item.country}},
                                     <span ng-if="history_item.permission == 0"><i class="fa fa-circle perm0"></i> no contribution</span>
+                                    <span ng-if="history_item.permission == 4"><i class="fa fa-circle perm0"></i> active search</span>
                                     <span ng-if="history_item.permission == 1"><i class="fa fa-circle perm1"></i> don't quote / don't attribute</span>
                                     <span ng-if="history_item.permission == 2"><i class="fa fa-circle perm2"></i> quote / don't attribute</span>
                                     <span ng-if="history_item.permission == 3"><i class="fa fa-circle perm3"></i> quote / attribute</span>,
@@ -78,13 +80,14 @@
                     <span ng-if="userInfo.fetp_id">
                         your response,
                         <span ng-if="history_item.permission == 0"><i class="fa fa-circle perm0"></i> no contribution</span>
+                        <span ng-if="history_item.permission == 4"><i class="fa fa-circle perm0"></i> active search</span>
                         <span ng-if="history_item.permission == 1"><i class="fa fa-circle perm1"></i> don't quote / don't attribute</span>
                         <span ng-if="history_item.permission == 2"><i class="fa fa-circle perm2"></i> quote / don't attribute</span>
                         <span ng-if="history_item.permission == 3"><i class="fa fa-circle perm3"></i> quote / attribute</span>,
                         {{history_item.date}}
                     </span>
         <!-- show reply button -->
-        <a ng-if="!closerfi && (history_item.organization_id == userInfo.organization_id) " class="pull-right btn btn-default btn-sm" href="#/followup/{{id}}/{{history_item.response_id}}">Reply</a>
+        <a ng-if="!closerfi && (history_item.organization_id == userInfo.organization_id) " class="pull-right btn btn-default btn-sm" href="#/followup2/{{id}}/{{history_item.response_id}}">Reply</a>
         <!-- show ratings for closed event -->
         <span ng-if=" userInfo.uid && ((history_item.permission != 0) && ((closerfi && (history_item.organization_id == userInfo.organization_id)) || (changeStatusText != 'Close')))" >
             &nbsp;&nbsp;<label><input type="radio" ng-model="history_item.useful" value="0" ng-disabled="history_item.useful && !isRequester"> <i class="fa fa-thumbs-o-down black"></i></label>&nbsp;&nbsp;

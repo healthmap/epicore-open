@@ -627,16 +627,21 @@ class EventInfo
         return $response_info;
     }
 
-    static function getAllEvents($uid = '', $status = '')
+    static function getAllEvents($uid = '', $status = '', $sdate = '')
     {
         if(!is_numeric($uid)) {
             return 0;
         }
+
+        $start_date = $sdate ? $sdate: '2000-01-01';
         $db = getDB();
         $oid = $db->getOne("SELECT organization_id FROM user WHERE user_id = ?", array($uid));
         $status = $status ? $status : 'O'; // if status is not passed in, get open events
         // join on the event_fetp table b/c if there is no row in there, the request was never sent (may have been started, but didn't get sent
-        $q = $db->query("SELECT DISTINCT(event.event_id), event.*, place.name AS location FROM place, event, event_fetp WHERE event.place_id = place.place_id AND event.event_id = event_fetp.event_id ORDER BY event.create_date DESC");
+        $q = $db->query("SELECT DISTINCT(event.event_id), event.*, place.name AS location FROM place, event, event_fetp 
+                          WHERE event.place_id = place.place_id AND event.event_id = event_fetp.event_id AND event.create_date > ?
+                          ORDER BY event.create_date DESC", array($start_date));
+
         while($row = $q->fetchRow()) {
             // get the current status - open or closed
             $dbstatus = $db->getOne("SELECT status FROM event_notes WHERE event_id = ? ORDER BY action_date DESC LIMIT 1", array($row['event_id']));
@@ -672,8 +677,9 @@ class EventInfo
 
             // get the number of requests sent for that event
             $row['num_responses'] = $db->getOne("SELECT count(*) FROM response WHERE event_id = ?", array($row['event_id']));
-            $row['num_responses_content'] = $db->getOne("SELECT count(*) FROM response WHERE event_id = ? AND response_permission <>0 ", array($row['event_id']));
-            $row['num_responses_nocontent'] = $row['num_responses'] - $row['num_responses_content'];
+            $row['num_responses_content'] = $db->getOne("SELECT count(*) FROM response WHERE event_id = ? AND response_permission > 0 AND  response_permission < 4", array($row['event_id']));
+            $row['num_responses_active'] = $db->getOne("SELECT count(*) FROM response WHERE event_id = ? AND response_permission = '4' ", array($row['event_id']));
+            $row['num_responses_nocontent'] = $row['num_responses'] - $row['num_responses_content'] - $row['num_responses_active'];
             $row['num_notrated_responses'] = $db->getOne("SELECT count(*) FROM response WHERE useful IS NULL AND response_permission <>0 and event_id = ?", array($row['event_id']));
             $row['num_notuseful_responses'] = $db->getOne("SELECT count(*) FROM response WHERE useful ='0' and event_id = ?", array($row['event_id']));
             $row['num_useful_responses'] = $db->getOne("SELECT count(*) FROM response WHERE useful ='1' and event_id = ?", array($row['event_id']));
@@ -738,8 +744,8 @@ class EventInfo
     }
 
     // get events from cache or database
-    // user_id ('#'), status ('C', 'O'), source ('cache', 'database')
-    static function getEventsCache($user_id, $status, $source) {
+    // user_id ('#'), status ('C', 'O'), source ('cache', 'database'), start date = 'yyyy-mm-dd'
+    static function getEventsCache($user_id, $status, $source, $start_date = '') {
 
         // generate cache file name
         $cachekey = md5('events'. $user_id . $status);
@@ -748,19 +754,21 @@ class EventInfo
         if (file_exists($events_file) && ($source == 'cache')) { // from cache
             $events = json_decode(file_get_contents($events_file));
         } else { // from database
-            $events = EventInfo::getAllEvents($user_id, $status);
+            $events = EventInfo::getAllEvents($user_id, $status, $start_date);
             file_put_contents("$events_file", json_encode($events));
         }
         return $events;
     }
 
-    static function getNumNotRatedResponses($uid = '')
+    static function getNumNotRatedResponses($uid = '', $sdate = '')
     {
         if(!is_numeric($uid)) {
             return 0;
         }
+
+        $start_date = $sdate ? $sdate: '2000-01-01';
         $db = getDB();
-        $q = $db->query("SELECT * FROM event where requester_id = ?", array($uid));
+        $q = $db->query("SELECT * FROM event where requester_id = ? AND create_date > ?", array($uid, $start_date));
         $num_notrated_responses = 0;
         while($row = $q->fetchRow()) {
             // get the current status - open or closed

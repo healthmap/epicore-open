@@ -24,7 +24,7 @@
                 <span ng-if="onOpen">* You have received responses after closing one or more RFIs that are still unrated. Please go to the "CLOSED EVENTS" tab to locate and rate these responses.</span>
                 <span ng-if="!onOpen">* Please rate the unrated responses in the RFI(s) highlighted below.</span>
             </p>
-            <div class="form-group">
+            <div class="form-group" ng-show="isOrganization">
                 <label class="radio-inline"> <input type="radio" ng-model="eventType" value="MR" ng-click="getEvents();"> My RFIs</label>
                 <label class="radio-inline"> <input type="radio" ng-model="eventType" value="MO" ng-click="getEvents();"> My Organization</label>
                 <label class="radio-inline"> <input type="radio" ng-model="eventType" value="AO" ng-click="getEvents();"> All Organizations</label>
@@ -61,13 +61,14 @@
                                 <span>{{event.num_responses_content}}</span>
                             </td>
                             <td>
-                                <span></span>
+                                <span>{{event.num_responses_active}}</span>
                             </td>
                             <td>
                                 <span>{{event.num_responses_nocontent}}</span>
                             </td>
                             <td>
-                                <span ng-if="onOpen">New</span>
+                                <span ng-if="onOpen && !event.num_responses_active">New</span>
+                                <span ng-if="onOpen && event.num_responses_active">Ongoing</span>
                                 <span ng-if="!onOpen">Closed</span>
                             </td>
                             <td>
@@ -86,22 +87,29 @@
                             <td>{{event.country}}</td>
                             <td>{{event.person}} - {{event.organization_name}}</td>
                             <td>
-                                <span></span>
+                                <span>{{event.num_members}}</span>
                             </td>
                             <td>
                                 <span>{{event.num_responses_content}}</span>
                             </td>
                             <td>
-                                <span></span>
+                                <span>{{event.num_responses_active}}</span>
                             </td>
                             <td>
                                 <span>{{event.num_responses_nocontent}}</span>
                             </td>
                             <td>
-                                <span></span>
+                                <span ng-if="onOpen && !event.num_responses_active">New</span>
+                                <span ng-if="onOpen && event.num_responses_active">Ongoing</span>
+                                <span ng-if="!onOpen">Closed</span>
                             </td>
                             <td>
-                                <span></span>
+                                <span ng-if="event.outcome == 'VP'">Verified (+)</span>
+                                <span ng-if="event.outcome == 'VN'">Verified (-)</span>
+                                <span ng-if="event.outcome == 'UV'">Unverfied</span>
+                                <span ng-if="event.outcome == 'UP'">Updated (+)</span>
+                                <span ng-if="event.outcome == 'NU'">Updated (-)</span>
+                                <span ng-if="!event.outcome">Pending</span>
                             </td>
                         </tr>
                         <tr ng-show="eventType == 'AO'" ng-repeat="event in eventsList['all'] | filter:query | orderBy:predicate:reverse" >
@@ -111,22 +119,29 @@
                             <td>{{event.country}}</td>
                             <td>{{event.person}} - {{event.organization_name}}</td>
                             <td>
-                                <span></span>
+                                <span>{{event.num_members}}</span>
                             </td>
                             <td>
                                 <span>{{event.num_responses_content}}</span>
                             </td>
                             <td>
-                                <span></span>
+                                <span>{{event.num_responses_active}}</span>
                             </td>
                             <td>
                                 <span>{{event.num_responses_nocontent}}</span>
                             </td>
                             <td>
-                                <span></span>
+                                <span ng-if="onOpen && !event.num_responses_active">New</span>
+                                <span ng-if="onOpen && event.num_responses_active">Ongoing</span>
+                                <span ng-if="!onOpen">Closed</span>
                             </td>
                             <td>
-                                <span></span>
+                                <span ng-if="event.outcome == 'VP'">Verified (+)</span>
+                                <span ng-if="event.outcome == 'VN'">Verified (-)</span>
+                                <span ng-if="event.outcome == 'UV'">Unverfied</span>
+                                <span ng-if="event.outcome == 'UP'">Updated (+)</span>
+                                <span ng-if="event.outcome == 'NU'">Updated (-)</span>
+                                <span ng-if="!event.outcome">Pending</span>
                             </td>
                         </tr>
                     </tbody>
@@ -134,29 +149,40 @@
             </div>
 
             <!-- view for FETPs -->
-            <div ng-show="!isOrganization" ng-init="predicate = 'last_send_date'; reverse=reverse">
+            <div ng-show="!isOrganization" ng-init="predicate = 'event_date'; reverse=reverse">
                 <table class='small table table-hover table-bordered'>
                     <tbody>
                         <tr>
+                            <th width="50px" ng-click="predicate = 'event_id_int'; reverse=!reverse">ID <i class="fa fa-sort"></i></th>
                             <th ng-click="predicate = 'title'; reverse=!reverse">Title <i class="fa fa-sort"></i></th>
-                            <th ng-click="predicate = 'disease'; reverse=!reverse">Disease <i class="fa fa-sort"></i></th>
+                            <th width="110px" ng-click="predicate = 'event_date'; reverse=!reverse">RFI Date <i class="fa fa-sort"></i></th>
                             <th ng-click="predicate = 'location'; reverse=!reverse">Location <i class="fa fa-sort"></i></th>
-                            <th ng-click="predicate = 'last_send_date'; reverse=!reverse">Request Received Date <i class="fa fa-sort"></i></th>
-                            <th>Your Response Date</th>
+                            <th ng-click="predicate = 'organization_name'; reverse=!reverse">Requester <i class="fa fa-sort"></i></th>
+                            <th ng-click="predicate = 'activity'; reverse=!reverse">Responder Activity <i class="fa fa-sort"></i></th>
+                            <th ng-click="predicate = 'deadline'; reverse=!reverse">Deadline <i class="fa fa-sort"></i></th>
+                            <th ng-click="predicate = 'outcome'; reverse=!reverse">RFI Outcome <i class="fa fa-sort"></i></th>
                         </tr>
                         <tr ng-repeat="event in eventsList | filter:query | orderBy:predicate:reverse">
+                            <td>{{event.event_id_int}}</td>
                             <td><a href="#/events2/{{event.event_id}}">{{event.title}}</a></td>
-                            <td>{{event.disease}}</td>
-                            <td>{{event.location}}</td>
+                            <td>{{event.event_date}}</td>
+                            <td>{{event.country}}</td>
+                            <td>{{event.organization_name}}</td>
                             <td>
-                                <p ng-repeat="send_date in event.send_dates">
-                                {{send_date}}
-                                </p>
+                                <span ng-if="event.activity == '1'">No Answer</span>
+                                <span ng-if="event.activity == '2'">Active Search</span>
+                                <span ng-if="event.activity == '3'">Contribution</span>
                             </td>
                             <td>
-                                <p ng-repeat="response_date in event.response_dates">
-                                    {{response_date}}
-                                </p>
+                                {{event.due_date}}
+                            </td>
+                            <td>
+                                <span ng-if="event.outcome == 'VP'">Verified (+)</span>
+                                <span ng-if="event.outcome == 'VN'">Verified (-)</span>
+                                <span ng-if="event.outcome == 'UV'">Unverfied</span>
+                                <span ng-if="event.outcome == 'UP'">Updated (+)</span>
+                                <span ng-if="event.outcome == 'NU'">Updated (-)</span>
+                                <span ng-if="!event.outcome">Pending</span>
                             </td>
                         </tr>
                     </tbody>
