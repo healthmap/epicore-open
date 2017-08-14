@@ -30,7 +30,7 @@ define('PROMED_ID', 4);
 define('LAT_LON_PRECISION', 2);
 define('DEFAULT_RADIUS', 400); // in km
 define('EMAILPREVIEWS', 'emailtemplates/temp/');
-define('V2START_DATE', '2017-06-01');
+define('V2START_DATE', '2017-08-10');
 
 $status_lu = array('O' => 're-opened', 'C' => 'closed');
 

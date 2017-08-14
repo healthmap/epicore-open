@@ -593,7 +593,7 @@ controller('requestController2', function($rootScope, $window, $scope, $routePar
 
             // go to success page for testing. Remove this when done testing.
             //$location.path('/sent');
-            
+
             var formData = {};
             if ($scope.rfiData.members.searchType == "radius") {
                 formData['search_box'] = $scope.rfiData.members.searchBox.toString();
@@ -727,7 +727,7 @@ controller('requestController2', function($rootScope, $window, $scope, $routePar
             }
         }
 
-        console.log($scope.eventsList);
+        //console.log($scope.eventsList);
 
         // today's date
         var today = new Date();

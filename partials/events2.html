@@ -67,8 +67,8 @@
                                 <span>{{event.num_responses_nocontent}}</span>
                             </td>
                             <td>
-                                <span ng-if="onOpen && !event.num_responses_active">New</span>
-                                <span ng-if="onOpen && event.num_responses_active">Ongoing</span>
+                                <span ng-if="onOpen && (event.num_responses_active == 0)">New</span>
+                                <span ng-if="onOpen && (event.num_responses_active > 0)">Ongoing</span>
                                 <span ng-if="!onOpen">Closed</span>
                             </td>
                             <td>
@@ -99,8 +99,8 @@
                                 <span>{{event.num_responses_nocontent}}</span>
                             </td>
                             <td>
-                                <span ng-if="onOpen && !event.num_responses_active">New</span>
-                                <span ng-if="onOpen && event.num_responses_active">Ongoing</span>
+                                <span ng-if="onOpen && (event.num_responses_active == 0)">New</span>
+                                <span ng-if="onOpen && (event.num_responses_active > 0)">Ongoing</span>
                                 <span ng-if="!onOpen">Closed</span>
                             </td>
                             <td>
@@ -131,8 +131,8 @@
                                 <span>{{event.num_responses_nocontent}}</span>
                             </td>
                             <td>
-                                <span ng-if="onOpen && !event.num_responses_active">New</span>
-                                <span ng-if="onOpen && event.num_responses_active">Ongoing</span>
+                                <span ng-if="onOpen && (event.num_responses_active == 0)">New</span>
+                                <span ng-if="onOpen && (event.num_responses_active > 0)">Ongoing</span>
                                 <span ng-if="!onOpen">Closed</span>
                             </td>
                             <td>
