@@ -592,10 +592,9 @@ controller('requestController2', function($rootScope, $window, $scope, $routePar
             $scope.submitDisabled = true;
 
             // go to success page for testing. Remove this when done testing.
-            $location.path('/sent');
-
-            //todo: uncomment this section when done testing.
-         /*   var formData = {};
+            //$location.path('/sent');
+            
+            var formData = {};
             if ($scope.rfiData.members.searchType == "radius") {
                 formData['search_box'] = $scope.rfiData.members.searchBox.toString();
             } else {
@@ -618,7 +617,7 @@ controller('requestController2', function($rootScope, $window, $scope, $routePar
                 $location.path('/sent');
                 $scope.submitDisabled = false;
 
-            });*/
+            });
 
         } else if ( direction === 'back'){
             $location.path('/source');
