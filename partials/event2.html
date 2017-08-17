@@ -16,11 +16,12 @@
         <p  ng-if="changeStatusText != 'Close'" ><a href="#/events2/closed" class="btn btn-default"><i class="fa fa-arrow-circle-left"></i> Back to EpiCore Dashboard</a></p>
 
         <!-- OWNER of event gets additional options to close event or send followup email -->
-        <span ng-show="isAuthorizedToFollowup && eventsList.event_id">
-            <span ng-if="changeStatusText == 'Close'">
+        <!-- Superusers get to edit and delete -->
+        <span ng-show="eventsList.event_id">
+            <span ng-if="isRequester && (changeStatusText == 'Close') || userInfo.superuser">
                 <a href="#/followup2/{{id}}" class="btn btn-secondary btn-tab">Send follow-up message to all responders</a>
             </span>
-            <span>
+            <span ng-if="isRequester || userInfo.superuser">
                 <a href="#/{{changeStatusType}}2/{{id}}" class="btn btn-secondary btn-tab" >{{changeStatusText}} RFI</a>
             </span>
             <span ng-if="userInfo.superuser">
