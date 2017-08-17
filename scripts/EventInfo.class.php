@@ -727,11 +727,14 @@ class EventInfo
 
             if($uid == $row['requester_id']) {
                 $events['yours'][] = $row;
+                $events['yourorg_you'][] = $row;
+                $events['all'][] = $row;
             } else {
                 // get the organization of the user and that of the initiator of the request
                 $oid_of_requester = $db->getOne("SELECT organization_id FROM user WHERE user_id = ?", array($row['requester_id']));
                 if($oid && $oid == $oid_of_requester) {
                     $events['yourorg'][] = $row;
+                    $events['yourorg_you'][] = $row;
                     $events['all'][] = $row;
                 } else {
                     $events['other'][] = $row;

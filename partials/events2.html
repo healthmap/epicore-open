@@ -80,7 +80,7 @@
                                 <span ng-if="!event.outcome">Pending</span>
                             </td>
                         </tr>
-                        <tr ng-show="eventType == 'MO'" ng-repeat="event in eventsList['yourorg'] | filter:query | orderBy:predicate:reverse">
+                        <tr ng-show="eventType == 'MO'" ng-repeat="event in eventsList['yourorg_you'] | filter:query | orderBy:predicate:reverse">
                             <td>{{event.event_id_int}}</td>
                             <td><a href="#/events2/{{event.event_id}}">{{event.title}}</a></td>
                             <td>{{event.event_date}}</td>

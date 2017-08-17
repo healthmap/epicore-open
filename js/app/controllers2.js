@@ -453,11 +453,11 @@ controller('requestController2', function($rootScope, $window, $scope, $routePar
     function getLocation() {
         var subnational = '';
         if ($scope.rfiData.default_city){
-            subnational = $scope.rfiData.default_city + ',' +$scope.rfiData.default_state;
+            subnational = ' (' + $scope.rfiData.default_city + ',' +$scope.rfiData.default_state + '), ';
         } else if ($scope.rfiData.default_state) {
-            subnational = $scope.rfiData.default_state;
+            subnational = ' (' + $scope.rfiData.default_state + '), ';
         }
-        return $scope.rfiData.default_country + ' (' + subnational + '), ';
+        return $scope.rfiData.default_country + subnational;
     }
 
     function getPopulation() {
