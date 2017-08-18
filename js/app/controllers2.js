@@ -856,6 +856,7 @@ controller('requestController2', function($rootScope, $window, $scope, $routePar
                 formData['phe_additional'] = $scope.summary.phe_additional;
             }
             formData['condition_details'] = $scope.eventsList.condition_details;
+
             $http({ url: urlBase + 'scripts/changestatus2.php', method: "POST", data: formData
             }).success(function (data, status, headers, config) {
                 if (data['status'] == 'success') {

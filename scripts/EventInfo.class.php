@@ -675,6 +675,13 @@ class EventInfo
             // get outcome
             $row['outcome'] = $db->getOne("SELECT outcome FROM purpose WHERE event_id = ?", array($row['event_id']));
 
+            // get phe description
+            $row['phe_description'] = $db->getOne("SELECT phe_description FROM purpose WHERE event_id = ?", array($row['event_id']));
+
+            // get phe additional info
+            $row['phe_additional'] = $db->getOne("SELECT phe_additional FROM purpose WHERE event_id = ?", array($row['event_id']));
+
+
             // get the number of requests sent for that event
             $row['num_responses'] = $db->getOne("SELECT count(*) FROM response WHERE event_id = ?", array($row['event_id']));
             $row['num_responses_content'] = $db->getOne("SELECT count(*) FROM response WHERE event_id = ? AND response_permission > 0 AND  response_permission < 4", array($row['event_id']));
@@ -1025,13 +1032,17 @@ class EventInfo
             return 'invalid event_id';
         }
 
+        if(!($darr['outcome'] && $darr['phe_description'])){
+            return 'invalid parameters for purpose update';
+        }
+
         $db = getDB();
         $eid = $db->getOne("SELECT event_id FROM purpose WHERE event_id = ? ", array($darr['event_id']));
         if ($eid) {
 
             // update the event table
             $q = $db->query("UPDATE purpose SET outcome = ?, phe_description = ?, phe_additional = ? WHERE event_id = ?",
-                array($darr['outcome'], $darr['phe_description'], $darr['phe_additional']));
+                array($darr['outcome'], $darr['phe_description'], $darr['phe_additional'], $darr['event_id']));
 
             // check that result is not an error
             if (PEAR::isError($q)) {
@@ -1042,7 +1053,7 @@ class EventInfo
             }
             return 1;
         } else {
-            return 0;
+            return 'event id not found.';
         }
     }
 

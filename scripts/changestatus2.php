@@ -30,9 +30,8 @@ if(is_numeric($event_id) && is_numeric($user_id)) {
     // reason is one of the radio button choices on the close event form
     $reason = isset($formvars->reason) && is_numeric($formvars->reason) ? $formvars->reason : '';
     if ($thestatus == 'O' || $thestatus == 'C') {
-        $cstatus = $ei->changeStatus($thestatus, $user_id, $formvars->notes, $reason);
 
-        if ($thestatus == 'C') {
+        if ($thestatus == 'C') { // close RFI
             // save outcome, phe description, and phe additional info in purpose table
             $purpose_table = array();
             $purpose_table['event_id'] = $event_id;
@@ -40,19 +39,33 @@ if(is_numeric($event_id) && is_numeric($user_id)) {
             $purpose_table['phe_description'] = $phe_description;
             $purpose_table['phe_additional'] = $phe_additional;
             $pstatus = EventInfo::updatePurpose($purpose_table);
+            if ($pstatus != 1) {
+                $return_val = 2;
+                $error_message = $pstatus;
+            } else {
+                $return_val = 1;
+            }
+            if ($pstatus == 1) {
+                // update event title if it's different than the original
+                $estatus = 1;
+                if ($event_info['title'] != $phe_title) {
+                    $event_table = array();
+                    $event_table['event_id'] = $event_id;
+                    $event_table['title'] = $phe_title;
+                    $estatus = EventInfo::updateEventTitle($event_table);
+                }
 
-            // update event title if it's different than the original
-            $estatus = 1;
-            if ($event_info['title'] != $phe_title) {
-                $event_table = array();
-                $event_table['event_id'] = $event_id;
-                $event_table['title'] = $phe_title;
-                $estatus = EventInfo::updateEventTitle($event_table);
+                if ($estatus != 1) {
+                    $return_val = 2;
+                    $error_message = $estatus;
+                } else {
+                    $return_val = 1;
+                    $cstatus = $ei->changeStatus($thestatus, $user_id, $formvars->notes, $reason);  // close RFI when no errors
+                }
             }
 
-            $return_val = $cstatus && $pstatus && $estatus;
-        } else {
-            $return_val = $cstatus;
+        } else { // open RFI
+            $return_val = $ei->changeStatus($thestatus, $user_id, $formvars->notes, $reason);
         }
 
         //todo: set cache flag when closed events changed
@@ -177,6 +190,8 @@ if(is_numeric($event_id) && is_numeric($user_id)) {
     } else if ($thestatus == 'U'){
         print json_encode(array('status' => 'success'));
         exit;
+    } else if($return_val == 2)  { // purpose or title update error
+        $error = $error_message;
     } else if ($thestatus == 'none'){
         if (!$cstatus){
             $error = "invalid RFI status";

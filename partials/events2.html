@@ -72,11 +72,15 @@
                                 <span ng-if="!onOpen">Closed</span>
                             </td>
                             <td>
-                                <span ng-if="event.outcome == 'VP'">Verified (+)</span>
-                                <span ng-if="event.outcome == 'VN'">Verified (-)</span>
+                                <span ng-if="event.outcome == 'VP'" >Verified (+)</span>
+                                <span ng-if="event.outcome == 'VN'" >Verified (-)</span>
                                 <span ng-if="event.outcome == 'UV'">Unverfied</span>
                                 <span ng-if="event.outcome == 'UP'">Updated (+)</span>
                                 <span ng-if="event.outcome == 'NU'">Updated (-)</span>
+                                <a href="" ng-click="isCollapsed = !isCollapsed" ng-show="event.outcome">Summary</a>
+                                <div class="show-response" ng-show="isCollapsed">
+                                    {{event.phe_description}}, {{event.phe_additional}}
+                                </div>
                                 <span ng-if="!event.outcome">Pending</span>
                             </td>
                         </tr>
