@@ -25,7 +25,6 @@
                 <textarea ng-model="formData.reply" style="height:300px" class="form-control" name="reply" id="replyfield" required></textarea>
             </div>
 
-               <!--<label for="response_permission">EpiCore Moderators may:</label>-->
             <div class="radio">
                 <div>
                     <label>
@@ -45,15 +44,37 @@
                 </div>
             </div>
 
-            <!--
-            <div class="form-group">
-                <label><input type="checkbox" ng-disabled="anonymous_disabled" ng-model="formData.anonymous" name="anonymous" value="1" /> Reply anonymously</label>
+            <br>
+            <div >
+                <h4>How has the information been verified (sources used or actions taken)?</h4>
             </div>
-            -->
+
+            <div class="form-group">
+                <div class="checkbox">
+                    <label ><input type="checkbox" name="direct_observation" ng-model="formData.source.direct_observation" > Direct observation (site visit or information on-site, e.g. direct involvement in loco)</label>
+                </div>
+                <div class="checkbox">
+                    <label ><input type="checkbox" name="indirect_report" ng-model="formData.source.indirect_report" > Indirect report (informal info received from person in loco) </label>
+                </div>
+                <div class="checkbox">
+                    <label ><input type="checkbox" name="media_report" ng-model="formData.source.media_report" > Media report (web-based or direct media item) </label>
+                </div>
+                <div class="checkbox">
+                    <label ><input type="checkbox" name="official_report" ng-model="formData.source.official_report" > Official report (web-based or direct official documentation) </label>
+                </div>
+                <div class="checkbox">
+                    <label ><input type="checkbox" name="professional_opinion" ng-model="formData.source.professional_opinion" > Professional opinion (information based on personal professional opinion, with no further report/statement) </label>
+                </div>
+                <div class="checkbox">
+                    <label ><input type="checkbox" name="other_source" ng-model="formData.source.other_source" > Other (any other information not included in the list) :</label>
+                    <input type="text" class="form-control" ng-model = "formData.source.other_source_description" ng-if="formData.source.other_source" placeholder="other info..." ng-required="formData.other_source">
+                </div>
+            </div>
 
             <div class="form-group">
                 <button ng-click="sendResponse(formData, sendResponseForm.$valid)" ng-disabled="submitDisabled" type="submit" class="submit btn btn-primary">Submit</button>
             </div><!-- /input-group -->
+            <span class="error">{{error_message}}</span>
         </form>
 
         </div>

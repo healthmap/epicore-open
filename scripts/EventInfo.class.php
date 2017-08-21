@@ -343,6 +343,27 @@ class EventInfo
         return $response_id;
     }
 
+    function insertResponse2($data_arr) {
+
+        $source = $data_arr['source'];
+        $direct_observation = $source->direct_observation ? $source->direct_observation: 0;
+        $indirect_report = $source->indirect_report ? $source->indirect_report: 0;
+        $media_report = $source->media_report ? $source->media_report: 0;
+        $official_report = $source->official_report ? $source->official_report: 0;
+        $professional_opinion = $source->professional_opinion ? $source->professional_opinion: 0;
+        $other_source = $source->other_source ? $source->other_source: 0;
+        $other_source_description = $source->other_source_description ? $source->other_source_description: '';
+
+        $responder_id = is_numeric($data_arr['responder_id']) ? $data_arr['responder_id'] : 0;
+        $response = strip_tags($data_arr['response']);
+        $perm = is_numeric($data_arr['response_permission']) && $data_arr['response_permission'] < 5 ? $data_arr['response_permission'] : 0;
+        $this->db->query("INSERT INTO response (event_id, response, responder_id, response_date, response_permission, direct_observation, indirect_report, media_report, official_report, professional_opinion, other_source, other_source_description) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+            array($this->id, $response, $responder_id, date('Y-m-d H:i:s'), $perm, $direct_observation, $indirect_report, $media_report, $official_report, $professional_opinion, $other_source, $other_source_description));
+        $response_id = $this->db->getOne("SELECT LAST_INSERT_ID()");
+        $this->db->commit();
+        return $response_id;
+    }
+
     function getResponses() {
         global $response_permission_lu;
         $respvals = $this->db->getRow("SELECT requester_id, title, place.name AS location FROM event, place WHERE event_id = ? AND event.place_id = place.place_id", array($this->id));

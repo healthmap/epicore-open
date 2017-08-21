@@ -879,7 +879,11 @@ controller('requestController2', function($rootScope, $window, $scope, $routePar
     };
 
     $scope.sendResponse = function(formData, isValid) {
-        if((formData['response_permission'] == 0) || (formData['response_permission'] == 4) || isValid) {
+
+        var source_valid = typeof(formData.source) != "undefined";
+
+        $scope.error_message = '';
+        if((formData['response_permission'] == 0) || (formData['response_permission'] == 4) || (isValid && source_valid)) {
             $scope.submitDisabled = true;
             // if user has chosen "I have nothing to contribute" button,
             // formData comes in as object response_permissions: 0
@@ -899,6 +903,10 @@ controller('requestController2', function($rootScope, $window, $scope, $routePar
                 }
                 $scope.submitDisabled = false;
             });
+        } else {
+            if (isValid && !source_valid) {
+                $scope.error_message = "missing verification sources";
+            }
         }
     };
 

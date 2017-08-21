@@ -17,14 +17,14 @@ if(is_numeric($event_id)) {
     $response_member = strip_tags($formvars->response_member);
     $dbdata['response'] = $response_member ? $dbdata['response'] . "\n\n Responding Member: " . $response_member : $dbdata['response'];
 
+    $dbdata['source'] = $formvars->source;
 
     // insert into response table
     $ei = new EventInfo($event_id);
     $event_info = $ei->getInfo();
-    $response_id = $ei->insertResponse($dbdata);
+    $response_id = $ei->insertResponse2($dbdata);
 
     $subject = "EPICORE RFI #" . $event_id .  " - Response: " . $event_info['Title'];
-
 
     // send response to moderators if member had something to contribute
     if (($dbdata['response_permission']  != 0) || ($dbdata['response_permission']  != 4)) {
@@ -77,7 +77,9 @@ if(is_numeric($event_id)) {
     }
 
     $status = "success";
+
 }
+
 
 print json_encode(array('status' => $status, 'dbdata' => $dbdata));
 
