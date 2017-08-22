@@ -602,7 +602,7 @@ controller('requestController2', function($rootScope, $window, $scope, $routePar
             }
 
         } else {
-            condition.push($scope.rfiData.health_condition.disease_details);
+            //condition.push($scope.rfiData.health_condition.disease_details);
         }
         return condition.toString();
     }
