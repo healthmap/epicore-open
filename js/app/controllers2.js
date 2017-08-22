@@ -544,6 +544,9 @@ controller('requestController2', function($rootScope, $window, $scope, $routePar
             species = 'human';
         else if ($scope.rfiData.population.type =="A")
             species = 'animal';
+        else if ($scope.rfiData.population.type =="E")
+            species = 'environment';
+
 
         var condition = [];
         if (species == 'human'){
@@ -601,8 +604,8 @@ controller('requestController2', function($rootScope, $window, $scope, $routePar
                 condition.push($scope.rfiData.health_condition.other_animal_description);
             }
 
-        } else {
-            //condition.push($scope.rfiData.health_condition.disease_details);
+        } else if (species == 'environment'){
+            condition.push($scope.rfiData.health_condition.disease_details);
         }
         return condition.toString();
     }
