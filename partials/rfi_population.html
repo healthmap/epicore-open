@@ -18,12 +18,12 @@
                 <div class="form-group">
                     <div class="radio">
                         <!--<label > <input type="checkbox" name="human" ng-model="rfiData.population.human" ng-click="clearPopulation('human'); clearAnimal('all'); clearPopError();" > Human population</label>-->
-                        <label > <input type="radio" name="human" ng-model="rfiData.population.type" value="H" ng-required="!rfiData.population.type"> Human population</label>
+                        <label > <input type="radio" name="human" ng-model="rfiData.population.type" value="H" ng-required="!rfiData.population.type && !goback"> Human population</label>
                     </div>
                 </div>
                 <div class="form-group">
                     <div class="radio">
-                        <label > <input type="radio" name="animal" ng-model="rfiData.population.type" value="A" ng-required="!rfiData.population.type" > Animal population</label>
+                        <label > <input type="radio" name="animal" ng-model="rfiData.population.type" value="A" ng-required="!rfiData.population.type && !goback" > Animal population</label>
                     </div>
                 </div>
                 <div class="form-group" ng-if="rfiData.population.type == 'A'" style="margin-left: 40px">
@@ -55,18 +55,18 @@
 
                 <div class="form-group">
                     <div class="radio">
-                        <label > <input type="radio" name="environment" ng-model="rfiData.population.type" value="E" ng-required="!rfiData.population.type" > Environmental</label>
+                        <label > <input type="radio" name="environment" ng-model="rfiData.population.type" value="E" ng-required="!rfiData.population.type && !goback" > Environmental</label>
                     </div>
                 </div>
 
                 <div class="form-group">
                     <div class="radio">
-                        <label > <input type="radio" name="unknown" ng-model="rfiData.population.type" value="U" ng-required="!rfiData.population.type" > Unknown</label>
+                        <label > <input type="radio" name="unknown" ng-model="rfiData.population.type" value="U" ng-required="!rfiData.population.type && !goback" > Unknown</label>
                     </div>
                 </div>
                 <div class="form-group">
                     <div class="radio">
-                        <label > <input type="radio" name="open" ng-model="rfiData.population.type" value="O" ng-required="!rfiData.population.type" > Open Option</label>
+                        <label > <input type="radio" name="open" ng-model="rfiData.population.type" value="O" ng-required="!rfiData.population.type && !goback" > Open Option</label>
                         <input ng-if="rfiData.population.type == 'O'" type="text" class="form-control" ng-model="rfiData.population.other" name="other" id="other" placeholder='open option details...' value="" required>
                     </div>
                 </div>

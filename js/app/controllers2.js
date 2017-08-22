@@ -217,7 +217,7 @@ controller('requestController2', function($rootScope, $window, $scope, $routePar
     $scope.saveTime = function (direction) {
 
         // validate and go to next or back path
-        if ($scope.rfiData.location.event_date){
+        if ((direction === 'back') || $scope.rfiData.location.event_date){
 
             // next or back
             if (direction === 'next') {
@@ -239,24 +239,33 @@ controller('requestController2', function($rootScope, $window, $scope, $routePar
     $scope.pop_error_message = '';
     $scope.savePopulation = function (direction) {
 
-        // validation
-        var valid_other_animal = ($scope.rfiData.population.animal_type != 'O') || $scope.rfiData.population.other_animal;
-        var valid_animal = ($scope.rfiData.population.type != 'A') || ($scope.rfiData.population.animal_type && valid_other_animal);
-        var valid_other = ($scope.rfiData.population.type != 'O') || $scope.rfiData.population.other;
-        var valid_population = $scope.rfiData.population.type && valid_other;
+        $scope.goback = (direction === 'back');
 
-        if (valid_population && valid_animal){
+        console.log($scope.goback);
 
-            if (direction === 'next') {
-                $location.path('/condition');
-            } else if ((direction === 'back') && !$scope.rfiData.event_id){
+        if (direction === 'back'){
+            if ($scope.rfiData.event_id){
                 $location.path('/members');
-            } else if ((direction === 'back') && $scope.rfiData.event_id){
+            } else {
                 $location.path('/time');
             }
-            $scope.pop_error_message = '';
+
         } else {
-            $scope.pop_error_message = 'Missing parameters above.';
+            // validation
+            var valid_other_animal = ($scope.rfiData.population.animal_type != 'O') || $scope.rfiData.population.other_animal;
+            var valid_animal = ($scope.rfiData.population.type != 'A') || ($scope.rfiData.population.animal_type && valid_other_animal);
+            var valid_other = ($scope.rfiData.population.type != 'O') || $scope.rfiData.population.other;
+            var valid_population = $scope.rfiData.population.type && valid_other;
+
+            if (valid_population && valid_animal) {
+
+                if (direction === 'next') {
+                    $location.path('/condition');
+                }
+                $scope.pop_error_message = '';
+            } else {
+                $scope.pop_error_message = 'Missing parameters above.';
+            }
         }
     };
 
@@ -264,37 +273,42 @@ controller('requestController2', function($rootScope, $window, $scope, $routePar
     $scope.hc_error_message = '';
     $scope.hc_error_message1 = '';
     $scope.saveCondition = function (direction) {
+        $scope.goback = (direction === 'back');
 
-        // checkbox validation
-        var valid_other = (!$scope.rfiData.health_condition.other || $scope.rfiData.health_condition.other_description);
-        var health_condition_human_valid = ($scope.rfiData.health_condition.respiratory || $scope.rfiData.health_condition.gastrointestinal || $scope.rfiData.health_condition.fever_rash || $scope.rfiData.health_condition.jaundice
-            || $scope.rfiData.health_condition.h_fever || $scope.rfiData.health_condition.paralysis || $scope.rfiData.health_condition.other_neurological || $scope.rfiData.health_condition.fever_unknown || $scope.rfiData.health_condition.renal
-            || $scope.rfiData.health_condition.unknown || $scope.rfiData.health_condition.other) && valid_other;
-
-        var valid_other_animal = (!$scope.rfiData.health_condition.other_animal || $scope.rfiData.health_condition.other_animal_description);
-        var health_condition_animal_valid = ($scope.rfiData.health_condition.respiratory_animal || $scope.rfiData.health_condition.neurological_animal || $scope.rfiData.health_condition.hemorrhagic_animal
-            || $scope.rfiData.health_condition.vesicular_animal || $scope.rfiData.health_condition.reproductive_animal || $scope.rfiData.health_condition.gastrointestinal_animal || $scope.rfiData.health_condition.multisystemic_animal
-            || $scope.rfiData.health_condition.unknown_animal || $scope.rfiData.health_condition.other_animal) && valid_other_animal;
-
-        var health_condition_ok = !(($scope.rfiData.population.type == 'H') && !health_condition_human_valid) && !(($scope.rfiData.population.type == 'A') && !health_condition_animal_valid);
-
-        if (health_condition_ok && $scope.rfiData.health_condition.disease_details ) { // validation
-
-            // next or back
-            if (direction === 'next') {
-                $location.path('/purpose');
-            } else if (direction === 'back'){
-                $location.path('/population');
-            }
-            // clear errors
-            $scope.hc_error_message = '';
-            $scope.hc_error_message1 = '';
-        } else if (!health_condition_ok){
-            $scope.hc_error_message1 =  (valid_other && valid_other_animal) ? 'Must select one or more of the above options ' : '' ;
-            $scope.hc_error_message = 'Missing parameters above.';
+        if (direction === 'back'){
+            $location.path('/population');
         } else {
-            $scope.hc_error_message = 'Missing parameters above.';
-            $scope.hc_error_message1 = '';
+            // checkbox validation
+            var valid_other = (!$scope.rfiData.health_condition.other || $scope.rfiData.health_condition.other_description);
+            var health_condition_human_valid = ($scope.rfiData.health_condition.respiratory || $scope.rfiData.health_condition.gastrointestinal || $scope.rfiData.health_condition.fever_rash || $scope.rfiData.health_condition.jaundice
+                || $scope.rfiData.health_condition.h_fever || $scope.rfiData.health_condition.paralysis || $scope.rfiData.health_condition.other_neurological || $scope.rfiData.health_condition.fever_unknown || $scope.rfiData.health_condition.renal
+                || $scope.rfiData.health_condition.unknown || $scope.rfiData.health_condition.other) && valid_other;
+
+            var valid_other_animal = (!$scope.rfiData.health_condition.other_animal || $scope.rfiData.health_condition.other_animal_description);
+            var health_condition_animal_valid = ($scope.rfiData.health_condition.respiratory_animal || $scope.rfiData.health_condition.neurological_animal || $scope.rfiData.health_condition.hemorrhagic_animal
+                || $scope.rfiData.health_condition.vesicular_animal || $scope.rfiData.health_condition.reproductive_animal || $scope.rfiData.health_condition.gastrointestinal_animal || $scope.rfiData.health_condition.multisystemic_animal
+                || $scope.rfiData.health_condition.unknown_animal || $scope.rfiData.health_condition.other_animal) && valid_other_animal;
+
+            var health_condition_ok = !(($scope.rfiData.population.type == 'H') && !health_condition_human_valid) && !(($scope.rfiData.population.type == 'A') && !health_condition_animal_valid);
+
+            if ((direction === 'back') || health_condition_ok && $scope.rfiData.health_condition.disease_details) { // validation
+
+                // next or back
+                if (direction === 'next') {
+                    $location.path('/purpose');
+                } else if (direction === 'back') {
+                    $location.path('/population');
+                }
+                // clear errors
+                $scope.hc_error_message = '';
+                $scope.hc_error_message1 = '';
+            } else if (!health_condition_ok) {
+                $scope.hc_error_message1 = (valid_other && valid_other_animal) ? 'Must select one or more of the above options ' : '';
+                $scope.hc_error_message = 'Missing parameters above.';
+            } else {
+                $scope.hc_error_message = 'Missing parameters above.';
+                $scope.hc_error_message1 = '';
+            }
         }
     };
 
@@ -334,31 +348,39 @@ controller('requestController2', function($rootScope, $window, $scope, $routePar
     $scope.purpose_error_message1 = '';
     $scope.savePurpose = function (direction) {
 
-        // checkbox validation
-        var valid_purpose = $scope.rfiData.purpose.causal_agent || $scope.rfiData.purpose.epidemiology || $scope.rfiData.purpose.pop_affected || $scope.rfiData.purpose.location
-            || $scope.rfiData.purpose.size || $scope.rfiData.purpose.test || $scope.rfiData.purpose.other_category;
-        var valid_other_purpose = !$scope.rfiData.purpose.other_category || $scope.rfiData.purpose.other;
+        $scope.goback = (direction === 'back');
 
-        // next
-        if (valid_purpose && valid_other_purpose && $scope.rfiData.purpose.purpose) { // validation
-            if (direction === 'next') {
-                $location.path('/source');
-            } else if (direction === 'back'){
-                $location.path('/condition');
+
+        if (direction === 'back'){
+            $location.path('/condition');
+        } else {
+            // checkbox validation
+            var valid_purpose = $scope.rfiData.purpose.causal_agent || $scope.rfiData.purpose.epidemiology || $scope.rfiData.purpose.pop_affected || $scope.rfiData.purpose.location
+                || $scope.rfiData.purpose.size || $scope.rfiData.purpose.test || $scope.rfiData.purpose.other_category;
+            var valid_other_purpose = !$scope.rfiData.purpose.other_category || $scope.rfiData.purpose.other;
+
+            // next
+            if ((direction === 'back') || valid_purpose && valid_other_purpose && $scope.rfiData.purpose.purpose) { // validation
+                if (direction === 'next') {
+                    $location.path('/source');
+                } else if (direction === 'back') {
+                    $location.path('/condition');
+                }
+
+                $scope.purpose_error_message = '';
+                $scope.purpose_error_message1 = '';
+            } else if (!valid_other_purpose) {
+                $scope.purpose_error_message = 'Missing parameters above.';
+                $scope.purpose_error_message1 = '';
             }
-
-            $scope.purpose_error_message = '';
-            $scope.purpose_error_message1 = '';
-        } else if (!valid_other_purpose) {
-            $scope.purpose_error_message = 'Missing parameters above.';
-            $scope.purpose_error_message1 = '';
-        }
-        else if (!valid_purpose){
+            else if (!valid_purpose) {
                 $scope.purpose_error_message = 'Missing parameters above.';
                 $scope.purpose_error_message1 = 'Must select one or more of the above options.';
-        } else {
-            $scope.purpose_error_message = 'Missing parameters above.';
-            $scope.purpose_error_message1 = '';
+            } else {
+                $scope.purpose_error_message = 'Missing parameters above.';
+                $scope.purpose_error_message1 = '';
+            }
+
         }
     };
 
@@ -366,7 +388,7 @@ controller('requestController2', function($rootScope, $window, $scope, $routePar
     $scope.source_error_message = '';
     $scope.saveSource = function (direction) {
 
-        if ($scope.rfiData.source.source && $scope.rfiData.source.details){
+        if ((direction === 'back') || $scope.rfiData.source.source && $scope.rfiData.source.details){
             if (direction === 'next') {
 
                 // save RFI details for review
@@ -608,8 +630,9 @@ controller('requestController2', function($rootScope, $window, $scope, $routePar
             formData['purpose'] = $scope.rfiData.purpose;
             formData['source'] = $scope.rfiData.source;
             formData['title'] =  $scope.rfiData.event_title;
+            formData['additionalText'] = $scope.rfiData.additionalText;
 
-            $http({
+                $http({
                 url: urlBase + 'scripts/sendrequest2.php', method: "POST", data: formData
             }).success(function (respdata, status, headers, config) {
 

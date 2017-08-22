@@ -81,7 +81,7 @@
                     </div>
                     <div class="form-group">
                         <div class="checkbox">
-                            <label data-toggle="tooltip" title=" example: “Marseille, suspected imported dengue. Please use for Animal Health conditions as well” ">
+                            <label data-toggle="tooltip" title=" example: “suspect autochthonous dengue case” ">
                                 <input type="checkbox" name="other" ng-model="rfiData.health_condition.other" ng-click="clearCondition(); rfiData.health_condition.unknown = false; clearhcError();" ng-checked="rfiData.health_condition.other_description"> Other</label>
                             <input ng-if="rfiData.health_condition.other" type="text" class="form-control" ng-model="rfiData.health_condition.other_description" name="other_description" id="other_description" placeholder='other description...' value="" ng-required="rfiData.health_condition.other" >
                         </div>
@@ -161,7 +161,7 @@
                 <div class="form-group">
                     <h4 >Health Condition Details:</h4>
                     <p>Please include all available details on the disease, including all reported symptoms, number of cases with clear classification (suspected/confirmed/fatalities) - if available:</p>
-                    <textarea class="form-control" style="height:50px" ng-model="rfiData.health_condition.disease_details" id="disease_details" name="disease_details" placeholder="Available details..." required></textarea>
+                    <textarea class="form-control" style="height:50px" ng-model="rfiData.health_condition.disease_details" id="disease_details" name="disease_details" placeholder="Available details..." ng-required="!goback"></textarea>
 
                 </div>
 

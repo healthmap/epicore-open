@@ -25,6 +25,7 @@ if ($formvars->uid && $formvars->fetp_ids && $formvars->population && $formvars-
     $event_info['search_countries'] = $formvars->search_countries ? $formvars->search_countries : '';
     $event_info['search_box'] = $formvars->search_box ? $formvars->search_box : '';
     $event_info['create_date'] = date('Y-m-d H:i:s');
+    $event_info['personalized_text'] = $formvars->additionalText ? (string)$formvars->additionalText : '';
     $event_info['event_date'] = date_format(date_create($formvars->location->event_date), "Y-m-d");
     $event_info['event_date_details'] = (string)$formvars->location->event_date_details;
     $event_info['title'] = (string)$formvars->title;

@@ -938,8 +938,8 @@ class EventInfo
 
         // insert into the event table
         $create_date = $darr['create_date'] ? $darr['create_date'] : date('Y-m-d H:i:s');
-        $res = $db->query("INSERT INTO event (place_id, title, create_date, requester_id, search_box, search_countries, event_date, event_date_details) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
-                    array($place_id, $darr['title'], $create_date, $darr['requester_id'], $darr['search_box'], $darr['search_countries'], $darr['event_date'], $darr['event_date_details']));
+        $res = $db->query("INSERT INTO event (place_id, title, personalized_text, create_date, requester_id, search_box, search_countries, event_date, event_date_details) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                    array($place_id, $darr['title'], $darr['personalized_text'], $create_date, $darr['requester_id'], $darr['search_box'], $darr['search_countries'], $darr['event_date'], $darr['event_date_details']));
 
         // check result is not an error
         if (PEAR::isError($res)) {

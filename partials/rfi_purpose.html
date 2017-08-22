@@ -20,8 +20,8 @@
                     <h5>Select Verification if this is the first report of a PHE (or officially reported) or Update to gather additional details on an ongoing verified or officially confirmed PHE</h5>
 
                     <div class="form-group">
-                        <label class="radio-inline"> <input type="radio" ng-model="rfiData.purpose.purpose" value="V" ng-required="!rfiData.purpose.purpose" ng-click="checkPurpose();"> Verification</label>
-                        <label class="radio-inline"> <input type="radio" ng-model="rfiData.purpose.purpose" value="U" ng-required="!rfiData.purpose.purpose" ng-click="checkPurpose();"> Update</label>
+                        <label class="radio-inline"> <input type="radio" ng-model="rfiData.purpose.purpose" value="V" ng-required="!goback && !rfiData.purpose.purpose" ng-click="checkPurpose();"> Verification</label>
+                        <label class="radio-inline"> <input type="radio" ng-model="rfiData.purpose.purpose" value="U" ng-required="!goback !rfiData.purpose.purpose" ng-click="checkPurpose();"> Update</label>
                     </div>
 
                     <div class="form-group" ng-if="rfiData.purpose.purpose">
@@ -87,6 +87,12 @@
                     </div>
                     <div class="form-group" ng-if="rfiData.purpose.other_category">
                         <input type="text" class="form-control" ng-model="rfiData.purpose.other" name="other" id="other" placeholder='other information...' value="" ng-required="rfiData.purpose.other_category">
+                    </div>
+
+
+                    <div class="form-group" >
+                        <h5>Please insert a personalized message to responders requesting specific information:</h5>
+                        <input type="text" class="form-control" ng-model="rfiData.additionalText" name="additionalText" id="additionalText" placeholder='message...' value="" >
                     </div>
 
                     <div class="form-group">
