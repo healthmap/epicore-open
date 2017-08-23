@@ -51,7 +51,8 @@ if ($formvars->uid && $formvars->fetp_ids && $formvars->population && $formvars-
         $fetp_emails = UserInfo::getFETPEmails($fetp_ids);
         $extra_headers['text_or_html'] = "html";
 
-        $emailtext = $ei->buildEmailForEvent($event_info, 'rfi2', '', 'text');
+        $custom_vars['CONDITION_DETAILS'] = $formvars->health_condition_details;
+        $emailtext = $ei->buildEmailForEvent($event_info, 'rfi2', $custom_vars, 'text');
 
         // set up push notification
         $push = new ePush();
@@ -73,7 +74,7 @@ if ($formvars->uid && $formvars->fetp_ids && $formvars->population && $formvars-
         }
 
         // build copy email
-        $proin_emailtext = $ei->buildEmailForEvent($event_info, 'rfi_proin2', '', 'text');
+        $proin_emailtext = $ei->buildEmailForEvent($event_info, 'rfi_proin2', $custom_vars, 'text');
         $moderator = $ei->getEventPerson($event_id); // get event moderator name
         $name = $moderator['name'];
         $email = $moderator['email'];

@@ -629,6 +629,7 @@ controller('requestController2', function($rootScope, $window, $scope, $routePar
             formData['fetp_ids'] = $scope.rfiData.members.userIds;
             formData['population'] = $scope.rfiData.population;
             formData['health_condition'] = $scope.rfiData.health_condition;
+            formData['health_condition_details'] = $scope.rfiData.health_condition.disease_details;
             formData['location'] = $scope.rfiData.location;
             formData['purpose'] = $scope.rfiData.purpose;
             formData['source'] = $scope.rfiData.source;
