@@ -813,6 +813,10 @@ class EventInfo
         return $num_notrated_responses;
     }
 
+    // Returns inactive open events for a Mod:
+    // - events created before $date
+    // - AND events with no responses or responses with nothing to contribute before $date
+    // - AND events with no followups before $date.
     static function getInactiveEvents($uid = '', $date = '')
     {
         if(!is_numeric($uid)) {
@@ -846,6 +850,47 @@ class EventInfo
         return $notactive_events;
     }
 
+    // Returns inactive open events for a Responder:
+    // - events created before $date
+    // - AND events with no responses or nothing to contribute before $date
+    static function getInactiveEvents2($uid = '', $date = '')
+    {
+        if(!is_numeric($uid)) {
+            return 0;
+        }
+        $v2start_date = V2START_DATE;
+        $db = getDB();
+        $q = $db->query("SELECT * FROM event where requester_id = ? AND create_date > '$v2start_date'", array($uid));
+        $notactive_events = array();
+        while($row = $q->fetchRow()) {
+            // get the current status - open or closed
+            $status = $db->getOne("SELECT status FROM event_notes WHERE event_id = ? ORDER BY action_date DESC LIMIT 1", array($row['event_id']));
+            $status = $status ? $status : 'O'; // if no value for status, it's open
+
+            // save event id if open and not active
+            if ($status == 'O') {
+                // get response ids with content or with active searches created after date
+                $content_response_ids = $db->getAll("SELECT response_id FROM response WHERE event_id = ? AND (response_permission >'0') AND (response_permission <= '4') 
+                                        AND response_date >= ?", array($row['event_id'], $date));
+                // check for active events created after $date
+                $active_event_ids = $db->getAll("SELECT event_id FROM event WHERE event_id = ? AND create_date >= ? ", array($row['event_id'], $date));
+                // save event if not active
+                if (!($active_event_ids || $content_response_ids)){
+                    // get response ids with content
+                    $response_ids = $db->getAll("SELECT response_id FROM response WHERE (response_permission >'0') AND (response_permission < '4') AND event_id = ?", array($row['event_id']));
+                    // get response ids with active search after date
+                    $active_response_ids = $db->getAll("SELECT response_id FROM response WHERE (response_permission = '4') AND event_id = ?", array($row['event_id']));
+
+                    $responses = $response_ids ? count($response_ids): 0;
+                    $active_responses = $active_response_ids ? count($active_response_ids): 0;
+                    $notactive_events[] = array('event_id' => $row['event_id'], 'title'=> $row['title'], 'date'=> $row['create_date'], 'responses' => $responses, 'active_search' => $active_responses);
+                }
+            }
+        }
+        return $notactive_events;
+    }
+
+    // Returns Mods with inactive events
     static function getModsWithInactiveEvents($active_date){
         $db = getDB();
         $all_mods = UserInfo::getMods();
@@ -864,6 +909,43 @@ class EventInfo
         else
             return false;
 
+    }
+
+    static function getModsWithInactiveEvents2($active_date){
+        $db = getDB();
+        $all_mods = UserInfo::getMods();
+
+        $inactive_mods = array();
+        foreach($all_mods as $mod){
+            $hmuid = $mod['hmu_id'];
+            $uid = $db->getOne("SELECT user_id FROM user WHERE hmu_id = '$hmuid'");
+            $events = self::getInactiveEvents2($uid, $active_date);
+            if ($events) {
+                $inactive_mods[] = array('email'=> $mod['email'], 'name' => $mod['name'], 'user_id' => $uid, 'events' => $events);
+            }
+        }
+        if ($inactive_mods)
+            return $inactive_mods;
+        else
+            return false;
+    }
+
+    // get responders for active searches (no content in responses)
+    static function getActiveSearchResponders($event_id){
+        $db = getDB();
+        // get the current status - open or closed
+        $status = $db->getOne("SELECT status FROM event_notes WHERE event_id = ? ORDER BY action_date DESC LIMIT 1", array($event_id));
+        $status = $status ? $status : 'O'; // if no value for status, it's open
+        // if open
+        if ($status == 'O') {
+            // get active search responders
+            $active_responders = $db->getAll("SELECT responder_id, email FROM response, fetp 
+                                    WHERE event_id = ? AND response_permission = '4' AND responder_id=fetp_id",
+                                    array($event_id));
+
+            return $active_responders;
+        } else
+            return false;
     }
 
     static function insertEvent($data_arr) 

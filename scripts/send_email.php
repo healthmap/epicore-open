@@ -100,6 +100,21 @@ function sendMail($email, $name, $subject, $status, $user_id, $event_title = '',
         $extra_headers['bcc'] = EMAIL_INFO_EPICORE;
         $emailtemplate = file_get_contents("../emailtemplates/warning_responses.html");
     }
+    else if($status =='warning2'){
+        $link = EPICORE_URL .'/#/events2';
+        $extra_headers['bcc'] = EMAIL_INFO_EPICORE;
+        $emailtemplate = file_get_contents("../emailtemplates/warning2.html");
+    }
+    else if($status =='warning_responses2'){
+        $link = EPICORE_URL .'/#/events2';
+        $extra_headers['bcc'] = EMAIL_INFO_EPICORE;
+        $emailtemplate = file_get_contents("../emailtemplates/warning_responses2.html");
+    }
+    else if($status =='active_search_warning'){
+        $link = EPICORE_URL .'/#/events2';
+        $extra_headers['bcc'] = EMAIL_INFO_EPICORE;
+        $emailtemplate = file_get_contents("../emailtemplates/warning_active_search.html");
+    }
     else{
         return false;
     }
