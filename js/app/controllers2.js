@@ -956,4 +956,18 @@ controller('requestController2', function($rootScope, $window, $scope, $routePar
         }
     };
 
+    // Show summary modal
+    $scope.showModal = false;
+    $scope.modalTitle = "";
+    $scope.modalBody = "";
+    $scope.showSummary = function(summary, more_info){
+        $scope.modalTitle = "Summary";
+        if (more_info)
+            $scope.modalBody = summary + "\r\n\r\n" + "Additional Info:\r\n" +more_info;
+        else
+            $scope.modalBody = summary;
+
+        $scope.showModal = !$scope.showModal;
+    };
+
 });
