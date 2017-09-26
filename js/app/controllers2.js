@@ -851,7 +851,7 @@ controller('requestController2', function($rootScope, $window, $scope, $routePar
                 var h_orgid = $scope.eventsList.history[h].organization_id;
                 var h_useful = $scope.eventsList.history[h].useful;
                 var h_perm = $scope.eventsList.history[h].permission;
-                if ((h_type == 'Member Response' && h_perm !=='0')
+                if ((h_type == 'Member Response' && h_perm !=='0' && h_perm !=='4')
                     && ($scope.userInfo.uid || (h_fetp_id == $scope.userInfo.fetp_id)) && (h_orgid == $scope.userInfo.organization_id)) {
                     if (h_useful === null ) {
                         alert('Please assess all member responses.');
