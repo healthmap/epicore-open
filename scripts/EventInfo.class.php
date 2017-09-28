@@ -36,6 +36,7 @@ class EventInfo
         $condition = $this->getConditions($population['type']);
         $event_info['condition'] = $condition['condition'];
         $event_info['condition_details'] = $condition['details'];
+        $event_info['hc_details'] = $condition['hc_details'];
         $source = $this->getSource();
         $event_info['source'] = $source['source'];
         $event_info['source_details'] = $source['details'];
@@ -108,7 +109,7 @@ class EventInfo
             } else {
                 $condition[] = $q['disease_details'];
             }
-            return array('condition' => implode(",", $condition), 'details' => $q['ph_details']);
+            return array('condition' => implode(",", $condition), 'details' => $q['ph_details'], 'hc_details' => $q['disease_details']);
 
         }else {
             return false;
@@ -260,6 +261,7 @@ class EventInfo
         $messages[$size]['population_details'] = $event_info['population_details'];
         $messages[$size]['condition'] = $event_info['condition'];
         $messages[$size]['condition_details'] = $event_info['condition_details'];
+        $messages[$size]['hc_details'] = $event_info['hc_details'];
         $messages[$size]['source'] = $event_info['source'];
         $messages[$size]['source_details'] = $event_info['source_details'];
         $messages[$size]['purpose'] = $event_info['purpose'];
