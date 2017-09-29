@@ -11,6 +11,10 @@
         <div id="form-container" class="col-xs-12 col-md-8">
             <form name="memberForm">
 
+                <div class="form-group">
+                    <span style="float: right;"><a href ng-click="clearRequest()" class="btn btn-default">Clear RFI</a></span><br>
+                </div>
+
                 <div class="intro">
                     <h5>You can select recipient responders either by moving the bounding box or by selecting countries in the menu below.</h5>
                     <p class="red">{{rfiData.members.numUniqueFetps}} responders at {{rfiData.members.numFetps}} locations selected</p>

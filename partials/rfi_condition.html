@@ -13,6 +13,10 @@
 
                 <!-- Checkboxes for Humans -->
                 <div ng-show="rfiData.population.type == 'H'">
+                    <div class="form-group">
+                        <span style="float: right;"><a href ng-click="clearRequest()" class="btn btn-default">Clear RFI</a></span><br>
+                    </div>
+
                     <h4>Human Health Condition:</h4>
                     <div class="intro">
                         <h5>Details on the health condition may be poor at initial stages. Requesters should try to classify the Public Health Event, if possible, into the syndromes suggested to avoid influencing the verification process.

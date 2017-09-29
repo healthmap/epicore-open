@@ -11,6 +11,9 @@
         <div id="form-container" class="col-xs-12 col-md-8">
             <form name="sendRequestForm">
 
+                <div class="form-group">
+                    <span style="float: right;"><a href ng-click="clearRequest()" class="btn btn-default">Clear RFI</a></span><br>
+                </div>
                 <ul>
                     <li ng-if="!rfiData.event_id" > Your RFI will be routed to {{rfiData.members.numFetps}} responders.</li>
                     <li> Please review the content of your RFI as well as your RFI title.

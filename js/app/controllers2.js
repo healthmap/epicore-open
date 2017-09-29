@@ -698,7 +698,16 @@ controller('requestController2', function($rootScope, $window, $scope, $routePar
         $window.sessionStorage.clear();
         rfiForm.clear();
         $location.path('/events2');
-    }
+    };
+
+    $scope.clearRequest = function () {
+
+        if (confirm('Are you sure you want to clear this RFI?')) {
+            $window.sessionStorage.clear();
+            rfiForm.clear();
+            $location.path('/location');
+        }
+    };
 
     /* Requester (moderator) & Responder (member) dashboard controller */
 }).controller('eventsController2', function($scope, $routeParams, $cookieStore, $location, $http, eventAPIservice2, urlBase, epicoreMode, epicoreVersion) {
