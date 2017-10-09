@@ -63,16 +63,16 @@ class EventInfo
             // SQL for health conditions
             $conditions = array();
             foreach ($check_conditions as $condition) {
-                if ($health_condition[$condition]) {
-                    $conditions[] = $condition . "=" . $health_condition[$condition];
+                if ($health_condition[$condition]){
+                    $conditions[] = '( ' .$condition . "= '1' )";
                 } else {
-                    $conditions[] = $condition . " IS NULL";
+                    $conditions[] = '( (' .$condition . " IS NULL) OR ( ". $condition . "= '0') )";
                 }
             }
             $hc = implode(" AND ", $conditions);
 
             // get duplicate event ids
-            $event_id = $db->getAll("SELECT e.event_id FROM event e, health_condition hc WHERE e.event_id = hc.event_id AND create_date > ? 
+            $event_id = $db->getAll("SELECT e.event_id FROM event e, health_condition hc WHERE e.event_id = hc.event_id AND create_date >= ? 
                                   AND place_id IN ($match_country) AND e.event_id IN ($match_population) AND $hc", array($date));
 
             // only save Open event ids

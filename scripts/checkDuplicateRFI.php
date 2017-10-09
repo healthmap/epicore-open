@@ -52,7 +52,7 @@ if ($formvars->population_type && $formvars->health_condition && $country) {
     $event_id = EventInfo::checkDuplicate($date, $country, $population_type, $conditions);
 
     // get duplicate event info if found
-    if ($event_id) {
+    if ($event_id[0]) {
         $status = 'success';
         $message = 'duplicate RFI found.';
     } else {
