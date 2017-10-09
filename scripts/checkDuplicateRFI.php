@@ -31,7 +31,7 @@ $event_id = -1;
 if ($formvars->population_type && $formvars->health_condition && $country) {
 
     // now minus seven days
-    $one_week_ago = strtotime("-60 day");
+    $one_week_ago = strtotime("-7 day");
     $date = date('Y-m-d', $one_week_ago);
 
     // get population type
