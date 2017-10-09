@@ -279,7 +279,7 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
     $scope.resetPassword = function(formData) {
             if (!$scope.setpwForm.$valid){
                 $scope.isRouteLoading = false;
-                $rootScope.error_message = 'Invalid email address';
+                $rootScope.error_message_pw = 'Invalid email address';
                 return false;
             }
             else {
@@ -288,14 +288,15 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
                 }).success(function (data, status, headers, config) {
                     if (data['status'] == "success") {
                         $scope.isRouteLoading = false;
-                        $rootScope.error_message = 'Please check your email for instructions to reset your password.';
+                        $rootScope.error_message_pw = 'Please check your email for instructions to reset your password.';
                         $route.reload();
                     } else {
                         $scope.isRouteLoading = false;
-                        $rootScope.error_message = 'Invalid email address';
+                        $rootScope.error_message_pw = 'Invalid email address';
                         $route.reload();
                     }
                 }).error(function (data, status, headers, config) {
+                    $rootScope.error_message_pw = 'Invalid email address';
                     $scope.isRouteLoading = false;
                     console.log(status);
                 });

@@ -295,7 +295,10 @@ controller('requestController2', function($rootScope, $window, $scope, $routePar
 
                 // next or back
                 if (direction === 'next') {
-                    $location.path('/purpose');
+
+                    // first check for duplicate RFI
+                    checkDuplicateRFI();
+
                 } else if (direction === 'back') {
                     $location.path('/population');
                 }
@@ -340,6 +343,78 @@ controller('requestController2', function($rootScope, $window, $scope, $routePar
     };
     $scope.clearhcError2 = function () {
         $scope.hc_error_message2 = '';
+    };
+
+    // check for duplicate RFI
+    function checkDuplicateRFI() {
+
+        var rfi_data = {};
+        rfi_data['population_type'] = $scope.rfiData.population.type;
+        rfi_data['health_condition'] = $scope.rfiData.health_condition;
+        rfi_data['location'] = $scope.rfiData.location.location;
+        $http({ url: urlBase + 'scripts/checkDuplicateRFI.php', method: "POST", data: rfi_data
+        }).success(function (respdata, status, headers, config) {
+
+            if (respdata['status'] == 'success' && respdata['event_id'] > 0){ // got to duplicate page
+                $scope.rfiData.duplicate_rfi = {};
+                $scope.rfiData.duplicate_rfi.rfi_id = respdata['event_id'];
+                $location.path('/duplicate');
+
+            }else if (respdata['status'] == 'notfound') { // go to purpose page
+                $location.path('/purpose');
+            }else {
+                alert(respdata['message']);
+            }
+
+        });
+
+    }
+
+    //////////////////////////////////////// Duplicate RFI Action ////////////////////////////////////////
+    $scope.duplicateAction = function () {
+
+        if ($scope.rfiData.duplicate_rfi.rfi_same == '1'){  // same RFI, do not send
+
+            if (confirm('Are sure? This will clear the RFI you have just entered.')) {
+
+                // clear RFI and go to dashboard
+                $window.sessionStorage.clear();
+                rfiForm.clear();
+                $location.path('/events2')
+            }
+
+        } else if ($scope.rfiData.duplicate_rfi.rfi_same == '2'){ // same RFI, track existing RFI
+
+            if (confirm('Are you sure?  This will clear the RFI you have just entered and you will receive all emails and notifications regarding the existing RFI.')){
+
+                // Track RFI
+                var rfi_id = $scope.rfiData.duplicate_rfi.rfi_id;
+                var user_id = $scope.userInfo.uid;
+                $http({ url: urlBase + 'scripts/trackDuplicateRFI.php', method: "POST", data: {'event_id' :rfi_id, 'user_id': user_id}
+                }).success(function (respdata, status, headers, config) {
+
+                    if (respdata['status'] == 'success'){
+
+                        // clear RFI and go to dashbaord
+                        $window.sessionStorage.clear();
+                        rfiForm.clear();
+                        $location.path('/events2');
+
+                    }else {
+                        console.log(respdata['message']);
+                    }
+
+                });
+            }
+
+        } else if ($scope.rfiData.duplicate_rfi.rfi_same == '3'){ // different RFI, so go ahead and send a new RFI
+
+            // go to purpose
+            $location.path('/purpose');
+
+        } else {
+            console.log('error');
+        }
     };
 
 
@@ -635,12 +710,13 @@ controller('requestController2', function($rootScope, $window, $scope, $routePar
             formData['source'] = $scope.rfiData.source;
             formData['title'] =  $scope.rfiData.event_title;
             formData['additionalText'] = $scope.rfiData.additionalText;
-
+            formData['duplicate_rfi_detected'] = ($scope.rfiData.duplicate_rfi && ($scope.rfiData.duplicate_rfi.rfi_same == '3')) ? 1:0; // possibile duplicate RFI
+            formData['duplicate_rfi_id'] = ($scope.rfiData.duplicate_rfi && $scope.rfiData.duplicate_rfi.rfi_id) ? $scope.rfiData.duplicate_rfi.rfi_id : 0;
                 $http({
                 url: urlBase + 'scripts/sendrequest2.php', method: "POST", data: formData
             }).success(function (respdata, status, headers, config) {
 
-                // go to success page
+                    // go to success page
                 $location.path('/sent');
                 $scope.submitDisabled = false;
 
@@ -918,7 +994,7 @@ controller('requestController2', function($rootScope, $window, $scope, $routePar
 
         var source_valid = typeof(formData.source) != "undefined";
 
-        $scope.error_message = '';
+        $scope.response_error_message = '';
         if((formData['response_permission'] == 0) || (formData['response_permission'] == 4) || (isValid && source_valid)) {
             $scope.submitDisabled = true;
             // if user has chosen "I have nothing to contribute" button,
@@ -941,7 +1017,7 @@ controller('requestController2', function($rootScope, $window, $scope, $routePar
             });
         } else {
             if (isValid && !source_valid) {
-                $scope.error_message = "missing verification sources";
+                $scope.response_error_message = "missing verification sources";
             }
         }
     };

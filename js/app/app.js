@@ -53,6 +53,7 @@ app.config(function($routeProvider) {
         when("/followup/:id/:response_id", {templateUrl: "partials/followup.html", controller: "eventsController"}).
         when("/followup2/:id/:response_id", {templateUrl: "partials/followup2.html", controller: "eventsController2"}).
         when("/condition", {templateUrl: "partials/rfi_condition.html", controller: "requestController2"}).
+        when("/duplicate", {templateUrl: "partials/rfi_duplicate.html", controller: "requestController2"}).
         when("/population", {templateUrl: "partials/rfi_population.html", controller: "requestController2"}).
         when("/location", {templateUrl: "partials/rfi_location.html", controller: "requestController2"}).
         when("/location/:id", {templateUrl: "partials/rfi_location.html", controller: "requestController2"}).

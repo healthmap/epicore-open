@@ -30,6 +30,8 @@ if ($formvars->uid && $formvars->fetp_ids && $formvars->population && $formvars-
     $event_info['event_date_details'] = (string)$formvars->location->event_date_details;
     $event_info['title'] = (string)$formvars->title;
     $fetp_ids = $formvars->fetp_ids;
+    $duplicate_rfi_detected = (int)$formvars->duplicate_rfi_detected == 1;
+    $duplicate_rfi_id = (int)$formvars->duplicate_rfi_id;
 
     // related tables
     $event_table['health_condition'] = $formvars->health_condition;
@@ -78,8 +80,9 @@ if ($formvars->uid && $formvars->fetp_ids && $formvars->population && $formvars-
         $moderator = $ei->getEventPerson($event_id); // get event moderator name
         $name = $moderator['name'];
         $email = $moderator['email'];
-        $modfetp = "Moderator: $name sent the following RFI";
+        $modfetp = "Requester: $name sent the following RFI";
         $custom_emailtext_proin = trim(str_replace("[PRO_IN]", $modfetp, $proin_emailtext));
+
 
         // send copy to pro-in for ProMED moderators only
         if ($moderator['organization_id'] == PROMED_ID) {
@@ -92,6 +95,16 @@ if ($formvars->uid && $formvars->fetp_ids && $formvars->population && $formvars-
         $idlist[0] = EPICORE_ID;
         $extra_headers['user_ids'] = $idlist;
         $aws_resp = AWSMail::mailfunc(EMAIL_INFO_EPICORE, $subject, $custom_emailtext_proin, EMAIL_NOREPLY, $extra_headers);
+
+        // send copy to Epicore Admin if duplicate RFI detected
+        if ($duplicate_rfi_detected) {
+            $admin_emailtext = $ei->buildEmailForEvent($event_info, 'rfi_proin2', $custom_vars, 'text');
+            $admin_message = "Possible duplicate of RFI ID: $duplicate_rfi_id.  Requester: $name sent the following RFI.";
+            $custom_emailtext_admin = trim(str_replace("[PRO_IN]", $admin_message, $admin_emailtext));
+            $idlist[0] = EPICORE_ID;
+            $extra_headers['user_ids'] = $idlist;
+            $aws_resp = AWSMail::mailfunc(EMAIL_EPICORE_ADMIN, $subject, $custom_emailtext_admin, EMAIL_NOREPLY, $extra_headers);
+        }
 
         $status = 'success';
     } else {

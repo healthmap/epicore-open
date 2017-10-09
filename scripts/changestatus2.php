@@ -167,6 +167,13 @@ if(is_numeric($event_id) && is_numeric($user_id)) {
         array_push($tolist, EMAIL_INFO_EPICORE);
         array_push($idlist, EPICORE_ID);
 
+        // send copy to mods following the Event
+        $followers = EventInfo::getFollowers($event_id);
+        foreach ($followers as $follower){
+            array_push($tolist, $follower['email']);
+            array_push($idlist, $follower['user_id']);
+        }
+
         if ($status_type == 're-opened')
             $status_type_new = 're-opened_proin2';
         else
@@ -178,7 +185,7 @@ if(is_numeric($event_id) && is_numeric($user_id)) {
             $name = $moderator['name'];
             $email = $moderator['email'];
             //$modfetp = "Moderator: $name ($email) $status_type an RFI";
-            $modfetp = "Moderator: $name $status_type an RFI";
+            $modfetp = "Requester: $name $status_type an RFI";
             $emailtext = trim(str_replace("[EVENT_HISTORY]", $history, $emailtext_event));
             $custom_emailtext_mods = trim(str_replace("[PRO_IN]", $modfetp, $emailtext));
             $extra_headers['user_ids'] = $idlist;

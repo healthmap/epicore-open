@@ -130,12 +130,19 @@ if ($moderator['organization_id'] == PROMED_ID){
 array_push($tolist, EMAIL_INFO_EPICORE);
 array_push($idlist, EPICORE_ID);
 
+// send copy to mods following the Event
+$followers = EventInfo::getFollowers($event_id);
+foreach ($followers as $follower){
+    array_push($tolist, $follower['email']);
+    array_push($idlist, $follower['user_id']);
+}
+
 // send email
 if (!empty($tolist)) {
     $name = $moderator['name'];
     $email = $moderator['email'];
     //$modfetp = "Moderator: $name ($email) sent this followup to an EpiCore RFI";
-    $modfetp = "Moderator: $name sent this followup to an EpiCore RFI";
+    $modfetp = "Requester: $name sent this followup to an EpiCore RFI";
     $proin_emailtext = trim(str_replace("[EVENT_HISTORY]", $history, $followupText_proin));
     $custom_emailtext_proin = trim(str_replace("[PRO_IN]", $modfetp, $proin_emailtext));
     $extra_headers['user_ids'] = $idlist;

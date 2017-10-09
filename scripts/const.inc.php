@@ -17,6 +17,7 @@ define('EPICORE_URL', $conf['epicore_info']['baseurl']);
 define('EMAIL_NOREPLY', $conf['epicore_info']['emailnoreply']);
 define('EMAIL_INFO_EPICORE', $conf['epicore_info']['emailinfo']);
 define('EPICORE_ID', 0);
+define('EMAIL_EPICORE_ADMIN', $conf['epicore_info']['emailadmin']);
 
 // Tephinet
 define('TEPHINET_BASE', $conf['tephinet']['baseurl']);
@@ -562,7 +563,10 @@ $whomap = array("AF" => "Eastern Mediterranean",
     "ZW" => "Africa"
 );
 
-
 define ('WHOMAP', serialize($whomap));
 
+$check_conditions = array("respiratory","gastrointestinal","other_neurological", "fever_rash", "jaundice", "h_fever", "paralysis", "other_neurological",
+                        "fever_unknown", "renal", "respiratory_animal", "neurological_animal", "hemorrhagic_animal", "vesicular_animal",
+                        "reproductive_animal", "gastrointestinal_animal", "multisystemic_animal");
+define('CHECK_CONDITIONS', serialize($check_conditions));
 ?>

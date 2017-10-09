@@ -45,10 +45,123 @@ class EventInfo
         return $event_info;
     }
 
+    // returns duplicate event ids after a given date, with matching country and health conditions
+    // only checks duplicates for Human and Animal population types
+    // returns false if no duplicates found
+    static function checkDuplicate($date, $country, $population_type, $health_condition){
+
+        if ($population_type == 'H' || $population_type = 'A') {
+            $db = getDB();
+            $check_conditions = unserialize(CHECK_CONDITIONS);
+
+            // SQL for matching place ids
+            $match_country = "SELECT place_id FROM place WHERE name LIKE '%$country%' ";
+
+            // SQL for event ids from matching population
+            $match_population = "SELECT event_id FROM population WHERE type = '$population_type'";
+
+            // SQL for health conditions
+            $conditions = array();
+            foreach ($check_conditions as $condition) {
+                if ($health_condition[$condition]) {
+                    $conditions[] = $condition . "=" . $health_condition[$condition];
+                } else {
+                    $conditions[] = $condition . " IS NULL";
+                }
+            }
+            $hc = implode(" AND ", $conditions);
+
+            // get duplicate event ids
+            $event_id = $db->getAll("SELECT e.event_id FROM event e, health_condition hc WHERE e.event_id = hc.event_id AND create_date > ? 
+                                  AND place_id IN ($match_country) AND e.event_id IN ($match_population) AND $hc", array($date));
+
+            // only save Open event ids
+            $eids = array();
+            foreach ($event_id as $eid) {
+                $estatus = $db->getOne("SELECT status FROM event_notes WHERE event_id = ? ORDER BY action_date DESC LIMIT 1", array($eid['event_id']));
+                // if no value for status, it's open
+                $event_status = $estatus ? $estatus : 'O';
+
+                if ($event_status == 'O') {
+                    $eids[] = $eid['event_id'];
+                }
+            }
+
+            if ($eids)
+                return $eids;
+            else
+                return false;
+
+        } else {
+            return false;
+        }
+
+    }
+
+    // Follow an event for a given event id and user id
+    // Returns true if following or false if already following or insert error
+    static function followEvent($event_id, $user_id){
+        $db = getDB();
+
+        // check if following event already
+        $res = $db->getAll("SELECT * FROM event_follow WHERE event_id = ? AND user_id = ?", array($event_id, $user_id));
+        if ($res){
+            return array('status'=>false, 'message' => 'already following event.');
+        } else {
+
+            // follow event
+            $follow_date = date('Y-m-d H:i:s');
+            $active = true;
+            $res = $db->query("INSERT INTO event_follow (event_id, user_id, follow_date, active) VALUES(?,?,?,?)", array($event_id, $user_id, $follow_date, $active));
+
+            // check result is not an error
+            if (PEAR::isError($res)) {
+                //die($res->getMessage());
+                return array('status' => false, 'message' => 'database insert error');
+            } else {
+                $db->commit();
+                return array('status' => true, 'message' => 'following event');
+            }
+        }
+
+    }
+
+    // gets email address(s) of user(s) following an event
+    // returns array of email addresses or false if no followers.
+    static function getFollowers($event_id){
+        $db = getDB();
+        $users = $db->getAll("SELECT hmu_id,u.user_id from event_follow ef, user u  WHERE u.user_id = ef.user_id AND ef.event_id = ? ", array($event_id));
+
+        if ($users) {
+
+            // get email for user from hm database
+            $hmdb = getDB('hm');
+
+            $followers = array();
+            foreach ($users as $user){
+                $hmuid = $user['hmu_id'];
+                $userid = $user['user_id'];
+                $email = $hmdb->getOne("SELECT email FROM hmu WHERE hmu_id = '$hmuid'");
+                if ($email) {
+                    $followers[] = ['email' => $email, 'user_id' =>$userid, 'hmu_id' =>$hmuid];
+                }
+
+            }
+
+            if ($followers){
+                return $followers;
+            } else {
+                return false;
+            }
+
+        } else {
+            return false;
+        }
+    }
+
     function getConditions($type){
         $q = $this->db->getRow("SELECT * from health_condition WHERE event_id = ?", array($this->id));
         if ($q) {
-
 
             $condition = array();
             if ($type == 'H'){
@@ -710,7 +823,7 @@ class EventInfo
             $row['num_responses_content'] = $db->getOne("SELECT count(*) FROM response WHERE event_id = ? AND response_permission > 0 AND  response_permission < 4", array($row['event_id']));
             $row['num_responses_active'] = $db->getOne("SELECT count(*) FROM response WHERE event_id = ? AND response_permission = '4' ", array($row['event_id']));
             $row['num_responses_nocontent'] = $row['num_responses'] - $row['num_responses_content'] - $row['num_responses_active'];
-            $row['num_notrated_responses'] = $db->getOne("SELECT count(*) FROM response WHERE useful IS NULL AND response_permission <>0 and event_id = ?", array($row['event_id']));
+            $row['num_notrated_responses'] = $db->getOne("SELECT count(*) FROM response WHERE useful IS NULL AND response_permission <>0 AND response_permission <>4 and event_id = ?", array($row['event_id']));
             $row['num_notuseful_responses'] = $db->getOne("SELECT count(*) FROM response WHERE useful ='0' and event_id = ?", array($row['event_id']));
             $row['num_useful_responses'] = $db->getOne("SELECT count(*) FROM response WHERE useful ='1' and event_id = ?", array($row['event_id']));
             $row['num_useful_promed_responses'] = $db->getOne("SELECT count(*) FROM response WHERE useful ='2' and event_id = ?", array($row['event_id']));
@@ -808,7 +921,7 @@ class EventInfo
             $status = $db->getOne("SELECT status FROM event_notes WHERE event_id = ? ORDER BY action_date DESC LIMIT 1", array($row['event_id']));
             $status = $status ? $status : 'O'; // if no value for status, it's open
             if ($status == 'C') {
-                $num_notrated_responses += $db->getOne("SELECT count(*) FROM response WHERE useful IS NULL AND response_permission <>0 and event_id = ?", array($row['event_id']));
+                $num_notrated_responses += $db->getOne("SELECT count(*) FROM response WHERE useful IS NULL AND response_permission <>0 AND response_permission <>4 AND event_id = ?", array($row['event_id']));
             }
 
         }

@@ -72,6 +72,13 @@ if(is_numeric($event_id)) {
         array_push($tolist, EMAIL_INFO_EPICORE);
         array_push($idlist, EPICORE_ID);
 
+        // send copy to mods following the Event
+        $followers = EventInfo::getFollowers($event_id);
+        foreach ($followers as $follower){
+            array_push($tolist, $follower['email']);
+            array_push($idlist, $follower['user_id']);
+        }
+
         $extra_headers['user_ids'] = $idlist;
         AWSMail::mailfunc($tolist, $subject, $emailtext, EMAIL_NOREPLY, $extra_headers);
     }
