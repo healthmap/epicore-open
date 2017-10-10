@@ -98,12 +98,13 @@ if ($formvars->uid && $formvars->fetp_ids && $formvars->population && $formvars-
 
         // send copy to Epicore Admin if duplicate RFI detected
         if ($duplicate_rfi_detected) {
-            $admin_emailtext = $ei->buildEmailForEvent($event_info, 'rfi_proin2', $custom_vars, 'text');
+            $subject2 = "EPICORE: DUPLICATE ALERT - RFI #" . $event_id . " : " . $event_info['title'];
+            $admin_emailtext = $ei->buildEmailForEvent($event_info, 'rfi_admin', $custom_vars, 'text');
             $admin_message = "Possible duplicate of RFI ID: $duplicate_rfi_id.  Requester: $name sent the following RFI.";
             $custom_emailtext_admin = trim(str_replace("[PRO_IN]", $admin_message, $admin_emailtext));
             $idlist[0] = EPICORE_ID;
             $extra_headers['user_ids'] = $idlist;
-            $aws_resp = AWSMail::mailfunc(EMAIL_EPICORE_ADMIN, $subject, $custom_emailtext_admin, EMAIL_NOREPLY, $extra_headers);
+            $aws_resp = AWSMail::mailfunc(EMAIL_EPICORE_ADMIN, $subject2, $custom_emailtext_admin, EMAIL_NOREPLY, $extra_headers);
         }
 
         $status = 'success';
