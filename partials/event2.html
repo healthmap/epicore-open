@@ -21,7 +21,7 @@
             <span ng-if="isRequester && (changeStatusText == 'Close') || userInfo.superuser">
                 <a href="#/followup2/{{id}}" class="btn btn-secondary btn-tab">Send follow-up message to all responders</a>
             </span>
-            <span ng-if="isRequester || userInfo.superuser">
+            <span ng-if="isRequester && (changeStatusText == 'Close') || userInfo.superuser">
                 <a href="#/{{changeStatusType}}2/{{id}}" class="btn btn-secondary btn-tab" >{{changeStatusText}} RFI</a>
             </span>
             <span ng-if="userInfo.superuser">
