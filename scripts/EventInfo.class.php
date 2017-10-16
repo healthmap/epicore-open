@@ -1250,7 +1250,7 @@ class EventInfo
             return 'invalid event_id';
         }
 
-        if(!($darr['outcome'] && $darr['phe_description'])){
+        if(!($darr['outcome'])){
             return 'invalid parameters for purpose update';
         }
 

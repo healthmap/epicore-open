@@ -13,8 +13,15 @@ $usefulpromed_rids = $formvars->usefulpromed_rids;
 $notuseful_rids = $formvars->notuseful_rids;
 $phe_title = $formvars->phe_title;
 $phe_outcome = $formvars->phe_outcome;
-$phe_description = $formvars->phe_description;
-$phe_additional = $formvars->phe_additional;
+
+if (($phe_outcome != 'UV') && ($phe_outcome != 'NU')){
+    $phe_description = $formvars->phe_description;
+    $phe_additional = $formvars->phe_additional;
+} else {// outcome is unverified or no update so there is no description
+    $phe_description = '';
+    $phe_additional = '';
+}
+
 
 if(is_numeric($event_id) && is_numeric($user_id)) {
     if ($formvars->thestatus == "Reopen")
@@ -45,10 +52,10 @@ if(is_numeric($event_id) && is_numeric($user_id)) {
             } else {
                 $return_val = 1;
             }
-            if ($pstatus == 1) {
-                // update event title if it's different than the original
+            if (($pstatus == 1)) {
+                // update event title if it's different than the original and the outcome is not unverified or no update
                 $estatus = 1;
-                if ($event_info['title'] != $phe_title) {
+                if (($event_info['title'] != $phe_title) && ($phe_outcome != 'UV') && ($phe_outcome != 'NU')) {
                     $event_table = array();
                     $event_table['event_id'] = $event_id;
                     $event_table['title'] = $phe_title;
