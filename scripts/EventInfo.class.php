@@ -179,7 +179,7 @@ class EventInfo
                 if ($q['paralysis'])
                     $condition[] = "Acute Flaccid paralysis";
                 if ($q['other_neurological'])
-                    $condition[] = "Other neorological";
+                    $condition[] = "Other neurological";
                 if ($q['fever_unknown'])
                     $condition[] = "Fever of uknown origin";
                 if ($q['renal'])

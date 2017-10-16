@@ -639,7 +639,7 @@ controller('requestController2', function($rootScope, $window, $scope, $routePar
             if ($scope.rfiData.health_condition.paralysis)
                 condition.push("Acute Flaccid paralysis");
             if ($scope.rfiData.health_condition.other_neurological)
-                condition.push("Other neorological");
+                condition.push("Other neurological");
             if ($scope.rfiData.health_condition.fever_unknown)
                 condition.push("Fever of uknown origin");
             if ($scope.rfiData.health_condition.renal)
