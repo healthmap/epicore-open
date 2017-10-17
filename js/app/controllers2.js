@@ -544,7 +544,7 @@ controller('requestController2', function($rootScope, $window, $scope, $routePar
         if ($scope.rfiData.purpose.other_category)
             type.push("Other: " + purpose + d7 + " - " + $scope.rfiData.purpose.other);
 
-        return type.toString();
+        return type; //type.toString();
     }
 
     function getLocation() {

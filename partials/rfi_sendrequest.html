@@ -31,28 +31,34 @@
                     <li>Title: {{rfiData.event_title}}</li>
                     <li>Location: {{rfiData.event_location}}</li>
                         <ul>
-                            <li>Available Details: {{rfiData.location.location_details}}</li>
+                            <li>Available Details: <pre style="white-space: pre-wrap; word-wrap: break-word">{{rfiData.location.location_details}}</pre></li>
                         </ul>
                     <li>Date: {{rfiData.location.event_date}}
                         <ul>
-                            <li>Available Details: {{rfiData.location.event_date_details}}</li>
+                            <li>Available Details: <pre style="white-space: pre-wrap; word-wrap: break-word"> {{rfiData.location.event_date_details}}</pre></li>
                         </ul>
                     </li>
                     <li>Affected Population: {{rfiData.event_population}}
                         <ul>
-                            <li>Available Details: {{rfiData.population.description}}</li>
+                            <li>Available Details: <pre style="white-space: pre-wrap; word-wrap: break-word"> {{rfiData.population.description}}</pre></li>
                         </ul>
                     </li>
                     <li>Health Condition: {{rfiData.event_conditions}}
                         <ul>
-                            <li>Health Condition Details: {{rfiData.health_condition.disease_details}}</li>
-                            <li>Other Relevant Public Health Details: {{rfiData.health_condition.ph_details}}</li>
+                            <li>Health Condition Details: <pre style="white-space: pre-wrap; word-wrap: break-word"> {{rfiData.health_condition.disease_details}}</pre></li>
+                            <li>Other Relevant Public Health Details: <pre style="white-space: pre-wrap; word-wrap: break-word"> {{rfiData.health_condition.ph_details}}</pre></li>
                         </ul>
                     </li>
-                    <li>Purpose: {{rfiData.event_purpose}} </li>
+                    <li> Purpose:
+                        <ul>
+                            <li ng-repeat="purpose in rfiData.event_purpose"> {{purpose}} </li>
+                            <li>Personalized Message: <pre style="white-space: pre-wrap; word-wrap: break-word">{{rfiData.additionalText}}</pre> </li>
+                        </ul>
+                    </li>
+
                     <li>Source(s): {{rfiData.event_source}}
                         <ul>
-                            <li>Available Details: {{rfiData.source.details}}</li>
+                            <li>Available Details: <pre style="white-space: pre-wrap; word-wrap: break-word"> {{rfiData.source.details}}</pre></li>
                         </ul>
                     </li>
                 </ul>

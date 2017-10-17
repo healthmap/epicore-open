@@ -296,6 +296,7 @@ class EventInfo
 
             $action = $q['purpose'] == "V" ? "Verification" : "Update";
             $type = array();
+            $type[] = $action;
             if ($q['causal_agent'])
                 $type[] = "PHE Causal Agent";
             if ($q['epidemiology'])
@@ -311,7 +312,8 @@ class EventInfo
             if ($q['other_category'])
                 $type[] = $q['other'];
 
-            return $action . ': ' . implode(",", $type);
+            //return $action . ': ' . implode(",", $type);
+            return $type;
 
         }else {
             return false;

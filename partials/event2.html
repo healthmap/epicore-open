@@ -68,8 +68,9 @@
                                     <li>Other Relevant Public Health Details: <pre style="white-space: pre-wrap; word-wrap: break-word">{{history_item.condition_details}}</pre> </li>
                                 </ul>
                             </li>
-                            <li>Purpose: {{history_item.purpose}}
+                            <li>Purpose:
                                 <ul>
+                                    <li ng-repeat="purpose in history_item.purpose"> {{purpose}} </li>
                                     <li>Personalized Message: <pre style="white-space: pre-wrap; word-wrap: break-word">{{history_item.personalized_text}}</pre> </li>
                                 </ul>
                             </li>
