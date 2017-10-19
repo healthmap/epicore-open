@@ -75,20 +75,18 @@ class EventInfo
             $event_id = $db->getAll("SELECT e.event_id FROM event e, health_condition hc WHERE e.event_id = hc.event_id AND create_date >= ? 
                                   AND place_id IN ($match_country) AND e.event_id IN ($match_population) AND $hc", array($date));
 
-            // only save Open event ids
-            $eids = array();
+            // only save event ids and status
+            $events = array();
             foreach ($event_id as $eid) {
                 $estatus = $db->getOne("SELECT status FROM event_notes WHERE event_id = ? ORDER BY action_date DESC LIMIT 1", array($eid['event_id']));
                 // if no value for status, it's open
                 $event_status = $estatus ? $estatus : 'O';
+                $events[] = array('event_id' => $eid['event_id'], 'status' => $event_status);
 
-                if ($event_status == 'O') {
-                    $eids[] = $eid['event_id'];
-                }
             }
 
-            if ($eids)
-                return $eids;
+            if ($events)
+                return $events;
             else
                 return false;
 

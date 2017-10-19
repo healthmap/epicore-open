@@ -355,9 +355,12 @@ controller('requestController2', function($rootScope, $window, $scope, $routePar
         $http({ url: urlBase + 'scripts/checkDuplicateRFI.php', method: "POST", data: rfi_data
         }).success(function (respdata, status, headers, config) {
 
-            if (respdata['status'] == 'success' && respdata['event_id'] > 0){ // got to duplicate page
+            var dup_event_id = respdata['event_id'];
+            var dup_event_status = respdata['event_status'];
+            if (respdata['status'] == 'success' && dup_event_id > 0){ // got to duplicate page
                 $scope.rfiData.duplicate_rfi = {};
-                $scope.rfiData.duplicate_rfi.rfi_id = respdata['event_id'];
+                $scope.rfiData.duplicate_rfi.rfi_id = dup_event_id;
+                $scope.rfiData.duplicate_rfi.rfi_status = dup_event_status;
                 $location.path('/duplicate');
 
             }else if (respdata['status'] == 'notfound') { // go to purpose page

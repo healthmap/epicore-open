@@ -48,11 +48,14 @@ if ($formvars->population_type && $formvars->health_condition && $country) {
         $conditions[$key] = strip_tags($val);
     }
 
-    // check for duplicate RFI
-    $event_id = EventInfo::checkDuplicate($date, $country, $population_type, $conditions);
+    // check for duplicate RFIs
+    $events = EventInfo::checkDuplicate($date, $country, $population_type, $conditions);
 
-    // get duplicate event info if found
-    if ($event_id[0]) {
+    // get duplicate event info if found, only return the first one
+    if ($events) {
+        $event = $events[0];
+        $eid = $event['event_id'];
+        $estatus = $event['status'];
         $status = 'success';
         $message = 'duplicate RFI found.';
     } else {
@@ -66,6 +69,6 @@ if ($formvars->population_type && $formvars->health_condition && $country) {
 }
 
 // return first event id if found
-print json_encode(array('status' => $status, 'message' => $message, 'event_id' => $event_id[0]));
+print json_encode(array('status' => $status, 'message' => $message, 'event_id' => $eid, 'event_status' => $estatus));
 
 ?>

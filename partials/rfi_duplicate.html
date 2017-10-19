@@ -24,7 +24,7 @@
                         <label class="radio" >
                             <input type="radio" ng-model="rfiData.duplicate_rfi.rfi_same" value="1" ng-required="!rfiData.duplicate_rfi.rfi_same"> Yes, they are the same. <b>I will not send an RFI.</b> </label>
                     </div>
-                    <div class="radio">
+                    <div class="radio" ng-if="rfiData.duplicate_rfi.rfi_status == 'O'">
                         <label class="radio" data-toggle="tooltip" title="Track an RFI means that you will receive all emails and notifications regarding that RFI, as if you were the requester who sent it, but will not be able to follow-up, reply, or close the RFI.">
                             <input type="radio" ng-model="rfiData.duplicate_rfi.rfi_same" value="2" ng-required="!rfiData.duplicate_rfi.rfi_same"> Yes, they are the same. <b>I want to TRACK the existing RFI.
                         </b> </label>
