@@ -101,6 +101,10 @@ class UserInfo
             // get phe additional info
             $event_phe_additional = $this->db->getOne("SELECT phe_additional FROM purpose WHERE event_id = ?", array($row['event_id']));
 
+            // get source
+            $event_source = $this->db->getOne("SELECT source FROM source WHERE event_id = ?", array($row['event_id']));
+            // get source details
+            $event_source_details = $this->db->getOne("SELECT details FROM source WHERE event_id = ?", array($row['event_id']));
 
             // get organization id for the event
             $org_id = $this->db->getOne("SELECT organization_id FROM user WHERE user.user_id = ?", array($row['requester_id']));
@@ -125,7 +129,7 @@ class UserInfo
                 $requests[$row['event_id']]['country'] = $row['country'];
                 $requests[$row['event_id']]['disease'] = $row['disease'];
                 $requests[$row['event_id']]['iso_create_date'] = $row['create_date'];
-                $requests[$row['event_id']]['create_date'] = date('j-M-Y H:i', strtotime($row['create_date']));
+                $requests[$row['event_id']]['create_date'] = date('j-M-Y', strtotime($row['create_date']));
                 $requests[$row['event_id']]['event_date'] = date('j-M-Y', strtotime($row['event_date']));
                 $requests[$row['event_id']]['due_date'] = date('j-M-Y', strtotime("+7 day",strtotime($row['create_date'])));
                 // make send date an array, because there may be multiple
@@ -148,6 +152,8 @@ class UserInfo
                 $requests[$row['event_id']]['outcome'] = $event_outcome;
                 $requests[$row['event_id']]['phe_description'] = $event_phe_description;
                 $requests[$row['event_id']]['phe_additional'] = $event_phe_additional;
+                $requests[$row['event_id']]['source'] = $event_source;
+                $requests[$row['event_id']]['source_details'] = $event_source_details;
 
                 $requests[$row['event_id']]['organization_name'] = $org_name;
 

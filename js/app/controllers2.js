@@ -1048,12 +1048,38 @@ controller('requestController2', function($rootScope, $window, $scope, $routePar
     $scope.showModal = false;
     $scope.modalTitle = "";
     $scope.modalBody = "";
-    $scope.showSummary = function(summary, more_info){
+    $scope.showSummary = function(summary, more_info, event_title, event_source, event_source_details, event_outcome){
+
+        var source = '';
+        if (event_source == 'MR'){
+            source = "Media Report";
+        } else if (event_source == 'OR'){
+            source = "Official Report";
+        }else if (event_source == 'OC'){
+            source = "Other communication";
+        }
+
+        var outcome = 'Pending';
+        if (event_outcome == 'VP'){
+            outcome = 'Verified (positive)';
+        }else if (event_outcome == 'VN'){
+            outcome = 'Verified (negative)';
+        }else if (event_outcome == 'UV'){
+            outcome = 'Unverified';
+        }else if (event_outcome == 'UP'){
+            outcome = 'Updated (positive)';
+        }else if (event_outcome == 'NU'){
+            outcome = 'Updated (negative)';
+        }
+
+
+        var event_info = "Title: " + event_title + "\r\n\r\n" + "Initial source: " + source + ":" + event_source_details + "\r\n\r\n" + "RFI outcome: " + outcome + "\r\n\r\n";
+
         $scope.modalTitle = "Summary";
         if (more_info)
-            $scope.modalBody = summary + "\r\n\r\n" + "Additional Info:\r\n" +more_info;
-        else
-            $scope.modalBody = summary;
+            $scope.modalBody = event_info + "PHE Description:\r\n" + summary + "\r\n\r\n" + "Additional Info:\r\n" +more_info;
+        else if(summary)
+            $scope.modalBody = event_info + "PHE Description:\r\n" + summary;
 
         $scope.showModal = !$scope.showModal;
     };

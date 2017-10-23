@@ -817,6 +817,11 @@ class EventInfo
             // get phe additional info
             $row['phe_additional'] = $db->getOne("SELECT phe_additional FROM purpose WHERE event_id = ?", array($row['event_id']));
 
+            // get source
+            $row['source'] = $db->getOne("SELECT source FROM source WHERE event_id = ?", array($row['event_id']));
+            // get source details
+            $row['source_details'] = $db->getOne("SELECT details FROM source WHERE event_id = ?", array($row['event_id']));
+
 
             // get the number of requests sent for that event
             $row['num_responses'] = $db->getOne("SELECT count(*) FROM response WHERE event_id = ?", array($row['event_id']));
@@ -849,7 +854,7 @@ class EventInfo
             }
             $row['iso_create_date'] = $row['create_date'];
             $row['event_id_int'] = (int)$row['event_id'];
-            $row['create_date'] = date('j-M-Y H:i', strtotime($row['create_date']));
+            $row['create_date'] = date('j-M-Y', strtotime($row['create_date']));
             $row['event_date'] = date('j-M-Y', strtotime($row['event_date']));
 
             //$row['title'] = iconv("UTF-8", "ISO-8859-1//IGNORE", $row['title']);
