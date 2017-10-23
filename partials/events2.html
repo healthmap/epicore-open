@@ -198,12 +198,18 @@
 </div>
 </div>
 </div><!--wrapper-->
+<div ng-include src="'disclaimer.html'"></div>
 <div ng-include src="'footer.html'"></div>
 
 <!-- Modal for summary -->
 <div>
     <modal visible="showModal">
         <pre style="white-space: pre-wrap; word-wrap: break-word">{{modalBody}}</pre>
+        <p>The information included has been verified by EPICORE, a network with a world-wide distribution of public health professionals ensuring a large spectrum of verification activities in proximity to where events are reported.
+            EPICORE members give highest priority to reliable sources of information including direct/indirect documentation about events, official statements and complementary reliable reports obtained at local level. Despite this,
+            EPICORE does not aim to replace any official reporting system and is meant to be a complementary surveillance tool supporting public health actors in their activities.
+            For all these reasons please consider that this information does not represent an official report and contents included should not be qualified as “officially verified”.
+        </p>
     </modal>
 </div>
 <script>
