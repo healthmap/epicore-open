@@ -96,6 +96,12 @@ class UserInfo
             $dbstatus = $dbstatus ? $dbstatus : 'O'; // if no value for status, it's open
             // get event outcome
             $event_outcome = $this->db->getOne("SELECT outcome FROM purpose WHERE event_id = ?", array($row['event_id']));
+            // get phe description
+            $event_phe_description = $this->db->getOne("SELECT phe_description FROM purpose WHERE event_id = ?", array($row['event_id']));
+            // get phe additional info
+            $event_phe_additional = $this->db->getOne("SELECT phe_additional FROM purpose WHERE event_id = ?", array($row['event_id']));
+
+
             // get organization id for the event
             $org_id = $this->db->getOne("SELECT organization_id FROM user WHERE user.user_id = ?", array($row['requester_id']));
             // get organization name
@@ -140,6 +146,9 @@ class UserInfo
                 $requests[$row['event_id']]['response_dates'] = array_unique($response_dates);
                 $requests[$row['event_id']]['response_use'] = $response_use;
                 $requests[$row['event_id']]['outcome'] = $event_outcome;
+                $requests[$row['event_id']]['phe_description'] = $event_phe_description;
+                $requests[$row['event_id']]['phe_additional'] = $event_phe_additional;
+
                 $requests[$row['event_id']]['organization_name'] = $org_name;
 
                 if (in_array('1',$response_permission) || in_array('2',$response_permission) || in_array('3',$response_permission)) {
