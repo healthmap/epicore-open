@@ -70,7 +70,14 @@ class UserInfo
         if ($users){
             $db2 = getDB('hm');
             $mods = $db2->getAll("SELECT hmu_id, email, name FROM hmu WHERE hmu_id in ($hmuid_list)");
+            $i=0;
             if ($mods) {
+                foreach ($mods as $mod){
+                    $hmu_id = $mod['hmu_id'];
+                    $user_id = $db1->getOne("SELECT user_id FROM user WHERE hmu_id = $hmu_id");
+                    $mod['user_id'] = $user_id;
+                    $mods[$i++] = $mod;
+                }
                 return $mods;
             }
             else
