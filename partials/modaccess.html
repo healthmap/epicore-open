@@ -31,6 +31,7 @@
                         <option value="2">Tephinet</option>
                         <option value="3">Skoll</option>
                         <option value="4">Promed</option>
+                        <option value="5">EpiCore</option>
                     </select>
                 </div>
 
@@ -58,12 +59,14 @@
                             <th style="width:30px;"><a href="" ng-click="predicate = 'name'; reverse=!reverse">Name</a></th>
                             <th style="width:30px;"><a href="" ng-click="predicate = 'email'; reverse=!reverse">email </a></th>
                             <th style="width:30px;"><a href="" ng-click="predicate = 'user_id'; reverse=!reverse">User id </a></th>
+                            <th style="width:30px;"><a href="" ng-click="predicate = 'org_name'; reverse=!reverse">Organization </a></th>
                         </tr>
                         <tr ng-repeat="mod in mods | filter:query | orderBy:predicate:reverse" >
                             <td>{{$index+1}}</td>
                             <td>{{mod.name}}</td>
                             <td>{{mod.email}}</td>
                             <td>{{mod.user_id}}</td>
+                            <td>{{mod.org_name}}</td>
                         </tr>
                     </table>
                 </div>

@@ -76,6 +76,9 @@ class UserInfo
                     $hmu_id = $mod['hmu_id'];
                     $user_id = $db1->getOne("SELECT user_id FROM user WHERE hmu_id = $hmu_id");
                     $mod['user_id'] = $user_id;
+                    $user_org_id = $db1->getOne("SELECT organization_id FROM user WHERE hmu_id = $hmu_id");
+                    $mod['org_name'] = $db1->getOne("SELECT name FROM organization WHERE organization_id = ?", array($user_org_id));
+
                     $mods[$i++] = $mod;
                 }
                 return $mods;
