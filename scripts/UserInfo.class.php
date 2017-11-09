@@ -34,7 +34,7 @@ class UserInfo
             $hmu_id = $db1->getOne("SELECT hmu_id FROM hmu WHERE email = ?", array($email));
             if ($hmu_id) {
                 $db2 = getDB();
-                $max_org_id = 4;
+                $max_org_id = 50;
                 if ($org_id >=1 and $org_id <= $max_org_id) {
                     $hid = $db2->getOne("SELECT hmu_id FROM user WHERE hmu_id ='$hmu_id' ");
                     if ($hid != $hmu_id) {
