@@ -101,7 +101,7 @@
                 <br><br>
                 <!-- END REPLY FORM -->
 
-                <div ng-include="'partials/messagehistory2.html'" ng-init="closerfi=''"></div><br>
+                <div ng-include="'partials/messagehistory2.html?v={{cbsuffix}}'" ng-init="closerfi=''"></div><br>
 
                 <div class="form-group"  ng-if="(changeStatusText != 'Close') && isAuthorizedToFollowup">
                     <button ng-click="changeRequestStatus(formData, 'Update', changeStatusForm.$valid)" ng-disabled="submitDisabled" type="submit" class="submit btn btn-primary">Update Response Ratings</button>

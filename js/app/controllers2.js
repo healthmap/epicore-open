@@ -808,6 +808,8 @@ controller('requestController2', function($rootScope, $window, $scope, $routePar
 
     $scope.eventType = "MR";
 
+    $scope.cbsuffix = Date.now();
+
     eventAPIservice2.getEvents($scope.id).success(function (response) {
         $scope.isOrganization = $scope.userInfo.fetp_id > 0 ? false : true;
         // if RFI requester is the logged in user or of same org, they get different action items
