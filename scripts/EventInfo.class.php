@@ -1742,7 +1742,7 @@ class EventInfo
     // get ALL event stats for all types: yours, yourorg, and other for the csv
     static function getEventStats2($uid, $status) {
         // get event info
-        $events = EventInfo::getAllEvents($uid, $status);
+        $events = EventInfo::getAllEvents($uid, $status, V2START_DATE);
 
         // get stats for each type
         $yours = EventInfo::getStats2($events['yours'], $status);
