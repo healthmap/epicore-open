@@ -24,8 +24,8 @@ function saveEventStatsToCSV() {
     require_once 'EventInfo.class.php';
     $filename = '../data/rfistats.csv';
     $uid = '91'; // Jeff, uid doesn't matter, any uid will work
-    $close_stats = EventInfo::getEventStats($uid, 'C');
-    $open_stats = EventInfo::getEventStats($uid, 'O');
+    $close_stats = EventInfo::getEventStats2($uid, 'C');
+    $open_stats = EventInfo::getEventStats2($uid, 'O');
     $stats = array_merge($close_stats, $open_stats);
     saveToCSV($stats, $filename);
 

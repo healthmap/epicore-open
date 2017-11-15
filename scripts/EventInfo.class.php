@@ -33,6 +33,7 @@ class EventInfo
         $population = $this->getPopulation();
         $event_info['population'] = $population['population'];
         $event_info['population_details'] = $population['details'];
+        $event_info['population_type'] = $population['type'];
         $condition = $this->getConditions($population['type']);
         $event_info['condition'] = $condition['condition'];
         $event_info['condition_details'] = $condition['details'];
@@ -158,6 +159,7 @@ class EventInfo
     }
 
     function getConditions($type){
+
         $q = $this->db->getRow("SELECT * from health_condition WHERE event_id = ?", array($this->id));
         if ($q) {
 
@@ -190,28 +192,28 @@ class EventInfo
             } else if ($type == 'A'){
 
                 if ($q['respiratory_animal']) {
-                    $condition[] = $q["Respiratory"];
+                    $condition[] = "Respiratory";
                 }
                 if ($q['neurological_animal']) {
-                    $condition[] = $q["Neurological"];
+                    $condition[] = "Neurological";
                 }
                 if ($q['hemorrhagic_animal']) {
-                    $condition[] = $q["Haemorrhagic"];
+                    $condition[] = "Haemorrhagic";
                 }
                 if ($q['vesicular_animal']) {
-                    $condition[] = $q["Vesicular"];
+                    $condition[] = "Vesicular";
                 }
                 if ($q['reproductive_animal']) {
-                    $condition[] = $q["Reproductive"];
+                    $condition[] = "Reproductive";
                 }
                 if ($q['gastrointestinal_animal']) {
-                    $condition[] = $q["Gastrointestinal"];
+                    $condition[] = "Gastrointestinal";
                 }
                 if ($q['multisystemic_animal']) {
-                    $condition[] = $q["Multisystemic"];
+                    $condition[] = "Multisystemic";
                 }
                 if ($q['unknown_animal']) {
-                    $condition[] = $q["Unknown"];
+                    $condition[] = "Unknown";
                 }
                 if ($q['other_animal']) {
                     $condition[] = $q['other_animal_description'];
@@ -228,6 +230,7 @@ class EventInfo
     }
 
     function getPopulation(){
+
         $q = $this->db->getRow("SELECT * from population WHERE event_id = ?", array($this->id));
         if ($q) {
 
@@ -289,6 +292,7 @@ class EventInfo
     }
 
     function getPurpose(){
+
         $q = $this->db->getRow("SELECT * from purpose WHERE event_id = ?", array($this->id));
         if ($q) {
 
@@ -319,6 +323,7 @@ class EventInfo
     }
 
     function getSource(){
+
         $q = $this->db->getRow("SELECT * from source WHERE event_id = ?", array($this->id));
 
         if ($q) {
@@ -763,6 +768,39 @@ class EventInfo
         return $response_info;
     }
 
+    static function getResponsesforEvent($event_id){
+
+        $db = getDB();
+        $responses = $db->getAll("SELECT * FROM response WHERE event_id = ?", array($event_id));
+
+        $response_info = array();
+        foreach ($responses as $response){
+            $response_info[] = $response['response'] . ', Action: ' . EventInfo::getResponseAction($response);
+        }
+
+        return $response_info;
+    }
+
+    static function getResponseAction($response){
+
+        $response_action = array();
+        if ($response['direct_observation'])
+            $response_action[] = 'Direct Observation';
+        if ($response['indirect_report'])
+            $response_action[] = 'indirect_report';
+        if ($response['media_report'])
+            $response_action[] = 'media_report';
+        if ($response['official_report'])
+            $response_action[] = 'official_report';
+        if ($response['professional_opinion'])
+            $response_action[] = 'professional_opinion';
+        if ($response['other_source'])
+            $response_action[] = 'Other source: ' . $response['other_source_description'];
+
+        return implode(',', $response_action);
+
+    }
+
     static function getAllEvents($uid = '', $status = '', $sdate = '')
     {
         if(!is_numeric($uid)) {
@@ -774,7 +812,7 @@ class EventInfo
         $oid = $db->getOne("SELECT organization_id FROM user WHERE user_id = ?", array($uid));
         $status = $status ? $status : 'O'; // if status is not passed in, get open events
         // join on the event_fetp table b/c if there is no row in there, the request was never sent (may have been started, but didn't get sent
-        $q = $db->query("SELECT DISTINCT(event.event_id), event.*, place.name AS location FROM place, event, event_fetp 
+        $q = $db->query("SELECT DISTINCT(event.event_id), event.*, place.name AS location, place.location_details FROM place, event, event_fetp 
                           WHERE event.place_id = place.place_id AND event.event_id = event_fetp.event_id AND event.create_date > ?
                           ORDER BY event.create_date DESC", array($start_date));
 
@@ -822,6 +860,25 @@ class EventInfo
             // get source details
             $row['source_details'] = $db->getOne("SELECT details FROM source WHERE event_id = ?", array($row['event_id']));
 
+
+            // get population, health conditions, source and purpose
+            $ei = new EventInfo($row['event_id']);
+            $event_info = $ei->getInfo();
+            $row['affected_population'] = $event_info['population'];
+            $row['affected_population_details'] = $event_info['population_details'];
+            $row['human_health_condition'] = $event_info['population_type'] == 'H' ? $event_info['condition']: '';
+            $row['animal_health_condition'] = $event_info['population_type'] == 'A' ? $event_info['condition']: '';
+            $row['health_condition_details'] = $event_info['hc_details'];
+            $row['other_relevant_ph_details'] = $event_info['condition_details'];
+            $purpose = $event_info['purpose'];
+            $row['verfication_or_update'] = $purpose[0];
+            $row['rfi_purpose'] = implode(',',$purpose);
+            $row['personalized_message'] = $event_info['personalized_text'];
+            $row['rfi_source'] = $event_info['source'];
+            $row['rfi_source_details'] = $event_info['source_details'];
+
+            // get responses
+            $row['event_responses'] = EventInfo::getResponsesforEvent($row['event_id']);
 
             // get the number of requests sent for that event
             $row['num_responses'] = $db->getOne("SELECT count(*) FROM response WHERE event_id = ?", array($row['event_id']));
@@ -1682,6 +1739,20 @@ class EventInfo
         return $stats;
     }
 
+    // get ALL event stats for all types: yours, yourorg, and other for the csv
+    static function getEventStats2($uid, $status) {
+        // get event info
+        $events = EventInfo::getAllEvents($uid, $status);
+
+        // get stats for each type
+        $yours = EventInfo::getStats2($events['yours'], $status);
+        $yourorg = EventInfo::getStats2($events['yourorg'], $status);
+        $other = EventInfo::getStats2($events['other'], $status);
+        $stats = array_merge($yours, $yourorg, $other);
+
+        return $stats;
+    }
+
     // get event stats for each type formatted for the csv
     static function getStats($events, $status){
 
@@ -1741,6 +1812,116 @@ class EventInfo
             $followups = $event['num_followups'];
             $first_request = end($followups);
             $event_stats['num_members'] = $first_request['num'];    //number of members on initial RFI
+
+            // push event stats
+            array_push($stats, $event_stats);
+        }
+
+        return $stats;
+    }
+
+    // get event stats for each type formatted for the csv
+    static function getStats2($events, $status){
+
+        $event_stats = array();
+        $stats = array();
+
+        foreach ($events as $event) {
+
+            // basic stats
+            $event_stats['status'] = $status;
+            $event_stats['notes'] = $event['notes'];
+            $event_stats['person'] = $event['person'];
+            $event_stats['organization_id'] = $event['organization_id'];
+            $event_stats['requester_id'] = $event['requester_id'];
+            $event_stats['country'] = $event['country'];
+            $event_stats['event_id'] = $event['event_id'];
+            $event_stats['title'] = $event['title'];
+            $event_stats['create_date'] = $event['create_date'];
+            $event_stats['event_date'] = $event['event_date'];  // new
+            $event_stats['location'] = $event['location'];
+            $event_stats['location_details'] = $event['location_details'];  // new
+            $event_stats['affected_population'] = $event['affected_population'];  // new
+            $event_stats['affected_population_details'] = $event['affected_population_details'];  // new
+            $event_stats['human_health_condition'] = $event['human_health_condition'];  // new
+            $event_stats['animal_health_condition'] = $event['animal_health_condition'];  // new
+            $event_stats['health_condition_details'] = $event['health_condition_details'];  // new
+            $event_stats['other_relavant_public_health_details'] = $event['other_relevant_ph_details'];  // new
+            $event_stats['verification_or_update'] = $event['verfication_or_update'];  // new
+            $event_stats['rfi_purpose'] = $event['rfi_purpose'];  // new
+            $event_stats['personalized_message'] = $event['personalized_message'];  // new
+            $event_stats['rfi_source'] = $event['rfi_source'];  // new
+            $event_stats['rfi_source_details'] = $event['rfi_source_details'];  // new
+
+
+            if ($event['outcome'] == 'VP')
+                $event_stats['outcome'] = 'Verified (+)';
+            else if ($event['outcome'] == 'VN')
+                $event_stats['outcome'] = 'Verified (-)';
+            else if ($event['outcome'] == 'UV')
+                $event_stats['outcome'] = 'Unverified';
+            else if ($event['outcome'] == 'UP')
+                $event_stats['outcome'] = 'Updated (+)';
+            else if ($event['outcome'] == 'NU')
+                $event_stats['outcome'] = 'Updated (-)';
+            else
+                $event_stats['outcome'] = 'Pending';  // new
+
+            //$event_stats['description'] = $event['description'];
+            //$event_stats['personalized_text'] = $event['personalized_text'];
+            $event_stats['num_responses'] = $event['num_responses'];
+            $event_stats['num_responses_content'] = $event['num_responses_content'];
+            $event_stats['num_responses_nocontent'] = $event['num_responses_nocontent'];
+            $event_stats['num_notuseful_responses'] = $event['num_notuseful_responses'];
+            $event_stats['num_useful_responses'] = $event['num_useful_responses'];
+            $event_stats['num_useful_promed_responses'] = $event['num_useful_promed_responses'];
+            $event_stats['member_ids'] = '"' . $event["member_ids"] . '"';
+            $event_stats['first_response_date'] = $event["first_response_date"];
+
+            // not useful responses
+            $notuseful = $event['notuseful_responses'];
+            $event_stats['notuseful_ids'] = '';
+            foreach ($notuseful as $nu) {
+                $event_stats['notuseful_ids'] .= ($event_stats['notuseful_ids'] == '') ? $nu['responder_id'] : ',' . $nu['responder_id'];
+            }
+            $event_stats['notuseful_ids'] = '"' . $event_stats['notuseful_ids'] . '"';
+
+            // useful responses
+            $useful = $event['useful_responses'];
+            $event_stats['useful_ids'] = '';
+            foreach ($useful as $u) {
+                $event_stats['useful_ids'] .= ($event_stats['useful_ids'] == '') ? $u['responder_id'] : ',' . $u['responder_id'];
+            }
+            $event_stats['useful_ids'] = '"'. $event_stats['useful_ids'] . '"';
+
+
+            $event_stats['phe_summary_description'] = $event['phe_description'];  // new
+            $event_stats['phe_summary_additional_information'] = $event['phe_additional'];  // new
+
+
+            // useful promed responses
+            $promed = $event['useful_promed_responses'];
+            $event_stats['promed_ids'] = '';
+            foreach ($promed as $p) {
+                $event_stats['promed_ids'] .= ($event_stats['promed_ids'] == '') ? $p['responder_id'] : ',' . $p['responder_id'];
+            }
+            $event_stats['promed_ids'] = '"' . $event_stats['promed_ids'] . '"';
+
+            // followups
+            $followups = $event['num_followups'];
+            $first_request = end($followups);
+            $event_stats['num_members'] = $first_request['num'];    //number of members on initial RFI
+
+            // get event responses
+            $event_responses = $event['event_responses'];
+            $max_responses = 100;
+            for ($i= 0; $i < $max_responses; $i++){
+                $response_n = 'response_'. (string)($i+1);
+                if ($event_responses && $event_responses[$i])
+                    $event_stats[$response_n] = $event_responses[$i];
+                else
+                    $event_stats[$response_n] = '';
+            }
 
             // push event stats
             array_push($stats, $event_stats);
