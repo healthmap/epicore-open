@@ -210,7 +210,8 @@ controller('requestController2', function($rootScope, $window, $scope, $routePar
     // datepicker options
     $("#datepicker").datepicker({
         format: "dd-MM-yyyy",
-        endDate : 'now'
+        endDate : 'now',
+        startDate : '-1y'
     });
 
     $scope.time_error_message = '';
