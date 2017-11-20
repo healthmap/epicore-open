@@ -645,7 +645,7 @@ controller('requestController2', function($rootScope, $window, $scope, $routePar
             if ($scope.rfiData.health_condition.other_neurological)
                 condition.push("Other neurological");
             if ($scope.rfiData.health_condition.fever_unknown)
-                condition.push("Fever of uknown origin");
+                condition.push("Fever of unknown origin");
             if ($scope.rfiData.health_condition.renal)
                 condition.push("Renal failure");
             if ($scope.rfiData.health_condition.unknown)

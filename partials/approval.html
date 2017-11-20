@@ -34,7 +34,7 @@
 
             <p>
                 Set the member status by clicking on one of the status buttons on the right side of the table below.  The member will be notified by email when their status is set to Accepted, Denied, or Approved.<br>
-                Inactive members are shown be default.  You can show all members by clicking on the the "Show All Members" buttun, but it will take a little while to display all members so please be patient.
+                Inactive members are shown be default.  You can show all members by clicking on the the "Show All Members" button, but it will take a little while to display all members so please be patient.
             </p>
 
             <p>
@@ -81,7 +81,7 @@
                 </tr>
                 <tr ng-repeat="applicant in applicants | filter:query | orderBy:predicate:reverse" >
                     <td>{{$index+1}}</td>
-                    <td>{{applicant.apply_date}}</td>
+                    <td>{{applicant.apply_date | date:'dd-MMM-yyyy'}}</td>
                     <td>{{applicant.approve_date}}</td>
                     <td>{{applicant.accept_date}}</td>
                     <td>{{applicant.maillist_id}}</td>

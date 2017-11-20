@@ -181,7 +181,7 @@ class EventInfo
                 if ($q['other_neurological'])
                     $condition[] = "Other neurological";
                 if ($q['fever_unknown'])
-                    $condition[] = "Fever of uknown origin";
+                    $condition[] = "Fever of unknown origin";
                 if ($q['renal'])
                     $condition[] = "Renal failure";
                 if ($q['unknown'])
