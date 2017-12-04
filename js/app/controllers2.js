@@ -1079,6 +1079,7 @@ controller('requestController2', function($rootScope, $window, $scope, $routePar
         var event_info = "Title: " + event_title + "\r\n\r\n" + "Initial source: " + source + ":" + event_source_details + "\r\n\r\n" + "RFI outcome: " + outcome + "\r\n\r\n";
 
         $scope.modalTitle = "Summary";
+        $scope.modalBody = '';
         if (more_info)
             $scope.modalBody = event_info + "PHE Description:\r\n" + summary + "\r\n\r\n" + "Additional Info:\r\n" +more_info;
         else if(summary)
