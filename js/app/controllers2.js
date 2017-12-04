@@ -474,7 +474,7 @@ controller('requestController2', function($rootScope, $window, $scope, $routePar
                 $scope.rfiData.event_location = getLocation();
                 $scope.rfiData.event_population = getPopulation();
                 $scope.rfiData.event_conditions = getConditions();
-                $scope.rfiData.event_title = $scope.rfiData.event_population + ', ' + $scope.rfiData.event_conditions + ' - ' + $scope.rfiData.event_location + $scope.rfiData.location.event_date;
+                $scope.rfiData.event_title = $scope.rfiData.event_population + ', ' + $scope.rfiData.event_conditions + ' - ' + $scope.rfiData.event_location + ', ' + $scope.rfiData.location.event_date;
                 $scope.rfiData.event_purpose = getPurpose();
                 $scope.rfiData.event_source = getSource();
                 $location.path('/sendrequest');
