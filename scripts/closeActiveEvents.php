@@ -10,8 +10,8 @@
 
 require_once "EventInfo.class.php";
 
-// set date to 7 days ago
-$date = date("Y-m-d", strtotime("-7 days"));
+// set date to 5 days ago
+$date = date("Y-m-d", strtotime("-5 days"));
 
 // get mods with inactive events for closing
 $mods = EventInfo::getModsWithInactiveEvents2($date);
