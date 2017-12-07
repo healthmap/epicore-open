@@ -889,6 +889,15 @@ controller('requestController2', function($rootScope, $window, $scope, $routePar
             }
         }
 
+        // check for active search
+        $scope.activeSearch = false;
+        for (var h in $scope.eventsList.history) {
+            if (($scope.eventsList.history[h].permission == '4') && ($scope.eventsList.history[h].type == 'Member Response')
+                && ($scope.eventsList.history[h].fetp_id == $scope.userInfo.fetp_id)){
+                $scope.activeSearch = true;
+            }
+        }
+
         // check unclosed RFIs with no activity in the last two weeks
         Date.prototype.yyyymmdd = function() {
             var yyyy = this.getFullYear().toString();
