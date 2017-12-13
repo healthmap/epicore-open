@@ -3,7 +3,7 @@
  * User: jeffandre
  * Date: 8/31/2017
  *
- * Sends notification emails to Requester's with Events past due closing that have responses with content.
+ * Sends notification emails to Requester's with Events past due closing (2 weeks) that have responses with content.
  *
  * Run once a week.
  *

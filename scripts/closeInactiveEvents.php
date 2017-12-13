@@ -3,9 +3,9 @@
  * User: jeffandre
  * Date: 8/31/17
  *
- * Closes Events with no responses or no contribution, and no active searches after a set date.
+ * Closes Events with no responses or no contribution, and no active searches after 5 days.
  *
- * Sends warning email to responders for events with active searches (no content) after a set date.
+ * Sends warning email to responders for events with active searches (no content) after 5 days.
  *
  * Run every day.
  */
@@ -18,7 +18,7 @@ $date = date("Y-m-d", strtotime("-5 days"));
 // get mods with inactive events for closing
 $mods = EventInfo::getModsWithInactiveEvents2($date);
 
-// close inactive events and send warning eamil to responders with active searches
+// close inactive events and send warning email to responders with active searches
 foreach ($mods as $mod){
 
     foreach ($mod['events'] as $event) {

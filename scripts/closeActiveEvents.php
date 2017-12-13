@@ -3,15 +3,15 @@
  * User: jeffandre
  * Date: 8/31/17
  *
- * Closes Events that have only Active search responses after a set date.
+ * Closes Events that have only Active search responses after 7 days.
  *
  * Run every day.
  */
 
 require_once "EventInfo.class.php";
 
-// set date to 5 days ago
-$date = date("Y-m-d", strtotime("-5 days"));
+// set date to 7 days ago
+$date = date("Y-m-d", strtotime("-7 days"));
 
 // get mods with inactive events for closing
 $mods = EventInfo::getModsWithInactiveEvents2($date);
