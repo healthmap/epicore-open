@@ -7,7 +7,7 @@
  *
  * Sends warning email to responders for events with active searches (no content) after 5 days.
  *
- * Run every day.
+ * Runs every day.
  */
 
 require_once "EventInfo.class.php";
@@ -45,6 +45,11 @@ foreach ($mods as $mod){
             else {
                 echo date("Y-m-d H:i:s") . ': Error auto-closing event id: ' . $event['event_id'] . "\n";
             }
+            // change outcome to Unverified
+            $outcome = array();
+            $outcome['outcome'] = 'UV'; // Unverified
+            $outcome['event_id'] = $event['event_id'];
+            EventInfo::updateOutcome($outcome);
 
         } else if ($event['responses'] == 0 && $event['active_search'] > 0) {  // send warning email for only active search responses and no content
 
