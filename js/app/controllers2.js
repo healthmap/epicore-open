@@ -811,27 +811,48 @@ controller('requestController2', function($rootScope, $window, $scope, $routePar
 
     $scope.cbsuffix = Date.now();
 
+    $scope.publicEvents = function (event) {
+        return event.outcome === 'VP' ||
+                event.outcome === 'VN' ||
+                event.outcome === 'UP';
+    };
+
     eventAPIservice2.getEvents($scope.id).success(function (response) {
-        $scope.isOrganization = $scope.userInfo.fetp_id > 0 ? false : true;
-        // if RFI requester is the logged in user or of same org, they get different action items
-        if(response.EventsList != null) {
-            $scope.isAuthorizedToFollowup = $scope.userInfo.organization_id == response.EventsList.org_requester_id ? true : false;
-            $scope.changeStatusText = response.EventsList.estatus == "C" ? 'Re open' : 'Close';
-            $scope.changeStatusType = response.EventsList.estatus == "C" ? 'reopen' : 'close';
-            $scope.isAuthorizedFETP = false;
-            $scope.isRequester = response.EventsList.requester_id == $scope.userInfo.uid ? true:false;
-            if (response.EventsList.fetp_ids != null && response.EventsList.fetp_ids.indexOf($scope.userInfo.fetp_id) != -1) {
-                $scope.isAuthorizedFETP = true;
-            }
-            if (response.EventsList.fetp_ids){
-                $scope.num_fetp = response.EventsList.fetp_ids.length;
-            }
 
+        if (typeof($scope.userinfo) != "undefined") {
+            $scope.isOrganization = $scope.userInfo.fetp_id > 0 ? false : true;
+            // if RFI requester is the logged in user or of same org, they get different action items
+            if (response.EventsList != null) {
+                $scope.isAuthorizedToFollowup = $scope.userInfo.organization_id == response.EventsList.org_requester_id ? true : false;
+                $scope.changeStatusText = response.EventsList.estatus == "C" ? 'Re open' : 'Close';
+                $scope.changeStatusType = response.EventsList.estatus == "C" ? 'reopen' : 'close';
+                $scope.isAuthorizedFETP = false;
+                $scope.isRequester = response.EventsList.requester_id == $scope.userInfo.uid ? true : false;
+                if (response.EventsList.fetp_ids != null && response.EventsList.fetp_ids.indexOf($scope.userInfo.fetp_id) != -1) {
+                    $scope.isAuthorizedFETP = true;
+                }
+                if (response.EventsList.fetp_ids) {
+                    $scope.num_fetp = response.EventsList.fetp_ids.length;
+                }
+
+                $scope.eventsList = response.EventsList;
+                $scope.filePreview = response.EventsList.filePreview ? response.EventsList.filePreview : '';
+
+
+                if ($scope.eventsList.purpose) {
+                    $scope.outcome = {};
+                    $scope.outcome.phe_purpose = 'N';
+                    if ($scope.eventsList.purpose.indexOf("Verification") >= 0) {
+                        $scope.outcome.phe_purpose = 'V';
+                    } else if ($scope.eventsList.purpose.indexOf("Update") >= 0) {
+                        $scope.outcome.phe_purpose = 'U';
+                    }
+                    $scope.summary = {};
+                    $scope.summary.phe_title = $scope.eventsList.title;
+                }
+            }
+        } else {
             $scope.eventsList = response.EventsList;
-            $scope.filePreview = response.EventsList.filePreview ? response.EventsList.filePreview : '';
-
-
-
             if($scope.eventsList.purpose) {
                 $scope.outcome = {};
                 $scope.outcome.phe_purpose = 'N';
@@ -844,8 +865,6 @@ controller('requestController2', function($rootScope, $window, $scope, $routePar
                 $scope.summary.phe_title = $scope.eventsList.title;
             }
         }
-
-        //console.log($scope.eventsList);
 
         // today's date
         var today = new Date();

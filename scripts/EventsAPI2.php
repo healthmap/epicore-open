@@ -44,25 +44,32 @@ if(isset($rvars['event_id']) && is_numeric($rvars['event_id'])) {
         $indexed_array['fetp_ids'] = $ei->getFETPRecipients();
     }
 } else { // get all events
-    // status can be "closed" or "open"
-    require_once "UserInfo.class.php";
-    $ui = new UserInfo($rvars['uid'], $rvars['fetp_id']);
-    $status = isset($rvars['detail']) && $rvars['detail'] == "closed" ? 'C' : 'O';
-    $num_notrated_repsonses = 0;
-    if($rvars['fetp_id']) {
-        // array values will lop off the array key b/c angular reorders the object
-        $indexed_array = array_values($ui->getFETPRequests($status,'',V2START_DATE));
+    if ($rvars['public']){
+        // get closed events for public
+        $uid = '0'; // no user id value
+        $indexed_array = EventInfo::getEventsCache($uid, 'C', 'database', V2START_DATE);
+
     } else {
-        if ($status == 'C'){
-            //$indexed_array = EventInfo::getEventsCache($rvars['uid'], 'C', 'cache');
-            // use database for now until cache update is working: need to update cache when status changes.
-            // Status of an event can change from the dashboard or from the auto-close cron job
-            $indexed_array = EventInfo::getEventsCache($rvars['uid'], 'C', 'database', V2START_DATE);
+        // status can be "closed" or "open"
+        require_once "UserInfo.class.php";
+        $ui = new UserInfo($rvars['uid'], $rvars['fetp_id']);
+        $status = isset($rvars['detail']) && $rvars['detail'] == "closed" ? 'C' : 'O';
+        $num_notrated_repsonses = 0;
+        if ($rvars['fetp_id']) {
+            // array values will lop off the array key b/c angular reorders the object
+            $indexed_array = array_values($ui->getFETPRequests($status, '', V2START_DATE));
         } else {
-            $indexed_array = EventInfo::getAllEvents($rvars['uid'], $status, V2START_DATE);
-        }
-        if ($status == 'O') {  // check for unrated respsonses
-            $num_notrated_repsonses = EventInfo::getNumNotRatedResponses($rvars['uid'], V2START_DATE);
+            if ($status == 'C') {
+                //$indexed_array = EventInfo::getEventsCache($rvars['uid'], 'C', 'cache');
+                // use database for now until cache update is working: need to update cache when status changes.
+                // Status of an event can change from the dashboard or from the auto-close cron job
+                $indexed_array = EventInfo::getEventsCache($rvars['uid'], 'C', 'database', V2START_DATE);
+            } else {
+                $indexed_array = EventInfo::getAllEvents($rvars['uid'], $status, V2START_DATE);
+            }
+            if ($status == 'O') {  // check for unrated respsonses
+                $num_notrated_repsonses = EventInfo::getNumNotRatedResponses($rvars['uid'], V2START_DATE);
+            }
         }
     }
 }
