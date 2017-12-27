@@ -17,6 +17,7 @@
                 <li ng-class="{ active: isActive('/location')}" class="text-uppercase" ng-show="{{userInfo.isOrganization}} && epicore_version == '2'"><a href="#/location" ng-class="getClass('/request')">Send RFI</a></li>
                 <li ng-class="{ active: isActive('/fetp')}" class="text-uppercase" ng-if="userInfo.active=='Y'"><a ng-show="userInfo.fetp_id" ng-href="#/application/{{userInfo.fetp_id}}/edit/fetp" >Edit Profile</a></li>
                 <li ng-class="{ active: isActive('/trainingvideos')}" class="text-uppercase" ng-if="userInfo.active=='Y' && userInfo.fetp_id"><a ng-href="#/trainingvideos">Training</a></li>
+                <li ng-class="{ active: isActive('/resources')}" class="text-uppercase" ng-if="userInfo.active=='Y' && userInfo.fetp_id"><a ng-href="#/resources">Resources</a></li>
                 <li class="text-uppercase"><a ng-href="#/home" ng-click="userLogout()">Log out</a></li>
             </ul>
         </div><!-- /.navbar-collapse -->

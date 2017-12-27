@@ -92,6 +92,7 @@ app.config(function($routeProvider) {
         when("/resetpassword", {templateUrl: "partials/resetpassword.html?cb=" + cacheBustSuffix}).
         when("/home", {templateUrl: "partials/home.html?cb=" + cacheBustSuffix}).
         when("/trainingvideos", {templateUrl: "partials/trainingvideos.html?cb=" + cacheBustSuffix, controller: "userController"}).
+        when("/resources", {templateUrl: "partials/resources.html?cb=" + cacheBustSuffix, controller: "userController"}).
         when("/training", {templateUrl: "partials/test.html?cb=" + cacheBustSuffix, controller: "testController"}).
         when("/certificate", {templateUrl: "partials/certificate.html?cb=" + cacheBustSuffix, controller: "certController"}).
         when("/modaccess", {templateUrl: "partials/modaccess.html?cb=" + cacheBustSuffix, controller: "modaccessController"}).
