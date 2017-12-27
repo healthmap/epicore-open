@@ -474,7 +474,7 @@ controller('requestController2', function($rootScope, $window, $scope, $routePar
                 $scope.rfiData.event_location = getLocation();
                 $scope.rfiData.event_population = getPopulation();
                 $scope.rfiData.event_conditions = getConditions();
-                $scope.rfiData.event_title = $scope.rfiData.event_population + ', ' + $scope.rfiData.event_conditions + ' - ' + $scope.rfiData.event_location + $scope.rfiData.location.event_date;
+                $scope.rfiData.event_title = $scope.rfiData.event_population + ', ' + $scope.rfiData.event_conditions + ' - ' + $scope.rfiData.event_location + ', ' + $scope.rfiData.location.event_date;
                 $scope.rfiData.event_purpose = getPurpose();
                 $scope.rfiData.event_source = getSource();
                 $location.path('/sendrequest');
@@ -554,9 +554,9 @@ controller('requestController2', function($rootScope, $window, $scope, $routePar
     function getLocation() {
         var subnational = '';
         if ($scope.rfiData.default_city){
-            subnational = ' (' + $scope.rfiData.default_city + ',' +$scope.rfiData.default_state + '), ';
+            subnational = ' (' + $scope.rfiData.default_city + ',' +$scope.rfiData.default_state + ')';
         } else if ($scope.rfiData.default_state) {
-            subnational = ' (' + $scope.rfiData.default_state + '), ';
+            subnational = ' (' + $scope.rfiData.default_state + ')';
         }
         return $scope.rfiData.default_country + subnational;
     }
@@ -811,27 +811,48 @@ controller('requestController2', function($rootScope, $window, $scope, $routePar
 
     $scope.cbsuffix = Date.now();
 
+    $scope.publicEvents = function (event) {
+        return event.outcome === 'VP' ||
+                event.outcome === 'VN' ||
+                event.outcome === 'UP';
+    };
+
     eventAPIservice2.getEvents($scope.id).success(function (response) {
-        $scope.isOrganization = $scope.userInfo.fetp_id > 0 ? false : true;
-        // if RFI requester is the logged in user or of same org, they get different action items
-        if(response.EventsList != null) {
-            $scope.isAuthorizedToFollowup = $scope.userInfo.organization_id == response.EventsList.org_requester_id ? true : false;
-            $scope.changeStatusText = response.EventsList.estatus == "C" ? 'Re open' : 'Close';
-            $scope.changeStatusType = response.EventsList.estatus == "C" ? 'reopen' : 'close';
-            $scope.isAuthorizedFETP = false;
-            $scope.isRequester = response.EventsList.requester_id == $scope.userInfo.uid ? true:false;
-            if (response.EventsList.fetp_ids != null && response.EventsList.fetp_ids.indexOf($scope.userInfo.fetp_id) != -1) {
-                $scope.isAuthorizedFETP = true;
-            }
-            if (response.EventsList.fetp_ids){
-                $scope.num_fetp = response.EventsList.fetp_ids.length;
-            }
 
+        if (typeof($scope.userinfo) != "undefined") {
+            $scope.isOrganization = $scope.userInfo.fetp_id > 0 ? false : true;
+            // if RFI requester is the logged in user or of same org, they get different action items
+            if (response.EventsList != null) {
+                $scope.isAuthorizedToFollowup = $scope.userInfo.organization_id == response.EventsList.org_requester_id ? true : false;
+                $scope.changeStatusText = response.EventsList.estatus == "C" ? 'Re open' : 'Close';
+                $scope.changeStatusType = response.EventsList.estatus == "C" ? 'reopen' : 'close';
+                $scope.isAuthorizedFETP = false;
+                $scope.isRequester = response.EventsList.requester_id == $scope.userInfo.uid ? true : false;
+                if (response.EventsList.fetp_ids != null && response.EventsList.fetp_ids.indexOf($scope.userInfo.fetp_id) != -1) {
+                    $scope.isAuthorizedFETP = true;
+                }
+                if (response.EventsList.fetp_ids) {
+                    $scope.num_fetp = response.EventsList.fetp_ids.length;
+                }
+
+                $scope.eventsList = response.EventsList;
+                $scope.filePreview = response.EventsList.filePreview ? response.EventsList.filePreview : '';
+
+
+                if ($scope.eventsList.purpose) {
+                    $scope.outcome = {};
+                    $scope.outcome.phe_purpose = 'N';
+                    if ($scope.eventsList.purpose.indexOf("Verification") >= 0) {
+                        $scope.outcome.phe_purpose = 'V';
+                    } else if ($scope.eventsList.purpose.indexOf("Update") >= 0) {
+                        $scope.outcome.phe_purpose = 'U';
+                    }
+                    $scope.summary = {};
+                    $scope.summary.phe_title = $scope.eventsList.title;
+                }
+            }
+        } else {
             $scope.eventsList = response.EventsList;
-            $scope.filePreview = response.EventsList.filePreview ? response.EventsList.filePreview : '';
-
-
-
             if($scope.eventsList.purpose) {
                 $scope.outcome = {};
                 $scope.outcome.phe_purpose = 'N';
@@ -844,8 +865,6 @@ controller('requestController2', function($rootScope, $window, $scope, $routePar
                 $scope.summary.phe_title = $scope.eventsList.title;
             }
         }
-
-        //console.log($scope.eventsList);
 
         // today's date
         var today = new Date();
@@ -886,6 +905,15 @@ controller('requestController2', function($rootScope, $window, $scope, $routePar
             if (($scope.eventsList.history[h].permission !== '0') && ($scope.eventsList.history[h].type == 'Member Response')
                 && ($scope.userInfo.uid)){
                 $scope.validResponses++;
+            }
+        }
+
+        // check for active search
+        $scope.activeSearch = false;
+        for (var h in $scope.eventsList.history) {
+            if (($scope.eventsList.history[h].permission == '4') && ($scope.eventsList.history[h].type == 'Member Response')
+                && ($scope.eventsList.history[h].fetp_id == $scope.userInfo.fetp_id)){
+                $scope.activeSearch = true;
             }
         }
 
@@ -1079,6 +1107,7 @@ controller('requestController2', function($rootScope, $window, $scope, $routePar
         var event_info = "Title: " + event_title + "\r\n\r\n" + "Initial source: " + source + ":" + event_source_details + "\r\n\r\n" + "RFI outcome: " + outcome + "\r\n\r\n";
 
         $scope.modalTitle = "Summary";
+        $scope.modalBody = '';
         if (more_info)
             $scope.modalBody = event_info + "PHE Description:\r\n" + summary + "\r\n\r\n" + "Additional Info:\r\n" +more_info;
         else if(summary)

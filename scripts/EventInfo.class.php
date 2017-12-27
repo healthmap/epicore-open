@@ -1337,6 +1337,42 @@ class EventInfo
         }
     }
 
+    // updates outcome, returns true if updated or error message.
+    static function updateOutcome($data_arr)
+    {
+        // sanitize the input
+        foreach($data_arr as $key => $val) {
+            $darr[$key] = strip_tags($val);
+        }
+        if(!is_numeric($darr['event_id'])) {
+            return 'invalid event_id';
+        }
+
+        if(!($darr['outcome'])){
+            return 'invalid parameters for outcome update';
+        }
+
+        $db = getDB();
+        $eid = $db->getOne("SELECT event_id FROM purpose WHERE event_id = ? ", array($darr['event_id']));
+        if ($eid) {
+
+            // update the event table
+            $q = $db->query("UPDATE purpose SET outcome = ? WHERE event_id = ?",
+                array($darr['outcome'], $darr['event_id']));
+
+            // check that result is not an error
+            if (PEAR::isError($q)) {
+                //die($res->getMessage());
+                return 'failed update outcome query';
+            } else {
+                $db->commit();
+            }
+            return 1;
+        } else {
+            return 'event id not found.';
+        }
+    }
+
     static function insertFollowup($data_arr)
     {
         $db = getDB();

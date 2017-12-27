@@ -3,7 +3,9 @@ angular.module('EpicoreApp.services', [])
         $rootScope.$on("$routeChangeStart", function (event, next, current) {
             var requesturl = $location.path();
             var urlarr = requesturl.split("/");
-            var nonauthpages = new Array('fetp', 'about', 'terms', 'mod', 'application', 'application_confirm', 'login', 'setpassword', 'resetpassword','who','how','educator','provider','professional','researcher', 'certificate');
+            var nonauthpages = new Array('fetp', 'about', 'terms', 'mod', 'application', 'application_confirm', 'login',
+                'setpassword', 'resetpassword','who','how','educator','provider','professional','researcher', 'certificate', 'events_public');
+
             // if user is not authenticated, make them go to homepage if on an auth-only page
             if(!authService.isAuthenticated() && nonauthpages.indexOf(urlarr[1]) == -1) {
                 if(urlarr[1] == "home") {
@@ -13,6 +15,7 @@ angular.module('EpicoreApp.services', [])
                     $location.path('/home').search({redir: requesturl});
                 }
             }
+
             // if user is authenticated and on homepage or fetp login page, go to events listing, or redirect location
             var redirloc = urlarr[1] == "fetp" && typeof(urlarr[3]) != "undefined" ? '/events/' + urlarr[3] : '/events';
             if (epicoreVersion == '2') {
@@ -57,11 +60,21 @@ angular.module('EpicoreApp.services', [])
         var eventAPI = {};
         eventAPI.getEvents = function(event_id) {
             var qs = event_id ? '&event_id='+event_id : '';
-            if(typeof($rootScope.userinfo['uid']) == "undefined") {
+            /*if(typeof($rootScope.userinfo['uid']) == "undefined") {
+                qs += "&fetp_id="+$rootScope.userinfo['fetp_id'];
+            } else {
+                qs += "&uid="+$rootScope.userinfo['uid'];
+            }*/
+
+            if(typeof($rootScope.userinfo) == "undefined") {
+               // get events for public view
+                qs +="&public=1"
+            } else if(typeof($rootScope.userinfo['uid']) == "undefined") {
                 qs += "&fetp_id="+$rootScope.userinfo['fetp_id'];
             } else {
                 qs += "&uid="+$rootScope.userinfo['uid'];
             }
+
             var requesturl = $location.path();
             var urlarr = requesturl.split("/");
             qs += "&from="+urlarr[1]; // responses, followup, events

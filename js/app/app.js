@@ -39,6 +39,7 @@ app.config(function($routeProvider) {
   $routeProvider.
         when("/events", {templateUrl: "partials/events.html?cb=" + cacheBustSuffix, controller: "eventsController"}).
         when("/events2", {templateUrl: "partials/events2.html?cb=" + cacheBustSuffix, controller: "eventsController2"}).
+        when("/events_public", {templateUrl: "partials/events_public.html?cb=" + cacheBustSuffix, controller: "eventsController2"}).
         when("/map", {templateUrl: "partials/map.html?cb=" + cacheBustSuffix, controller: "mapController"}).
         when("/events/closed", {templateUrl: "partials/events.html?cb=" + cacheBustSuffix, controller: "eventsController"}).
         when("/events2/closed", {templateUrl: "partials/events2.html?cb=" + cacheBustSuffix, controller: "eventsController2"}).
