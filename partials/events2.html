@@ -77,7 +77,7 @@
                                 <span ng-if="event.outcome == 'UV'">Unverified</span>
                                 <span ng-if="event.outcome == 'UP'">Updated (+)</span>
                                 <span ng-if="event.outcome == 'NU'">Updated (-)</span>
-                                <a href="" ng-click="showSummary(event.phe_description, event.phe_additional, event.title, event.source, event.source_details, event.outcome)" ng-show="event.outcome">Summary</a>
+                                <a href="" ng-click="showSummary(event.phe_description, event.phe_additional, event.title, event.source, event.source_details, event.outcome)" ng-show="event.outcome && event.phe_description">Summary</a>
                                 <span ng-if="!event.outcome">Pending</span>
                             </td>
                         </tr>
@@ -110,7 +110,7 @@
                                 <span ng-if="event.outcome == 'UV'">Unverified</span>
                                 <span ng-if="event.outcome == 'UP'">Updated (+)</span>
                                 <span ng-if="event.outcome == 'NU'">Updated (-)</span>
-                                <a href="" ng-click="showSummary(event.phe_description, event.phe_additional, event.title, event.source, event.source_details, event.outcome)" ng-show="event.outcome">Summary</a>
+                                <a href="" ng-click="showSummary(event.phe_description, event.phe_additional, event.title, event.source, event.source_details, event.outcome)" ng-show="event.outcome && event.phe_description">Summary</a>
                                 <span ng-if="!event.outcome">Pending</span>
                             </td>
                         </tr>
