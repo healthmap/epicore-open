@@ -24,10 +24,16 @@
                 <span ng-if="onOpen">* You have received responses after closing one or more RFIs that are still unrated. Please go to the "CLOSED EVENTS" tab to locate and rate these responses.</span>
                 <span ng-if="!onOpen">* Please rate the unrated responses in the RFI(s) highlighted below.</span>
             </p>
+
             <div class="form-group" ng-show="isOrganization">
                 <label class="radio-inline"> <input type="radio" ng-model="eventType" value="MR" ng-click="getEvents();"> My RFIs</label>
                 <label class="radio-inline"> <input type="radio" ng-model="eventType" value="MO" ng-click="getEvents();"> My Organization</label>
                 <label class="radio-inline"> <input type="radio" ng-model="eventType" value="AO" ng-click="getEvents();"> All Organizations</label>
+            </div>
+
+            <div class="form-group" ng-show="!isOrganization">
+                <label class="radio-inline"> <input type="radio" ng-model="dashboardType" value="MR" ng-click="getEvents2('MR');"> My RFIs</label>
+                <label class="radio-inline"> <input type="radio" ng-model="dashboardType" value="PR" ng-click="getEvents2('PR');"> Public Dashboard RFIs</label>
             </div>
             <p><span class="search-wrapper"><i class="fa fa-search"></i> <input ng-model="query"></span></p>
 
@@ -152,7 +158,7 @@
             </div>
 
             <!-- view for FETPs -->
-            <div ng-show="!isOrganization" ng-init="predicate = 'iso_create_date'; reverse=reverse">
+            <div ng-show="!isOrganization && (dashboardType == 'MR')" ng-init="predicate = 'iso_create_date'; reverse=reverse">
                 <table class='small table table-hover table-bordered'>
                     <tbody>
                         <tr>
@@ -192,6 +198,34 @@
                     </tbody>
                 </table>
             </div>
+
+            <div ng-show="!isOrganization && (dashboardType == 'PR')" ng-init="predicate = 'iso_create_date'; reverse=!reverse">
+                <table class='small table table-hover table-bordered'>
+                    <tbody>
+                    <tr>
+                        <th width="50px" ng-click="predicate = 'event_id_int'; reverse=!reverse">ID <i class="fa fa-sort"></i></th>
+                        <th ng-click="predicate = 'title'; reverse=!reverse">Title <i class="fa fa-sort"></i></th>
+                        <th width="110px" ng-click="predicate = 'iso_create_date'; reverse=!reverse">RFI Date <i class="fa fa-sort"></i></th>
+                        <th width="110px" ng-click="predicate = 'country'; reverse=!reverse">Location <i class="fa fa-sort"></i></th>
+                        <th width="50px"><span data-toggle="tooltip" title="information about the final outcome of the verification process">Outcome</span></th>
+                    </tr>
+                    <tr ng-repeat="pevent in eventsListPublic['all'] | filter:publicEvents | orderBy:predicate:reverse" >
+                        <td>{{pevent.event_id_int}}</td>
+                        <td>{{pevent.title}}</td>
+                        <td>{{pevent.create_date}}</td>
+                        <td>{{pevent.country}}</td>
+                        <td>
+                            <span ng-if="pevent.outcome == 'VP'">Verified (+)</span>
+                            <span ng-if="pevent.outcome == 'VN'">Verified (-)</span>
+                            <span ng-if="pevent.outcome == 'UP'">Updated (+)</span>
+                            <a href="" ng-click="showSummary(pevent.phe_description, pevent.phe_additional, pevent.title, pevent.source, pevent.source_details, pevent.outcome)" ng-show="pevent.outcome && pevent.phe_description">Summary</a>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+
+
             <span ng-show="isRouteLoading">
                 <i class="fa fa-spinner fa-spin"></i> Please wait...
             </span>

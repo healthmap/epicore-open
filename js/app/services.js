@@ -66,7 +66,7 @@ angular.module('EpicoreApp.services', [])
                 qs += "&uid="+$rootScope.userinfo['uid'];
             }*/
 
-            if(typeof($rootScope.userinfo) == "undefined") {
+            if((typeof($rootScope.userinfo) == "undefined") || $rootScope.dashboardType == 'PR') {
                // get events for public view
                 qs +="&public=1"
             } else if(typeof($rootScope.userinfo['uid']) == "undefined") {

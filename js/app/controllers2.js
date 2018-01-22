@@ -790,7 +790,7 @@ controller('requestController2', function($rootScope, $window, $scope, $routePar
     };
 
     /* Requester (moderator) & Responder (member) dashboard controller */
-}).controller('eventsController2', function($scope, $routeParams, $cookieStore, $location, $http, eventAPIservice2, urlBase, epicoreMode, epicoreVersion) {
+}).controller('eventsController2', function($scope, $rootScope, $routeParams, $cookieStore, $location, $http, eventAPIservice2, urlBase, epicoreMode, epicoreVersion) {
 
     $scope.mobile = (epicoreMode == 'mobile') ? true: false;
     $scope.epicore_version = epicoreVersion;
@@ -809,12 +809,39 @@ controller('requestController2', function($rootScope, $window, $scope, $routePar
 
     $scope.eventType = "MR";
 
+    $rootScope.dashboardType = "MR";
+
     $scope.cbsuffix = Date.now();
 
     $scope.publicEvents = function (event) {
         return event.outcome === 'VP' ||
                 event.outcome === 'VN' ||
                 event.outcome === 'UP';
+    };
+
+    // get events for public dashboard for Responders view
+    $scope.getEvents2 = function (dbtype) {
+        $scope.isRouteLoading = false;
+        $rootScope.dashboardType = dbtype;
+        if (dbtype == "PR" && !$scope.eventsListPublic) {
+            $scope.isRouteLoading = true;
+            eventAPIservice2.getEvents($scope.id).success(function (response) {
+                $scope.isRouteLoading = false;
+                $scope.eventsListPublic = response.EventsList;
+                if ($scope.eventsListPublic.purpose) {
+                    $scope.outcomePublic = {};
+                    $scope.outcomePublic.phe_purpose = 'N';
+                    if ($scope.eventsListPublic.purpose.indexOf("Verification") >= 0) {
+                        $scope.outcomePublic.phe_purpose = 'V';
+                    } else if ($scope.eventsListPublic.purpose.indexOf("Update") >= 0) {
+                        $scope.outcomePublic.phe_purpose = 'U';
+                    }
+                    $scope.summaryPublic = {};
+                    $scope.summaryPublic.phe_title = $scope.eventsListPublic.title;
+                }
+            });
+        }
+
     };
 
     eventAPIservice2.getEvents($scope.id).success(function (response) {
@@ -851,7 +878,7 @@ controller('requestController2', function($rootScope, $window, $scope, $routePar
                     $scope.summary.phe_title = $scope.eventsList.title;
                 }
             }
-        } else {
+        } else if (typeof($scope.userinfo) != "undefined") {
             $scope.eventsList = response.EventsList;
             if($scope.eventsList.purpose) {
                 $scope.outcome = {};
