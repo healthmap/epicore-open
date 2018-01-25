@@ -12,7 +12,8 @@
             <ul class="nav navbar-nav">
                 <li class="text-uppercase" ng-show="{{userInfo.isPromed}} && epicore_version != '2'"><a href="http://promedmail.org/dashboard" target="_blank"><img src="img/promed.png"> ProMED Dashboard <i class="fa fa-arrow-circle-right"></i></a>&nbsp;&nbsp;</li>
                 <li ng-class="{ active: isActive('/events')}" class="text-uppercase" ng-if="(userInfo.active=='Y') && epicore_version !='2'"><a href="#/events" ng-class="getClass('/events')">Dashboard</a></li>
-                <li ng-class="{ active: isActive('/events')}" class="text-uppercase" ng-if="(userInfo.active=='Y') && epicore_version == '2'"><a href="#/events2" ng-class="getClass('/events')">Dashboard</a></li>
+                <li ng-class="{ active: isActive('/events')}" class="text-uppercase" ng-if="(userInfo.active=='Y') && epicore_version == '2'"><a href="#/events2" ng-class="getClass('/events')" ng-click="getEvents2('MR');">Dashboard</a></li>
+                <li ng-class="{ active: isActive('/events_public')}" class="text-uppercase" ng-if="userInfo.active=='Y' && userInfo.fetp_id"><a href="#/events2" ng-click="getEvents2('PR');" >Public RFI Dashboard</a></li>
                 <li ng-class="{ active: isActive('/request')}" class="text-uppercase" ng-show="{{userInfo.isOrganization}} && epicore_version != '2'"><a href="#/request" ng-class="getClass('/request')">Send RFI</a></li>
                 <li ng-class="{ active: isActive('/location')}" class="text-uppercase" ng-show="{{userInfo.isOrganization}} && epicore_version == '2'"><a href="#/location" ng-class="getClass('/request')">Send RFI</a></li>
                 <li ng-class="{ active: isActive('/fetp')}" class="text-uppercase" ng-if="userInfo.active=='Y'"><a ng-show="userInfo.fetp_id" ng-href="#/application/{{userInfo.fetp_id}}/edit/fetp" >Edit Profile</a></li>

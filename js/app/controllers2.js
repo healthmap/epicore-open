@@ -821,6 +821,7 @@ controller('requestController2', function($rootScope, $window, $scope, $routePar
 
     // get events for public dashboard for Responders view
     $scope.getEvents2 = function (dbtype) {
+
         $scope.isRouteLoading = false;
         $rootScope.dashboardType = dbtype;
         if (dbtype == "PR" && !$scope.eventsListPublic) {
@@ -878,7 +879,7 @@ controller('requestController2', function($rootScope, $window, $scope, $routePar
                     $scope.summary.phe_title = $scope.eventsList.title;
                 }
             }
-        } else if (typeof($scope.userinfo) != "undefined") {
+        } else if (typeof($scope.userinfo) == "undefined") {
             $scope.eventsList = response.EventsList;
             if($scope.eventsList.purpose) {
                 $scope.outcome = {};
