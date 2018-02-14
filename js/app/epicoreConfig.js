@@ -19,4 +19,4 @@ epicore_config.vers = '2';
 epicore_config.app_mode = 'web';
 
 // Push notifications Sender Id for Android devices
-epicore_config.android_senderId = "808458117906";
+epicore_config.android_senderId = "67299923213";
