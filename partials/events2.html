@@ -83,7 +83,7 @@
                                 <span ng-if="event.outcome == 'UV'">Unverified</span>
                                 <span ng-if="event.outcome == 'UP'">Updated (+)</span>
                                 <span ng-if="event.outcome == 'NU'">Updated (-)</span>
-                                <a href="" ng-click="showSummary(event.phe_description, event.phe_additional, event.title, event.source, event.source_details, event.outcome)" ng-show="event.outcome && event.phe_description">Summary</a>
+                                <a href="" ng-click="showSummary(event.phe_description, event.phe_additional, event.title, event.source, event.source_details, event.outcome, event.action_date)" ng-show="event.outcome && event.phe_description">Summary</a>
                                 <span ng-if="!event.outcome">Pending</span>
                             </td>
                         </tr>
@@ -116,7 +116,7 @@
                                 <span ng-if="event.outcome == 'UV'">Unverified</span>
                                 <span ng-if="event.outcome == 'UP'">Updated (+)</span>
                                 <span ng-if="event.outcome == 'NU'">Updated (-)</span>
-                                <a href="" ng-click="showSummary(event.phe_description, event.phe_additional, event.title, event.source, event.source_details, event.outcome)" ng-show="event.outcome && event.phe_description">Summary</a>
+                                <a href="" ng-click="showSummary(event.phe_description, event.phe_additional, event.title, event.source, event.source_details, event.outcome, event.action_date)" ng-show="event.outcome && event.phe_description">Summary</a>
                                 <span ng-if="!event.outcome">Pending</span>
                             </td>
                         </tr>
@@ -149,7 +149,7 @@
                                 <span ng-if="event.outcome == 'UV'">Unverified</span>
                                 <span ng-if="event.outcome == 'UP'">Updated (+)</span>
                                 <span ng-if="event.outcome == 'NU'">Updated (-)</span>
-                                <a href="" ng-click="showSummary(event.phe_description, event.phe_additional, event.title, event.source, event.source_details, event.outcome)" ng-show="event.outcome && event.phe_description">Summary</a>
+                                <a href="" ng-click="showSummary(event.phe_description, event.phe_additional, event.title, event.source, event.source_details, event.outcome, event.action_date)" ng-show="event.outcome && event.phe_description">Summary</a>
                                 <span ng-if="!event.outcome">Pending</span>
                             </td>
                         </tr>
@@ -191,7 +191,7 @@
                                 <span ng-if="event.outcome == 'UV'">Unverified</span>
                                 <span ng-if="event.outcome == 'UP'">Updated (+)</span>
                                 <span ng-if="event.outcome == 'NU'">Updated (-)</span>
-                                <a href="" ng-click="showSummary(event.phe_description, event.phe_additional, event.title, event.source, event.source_details, event.outcome)" ng-show="event.outcome">Summary</a>
+                                <a href="" ng-click="showSummary(event.phe_description, event.phe_additional, event.title, event.source, event.source_details, event.outcome, event.action_date)" ng-show="event.outcome">Summary</a>
                                 <span ng-if="!event.outcome">Pending</span>
                             </td>
                         </tr>
@@ -219,7 +219,7 @@
                             <span ng-if="pevent.outcome == 'VP'">Verified (+)</span>
                             <span ng-if="pevent.outcome == 'VN'">Verified (-)</span>
                             <span ng-if="pevent.outcome == 'UP'">Updated (+)</span>
-                            <a href="" ng-click="showSummary(pevent.phe_description, pevent.phe_additional, pevent.title, pevent.source, pevent.source_details, pevent.outcome)" ng-show="pevent.outcome && pevent.phe_description">Summary</a>
+                            <a href="" ng-click="showSummary(pevent.phe_description, pevent.phe_additional, pevent.title, pevent.source, pevent.source_details, pevent.outcome, pevent.action_date)" ng-show="pevent.outcome && pevent.phe_description">Summary</a>
                         </td>
                     </tr>
                     </tbody>

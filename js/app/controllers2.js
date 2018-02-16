@@ -1107,7 +1107,7 @@ controller('requestController2', function($rootScope, $window, $scope, $routePar
     $scope.showModal = false;
     $scope.modalTitle = "";
     $scope.modalBody = "";
-    $scope.showSummary = function(summary, more_info, event_title, event_source, event_source_details, event_outcome){
+    $scope.showSummary = function(summary, more_info, event_title, event_source, event_source_details, event_outcome, event_action_date){
 
         var source = '';
         if (event_source == 'MR'){
@@ -1132,14 +1132,14 @@ controller('requestController2', function($rootScope, $window, $scope, $routePar
         }
 
 
-        var event_info = "Title: " + event_title + "\r\n\r\n" + "Initial source: " + source + ":" + event_source_details + "\r\n\r\n" + "RFI outcome: " + outcome + "\r\n\r\n";
+        var event_info = "Title: " + event_title + "\r\n\r\n" + "Initial Source: " + source + ":" + event_source_details + "\r\n\r\n" + "RFI Outcome: " + outcome + "\r\n\r\n";
 
         $scope.modalTitle = "Summary";
         $scope.modalBody = '';
         if (more_info)
-            $scope.modalBody = event_info + "PHE Description:\r\n" + summary + "\r\n\r\n" + "Additional Info:\r\n" +more_info;
+            $scope.modalBody = event_info + "RFI Closure Date: " + event_action_date + "\r\n\r\n" + "PHE Description:\r\n" + summary + "\r\n\r\n" + "Additional Info:\r\n" +more_info;
         else if(summary)
-            $scope.modalBody = event_info + "PHE Description:\r\n" + summary;
+            $scope.modalBody = event_info + "RFI Closure Date: " + event_action_date + "\r\n\r\n" + "PHE Description:\r\n" + summary;
 
         $scope.showModal = !$scope.showModal;
     };
