@@ -21,7 +21,7 @@
 
                 <div class="form-group">
                     <h4>Event Location</h4>
-                    <input type="text" class="form-control" ng-model="rfiData.location.location" name="location" id="searchTextField" placeholder="" value="" required>
+                    <input type="text" class="form-control" ng-model="rfiData.location.location" ng-focus="rfiData.location.location = ''; rfiData.location.latlon=''" name="location" id="searchTextField" placeholder="" value="" required>
                     <input type="hidden" name="latlon" ng-model="rfiData.location.latlon" id="default_location" value="{{rfiData.location.latlon}}">
                 <!--    <input type="hidden" name="default_city" ng-model="rfiData.default_city" id="default_city" value="{{rfiData.default_city}}">
                     <input type="hidden" name="default_state" ng-model="rfiData.default_state" id="default_state" value="{{rfiData.default_state}}">
