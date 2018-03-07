@@ -1,7 +1,10 @@
 angular.module('EpicoreApp.controllers', []).
 
 /* User - includes signup, Reset password, Login & Logout */
-controller('userController', function($rootScope, $routeParams, $scope, $route, $cookies, $cookieStore, $location, $http, $window, urlBase , epicoreMode, $localStorage, epicoreCountries, epicoreVersion) {
+controller('userController', function($rootScope, $routeParams, $scope, $route, $cookies, $cookieStore, $location, $http, $window, urlBase , epicoreMode, $localStorage, epicoreCountries, epicoreVersion, $cordovaTouchID) {
+
+
+
 
     $scope.mobile = (epicoreMode == 'mobile') ? true: false;
     $scope.epicore_version = epicoreVersion;
@@ -131,6 +134,47 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
             }
         }
     };
+
+    clearPassword = function (){
+      $scope.formData = {};
+      $scope.formData.username = "";
+      $scope.formData.password = "";
+      $localStorage.username = "";
+      $localStorage.password = "";
+    }
+    // Touch id login for iOS
+    if ($scope.mobile && (typeof($localStorage.mobile_platform) != 'undefined') && ($localStorage.mobile_platform == 'iOS')
+        && ($location.path() == '/login') && !$rootScope.error_message){
+        $scope.autologin = true;
+      // check touch id support of iOS
+      $cordovaTouchID.checkSupport().then(function() {
+        // success, TouchID supported
+        // iOS touch id authentication
+        $cordovaTouchID.authenticate("Use touch id to login or cancel to login with password.").then(function() {
+            // success
+            // username and password must be set first time to use touch id
+            if ((typeof($scope.formData.username) !='undefined') && (typeof($scope.formData.password) !='undefined')
+                && $scope.formData.username && $scope.formData.password){
+              $scope.userLogin($scope.formData);
+            } else {
+              clearPassword();
+              alert('Please enter Epicore email (username) and password to use touch id')
+              $scope.autologin = false;
+            }
+          }, function () {
+            //clearPassword();
+            alert('Please enter email (username) and passord to login.');// cancel touch id authentication
+            $scope.autologin = false;
+        });
+
+      }, function (error) {
+        $scope.autologin = false;
+        alert('Touch id not supported or you have not enabled touch id on your device.');
+        //alert(error); // TouchID not supported
+      });
+    } else {
+      $scope.autologin = false;
+    }
 
     /* log in */
     $scope.userLogin = function(formData) {
