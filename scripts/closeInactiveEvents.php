@@ -30,7 +30,7 @@ foreach ($mods as $mod){
             echo date("Y-m-d H:i:s") . ': Sent email to ' .$mod['email']. ' for auto-closed event id: ' . $event['event_id'] . "\n";
 
             // send email to mod
-            sendMail($mod['email'], $mod['name'], "Epicore RFI has been closed", 'warning2', $mod['user_id'], $event['title'], $event['date'], $event['event_id']);
+            sendMail($mod['email'], $mod['name'], "Epicore RFI " . $event['event_id'] . " has been closed", 'warning2', $mod['user_id'], $event['title'], $event['date'], $event['event_id']);
             // get event
             $ei = new EventInfo($event['event_id']);
             $event_info = $ei->getInfo();
@@ -63,7 +63,7 @@ foreach ($mods as $mod){
                 echo date("Y-m-d H:i:s") . ': Sent email to ' .$responder['email']. ' for Active Search Warning, event id: ' . $event['event_id'] . "\n";
 
                 // send email
-                sendMail($responder['email'], '', "Epicore RFI Active Search Reminder", 'active_search_warning', $responder['responder_id'], $event['title'], '', '');
+                sendMail($responder['email'], '', "Epicore RFI " . $event['event_id'] . " Active Search Reminder", 'active_search_warning', $responder['responder_id'], $event['title'], '', '');
             }
 
         }

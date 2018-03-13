@@ -29,7 +29,7 @@ foreach ($mods as $mod){
 
 
             // send email to mod
-            sendMail($mod['email'], $mod['name'], "Epicore RFI has been closed", 'warning2', $mod['user_id'], $event['title'], $event['date'], $event['event_id']);
+            sendMail($mod['email'], $mod['name'], "Epicore RFI " . $event['event_id'] . " has been closed", 'warning2', $mod['user_id'], $event['title'], $event['date'], $event['event_id']);
             // get event
             $ei = new EventInfo($event['event_id']);
             $event_info = $ei->getInfo();

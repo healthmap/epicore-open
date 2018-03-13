@@ -128,7 +128,7 @@ function sendMail($email, $name, $subject, $status, $user_id, $event_title = '',
     $emailtext = str_replace("[EVENT_ID]", $event_id, $emailtext);
     if ($link)
         $emailtext = str_replace("[LINK]", $link, $emailtext);
-    $aws_resp = AWSMail::mailfunc($email, $subject, $emailtext, EMAIL_INFO_EPICORE, $extra_headers);
+    $aws_resp = AWSMail::mailfunc($email, $subject, $emailtext, EMAIL_NOREPLY, $extra_headers);
 
     return true;
 }

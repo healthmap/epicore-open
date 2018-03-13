@@ -21,7 +21,7 @@ foreach ($mods as $mod){
         foreach ($mod['events'] as $event) {
 
             if ($event['responses'] == 0) {  // events with no responses
-                sendMail($mod['email'], $mod['name'], "Epicore RFI has been closed", 'warning', $mod['user_id'], $event['title'], $event['date'], $event['event_id']);
+                sendMail($mod['email'], $mod['name'], "Epicore RFI " . $event['event_id'] . " has been closed", 'warning', $mod['user_id'], $event['title'], $event['date'], $event['event_id']);
                 echo date("Y-m-d H:i:s") . ': Sent email to ' .$mod['email']. ' for auto-closed event id: ' . $event['event_id'] . "\n";
                 // get event
                 $ei = new EventInfo($event['event_id']);
@@ -38,7 +38,7 @@ foreach ($mods as $mod){
                     echo date("Y-m-d H:i:s") . ': Error auto-closing event id: ' . $event['event_id'] . "\n";
                 }
             } else { // events with repsonses
-                sendMail($mod['email'], $mod['name'], "Epicore RFI past due closing", 'warning_responses', $mod['user_id'], $event['title'], $event['date'], $event['event_id']);
+                sendMail($mod['email'], $mod['name'], "Epicore RFI " . $event['event_id'] . " past due closing", 'warning_responses', $mod['user_id'], $event['title'], $event['date'], $event['event_id']);
                 echo date("Y-m-d H:i:s") . ': Sent email to ' .$mod['email']. ' to close past due event id: ' . $event['event_id'] . "\n";
             }
         }
