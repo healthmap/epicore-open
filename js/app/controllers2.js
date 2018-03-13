@@ -877,6 +877,10 @@ controller('requestController2', function($rootScope, $window, $scope, $routePar
                     }
                     $scope.summary = {};
                     $scope.summary.phe_title = $scope.eventsList.title;
+                    $scope.summary.phe_description = $scope.eventsList.phe_description;
+                    $scope.summary.phe_additional = $scope.eventsList.phe_additional;
+                    $scope.summary.outcome = $scope.eventsList.outcome;
+
                 }
             }
         } else if (typeof($scope.userinfo) == "undefined") {
@@ -1028,7 +1032,13 @@ controller('requestController2', function($rootScope, $window, $scope, $routePar
                 formData['phe_title'] = $scope.summary.phe_title;
                 formData['phe_description'] = $scope.summary.phe_description;
                 formData['phe_additional'] = $scope.summary.phe_additional;
+            } else if (thestatus == 'Summary') {
+                formData['phe_outcome'] = $scope.summary.outcome;
+                formData['phe_title'] = $scope.summary.phe_title;
+                formData['phe_description'] = $scope.summary.phe_description;
+                formData['phe_additional'] = $scope.summary.phe_additional;
             }
+
             formData['condition_details'] = $scope.eventsList.condition_details;
 
             $http({ url: urlBase + 'scripts/changestatus2.php', method: "POST", data: formData
@@ -1040,7 +1050,10 @@ controller('requestController2', function($rootScope, $window, $scope, $routePar
                         pathid = 8;
                     } else if (thestatus == "Reopen") {
                         pathid = 5;
-                    } else { // closed
+                    }else if (thestatus == "Summary") {
+                        pathid = 9;
+                    }
+                    else { // closed
                         pathid = 4;
                     }
                     $location.path('/success/' + pathid);

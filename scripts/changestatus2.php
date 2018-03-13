@@ -30,6 +30,8 @@ if(is_numeric($event_id) && is_numeric($user_id)) {
         $thestatus = 'C';
     elseif ($formvars->thestatus == "Update")
         $thestatus = 'U';
+    elseif ($formvars->thestatus == "Summary")  // update summary
+        $thestatus = 'S';
     else
         $thestatus = 'none';
     $ei = new EventInfo($event_id);
@@ -84,6 +86,25 @@ if(is_numeric($event_id) && is_numeric($user_id)) {
         $ei->setResponseStatus($useful_rids, 1);
         $ei->setResponseStatus($usefulpromed_rids, 2);
         $ei->setResponseStatus($notuseful_rids, 0);
+        $return_val = 0;
+    }
+    else if ($thestatus == 'S'){    // update summary
+
+        // save outcome, phe description, and phe additional info in purpose table
+        $purpose_table = array();
+        $purpose_table['event_id'] = $event_id;
+        $purpose_table['outcome'] = $phe_outcome;
+        $purpose_table['phe_description'] = $phe_description;
+        $purpose_table['phe_additional'] = $phe_additional;
+        EventInfo::updatePurpose($purpose_table);
+
+        // update event title if it changed
+        if (($event_info['title'] != $phe_title) ) {
+            $event_table = array();
+            $event_table['event_id'] = $event_id;
+            $event_table['title'] = $phe_title;
+            EventInfo::updateEventTitle($event_table);
+        }
         $return_val = 0;
     }
     else{
@@ -201,7 +222,7 @@ if(is_numeric($event_id) && is_numeric($user_id)) {
 
         print json_encode(array('status' => $status));
         exit;
-    } else if ($thestatus == 'U'){
+    } else if ($thestatus == 'U' || $thestatus == 'S' ){
         print json_encode(array('status' => 'success'));
         exit;
     } else if($return_val == 2)  { // purpose or title update error

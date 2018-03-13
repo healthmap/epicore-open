@@ -1,0 +1,71 @@
+<div ng-include src="'header.html'"></div>
+<div class="jumbotron dashboard">
+    <div class="container">
+        <h1>Edit RFI Summary</h1>
+    </div>
+</div>
+
+<div class="wrapper dashboard">
+<div class="container">
+    <div class="row">
+        <div id="form-container" class="col-xs-12 mb24">
+            <p><a href="#/events2/{{id}}" class="btn btn-default"><i class="fa fa-arrow-circle-left"></i> Back to RFI</a></p>
+
+        <form name="changeStatusForm">
+
+            <div class="form-group" ng-show="outcome.phe_purpose == 'V'">
+                <h3>RFI Outcome:</h3>
+                <label class="radio"> <input type="radio" ng-model="summary.outcome" value="VP" ng-required="!summary.outcome" > <b>Verified (positive):</b> Information provided in the responses supports verification of the PHE.</label>
+                <label class="radio"> <input type="radio" ng-model="summary.outcome" value="VN" ng-required="!summary.outcome" > <b>Verified (negative):</b> Information provided in the responses refutes verification of the PHE.</label>
+                <!--<label class="radio"> <input type="radio" ng-model="summary.outcome" value="UV" ng-required="!summary.outcome" > <b>Unverified:</b> The PHE can neither be supported nor refuted based on the information provided in the responses.</label>-->
+            </div>
+
+            <div class="form-group" ng-show="outcome.phe_purpose == 'U'">
+                <h3>Please choose one of the following as the outcome of your RFI:</h3>
+                <label class="radio"> <input type="radio" ng-model="summary.outcome" value="UP" ng-required="!summary.outcome" > <b>Updated:</b> Response(s) provided additional information that was relevant to the update request, regarding the PHE.</label>
+                <label class="radio"> <input type="radio" ng-model="summary.outcome" value="NU" ng-required="!summary.outcome" > <b>No Update:</b> Response(s) did not provide additional information that was relevant to the update request, regarding the PHE.</label>
+            </div>
+
+
+            <div class="form-group" ng-if="summary.outcome == 'VP' || summary.outcome == 'VN' || summary.outcome == 'UP' ">
+                <h3>RFI Summary</h3>
+
+                <b>Title:</b>
+                <input  type="text" class="form-control" ng-model="summary.phe_title" id="title" placeholder='event title...' value="" required>
+
+                <br>
+                <!--<p><b>Initial source: </b>{{eventsList.source}} : {{eventsList.source_details}}</p>
+
+                <p><b>Start date of verification process: </b>{{eventsList.event_date}}</p>
+
+                <p><b>End date of verification process: </b>{{today_date}}</p>
+                <p><b>RFI outcome:</b>
+                    <span ng-if="summary.outcome=='VP'">Verified (positive)</span>
+                    <span ng-if="summary.outcome=='VN'">Verified (negative)</span>
+                    <span ng-if="summary.outcome=='UP'">Updated</span>
+                </p>-->
+
+                <div class="form-group">
+                    <b>PHE description: </b>
+                    <textarea class="form-control" style="height:300px" ng-model="summary.phe_description" id="phe_description" placeholder="PHE description..." required></textarea>
+                </div>
+
+                <div class="form-group">
+                    <b>Additional information: </b>
+                    <textarea class="form-control" style="height:300px" ng-model="summary.phe_additional" id="phe_additional" placeholder="Additional information..." ></textarea>
+                </div>
+            </div>
+
+            <div class="form-group" ng-if="summary.outcome">
+                <button ng-click="changeRequestStatus(formData, 'Summary', changeStatusForm.$valid)" ng-disabled="submitDisabled" type="submit" class="submit btn btn-primary">Update Summary</button>
+            </div>
+
+        </form>
+
+            <div ng-if="close_message">
+                <p class="intro error red" name="close_message" ><strong ng-bind-html="close_message"></strong></p>
+            </div>
+        </div>
+    </div><!--row-->
+</div><!--container main-->
+</div><!--wrapper-->
