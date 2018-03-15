@@ -240,6 +240,17 @@ h3, .h3 {
     padding: 72px 0;
     }
 
+.wrapper-mobile {
+    padding: 24px 0;
+    }
+.mobile-app .logout {
+    height: 48px;
+    line-height: 24px;
+}
+
+.navbar-header.mobile-app {
+    float: none;
+}
 .wrapper.gray {
     background: #efefef;
     }
@@ -529,6 +540,10 @@ line-height: 1.5;
     margin-bottom: 24px;
     }
 
+.mt24 {
+    margin-top: 24px;
+    }
+
 .mb48 {
     margin-bottom: 48px;
     }
@@ -605,7 +620,7 @@ a.inherit, .inherit {
     }
 
 th {
-    background-color: @light-gray;
+    background-color: @primary-color;
     color: #fff;
     font-weight: normal;
     }
@@ -683,4 +698,19 @@ th {
 .valign {
     display: block;
     }
+
+.table-responsive {
+    border: 0px;
+}
+.table-responsive>.table>tbody>tr>td, .table-responsive>.table>tbody>tr>th, .table-responsive>.table>tfoot>tr>td, .table-responsive>.table>tfoot>tr>th, .table-responsive>.table>thead>tr>td, .table-responsive>.table>thead>tr>th {
+    white-space: pre-wrap;
+}
+.jumbotron.dashboard {
+    padding: 36px 0;
+    }
+
+.table-responsive>.table>tbody>tr>th.nowrap-mobile {
+    white-space: nowrap;
+}
+
 }

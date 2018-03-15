@@ -89,6 +89,7 @@ app.config(function($routeProvider) {
         when("/application/:id/:action/:idtype", {templateUrl: "partials/application_new.html?cb=" + cacheBustSuffix, controller: "userController"}).
         when("/approval", {templateUrl: "partials/approval.html?cb=" + cacheBustSuffix, controller: "approvalController"}).
         when("/login", {templateUrl: "partials/login.html?cb=" + cacheBustSuffix}).
+        when("/login_mobile", {templateUrl: "partials/login_mobile.html?cb=" + cacheBustSuffix}).
         when("/setpassword", {templateUrl: "partials/setpassword.html?cb=" + cacheBustSuffix}).
         when("/resetpassword", {templateUrl: "partials/resetpassword.html?cb=" + cacheBustSuffix}).
         when("/home", {templateUrl: "partials/home.html?cb=" + cacheBustSuffix}).

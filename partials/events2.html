@@ -1,4 +1,4 @@
-<div ng-include src="'header.html'"></div>
+<div ng-include src="'header_mobile.html'"></div>
 <!-- <div ng-if="mobile"ng-include src="'header_mobile.html'"></div> -->
 <div class="jumbotron dashboard">
     <div class="container">
@@ -38,15 +38,15 @@
             <p><span class="search-wrapper"><i class="fa fa-search"></i> <input ng-model="query"></span></p>
 
             <!-- view for organizations -->
-            <div ng-show="isOrganization" ng-init="predicate = 'iso_create_date';">
+            <div ng-show="isOrganization" ng-init="predicate = 'iso_create_date';" class="table-responsive">
                 <table class='small table table-hover table-bordered'>
                     <tbody>
                         <tr>
                             <th width="50px" ng-click="predicate = 'event_id_int'; reverse=!reverse">ID <i class="fa fa-sort"></i></th>
                             <th ng-click="predicate = 'title'; reverse=!reverse">Title <i class="fa fa-sort"></i></th>
-                            <th width="110px" ng-click="predicate = 'iso_create_date'; reverse=!reverse">RFI Date <i class="fa fa-sort"></i></th>
+                            <th width="110px" ng-click="predicate = 'iso_create_date'; reverse=!reverse" class="nowrap-mobile">RFI Date <i class="fa fa-sort"></i></th>
                             <th width="110px" ng-click="predicate = 'country'; reverse=!reverse">Location <i class="fa fa-sort"></i></th>
-                            <th width="110px" ng-click="predicate = 'person'; reverse=!reverse">Requester <i class="fa fa-sort"></i></th>
+                            <th width="110px" ng-click="predicate = 'person'; reverse=!reverse" class="nowrap-mobile">Requester <i class="fa fa-sort"></i></th>
                             <th width="50px">Total Recipients</th>
                             <th width="50px"> <span data-toggle="tooltip" title="(number of) Responders that have already provided information about the RFI" >Contribution </span></th>
                             <th width="50px"><span data-toggle="tooltip" title="(number of) Responders that have stated having no details to provide about the RFI but currently actively gathering information" >Active Search</span></th>
@@ -158,15 +158,15 @@
             </div>
 
             <!-- view for FETPs -->
-            <div ng-show="!isOrganization && (dashboardType == 'MR')" ng-init="predicate = 'iso_create_date'; reverse=reverse">
+            <div ng-show="!isOrganization && (dashboardType == 'MR')" ng-init="predicate = 'iso_create_date'; reverse=reverse" class="table-responsive">
                 <table class='small table table-hover table-bordered'>
                     <tbody>
                         <tr>
                             <th width="50px" ng-click="predicate = 'event_id_int'; reverse=!reverse">ID <i class="fa fa-sort"></i></th>
                             <th ng-click="predicate = 'title'; reverse=!reverse">Title <i class="fa fa-sort"></i></th>
-                            <th width="110px" ng-click="predicate = 'iso_create_date'; reverse=!reverse">RFI Date <i class="fa fa-sort"></i></th>
+                            <th width="110px" ng-click="predicate = 'iso_create_date'; reverse=!reverse" class="nowrap-mobile">RFI Date <i class="fa fa-sort"></i></th>
                             <th ng-click="predicate = 'location'; reverse=!reverse">Location <i class="fa fa-sort"></i></th>
-                            <th ng-click="predicate = 'organization_name'; reverse=!reverse">Requester <i class="fa fa-sort"></i></th>
+                            <th ng-click="predicate = 'organization_name'; reverse=!reverse" class="nowrap-mobile">Requester <i class="fa fa-sort"></i></th>
                             <th ng-click="predicate = 'activity'; reverse=!reverse">Responder Activity <i class="fa fa-sort"></i></th>
                             <th ng-click="predicate = 'deadline'; reverse=!reverse">Deadline <i class="fa fa-sort"></i></th>
                             <th ng-click="predicate = 'outcome'; reverse=!reverse">RFI Outcome <i class="fa fa-sort"></i></th>
@@ -200,13 +200,13 @@
             </div>
 
             <!-- public dashboard -->
-            <div ng-show="!isOrganization && (dashboardType == 'PR')" ng-init="predicate = 'iso_create_date'; reverse=!reverse">
+            <div ng-show="!isOrganization && (dashboardType == 'PR')" ng-init="predicate = 'iso_create_date'; reverse=!reverse" class="table-responsive">
                 <table class='small table table-hover table-bordered'>
                     <tbody>
                     <tr>
                         <th width="50px" ng-click="predicate = 'event_id_int'; reverse=!reverse">ID <i class="fa fa-sort"></i></th>
                         <th ng-click="predicate = 'title'; reverse=!reverse">Title <i class="fa fa-sort"></i></th>
-                        <th width="110px" ng-click="predicate = 'iso_create_date'; reverse=!reverse">RFI Date <i class="fa fa-sort"></i></th>
+                        <th width="110px" ng-click="predicate = 'iso_create_date'; reverse=!reverse" class="nowrap-mobile">RFI Date <i class="fa fa-sort"></i></th>
                         <th width="110px" ng-click="predicate = 'country'; reverse=!reverse">Location <i class="fa fa-sort"></i></th>
                         <th width="50px"><span data-toggle="tooltip" title="information about the final outcome of the verification process">Outcome</span></th>
                     </tr>

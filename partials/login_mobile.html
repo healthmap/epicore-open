@@ -1,0 +1,58 @@
+<nav class="navbar navbar-default" role="navigation" ng-controller="headerController">
+    <div class="container">
+        <div class="navbar-header">
+            <a class="logo" href="#/home"><img src="img/logos/epicore.png" height="60px" alt="Epicore"> <span class="text-uppercase">Epicore</span></a>
+        </div>
+    </div><!-- /.container -->
+</nav>
+
+<div class="wrapper wrapper-mobile">
+    <div class="container">
+        <h1 class=""><span class="tagline text-uppercase">Log In</span></h1>
+        <div class="row">
+            <div id="form-container" class="col-xs-12 col-md-6" ng-controller="userController">
+                <form name="loginForm"  ng-show="!autologin">
+                    <p id="error_message" ng-show="error_message"><strong class="red">Authentication failed!</strong><br><br>
+                    <!--<a href="#/resetpassword">Forgot your password? <i class="fa fa-arrow-circle-right"></i></a>-->
+                    </p>
+
+                    <div class="form-group">
+                        <label class="sr-only" for="username">Email Address</label>
+                        <input type="text" class="form-control" ng-model="formData.username" name="username" id="username" placeholder="Email Address" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="sr-only" for="password">Password</label>
+                        <input type="password" class="form-control" ng-model="formData.password" name="password" id="password" placeholder="Password" required>
+                    </div>
+
+                    <!--<div class="checkbox">
+                <label><input type="checkbox" name="agree" ng-model="formData.agree" required> I agree to Epicore's <a href="#/terms">Terms of Participation</a></label>.
+            </div>-->
+
+                    <div class="form-group">
+                        <span ng-show="isRouteLoading">
+                            <i class="fa fa-spinner fa-spin"></i> Please wait...
+                        </span>
+                        <button ng-click="userLogin(formData)" type="submit" class="btn-block submit btn btn-primary">Login</button>
+                    </div><!-- /input-group -->
+
+                    <span >
+                        <a href="#/resetpassword">Forgot your password?</a>
+                    </span>
+                </form>
+
+                <span ng-show="autologin">
+                    <i class="fa fa-spinner fa-spin"></i> Please wait...
+                </span>
+
+            </div><!--form-container-->
+
+        </div><!--row-->
+    </div><!--container-->
+</div><!--wrapper-->
+<div ng-include src="'footer.html'"></div>
+<script>
+// form validation
+$("form").validate();
+</script>

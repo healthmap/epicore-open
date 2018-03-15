@@ -1,18 +1,10 @@
 <div class="container">
-        <div class="navbar-header">
-          <a class="logo" href="#/home"><img src="img/logos/epicore.png" height="60px" alt="Epicore" style="display:block;float:left;margin-top:18px;margin-right:6px;">
-            <span ng-if="!userInfo.fetp_id" class="text-uppercase">Epicore</span>
-            <span ng-if="userInfo.fetp_id" class="text-uppercase">Epicore Dashboard</span>
+        <div class="navbar-header mobile-app">
+          <a class="logo" href="#/home"><img src="img/logos/epicore.png" height="60px" alt="Epicore">
+            <span class="text-uppercase">Epicore</span>
           </a>
+
+        <a ng-if="userInfo.active=='Y' && userInfo.fetp_id" ng-href="#/home" ng-click="userLogout()" class="logout mt24 mb24 pull-right btn btn-default text-uppercase">Log out</a>
         </div>
 
 </div>
-<div class="container">
-    <div class="col-xs-12 col-md-4">
-        <a ng-if="!userInfo.fetp_id" ng-href="#/login" class="btn btn-default text-uppercase">Login</a>
-        <a ng-if="userInfo.active=='Y' && userInfo.fetp_id" ng-href="#/home" ng-click="userLogout()" class="btn btn-default text-uppercase">Log out</a>&nbsp;&nbsp;
-        <a ng-if="userInfo.active=='Y' && userInfo.fetp_id" ng-href="#/application/{{userInfo.fetp_id}}/edit/fetp" class="btn btn-default text-uppercase">Edit Profile</a>
-    </div>
-</div>
-<br>
-
