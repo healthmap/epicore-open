@@ -921,6 +921,7 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
         messages[6] = "Your RFI has been updated.";
         messages[7] = "Your RFI has been deleted.";
         messages[8] = "Your RFI responses have been updated.";
+        messages[9] = "RFI summary has been updated.";
         $scope.id = $routeParams.id;
         $scope.eid = $routeParams.eid;
         $scope.messageResponse = {};

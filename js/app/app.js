@@ -51,6 +51,7 @@ app.config(function($routeProvider) {
         when("/close2/:id", {templateUrl: "partials/close2.html?cb=" + cacheBustSuffix, controller: "eventsController2"}).
         when("/reopen/:id", {templateUrl: "partials/reopen.html?cb=" + cacheBustSuffix, controller: "eventsController"}).
         when("/reopen2/:id", {templateUrl: "partials/reopen2.html?cb=" + cacheBustSuffix, controller: "eventsController2"}).
+        when("/summary/:id", {templateUrl: "partials/summary.html?cb=" + cacheBustSuffix, controller: "eventsController2"}).
         when("/followup/:id", {templateUrl: "partials/followup.html?cb=" + cacheBustSuffix, controller: "eventsController"}).
         when("/followup2/:id", {templateUrl: "partials/followup2.html?cb=" + cacheBustSuffix, controller: "eventsController2"}).
         when("/followup/:id/:response_id", {templateUrl: "partials/followup.html?cb=" + cacheBustSuffix, controller: "eventsController"}).

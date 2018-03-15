@@ -43,6 +43,15 @@ class EventInfo
         $event_info['source_details'] = $source['details'];
         $event_info['purpose'] = $this->getPurpose();
 
+        // outcome
+        $event_info['outcome'] = $this->db->getOne("SELECT outcome FROM purpose WHERE event_id = ?", array($this->id));
+
+        // phe description
+        $event_info['phe_description'] = $this->db->getOne("SELECT phe_description FROM purpose WHERE event_id = ?", array($this->id));
+
+        // phe additional info
+        $event_info['phe_additional'] = $this->db->getOne("SELECT phe_additional FROM purpose WHERE event_id = ?", array($this->id));
+
         return $event_info;
     }
 

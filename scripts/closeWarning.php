@@ -29,7 +29,7 @@ foreach ($mods as $mod){
                 echo date("Y-m-d H:i:s") . ': Sent email to ' .$mod['email']. ' to close past due event id: ' . $event['event_id'] . "\n";
 
                 // comment out for testing
-                sendMail($mod['email'], $mod['name'], "Epicore RFI past due closing", 'warning_responses2', $mod['user_id'], $event['title'], $event['date'], $event['event_id']);
+                sendMail($mod['email'], $mod['name'], "Epicore RFI " . $event['event_id'] . " past due closing", 'warning_responses2', $mod['user_id'], $event['title'], $event['date'], $event['event_id']);
 
             }
         }
