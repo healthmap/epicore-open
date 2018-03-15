@@ -16,7 +16,7 @@ epicore_config.vers = '2';
 // mobile_dev - for mobile app with dev backend
 // mobile_jandre - for mobile app with jandre's sandbox backend
 // web - for web app (production, dev, and sandboxes)
-epicore_config.app_mode = 'mobile_dev';
+epicore_config.app_mode = 'web';
 
 // Push notifications Sender Id for Android devices
 epicore_config.android_senderId = "67299923213";
