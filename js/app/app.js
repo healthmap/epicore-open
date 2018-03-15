@@ -16,17 +16,21 @@ app.value('epicoreVersion', epicore_config.vers);
 
 // select web or mobile app
 var app_mode = epicore_config.app_mode;
+var home_page = "partials/home.html?cb=";
 if (app_mode == 'mobile_prod') {
     app.value('urlBase', 'https://epicore.org/'); // use full url for mobile api calls
     app.value('epicoreMode', 'mobile');
+    home_page = "partials/login_mobile.html?cb=";
   }
 else if ( app_mode == 'mobile_dev') { // use full url for mobile api calls
     app.value('urlBase', 'https://epicore.org/dev/');
     app.value('epicoreMode', 'mobile');
+    home_page = "partials/login_mobile.html?cb=";
   }
 else if ( app_mode == 'mobile_jandre') { // use full url for mobile api calls
     app.value('urlBase', 'https://epicore.org/~jandre/epicore/');
     app.value('epicoreMode', 'mobile');
+    home_page = "partials/login_mobile.html?cb=";
 }
 else { // use relative url for web app
     app.value('urlBase', '');
@@ -93,7 +97,7 @@ app.config(function($routeProvider) {
         when("/login_mobile", {templateUrl: "partials/login_mobile.html?cb=" + cacheBustSuffix}).
         when("/setpassword", {templateUrl: "partials/setpassword.html?cb=" + cacheBustSuffix}).
         when("/resetpassword", {templateUrl: "partials/resetpassword.html?cb=" + cacheBustSuffix}).
-        when("/home", {templateUrl: "partials/home.html?cb=" + cacheBustSuffix}).
+        when("/home", {templateUrl: home_page + cacheBustSuffix}).
         when("/trainingvideos", {templateUrl: "partials/trainingvideos.html?cb=" + cacheBustSuffix, controller: "userController"}).
         when("/resources", {templateUrl: "partials/resources.html?cb=" + cacheBustSuffix, controller: "userController"}).
         when("/training", {templateUrl: "partials/test.html?cb=" + cacheBustSuffix, controller: "testController"}).
