@@ -144,7 +144,7 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
     }
     // Touch id login for iOS
     if ($scope.mobile && (typeof($localStorage.mobile_platform) != 'undefined') && ($localStorage.mobile_platform == 'iOS')
-        && ($location.path() == '/login') && !$rootScope.error_message){
+        && ($location.path() == '/home') && !$rootScope.error_message){
         $scope.autologin = true;
       // check touch id support of iOS
       $cordovaTouchID.checkSupport().then(function() {

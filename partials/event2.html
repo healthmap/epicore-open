@@ -1,4 +1,4 @@
-<div ng-if="!userInfo.fetp_id" ng-include src="'header.html'"></div>
+<div ng-if="!mobile || !userInfo.fetp_id" ng-include src="'header.html'"></div>
 <div ng-if="mobile && userInfo.active=='Y' && userInfo.fetp_id" ng-include src="'header_mobile.html'"></div>
 
 <div class="jumbotron dashboard">
