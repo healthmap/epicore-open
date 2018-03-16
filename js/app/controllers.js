@@ -159,7 +159,7 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
             }, function () {
               $scope.autologin = false;
               $scope.formData.password = "";
-              $scope.mobile_message = "Please enter email (username) and passord to login."
+              $scope.mobile_message = "Please enter email (username) and password to login.";
               //alert('Please enter email (username) and passord to login.');// cancel touch id authentication
           });
 
