@@ -4,13 +4,11 @@ angular.module('EpicoreApp.controllers', []).
 controller('userController', function($rootScope, $routeParams, $scope, $route, $cookies, $cookieStore, $location, $http, $window, urlBase , epicoreMode, $localStorage, epicoreCountries, epicoreVersion, $cordovaTouchID) {
 
 
-
-
     $scope.mobile = (epicoreMode == 'mobile') ? true: false;
     $scope.epicore_version = epicoreVersion;
 
     $scope.isRouteLoading = false;
-    $scope.autologin = false;
+    $scope.autologin = true;
     var querystr = $location.search() ? $location.search() : '';
 
     /* get the active state of page you're on */
@@ -135,45 +133,46 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
         }
     };
 
-    clearPassword = function (){
-      $scope.formData = {};
-      $scope.formData.username = "";
-      $scope.formData.password = "";
-      $localStorage.username = "";
-      $localStorage.password = "";
-    }
-    // Touch id login for iOS
-    if ($scope.mobile && (typeof($localStorage.mobile_platform) != 'undefined') && ($localStorage.mobile_platform == 'iOS')
-        && ($location.path() == '/home') && !$rootScope.error_message){
-        $scope.autologin = true;
-      // check touch id support of iOS
-      $cordovaTouchID.checkSupport().then(function() {
-        // success, TouchID supported
-        // iOS touch id authentication
-        $cordovaTouchID.authenticate("Use touch id to login or cancel to login with password.").then(function() {
-            // success
-            // username and password must be set first time to use touch id
-            if ((typeof($scope.formData.username) !='undefined') && (typeof($scope.formData.password) !='undefined')
-                && $scope.formData.username && $scope.formData.password){
-              $scope.userLogin($scope.formData);
-            } else {
-              clearPassword();
-              alert('Please enter Epicore email (username) and password to use touch id')
+    // Sign in with Touch id for iOS or login with username & password
+    $scope.mobile_message = "";
+    $scope.signIn = function(){
+      $scope.autologin = true;
+      if ($scope.mobile && (typeof($localStorage.mobile_platform) != 'undefined') && ($localStorage.mobile_platform == 'iOS')){
+        // check touch id support of iOS
+        $cordovaTouchID.checkSupport().then(function() {
+          // success, TouchID supported
+          // iOS touch id authentication
+          $cordovaTouchID.authenticate("Use touch id to login or cancel to login with password.").then(function() {
+              // success
+              // username and password must be set first time to use touch id
+              if ((typeof($localStorage.username) !='undefined') && (typeof($localStorage.password) !='undefined')
+                  && $localStorage.username && $localStorage.password){
+                    $scope.formData.username = $localStorage.username;
+                    $scope.formData.password = $localStorage.password;
+                    $scope.userLogin($scope.formData);
+              } else {
+                $scope.autologin = false;
+                $scope.formData.password = "";
+                $scope.mobile_message = "Please enter Epicore email (username) and password to use touch id";
+                //alert('Please enter Epicore email (username) and password to use touch id')
+              }
+            }, function () {
               $scope.autologin = false;
-            }
-          }, function () {
-            //clearPassword();
-            alert('Please enter email (username) and passord to login.');// cancel touch id authentication
-            $scope.autologin = false;
-        });
+              $scope.formData.password = "";
+              $scope.mobile_message = "Please enter email (username) and passord to login."
+              //alert('Please enter email (username) and passord to login.');// cancel touch id authentication
+          });
 
-      }, function (error) {
+        }, function (error) {
+          $scope.autologin = false;
+          $scope.formData.password = "";
+          //alert('Touch id not supported or you have not enabled touch id on your device.');
+          //alert(error); // TouchID not supported
+        });
+      } else {  // login no touch ID
         $scope.autologin = false;
-        alert('Touch id not supported or you have not enabled touch id on your device.');
-        //alert(error); // TouchID not supported
-      });
-    } else {
-      $scope.autologin = false;
+        $scope.formData.password = "";
+      }
     }
 
     /* log in */
@@ -350,10 +349,12 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
 
     // auto-login with mobile push notification
     // This needs to be last in the controller
-    if ($scope.mobile && ($localStorage.event_id !== null) && (typeof $localStorage.event_id !== 'undefined') && (parseInt($localStorage.event_id) > 0)) {
-        $scope.autologin = true;
-        $scope.userLogin($scope.formData);
-    }
+     if ($scope.mobile && ($localStorage.event_id !== null) && (typeof $localStorage.event_id !== 'undefined') && (parseInt($localStorage.event_id) > 0)) {
+         $scope.autologin = true;
+         $scope.formData.username = $localStorage.username;
+         $scope.formData.password = $localStorage.password;
+         $scope.userLogin($scope.formData);
+     }
 
 }).controller('mapController', function($scope, $http, $cookieStore, urlBase) {
     // only allow moderators
