@@ -8,7 +8,8 @@ var app = angular.module('EpicoreApp', [
     'uiGmapgoogle-maps',
     'angular-google-analytics',
     'ngCordova',
-    'ngStorage'
+    'ngStorage',
+    'google.places'
 ]);
 
 // set app version

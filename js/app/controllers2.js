@@ -45,15 +45,25 @@ controller('requestController2', function($rootScope, $window, $scope, $routePar
     }
 
     /////////////////////////////////////////////// Location ////////////////////////////////
+
+    // autocomplete options for google api places
+    $scope.autocompleteOptions = {
+        types: ['(regions)']
+    }
+
+    getPlaceLatLon = function(place){
+        return place.geometry.location.lat() + ',' + place.geometry.location.lng();
+    };
+
     $scope.location_error_message = '';
     $scope.saveLocation = function (direction) {
 
         // jquery hack to get the latlon hidden value and autocomplete for location (angular bug)
-        $scope.rfiData.location.latlon = $("#default_location").val();
-        $scope.rfiData.location.location = $("#searchTextField").val(); // format: "country" or "state, country" or "city, state, country"
-        //$scope.rfiData.default_city = $("#default_city").val();
-        //$scope.rfiData.default_state = $("#default_state").val();
-        //$scope.rfiData.default_country = $("#default_country").val();
+        //$scope.rfiData.location.latlon = $("#default_location").val();
+        //$scope.rfiData.location.location = $("#searchTextField").val(); // format: "country" or "state, country" or "city, state, country"
+
+        $scope.rfiData.location.latlon = getPlaceLatLon($scope.rfiData.place);
+        $scope.rfiData.location.location = $("#autocompleteText").val();
 
         // get city, state, country from location string
         var mylocation = $scope.rfiData.location.location.split(",");
