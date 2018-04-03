@@ -40,6 +40,8 @@ controller('requestController2', function($rootScope, $window, $scope, $routePar
             $scope.rfiData.purpose = data.purpose;
             $scope.rfiData.health_condition = data.health_condition;
             $scope.rfiData.source = data.source;
+
+            $scope.rfiData.place = data.event.location;
         });
 
     }
@@ -62,30 +64,33 @@ controller('requestController2', function($rootScope, $window, $scope, $routePar
         //$scope.rfiData.location.latlon = $("#default_location").val();
         //$scope.rfiData.location.location = $("#searchTextField").val(); // format: "country" or "state, country" or "city, state, country"
 
-        $scope.rfiData.location.latlon = getPlaceLatLon($scope.rfiData.place);
-        $scope.rfiData.location.location = $("#autocompleteText").val();
+        // only use google places for new events
+        if (!$scope.rfiData.event_id) {
+            $scope.rfiData.location.latlon = getPlaceLatLon($scope.rfiData.place);
+            $scope.rfiData.location.location = $("#autocompleteText").val();
 
-        // get city, state, country from location string
-        var mylocation = $scope.rfiData.location.location.split(",");
-        if (mylocation.length == 3){
-            $scope.rfiData.default_city = mylocation[0];
-            $scope.rfiData.default_state = mylocation[1];
-            $scope.rfiData.default_country = mylocation[2];
-        } else if (mylocation.length == 2) {
-            $scope.rfiData.default_city = '';
-            $scope.rfiData.default_state = mylocation[0];
-            $scope.rfiData.default_country = mylocation[1];
-        } else if (mylocation.length == 1) {
-            $scope.rfiData.default_city = '';
-            $scope.rfiData.default_state = '';
-            $scope.rfiData.default_country = mylocation[0];
-        }
+            // get city, state, country from location string
+            var mylocation = $scope.rfiData.location.location.split(",");
+            if (mylocation.length == 3) {
+                $scope.rfiData.default_city = mylocation[0];
+                $scope.rfiData.default_state = mylocation[1];
+                $scope.rfiData.default_country = mylocation[2];
+            } else if (mylocation.length == 2) {
+                $scope.rfiData.default_city = '';
+                $scope.rfiData.default_state = mylocation[0];
+                $scope.rfiData.default_country = mylocation[1];
+            } else if (mylocation.length == 1) {
+                $scope.rfiData.default_city = '';
+                $scope.rfiData.default_state = '';
+                $scope.rfiData.default_country = mylocation[0];
+            }
 
 
-        if(!$scope.rfiData.location.latlon) {
-            $scope.rfiData.location.location_error_message = 'Geolocation failed - please scroll down and select a location from the auto-suggester in the location field so that we have the coordinates of the event.';
-            $scope.rfiData.location.location = '';
-            return false;
+            if (!$scope.rfiData.location.latlon) {
+                $scope.rfiData.location.location_error_message = 'Geolocation failed - please scroll down and select a location from the auto-suggester in the location field so that we have the coordinates of the event.';
+                $scope.rfiData.location.location = '';
+                return false;
+            }
         }
 
         // validate and go to next or back path
