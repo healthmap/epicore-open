@@ -8,6 +8,7 @@ require_once 'ePush.class.php';
 
 $event_id = $formvars->event_id;
 $user_id = $formvars->uid;
+$superuser = $formvars->superuser;
 $useful_rids = $formvars->useful_rids;
 $usefulpromed_rids = $formvars->usefulpromed_rids;
 $notuseful_rids = $formvars->notuseful_rids;
@@ -69,12 +70,12 @@ if(is_numeric($event_id) && is_numeric($user_id)) {
                     $error_message = $estatus;
                 } else {
                     $return_val = 1;
-                    $cstatus = $ei->changeStatus($thestatus, $user_id, $formvars->notes, $reason);  // close RFI when no errors
+                    $cstatus = $ei->changeStatus($thestatus, $user_id, $formvars->notes, $reason, $superuser);  // close RFI when no errors
                 }
             }
 
         } else { // open RFI
-            $return_val = $ei->changeStatus($thestatus, $user_id, $formvars->notes, $reason);
+            $return_val = $ei->changeStatus($thestatus, $user_id, $formvars->notes, $reason, $superuser);
         }
 
         //todo: set cache flag when closed events changed

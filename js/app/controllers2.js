@@ -1037,6 +1037,7 @@ controller('requestController2', function($rootScope, $window, $scope, $routePar
             $scope.submitDisabled = true;
             formData['event_id'] = $routeParams.id;
             formData['uid'] = $scope.userInfo.uid;
+            formData['superuser'] = $scope.userInfo.superuser;
             formData['thestatus'] = thestatus;
             formData['useful_rids'] = useful_rids.toString();
             formData['usefulpromed_rids'] = usefulpromed_rids.toString();

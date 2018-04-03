@@ -433,10 +433,10 @@ class EventInfo
 
     }
 
-    function changeStatus($status, $requester_id, $notes, $reason) {
+    function changeStatus($status, $requester_id, $notes, $reason, $superuser = false) {
         $initiator_oid = $this->db->getOne("SELECT user.organization_id FROM event, user WHERE event_id = ? AND event.requester_id = user.user_id", array($this->id));
         $requester_oid = $this->db->getOne("SELECT organization_id FROM user WHERE user_id = ?", array($requester_id));
-        if($requester_oid == $initiator_oid) {
+        if(($requester_oid == $initiator_oid) || $superuser) {
             $notes = strip_tags($notes);
             $this->db->query("INSERT INTO event_notes (event_id, action_date, note, reason, status, requester_id) VALUES (?,?,?,?,?,?)",
                             array($this->id, date('Y-m-d H:i:s'), $notes, $reason, $status, $requester_id));
