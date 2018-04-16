@@ -33,6 +33,8 @@ define('DEFAULT_RADIUS', 400); // in km
 define('EMAILPREVIEWS', 'emailtemplates/temp/');
 define('V2START_DATE', '2017-10-30');
 
+define('RESPONSEFILE_DIR', 'responsefiles/');
+
 $status_lu = array('O' => 're-opened', 'C' => 'closed');
 
 $super_users = explode(',', $conf['superusers']['userids']);

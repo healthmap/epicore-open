@@ -9,7 +9,8 @@ var app = angular.module('EpicoreApp', [
     'angular-google-analytics',
     'ngCordova',
     'ngStorage',
-    'google.places'
+    'google.places',
+    'ngFileUpload'
 ]);
 
 // set app version

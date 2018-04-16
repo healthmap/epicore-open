@@ -16,13 +16,20 @@ if(is_numeric($event_id)) {
     $dbdata['response_permission'] = (int)$formvars->response_permission;
     $response_member = strip_tags($formvars->response_member);
     $dbdata['response'] = $response_member ? $dbdata['response'] . "\n\n Responding Member: " . $response_member : $dbdata['response'];
-
     $dbdata['source'] = $formvars->source;
+    $filenames = isset($formvars->files) ? $formvars->files : 0;
 
     // insert into response table
     $ei = new EventInfo($event_id);
     $event_info = $ei->getInfo();
     $response_id = $ei->insertResponse2($dbdata);
+
+    // save response file names
+    if ($filenames){
+        foreach ($filenames as $fname) {
+            $rfilnename_id = $ei->saveResponseFileNames($response_id,$fname->savefilename);
+        }
+    }
 
     $subject = "EPICORE RFI #" . $event_id .  " - Response: " . $event_info['Title'];
 

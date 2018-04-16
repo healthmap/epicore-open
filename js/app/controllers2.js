@@ -69,29 +69,29 @@ controller('requestController2', function($rootScope, $window, $scope, $routePar
             $scope.rfiData.location.latlon = getPlaceLatLon($scope.rfiData.place);
             $scope.rfiData.location.location = $("#autocompleteText").val();
 
-            // get city, state, country from location string
-            var mylocation = $scope.rfiData.location.location.split(",");
-            if (mylocation.length == 3) {
-                $scope.rfiData.default_city = mylocation[0];
-                $scope.rfiData.default_state = mylocation[1];
-                $scope.rfiData.default_country = mylocation[2];
-            } else if (mylocation.length == 2) {
-                $scope.rfiData.default_city = '';
-                $scope.rfiData.default_state = mylocation[0];
-                $scope.rfiData.default_country = mylocation[1];
-            } else if (mylocation.length == 1) {
-                $scope.rfiData.default_city = '';
-                $scope.rfiData.default_state = '';
-                $scope.rfiData.default_country = mylocation[0];
-            }
-
-
             if (!$scope.rfiData.location.latlon) {
                 $scope.rfiData.location.location_error_message = 'Geolocation failed - please scroll down and select a location from the auto-suggester in the location field so that we have the coordinates of the event.';
                 $scope.rfiData.location.location = '';
                 return false;
             }
         }
+
+        // get city, state, country from location string
+        var mylocation = $scope.rfiData.location.location.split(",");
+        if (mylocation.length == 3) {
+            $scope.rfiData.default_city = mylocation[0];
+            $scope.rfiData.default_state = mylocation[1];
+            $scope.rfiData.default_country = mylocation[2];
+        } else if (mylocation.length == 2) {
+            $scope.rfiData.default_city = '';
+            $scope.rfiData.default_state = mylocation[0];
+            $scope.rfiData.default_country = mylocation[1];
+        } else if (mylocation.length == 1) {
+            $scope.rfiData.default_city = '';
+            $scope.rfiData.default_state = '';
+            $scope.rfiData.default_country = mylocation[0];
+        }
+
 
         // validate and go to next or back path
         if ($scope.rfiData.location.latlon && $scope.rfiData.location.location){
@@ -805,7 +805,7 @@ controller('requestController2', function($rootScope, $window, $scope, $routePar
     };
 
     /* Requester (moderator) & Responder (member) dashboard controller */
-}).controller('eventsController2', function($scope, $rootScope, $routeParams, $cookieStore, $location, $http, eventAPIservice2, urlBase, epicoreMode, epicoreVersion) {
+}).controller('eventsController2', function($scope, $rootScope, $routeParams, $cookieStore, $location, $http, eventAPIservice2, urlBase, epicoreMode, epicoreVersion, Upload, $timeout) {
 
     $scope.mobile = (epicoreMode == 'mobile') ? true: false;
     $scope.epicore_version = epicoreVersion;
@@ -827,6 +827,59 @@ controller('requestController2', function($rootScope, $window, $scope, $routePar
     $rootScope.dashboardType = "MR";
 
     $scope.cbsuffix = Date.now();
+
+    // upload response files
+    $scope.ufiles = [];
+    $scope.uploadFiles = function(files, errFiles) {
+        $scope.files = files;
+        $scope.errFiles = errFiles;
+
+        var i = 1;
+        angular.forEach(files, function(file) {
+            $scope.isRouteLoading = true;
+            file.upload = Upload.upload({
+                url: 'scripts/uploadfile.php',
+                data: {file: file, event_id: $scope.id, fetp_id: $scope.userInfo.fetp_id},
+                method: 'POST'
+            });
+
+            file.upload.then(function (response) {
+                // save uploaded file names
+                $scope.ufiles.push({filename: response.data.filename, savefilename:response.data.savefilename});
+                // turn off spinner
+                if (i++ >= files.length) {
+                    $scope.isRouteLoading = false;
+                }
+
+                $timeout(function () {
+                    file.result = response.data;
+                });
+            }, function (response) {
+
+                if (response.status > 0) {
+                    $scope.errorMsg = response.status + ': ' + response.data;
+                }
+            }, function (evt) {
+                file.progress = Math.min(100, parseInt(100.0 *
+                    evt.loaded / evt.total));
+            });
+
+        });
+    };
+
+    removeItem = function (file) {
+        var index = $scope.ufiles.map(function(item) { return item.savefilename; }).indexOf(file);
+        $scope.ufiles.splice(index, 1);
+    };
+
+    $scope.removeFile = function (file) {
+
+        $http({ url: urlBase + 'scripts/removefile.php', method: "POST", data: {filename:file}
+        }).success(function (respdata, status) {
+            removeItem(file);
+        });
+
+    };
 
     $scope.publicEvents = function (event) {
         return event.outcome === 'VP' ||
@@ -1096,6 +1149,7 @@ controller('requestController2', function($rootScope, $window, $scope, $routePar
             if ($routeParams.id){
                 var eid = $routeParams.id;
             }
+            formData['files'] = $scope.ufiles;
             $http({ url: urlBase + 'scripts/sendresponse2.php', method: "POST", data: formData
             }).success(function (data, status, headers, config) {
                 if (data['status'] == 'success') {

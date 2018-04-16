@@ -89,7 +89,7 @@
         <!-- show reply button -->
         <a ng-if="!closerfi && (history_item.organization_id == userInfo.organization_id) " class="pull-right btn btn-default btn-sm" href="#/followup2/{{id}}/{{history_item.response_id}}">Reply</a>
         <!-- show ratings for closed event -->
-        <span ng-if=" userInfo.uid && ((history_item.permission != 0 && history_item.permission != 4) && ((closerfi && ( (history_item.organization_id == userInfo.organization_id) || userInfo.superuser) ) || (changeStatusText != 'Close')))" >
+        <span ng-if=" userInfo.uid && ((history_item.permission != 0 && history_item.permission != 4) && ((closerfi && ( (history_item.organization_id == userInfo.organization_id) ||userInfo.superuser)) || (changeStatusText != 'Close')))" >
             &nbsp;&nbsp;<label><input type="radio" ng-model="history_item.useful" value="0" ng-disabled="history_item.useful && !isRequester"> <i class="fa fa-thumbs-o-down black"></i></label>&nbsp;&nbsp;
             <label><input type="radio" ng-model="history_item.useful" value="1" ng-disabled="history_item.useful && !isRequester" > <i class="fa fa-thumbs-o-up green"></i></label>&nbsp;&nbsp;
             <label><input type="radio" ng-model="history_item.useful" value="2" ng-disabled="history_item.useful && !isRequester" > <i class="fa fa-pencil black"></i></label>
@@ -97,6 +97,9 @@
         </span>
         <div class="show-response" ng-show="isCollapsed">
             <p ng-bind-html="history_item.text | to_trusted"></p>
+            <ul><span ng-show="history_item.files">Files</span>
+                <li ng-repeat="fname in history_item.files"><a target="_blank" href="responsefiles/{{fname.filename}}" >{{fname.filename}}</a></li>
+            </ul>
         </div>
     </div>
 

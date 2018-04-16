@@ -447,6 +447,19 @@ class EventInfo
         return 0;
     }
 
+    function saveResponseFileNames($rid, $filename){
+
+        $this->db->query("INSERT INTO responsefile(response_id, filename) VALUES (?,?)", array($rid,$filename));
+        $fid = $this->db->getOne("SELECT LAST_INSERT_ID()");
+        $this->db->commit();
+        return $fid;
+
+    }
+
+    function getResponseFileNames($rid){
+        return $this->db->getAll("SELECT filename FROM responsefile WHERE response_id = ?", array($rid));
+    }
+
     function setResponseStatus($rid, $status) {
         $res = $this->db->query("UPDATE response SET useful='$status' WHERE response_id in ($rid)");
 
@@ -1623,6 +1636,7 @@ class EventInfo
         }
         foreach ($responses as $response ){
 
+            $messages[$i]['files'] = $this->getResponseFileNames($response['response_id']);
             $messages[$i]['text'] = nl2br($response['response']);
             if ($response['response_permission'] == "0")
                 $messages[$i]['text'] = $response_permission_lu["0"];;
