@@ -10,7 +10,7 @@ controller('requestController2', function($rootScope, $window, $scope, $routePar
     // get persistant RFI form
     $scope.rfiData = rfiForm.get();
 
-    // get event from database if event id is passed in and populate forM
+    // get event from database if event id is passed in and populate form
     // this is used to edit an RFI (not send a new RFI)
     if ($routeParams.id) {
         // save event id
@@ -22,7 +22,7 @@ controller('requestController2', function($rootScope, $window, $scope, $routePar
         $http({ url: urlBase + 'scripts/getrequest2.php', method: "POST", data: eventData
         }).success(function (data, status, headers, config) {
 
-            //console.log(data);
+            console.log(data);
 
             // populate form
             $scope.rfiData.location = {};
@@ -42,6 +42,9 @@ controller('requestController2', function($rootScope, $window, $scope, $routePar
             $scope.rfiData.source = data.source;
 
             $scope.rfiData.place = data.event.location;
+
+            $scope.isRequester = (data.event.requester_id == $scope.userInfo.uid);
+
         });
 
     }
@@ -312,8 +315,11 @@ controller('requestController2', function($rootScope, $window, $scope, $routePar
                 // next or back
                 if (direction === 'next') {
 
-                    // first check for duplicate RFI
-                    checkDuplicateRFI();
+                    // Check for duplicate RFI only for original RFI requester
+                    // bypass check for super users
+                    if ($scope.isRequester) {
+                        checkDuplicateRFI();
+                    }
 
                 } else if (direction === 'back') {
                     $location.path('/population');
