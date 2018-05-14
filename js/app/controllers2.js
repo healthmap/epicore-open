@@ -22,8 +22,6 @@ controller('requestController2', function($rootScope, $window, $scope, $routePar
         $http({ url: urlBase + 'scripts/getrequest2.php', method: "POST", data: eventData
         }).success(function (data, status, headers, config) {
 
-            console.log(data);
-
             // populate form
             $scope.rfiData.location = {};
             $scope.rfiData.health_condition = {};
@@ -260,8 +258,6 @@ controller('requestController2', function($rootScope, $window, $scope, $routePar
 
         $scope.goback = (direction === 'back');
 
-        console.log($scope.goback);
-
         if (direction === 'back'){
             if ($scope.rfiData.event_id){
                 $location.path('/members');
@@ -316,10 +312,8 @@ controller('requestController2', function($rootScope, $window, $scope, $routePar
                 if (direction === 'next') {
 
                     // Check for duplicate RFI only for original RFI requester
-                    // bypass check for super users
-                    if ($scope.isRequester) {
-                        checkDuplicateRFI();
-                    }
+                    var bypass = $scope.userInfo.superuser && !$scope.isRequester; // bypass for superusers that are not the original requester
+                    checkDuplicateRFI( bypass );
 
                 } else if (direction === 'back') {
                     $location.path('/population');
@@ -368,30 +362,35 @@ controller('requestController2', function($rootScope, $window, $scope, $routePar
     };
 
     // check for duplicate RFI
-    function checkDuplicateRFI() {
+    function checkDuplicateRFI(bypass) {
 
-        var rfi_data = {};
-        rfi_data['population_type'] = $scope.rfiData.population.type;
-        rfi_data['health_condition'] = $scope.rfiData.health_condition;
-        rfi_data['location'] = $scope.rfiData.location.location;
-        $http({ url: urlBase + 'scripts/checkDuplicateRFI.php', method: "POST", data: rfi_data
-        }).success(function (respdata, status, headers, config) {
+        if (bypass) {
+            $location.path('/purpose');
+        } else {
+            var rfi_data = {};
+            rfi_data['population_type'] = $scope.rfiData.population.type;
+            rfi_data['health_condition'] = $scope.rfiData.health_condition;
+            rfi_data['location'] = $scope.rfiData.location.location;
+            $http({
+                url: urlBase + 'scripts/checkDuplicateRFI.php', method: "POST", data: rfi_data
+            }).success(function (respdata, status, headers, config) {
 
-            var dup_event_id = respdata['event_id'];
-            var dup_event_status = respdata['event_status'];
-            if (respdata['status'] == 'success' && dup_event_id > 0){ // got to duplicate page
-                $scope.rfiData.duplicate_rfi = {};
-                $scope.rfiData.duplicate_rfi.rfi_id = dup_event_id;
-                $scope.rfiData.duplicate_rfi.rfi_status = dup_event_status;
-                $location.path('/duplicate');
+                var dup_event_id = respdata['event_id'];
+                var dup_event_status = respdata['event_status'];
+                if (respdata['status'] == 'success' && dup_event_id > 0) { // got to duplicate page
+                    $scope.rfiData.duplicate_rfi = {};
+                    $scope.rfiData.duplicate_rfi.rfi_id = dup_event_id;
+                    $scope.rfiData.duplicate_rfi.rfi_status = dup_event_status;
+                    $location.path('/duplicate');
 
-            }else if (respdata['status'] == 'notfound') { // go to purpose page
-                $location.path('/purpose');
-            }else {
-                alert(respdata['message']);
-            }
+                } else if (respdata['status'] == 'notfound') { // go to purpose page
+                    $location.path('/purpose');
+                } else {
+                    alert(respdata['message']);
+                }
 
-        });
+            });
+        }
 
     }
 
