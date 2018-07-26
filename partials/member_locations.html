@@ -1,0 +1,80 @@
+<div ng-include src="'header.html'"></div>
+<!-- <div ng-if="mobile"ng-include src="'header_mobile.html'"></div> -->
+
+<div class="jumbotron dashboard">
+    <div class="container">
+        <h1>Additional Member Locations</h1>
+    </div>
+</div>
+
+<div class="wrapper dashboard">
+
+    <div class="container" >
+        <div ng-show="locationaccess !='1'">
+            <h3>You do not have access to this page.</h3>
+        </div>
+        <div ng-show="locationaccess =='1'" ng-controller="memberLocationsController" >
+
+            <div id="form-container" class="row">
+            <form name="locationForm" role="form" id="locationForm" class="col-xs-12 col-md-8" >
+                <h4>Add Member Location</h4>
+                <div class="form-group">
+                    <label class="form-label" for="country">Country</label>
+                    <select chosen="" ng-model="member.countrycode" name="country" data-placeholder="Choose a country..." class="chosen-select form-control" >
+                        <option value=""></option>
+                        <option ng-repeat="country in countries" value="{{country.code}}">{{country.name}}</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="city">City</label>
+                    <input type="text" class="form-control" ng-model="member.city" name="city" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="state">State/Province/Region</label>
+                    <input type="text" class="form-control" ng-model="member.state" name="state" required>
+                </div>
+
+                <div class="form-group">
+
+                    <button ng-click="addLocation(member)" type="submit" class="submit btn btn-default">Add Location</button>
+                    <div>
+                        <br>
+                        <p>{{message}}</p>
+                        <p class="intro error" name="error_message" ><strong ng-bind-html="error_message" ></strong></p>
+                    </div>
+                </div><!-- /input-group -->
+            </form>
+
+            </div>
+
+            <div class="row col-xs-12 col-md-8" >
+                <h4>Member Locations</h4>
+
+                <div class="table-responsive">
+                    <table class='small table table-hover table-bordered'>
+                        <tr>
+                            <th style="width:30px;">#</th>
+                            <th style="width:30px;">Country</th>
+                            <th style="width:30px;">City</th>
+                            <th style="width:30px;">State</th>
+                            <th style="width:30px;">Delete Location</th>
+                        </tr>
+                        <tr ng-repeat="location in locations" >
+                            <td>{{$index+1}}</td>
+                            <td>{{location.country}}</td>
+                            <td>{{location.city}}</td>
+                            <td>{{location.state}}</td>
+                            <td>
+                                <button  class="btn btn-default btn-sm stacked" type="button" ng-click="deleteLocation(location.location_id)"><i class="fa fa-trash-o"></i></button>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+
+
+        </div>
+    </div><!--container-->
+</div><!--wrapper-->

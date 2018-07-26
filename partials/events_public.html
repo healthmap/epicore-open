@@ -1,0 +1,68 @@
+<div ng-include src="'header_new.html'"></div>
+<!-- <div ng-if="mobile"ng-include src="'header_mobile.html'"></div> -->
+
+<div class="jumbotron dashboard">
+    <div class="container">
+        <h1><span>Public RFI List</span></h1>
+    </div>
+</div>
+
+
+<div class="wrapper dashboard">
+<div class="container">
+    <div class="row">
+        <div class="col-xs-12">
+
+            <!-- view for organizations -->
+            <div ng-init="predicate = 'iso_create_date'; reverse=!reverse">
+                <table class='small table table-hover table-bordered'>
+                    <tbody>
+                        <tr>
+                            <th width="50px" ng-click="predicate = 'event_id_int'; reverse=!reverse">ID <i class="fa fa-sort"></i></th>
+                            <th ng-click="predicate = 'title'; reverse=!reverse">Title <i class="fa fa-sort"></i></th>
+                            <th width="110px" ng-click="predicate = 'iso_create_date'; reverse=!reverse">RFI Date <i class="fa fa-sort"></i></th>
+                            <th width="110px" ng-click="predicate = 'country'; reverse=!reverse">Location <i class="fa fa-sort"></i></th>
+                            <th width="50px"><span data-toggle="tooltip" title="information about the final outcome of the verification process">Outcome</span></th>
+                        </tr>
+                        <tr ng-repeat="event in eventsList['all'] | filter:publicEvents | orderBy:predicate:reverse" >
+                            <td>{{event.event_id_int}}</td>
+                            <td>{{event.title}}</td>
+                            <td>{{event.create_date}}</td>
+                            <td>{{event.country}}</td>
+                            <td>
+                                <span ng-if="event.outcome == 'VP'">Verified (+)</span>
+                                <span ng-if="event.outcome == 'VN'">Verified (-)</span>
+                                <span ng-if="event.outcome == 'UP'">Updated (+)</span>
+                                <a href="" ng-click="showSummary(event.phe_description, event.phe_additional, event.title, event.source, event.source_details, event.outcome, event.action_date)" ng-show="event.outcome && event.phe_description">Summary</a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+
+            <span ng-show="isRouteLoading">
+                <i class="fa fa-spinner fa-spin"></i> Please wait...
+            </span>
+    </div>
+</div>
+</div>
+</div><!--wrapper-->
+<div ng-include src="'disclaimer.html'"></div>
+<div ng-include src="'footer.html'"></div>
+
+<!-- Modal for summary -->
+<div>
+    <modal visible="showModal">
+        <pre style="white-space: pre-wrap; word-wrap: break-word">{{modalBody}}</pre>
+        <p>The information included has been verified by EPICORE, a network with a world-wide distribution of public health professionals ensuring a large spectrum of verification activities in proximity to where events are reported.
+            EPICORE members give highest priority to reliable sources of information including direct/indirect documentation about events, official statements and complementary reliable reports obtained at local level. Despite this,
+            EPICORE does not aim to replace any official reporting system and is meant to be a complementary surveillance tool supporting public health actors in their activities.
+            For all these reasons please consider that this information does not represent an official report and contents included should not be qualified as “officially verified”.
+        </p>
+    </modal>
+</div>
+<script>
+    // TOOLTIP
+    $('[data-toggle="tooltip"]').tooltip( {html: true,trigger:'hover'});
+</script>

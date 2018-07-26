@@ -1,0 +1,51 @@
+<div ng-include src="'header.html'"></div>
+<div class="jumbotron dashboard">
+    <div class="container">
+        <h1>RFI - Location and Date</h1>
+    </div>
+</div>
+
+<div class="wrapper dashboard">
+<div class="container">
+    <div class="row">
+        <div id="form-container" class="col-xs-12 col-md-8">
+            <form name="locationForm">
+
+                <div class="form-group">
+                    <span style="float: right;"><a href ng-click="clearRequest()" class="btn btn-default">Clear RFI</a></span><br>
+                </div>
+
+                <div class="intro">
+
+                </div>
+
+                <div class="form-group">
+                    <h4>Event Location</h4>
+                    <!--<input type="text" class="form-control" ng-model="rfiData.location.location" ng-focus="rfiData.location.location = ''; rfiData.location.latlon=''" name="location" id="searchTextField" placeholder="" value="" required>-->
+                    <!--<input type="hidden" name="latlon" ng-model="rfiData.location.latlon" id="default_location" value="{{rfiData.location.latlon}}">-->
+                    <input class="form-control" g-places-autocomplete options="autocompleteOptions" force-selection="true" ng-model="rfiData.place" ng-focus="rfiData.place = ''; rfiData.location.latlon=''" id="autocompleteText" required />
+
+                </div>
+
+                <div class="form-group">
+                    <h4>Location Details</h4>
+                    <p>Please include details about the subnational level location of the event:</p>
+                    <textarea class="form-control" style="height:300px" ng-model="rfiData.location.location_details" id="population_description" placeholder="Available details..." ></textarea>
+                </div>
+
+                <div class="form-group">&nbsp;
+                    <button ng-click="saveLocation('next')" type="submit" class="submit btn btn-primary"> Next <i class="fa fa-arrow-circle-right"></i></button>
+                </div><!-- /input-group -->
+                <span class="error">{{location_error_message}}</span>
+
+            </form>
+
+        </div><!--col-->
+    </div><!--row-->
+</div><!--container-->
+</div><!--wrapper-->
+<!--<script>
+    // google places for auto-suggester
+    initialize_googleplaces();
+
+</script>-->

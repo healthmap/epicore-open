@@ -1,0 +1,11 @@
+# php files#
+############
+/test
+/data
+/emailtemplates/temp
+/scripts/conf/
+.idea
+/vendor
+composer.*
+/cache
+/responsefiles

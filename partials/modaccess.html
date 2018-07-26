@@ -1,0 +1,79 @@
+<div ng-include src="'header.html'"></div>
+<div class="jumbotron dashboard">
+    <div class="container">
+        <h1>Requester Access</h1>
+    </div>
+</div>
+
+<div class="wrapper dashboard">
+
+    <div class="container" >
+        <div ng-show="!superuser">
+            <h3>You do not have access to this page.</h3>
+        </div>
+        <div ng-show="superuser && showpage" ng-controller="modaccessController" >
+
+            <div id="form-container" class="row">
+            <form name="modaccessForm" role="form" id="modaccessForm" class="col-xs-12 col-md-8">
+                <h4>Add Requester</h4>
+                <p>The requester must first sign up for a Healthmap account and provide you with their email address they used to sign up with.</p>
+                <p>Please enter the email address from the requester's Healthmap account.</p>
+                <div class="form-group">
+                    <label class="sr-only" for="mod_email">Healthmap Email Address</label>
+                    <input type="text" class="form-control" ng-model="mod_email" name="mod_email" id="mod_mail" placeholder="Requester's Healthmap Email Address" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="mod_org_id">Requester Organization</label>
+                    <select ng-model="mod_org_id" name="mod_org_id" required>
+                        <option value="">-- select --</option>
+                        <option value="1">Healthmap</option>
+                        <option value="2">Tephinet</option>
+                        <option value="3">Ending Pandemics</option>
+                        <option value="4">Promed</option>
+                        <option value="5">EpiCore</option>
+                        <option value="6">Médecins Sans Frontières - MSF Spain</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <span ng-show="isRouteLoading">
+                        <i class="fa fa-spinner fa-spin"></i> Please wait...
+                    </span>
+                    <button ng-click="addMod(mod_email,mod_org_id)" type="submit" class="submit btn btn-default">Add Requester</button>
+                    <div>
+                        <br>
+                        <p>{{message}}</p>
+                    </div>
+                </div><!-- /input-group -->
+            </form>
+            </div>
+
+            <div ng-init="predicate='name'; reverse=reverse" class="row col-xs-12 col-md-8" >
+                <h4>Requesters</h4>
+                <p>These are the requesters that have access to the Epicore system.</p>
+                <p><i class="fa fa-search"></i> <input ng-model="query"> &nbsp;&nbsp;&nbsp;&nbsp;
+                <div class="table-responsive">
+                    <table class='small table table-hover table-bordered'>
+                        <tr>
+                            <th style="width:30px;">#</th>
+                            <th style="width:30px;"><a href="" ng-click="predicate = 'name'; reverse=!reverse">Name</a></th>
+                            <th style="width:30px;"><a href="" ng-click="predicate = 'email'; reverse=!reverse">email </a></th>
+                            <th style="width:30px;"><a href="" ng-click="predicate = 'user_id'; reverse=!reverse">User id </a></th>
+                            <th style="width:30px;"><a href="" ng-click="predicate = 'org_name'; reverse=!reverse">Organization </a></th>
+                        </tr>
+                        <tr ng-repeat="mod in mods | filter:query | orderBy:predicate:reverse" >
+                            <td>{{$index+1}}</td>
+                            <td>{{mod.name}}</td>
+                            <td>{{mod.email}}</td>
+                            <td>{{mod.user_id}}</td>
+                            <td>{{mod.org_name}}</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+
+
+        </div>
+    </div><!--container-->
+</div><!--wrapper-->

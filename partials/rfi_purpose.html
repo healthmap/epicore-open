@@ -1,0 +1,120 @@
+<div ng-include src="'header.html'"></div>
+<div class="jumbotron dashboard">
+    <div class="container">
+        <h1>RFI - Purpose</h1>
+    </div>
+</div>
+
+<div class="wrapper dashboard">
+<div class="container">
+    <div class="row">
+        <div id="form-container" class="col-xs-12 col-md-8">
+            <form name="requestForm">
+
+                <div class="form-group">
+                    <span style="float: right;"><a href ng-click="clearRequest()" class="btn btn-default">Clear RFI</a></span><br>
+                </div>
+
+                <div class="intro">
+                    <h3>Verification or Update</h3>
+                    <h4></h4>
+                </div>
+
+                <div class="form-group">
+                    <h5>Select Verification if this is the first report of a PHE (or officially reported) or Update to gather additional details on an ongoing verified or officially confirmed PHE</h5>
+
+                    <div class="form-group">
+                        <label class="radio-inline"> <input type="radio" ng-model="rfiData.purpose.purpose" value="V" ng-required="!goback && !rfiData.purpose.purpose" ng-click="checkPurpose();"> Verification</label>
+                        <label class="radio-inline"> <input type="radio" ng-model="rfiData.purpose.purpose" value="U" ng-required="!goback !rfiData.purpose.purpose" ng-click="checkPurpose();"> Update</label>
+                    </div>
+
+                    <div class="form-group" ng-if="rfiData.purpose.purpose">
+
+                    <div class="form-group">
+                        <div class="checkbox">
+                            <label > <input type="checkbox" name="causal_agent" ng-model="rfiData.purpose.causal_agent" ng-checked="rfiData.purpose.causal_agent"> <b>PHE Causal Agent:</b>
+                                <span ng-if="rfiData.purpose.purpose == 'V' ">information on identified/hypothetical causal agent</span>
+                                <span ng-if="rfiData.purpose.purpose != 'V' ">update on identified/hypothetical causal agent</span>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="checkbox">
+                            <label > <input type="checkbox" name="epidemiology" ng-model="rfiData.purpose.epidemiology" ng-checked="rfiData.purpose.epidemiology"> <b>PHE Epidemiology:</b>
+                                <span ng-if="rfiData.purpose.purpose == 'V' ">information on the epidemiology including patterns of disease transmission, incubation period</span>
+                                <span ng-if="rfiData.purpose.purpose != 'V' ">update on disease epidemiology including patterns of transmission, incubation period etc</span>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="checkbox">
+                            <label > <input type="checkbox" name="pop_affected" ng-model="rfiData.purpose.pop_affected" ng-checked="rfiData.purpose.pop_affected" > <b>PHE population affected:</b>
+                                <span ng-if="rfiData.purpose.purpose == 'V' ">information on involved population (e.g. human/animal) or specific community</span>
+                                <span ng-if="rfiData.purpose.purpose != 'V' ">update on involved population (e.g. human/animal) or specific community</span>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="checkbox">
+                            <label > <input type="checkbox" name="location" ng-model="rfiData.purpose.location" ng-checked="rfiData.purpose.location"> <b>PHE Location:</b>
+                                <span ng-if="rfiData.purpose.purpose == 'V' ">information on location of cases or locations at risk for disease spread</span>
+                                <span ng-if="rfiData.purpose.purpose != 'V' ">update in terms of geographical spread or new locations in general</span>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="checkbox">
+                            <label > <input type="checkbox" name="size" ng-model="rfiData.purpose.size" ng-checked="rfiData.purpose.size"> <b>PHE Size:</b>
+                                <span ng-if="rfiData.purpose.purpose == 'V' ">information on number of cases  (suspected, confirmed, fatalities etc)</span>
+                                <span ng-if="rfiData.purpose.purpose != 'V' ">update in terms of number of cases (suspected, confirmed, fatalities etc)</span>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="checkbox">
+                            <label > <input type="checkbox" name="test" ng-model="rfiData.purpose.test" ng-checked="rfiData.purpose.test"> <b>PHE Test Results:</b>
+                                <span ng-if="rfiData.purpose.purpose == 'V' ">information on test results</span>
+                                <span ng-if="rfiData.purpose.purpose != 'V' ">update on test results</span>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="checkbox">
+                            <label > <input type="checkbox" name="other_category" ng-model="rfiData.purpose.other_category" ng-checked="rfiData.purpose.other_category"> <b>Other</b>
+                                <span ng-if="rfiData.purpose.purpose == 'V' ">(please specify): information on aspects not reflected in the other categories</span>
+                                <span ng-if="rfiData.purpose.purpose != 'V' ">(please specify): update on aspects not reflected in the other categories</span>
+                            </label>
+                        </div>
+                        <span class="error" >{{purpose_error_message1}}</span>
+                    </div>
+
+                    </div>
+                    <div class="form-group" ng-if="rfiData.purpose.other_category">
+                        <input type="text" class="form-control" ng-model="rfiData.purpose.other" name="other" id="other" placeholder='other information...' value="" ng-required="rfiData.purpose.other_category">
+                    </div>
+
+
+                    <div class="form-group" >
+                        <h5>Please insert a personalized message to responders requesting specific information:</h5>
+                        <input type="text" class="form-control" ng-model="rfiData.additionalText" name="additionalText" id="additionalText" placeholder='message...' value="" >
+                    </div>
+
+                    <div class="form-group">
+                        <button ng-click="savePurpose('back')" type="submit" class="submit btn btn-primary"><i class="fa fa-arrow-circle-left"></i> Back </button> &nbsp; &nbsp;
+                        <button ng-click="savePurpose('next')" type="submit" class="submit btn btn-primary"> Next <i class="fa fa-arrow-circle-right"></i></button>
+                    </div>
+                    <span class="error">{{purpose_error_message}}</span>
+
+                </div>
+
+            </form>
+
+        </div><!--col-->
+    </div><!--row-->
+</div><!--container-->
+</div><!--wrapper-->
+<script>
+
+    // TOOLTIP
+    $('[data-toggle="tooltip"]').tooltip( {html: true,trigger:'hover'});
+</script>

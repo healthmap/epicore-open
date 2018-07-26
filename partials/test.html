@@ -1,0 +1,186 @@
+<div ng-include src="'header.html'"></div>
+<div class="jumbotron dashboard">
+    <div class="container">
+        <h1>Epicore Training</h1>
+    </div>
+</div>
+
+<div class="wrapper" ng-hide="part1">
+    <div class="container">
+        <h2>Welcome to EpiCore!</h2>
+        <p>Congratulations on your acceptance! The next step is for you to complete our short online training certification sessions.</p>
+
+        <p>These sessions are designed to provide the basic skills and information you need as a health professional to improve disease surveillance not only in your community and country, but also globally.</p>
+
+        <p>The journey to EpiCore certification begins by clicking the button below, where you will be directed to the first session consisting of a 20 minute video titled "Introduction to Innovative Disease Surveillance Training Course". Please watch this video and learn the following:</p>
+        <ul>
+            <li>Recognize the advantages and challenges of traditional disease surveillance</li>
+            <li>Define the meaning of innovative disease surveillance</li>
+            <li>Recognize informal information sources</li>
+            <li>Identify the benefits of using innovative disease surveillance methods</li>
+        </ul>
+
+        <p>Above this video you will find a link where you can download the Introduction to Innovative Diseases Surveillance Training Course Handbook.</p> 
+        <p>Next, proceed to the second session where you will need to download and read the EpiCore Course Training Course handbook. The handbook will go over the following:</p>
+        <ul>
+            <li>What is EpiCore and how ProMED is related to EpiCore</li>
+            <li>Why you should become an EpiCore member and what you will gain from it</li>
+            <li>What a request for Information is and how to respond </li>
+            <li>How to use the EpiCore platform</li>
+            </ul>
+
+        <p>After you finish viewing the videos or handbooks, you will be directed to take a short test. Once you pass the test, you will be a certified EpiCore member. You will have access to your EpiCore dashboard and will begin receiving Requests for Information on possible outbreaks in your region.</p>
+
+        <p>We are very excited to start working with you! Please do not hesitate to contact us at info@epicore.org if you have any questions.</p>
+
+        <p>Sincerely,<br>
+        The EpiCore Team</p>
+ 
+        <button ng-click="part1=true;part2=true" class="btn btn-primary">Begin the first training session</button>
+    </div>
+</div>
+
+<div class="wrapper" ng-show="part2">
+    <div class="container">
+        <h2>Introduction to Innovative Disease Surveillance</h2>
+        <p><a href="/documents/intro-to-innovative-surveillance-handbook.pdf">Download the Introduction to Innovative Diseases Surveillance Training Course Handbook <i class="fa fa-download"></i></a></p>
+        <div class="mb24">
+            <iframe src="https://player.vimeo.com/video/173458799" height="550" width="980" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+        </div>
+        <button ng-click="part3=true;part2=false" class="btn btn-primary">Proceed to the second training session</button>
+    </div>
+</div>
+
+<div class="wrapper" ng-show="part3">
+    <div class="container">
+        <h2>Introduction to the EpiCore Platform</h2>
+        <p>Please download and carefully the read the handbook below before taking the test.</p>
+        <p><a href="/documents/epicore-training-handbook.pdf">Download the EpiCore Training Course Handbook <i class="fa fa-download"></i></a></p>
+<!--
+        <div class="mb24">
+            <iframe src="https://player.vimeo.com/video/173458872" height="550" width="980" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+        </div>
+-->
+        <button ng-click="part4=true;part3=false" class="btn btn-primary">Proceed to the test</button>
+    </div>
+</div>
+
+<div class="wrapper" ng-show="part4">
+<div class="container">
+
+            <!-- Test -->
+            <h2>Test</h2>
+            <p>Please complete the following multiple choice questions. There is only one correct answer per question. All questions must be answered correctly in order to pass the test.</p>
+
+            <form name="testForm" role="form" id="testForm">
+
+                <div class="form-group">
+                    <p>1. The following could be considered (an) information source(s) for disease surveillance:</p>
+                        <span ng-show="!test.q1 && attempted" class="red">Must select one</span>
+                    <div class="radio">
+                        <label> <input type="radio" ng-model="test.q1" value="A" > a)  Blogs and online discussion groups</label>
+                    </div>
+                    <div class="radio">
+                        <label> <input type="radio" ng-model="test.q1" value="B" >  b)  Social media</label>
+                    </div>
+                    <div class="radio">
+                        <label> <input type="radio" ng-model="test.q1" value="C" >  c)  Rumor (gossip)  </label>
+                    </div>
+                    <div class="radio">
+                        <label> <input type="radio" ng-model="test.q1" value="D" >  d)  Local media</label>
+                    </div>
+                    <div class="radio">
+                        <label> <input type="radio" ng-model="test.q1" value="E" >  e)  All of the above</label>
+                    </div>
+                    <div class="radio">
+                        <label> <input type="radio" ng-model="test.q1" value="F" >  f)  b and d only</label>
+                    </div>
+                </div>
+
+            <div class="form-group">
+                <p>2. All of the following are important reasons for using non-traditional sources in disease surveillance <strong>except</strong>:</p>
+                <span ng-show="!test.q2 && attempted" class="red">Must select one</span>
+                <div class="radio">
+                    <label> <input type="radio" ng-model="test.q2" value="A" >  a)  Faster disease detection </label>
+                </div>
+                <div class="radio">
+                    <label> <input type="radio" ng-model="test.q2" value="B" >  b)  Faster disease reporting</label>
+                </div>
+                <div class="radio">
+                    <label> <input type="radio" ng-model="test.q2" value="C" >  c)  Better Accuracy</label>
+                </div>
+                <div class="radio">
+                    <label> <input type="radio" ng-model="test.q2" value="D" >  d)  Not restricted to certain diseases</label>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <p>3. Over the past 20 years, some data suggest that the time required for an outbreak to be detected:</p>
+                <span ng-show="!test.q3 && attempted" class="red">Must select one</span>
+                <div class="radio">
+                    <label> <input type="radio" ng-model="test.q3" value="A" >  a)  Increased by almost 50%</label>
+                </div>
+                <div class="radio">
+                    <label> <input type="radio" ng-model="test.q3" value="B" >  b)  Decreased by almost 50%</label>
+                </div>
+                <div class="radio">
+                    <label> <input type="radio" ng-model="test.q3" value="C" >  c)  Remained unchanged</label>
+                </div>
+                <div class="radio">
+                    <label> <input type="radio" ng-model="test.q3" value="D" >  d)  Unknown, because this question has never been studied</label>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <p>4. All of the following are online disease surveillance sources <strong>except</strong>:</p>
+                <span ng-show="!test.q4 && attempted" class="red">Must select one</span>
+                <div class="radio">
+                    <label> <input type="radio" ng-model="test.q4" value="A" >  a)	HealthMap</label>
+                </div>
+                <div class="radio">
+                    <label> <input type="radio" ng-model="test.q4" value="B" >  b)	OneHealth</label>
+                </div>
+                <div class="radio">
+                    <label> <input type="radio" ng-model="test.q4" value="C" >  c)	ProMED-mail</label>
+                </div>
+                <div class="radio">
+                    <label> <input type="radio" ng-model="test.q4" value="D" >  d)	GPHIN</label>
+                </div>
+                <div class="radio">
+                    <label> <input type="radio" ng-model="test.q4" value="E" >  e)	MedISys</label>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <p>5. One of these options about the epicore.org platform is <strong>not correct</strong>:</p>
+                <span ng-show="!test.q5 && attempted" class="red">Must select one</span>
+                <div class="radio">
+                    <label> <input type="radio" ng-model="test.q5" value="A" >  a)	Requests for information on disease outbreaks will be sent to you by expert moderators</label>
+                </div>
+                <div class="radio">
+                    <label> <input type="radio" ng-model="test.q5" value="B" >  b)	You can use available traditional and/or non-traditional sources when collecting information for your response</label>
+                </div>
+                <div class="radio">
+                    <label> <input type="radio" ng-model="test.q5" value="C" >  c)	Your responses will be anonymous, unless you choose otherwise</label>
+                </div>
+                <div class="radio">
+                    <label> <input type="radio" ng-model="test.q5" value="D" >  d)	It is free to join EpiCore</label>
+                </div>
+                <div class="radio">
+                    <label> <input type="radio" ng-model="test.q5" value="E" >  e)	None of the above</label>
+                </div>
+            </div>
+
+            <div class="form-group" ng-show="!passed">
+                <button type="submit" ng-click="grade(test)" class="submit btn btn-primary">Submit</button>
+            </div>
+        </form>
+            <div>
+                <p class="intro red"><strong ng-bind-html="test_message"></strong></p>
+            </div>
+            <div ng-show="passed">
+                <a href="#/login" class="btn btn-primary"><b>Login</b></a>
+            </div>
+</div><!--container-->
+</div><!--wrapper-->
+
