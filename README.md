@@ -4,6 +4,13 @@
 
 ### Clone Epicore repository
 
+### set permissions on data files
+
+```sh
+cd epicore_root/data
+
+sudo chown www-data:sudo *.csv
+```
 
 
 ### Create temp directory in emailtemplates
@@ -34,7 +41,6 @@ mkdir conf
 cp da.ini.php epicore_root/scripts/conf/.
 
 ```
-*Contact Epicore admin for a copy of the config files.
 
 ### Set app version and mode
 
