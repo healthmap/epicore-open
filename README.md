@@ -1,6 +1,6 @@
 # Epicore
 
-
+This project was devolped in PHP 5.5.9 & MySQL for the backend, and AngularJS v1.2.9 for the front end.
 
 ### Clone Epicore repository
 
