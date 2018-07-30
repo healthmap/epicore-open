@@ -924,7 +924,9 @@ controller('requestController2', function($rootScope, $window, $scope, $routePar
             $scope.isOrganization = $scope.userInfo.fetp_id > 0 ? false : true;
             // if RFI requester is the logged in user or of same org, they get different action items
             if (response.EventsList != null) {
-                $scope.isAuthorizedToFollowup = $scope.userInfo.organization_id == response.EventsList.org_requester_id ? true : false;
+                console.log($scope.userInfo);
+                //$scope.isAuthorizedToFollowup = $scope.userInfo.organization_id == response.EventsList.org_requester_id ? true : false;
+                $scope.isAuthorizedToFollowup = (($scope.userInfo.organization_id == response.EventsList.org_requester_id) || ($scope.userInfo.superuser)) ? true : false;
                 $scope.changeStatusText = response.EventsList.estatus == "C" ? 'Re open' : 'Close';
                 $scope.changeStatusType = response.EventsList.estatus == "C" ? 'reopen' : 'close';
                 $scope.isAuthorizedFETP = false;
