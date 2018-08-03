@@ -1001,6 +1001,7 @@ class UserInfo
             $user['City'] = $applicant['city'];
             $user['State/Province'] = $applicant['state'];
             $user['Country'] = $std_countries[$applicant['country_code']];
+            $user['Country Code'] = $applicant['country_code'];
             $user['WHO Region'] = $std_who_map[$applicant['country_code']];
             $user['Job Title'] = $applicant['job_title'];
             $user['Organization'] = $applicant['organization'];
