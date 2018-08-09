@@ -1069,6 +1069,7 @@ controller('requestController2', function($rootScope, $window, $scope, $routePar
         var useful_rids = [];
         var usefulpromed_rids = [];
         var notuseful_rids = [];
+        console.log($scope.eventsList);
         if(isValid && (thestatus == 'Close' || thestatus == 'Update') && ($scope.validResponses > 0)) {
             for (var h in $scope.eventsList.history) {
                 var h_rid = $scope.eventsList.history[h].response_id;
@@ -1077,8 +1078,8 @@ controller('requestController2', function($rootScope, $window, $scope, $routePar
                 var h_orgid = $scope.eventsList.history[h].organization_id;
                 var h_useful = $scope.eventsList.history[h].useful;
                 var h_perm = $scope.eventsList.history[h].permission;
-                if ((h_type == 'Member Response' && h_perm !=='0' && h_perm !=='4')
-                    && ($scope.userInfo.uid || (h_fetp_id == $scope.userInfo.fetp_id)) && (h_orgid == $scope.userInfo.organization_id)) {
+                if ( (h_type == 'Member Response' && h_perm !=='0' && h_perm !=='4')
+                    && ($scope.userInfo.uid || (h_fetp_id == $scope.userInfo.fetp_id)) && ((h_orgid == $scope.userInfo.organization_id) || $scope.userInfo.superuser) ) {
                     if (h_useful === null ) {
                         alert('Please assess all member responses.');
                         $scope.close_message = 'Please assess all member responses.';
@@ -1117,6 +1118,7 @@ controller('requestController2', function($rootScope, $window, $scope, $routePar
 
             formData['condition_details'] = $scope.eventsList.condition_details;
 
+            console.log(formData);
             $http({ url: urlBase + 'scripts/changestatus2.php', method: "POST", data: formData
             }).success(function (data, status, headers, config) {
                 if (data['status'] == 'success') {
