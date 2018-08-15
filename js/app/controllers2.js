@@ -827,7 +827,7 @@ controller('requestController2', function($rootScope, $window, $scope, $routePar
     }
     $scope.validResponses = 0;
 
-    $scope.eventType = "MR";
+    $scope.eventType = "AO";
 
     $rootScope.dashboardType = "MR";
 
