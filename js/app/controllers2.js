@@ -269,7 +269,8 @@ controller('requestController2', function($rootScope, $window, $scope, $routePar
             // validation
             var valid_other_animal = ($scope.rfiData.population.animal_type != 'O') || $scope.rfiData.population.other_animal;
             var valid_animal = ($scope.rfiData.population.type != 'A') || ($scope.rfiData.population.animal_type && valid_other_animal);
-            var valid_other = ($scope.rfiData.population.type != 'O') || $scope.rfiData.population.other;
+            //var valid_other = ($scope.rfiData.population.type != 'O') || $scope.rfiData.population.other;
+            var valid_other = (($scope.rfiData.population.type != 'E') && ($scope.rfiData.population.type != 'U')) || $scope.rfiData.population.other;
             var valid_population = $scope.rfiData.population.type && valid_other;
 
             if (valid_population && valid_animal) {
@@ -591,10 +592,10 @@ controller('requestController2', function($rootScope, $window, $scope, $routePar
                 population = getAnimal();
                 break;
             case "E":
-                population = 'Environmental';
+                population = 'Environmental, ' + $scope.rfiData.population.other;
                 break;
             case "U":
-                population = 'Unknown';
+                population = 'Unknown, ' + $scope.rfiData.population.other;
                 break;
             case "O":
                 population = $scope.rfiData.population.other;
@@ -645,6 +646,8 @@ controller('requestController2', function($rootScope, $window, $scope, $routePar
             species = 'animal';
         else if ($scope.rfiData.population.type =="E")
             species = 'environment';
+        else if ($scope.rfiData.population.type =="U")
+            species = 'unknown';
 
 
         var condition = [];
@@ -704,7 +707,7 @@ controller('requestController2', function($rootScope, $window, $scope, $routePar
             }
 
         } else if (species == 'environment'){
-            condition.push($scope.rfiData.health_condition.disease_details);
+           condition.push($scope.rfiData.health_condition.disease_details);
         }
         return condition.toString();
     }

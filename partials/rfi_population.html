@@ -59,22 +59,28 @@
                 </div>
 
                 <div class="form-group">
-                    <div class="radio">
+                    <div class="radio" data-toggle="tooltip" title="">
                         <label > <input type="radio" name="environment" ng-model="rfiData.population.type" value="E" ng-required="!rfiData.population.type && !goback" > Environmental</label>
+                        <input ng-if="rfiData.population.type == 'E'" type="text" class="form-control" ng-model="rfiData.population.other" name="other" id="other_environment" placeholder='short description... Example: Chemical spill' value="" required>
                     </div>
                 </div>
 
-                <div class="form-group">
+                <div class="form-group" data-toggle="tooltip" title="">
                     <div class="radio">
                         <label > <input type="radio" name="unknown" ng-model="rfiData.population.type" value="U" ng-required="!rfiData.population.type && !goback" > Unknown</label>
+                        <input ng-if="rfiData.population.type == 'U'" type="text" class="form-control" ng-model="rfiData.population.other" name="other" id="other_unknown" placeholder='short description...' value="" required>
                     </div>
                 </div>
+<!--
+
                 <div class="form-group">
                     <div class="radio">
                         <label > <input type="radio" name="open" ng-model="rfiData.population.type" value="O" ng-required="!rfiData.population.type && !goback" > Open Option</label>
                         <input ng-if="rfiData.population.type == 'O'" type="text" class="form-control" ng-model="rfiData.population.other" name="other" id="other" placeholder='open option details...' value="" required>
                     </div>
                 </div>
+
+-->
 
                 <div class="form-group">
                     <h4>Affected Population Details:</h4>
@@ -95,4 +101,9 @@
     </div><!--row-->
 </div><!--container-->
 </div><!--wrapper-->
+
+<script>
+    // TOOLTIP
+    $('[data-toggle="tooltip"]').tooltip( {html: true,trigger:'hover'});
+</script>
 
