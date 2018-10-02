@@ -24,11 +24,6 @@ foreach($_GET as $key => $val) {
 require_once "db.function.php";
 $db = getDB();
 
-/*
-// insert the api hit into the log
-$db->query("INSERT INTO api_log (api_id, hit_date, query) VALUES (?, ?, ?)", array($api_id, date('Y-m-d H:i:s'), $qs));
-$db->commit();
-*/
 
 // get the events
 require_once "EventInfo.class.php";
@@ -44,10 +39,14 @@ if(isset($rvars['event_id']) && is_numeric($rvars['event_id'])) {
         $indexed_array['fetp_ids'] = $ei->getFETPRecipients();
     }
 } else { // get all events
+    $start_date = $rvars['start_date'] ? $rvars['start_date']: V2START_DATE;
+    $end_date = $rvars['end_date'] ? $rvars['end_date'] : date("Y-m-d H:i:s");
+
     if ($rvars['public']){
         // get closed events for public
         $uid = '0'; // no user id value
-        $indexed_array = EventInfo::getEventsCache($uid, 'C', 'database', V2START_DATE);
+        //$indexed_array = EventInfo::getEventsCache($uid, 'C', 'database', V2START_DATE);
+        $indexed_array = EventInfo::getAllEvents($uid, 'C', $start_date, $end_date);
 
     } else {
         // status can be "closed" or "open"
@@ -59,14 +58,7 @@ if(isset($rvars['event_id']) && is_numeric($rvars['event_id'])) {
             // array values will lop off the array key b/c angular reorders the object
             $indexed_array = array_values($ui->getFETPRequests($status, '', V2START_DATE));
         } else {
-            if ($status == 'C') {
-                //$indexed_array = EventInfo::getEventsCache($rvars['uid'], 'C', 'cache');
-                // use database for now until cache update is working: need to update cache when status changes.
-                // Status of an event can change from the dashboard or from the auto-close cron job
-                $indexed_array = EventInfo::getEventsCache($rvars['uid'], 'C', 'database', V2START_DATE);
-            } else {
-                $indexed_array = EventInfo::getAllEvents($rvars['uid'], $status, V2START_DATE);
-            }
+            $indexed_array = EventInfo::getAllEvents($rvars['uid'], $status, $start_date, $end_date);
             if ($status == 'O') {  // check for unrated respsonses
                 $num_notrated_repsonses = EventInfo::getNumNotRatedResponses($rvars['uid'], V2START_DATE);
             }

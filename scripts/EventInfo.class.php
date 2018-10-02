@@ -60,11 +60,13 @@ class EventInfo
     // returns false if no duplicates found
     static function checkDuplicate($date, $country, $population_type, $health_condition){
 
-        if ($population_type == 'H' || $population_type = 'A') {
+        if ($population_type == 'H' || $population_type == 'A') {
             $db = getDB();
             $check_conditions = unserialize(CHECK_CONDITIONS);
 
             // SQL for matching place ids
+            // remove white space
+            $country = preg_replace('/\s+/', '', $country);
             $match_country = "SELECT place_id FROM place WHERE name LIKE '%$country%' ";
 
             // SQL for event ids from matching population
@@ -97,6 +99,41 @@ class EventInfo
 
             if ($events)
                 return $events;
+            else
+                return false;
+
+        } else {
+            return false;
+        }
+
+    }
+
+    // returns duplicate event ids after a given date, with matching country and population
+    // returns false if no duplicates found
+    static function checkDuplicate2($date, $country, $population_type){
+
+        if ($population_type == 'H' || $population_type == 'A' || $population_type == 'U' || $population_type == 'O') {
+            $db = getDB();
+
+            // remove white space
+            $country = preg_replace('/\s+/', '', $country);
+            // get duplicate event ids
+            $events = $db->getAll("SELECT event_id, title FROM event WHERE create_date >= ? 
+                                  AND place_id IN (SELECT place_id FROM place WHERE name LIKE '%$country%') 
+                                  AND event_id IN (SELECT event_id FROM population WHERE type = '$population_type') ", array($date));
+
+            // only save event ids and status
+            $duplicate_events = array();
+            foreach ($events as $event) {
+                $estatus = $db->getOne("SELECT status FROM event_notes WHERE event_id = ? ORDER BY action_date DESC LIMIT 1", array($event['event_id']));
+                // if no value for status, it's open
+                $event_status = $estatus ? $estatus : 'O';
+                $duplicate_events[] = array('event_id' => $event['event_id'], 'title' => $event['title'], 'status' => $event_status);
+
+            }
+
+            if ($duplicate_events)
+                return $duplicate_events;
             else
                 return false;
 
@@ -823,20 +860,21 @@ class EventInfo
 
     }
 
-    static function getAllEvents($uid = '', $status = '', $sdate = '')
+    static function getAllEvents($uid = '', $status = '', $sdate = '', $edate = '')
     {
         if(!is_numeric($uid)) {
             return 0;
         }
 
-        $start_date = $sdate ? $sdate: '2000-01-01';
+        $start_date = $sdate ? $sdate: V2START_DATE;
+        $end_date = $edate ? $edate: date("Y-m-d H:i:s");
         $db = getDB();
         $oid = $db->getOne("SELECT organization_id FROM user WHERE user_id = ?", array($uid));
         $status = $status ? $status : 'O'; // if status is not passed in, get open events
         // join on the event_fetp table b/c if there is no row in there, the request was never sent (may have been started, but didn't get sent
         $q = $db->query("SELECT DISTINCT(event.event_id), event.*, place.name AS location, place.location_details FROM place, event, event_fetp 
-                          WHERE event.place_id = place.place_id AND event.event_id = event_fetp.event_id AND event.create_date > ?
-                          ORDER BY event.create_date DESC", array($start_date));
+                          WHERE event.place_id = place.place_id AND event.event_id = event_fetp.event_id AND event.create_date >= ? AND event.create_date <= ?
+                          ORDER BY event.create_date DESC", array($start_date, $end_date));
 
         while($row = $q->fetchRow()) {
             // get the current status - open or closed

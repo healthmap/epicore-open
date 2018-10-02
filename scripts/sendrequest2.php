@@ -31,7 +31,7 @@ if ($formvars->uid && $formvars->fetp_ids && $formvars->population && $formvars-
     $event_info['title'] = (string)$formvars->title;
     $fetp_ids = $formvars->fetp_ids;
     $duplicate_rfi_detected = (int)$formvars->duplicate_rfi_detected == 1;
-    $duplicate_rfi_id = (int)$formvars->duplicate_rfi_id;
+    //$duplicate_rfi_id = (int)$formvars->duplicate_rfi_id;
 
     // related tables
     $event_table['health_condition'] = $formvars->health_condition;
@@ -100,7 +100,8 @@ if ($formvars->uid && $formvars->fetp_ids && $formvars->population && $formvars-
         if ($duplicate_rfi_detected) {
             $subject2 = "EPICORE: DUPLICATE ALERT - RFI #" . $event_id . " : " . $event_info['title'];
             $admin_emailtext = $ei->buildEmailForEvent($event_info, 'rfi_admin', $custom_vars, 'text');
-            $admin_message = "Possible duplicate of RFI ID: $duplicate_rfi_id.  Requester: $name sent the following RFI.";
+            //$admin_message = "Possible duplicate of RFI ID: $duplicate_rfi_id.  Requester: $name sent the following RFI.";
+            $admin_message = "Possible duplicate of RFI ID: $event_id.  Requester: $name sent the following RFI.";
             $custom_emailtext_admin = trim(str_replace("[PRO_IN]", $admin_message, $admin_emailtext));
             $idlist[0] = EPICORE_ID;
             $extra_headers['user_ids'] = $idlist;

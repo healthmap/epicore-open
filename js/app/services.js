@@ -58,7 +58,7 @@ angular.module('EpicoreApp.services', [])
     })
     .factory('eventAPIservice2', function($http, $rootScope, $location, urlBase) {
         var eventAPI = {};
-        eventAPI.getEvents = function(event_id) {
+        eventAPI.getEvents = function(event_id, start_date, end_date) {
             var qs = event_id ? '&event_id='+event_id : '';
             /*if(typeof($rootScope.userinfo['uid']) == "undefined") {
                 qs += "&fetp_id="+$rootScope.userinfo['fetp_id'];
@@ -74,6 +74,9 @@ angular.module('EpicoreApp.services', [])
             } else {
                 qs += "&uid="+$rootScope.userinfo['uid'];
             }
+
+            qs += "&start_date="+start_date;
+            qs += "&end_date="+end_date;
 
             var requesturl = $location.path();
             var urlarr = requesturl.split("/");

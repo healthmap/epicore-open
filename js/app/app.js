@@ -63,7 +63,7 @@ app.config(function($routeProvider) {
         when("/followup/:id/:response_id", {templateUrl: "partials/followup.html?cb=" + cacheBustSuffix, controller: "eventsController"}).
         when("/followup2/:id/:response_id", {templateUrl: "partials/followup2.html?cb=" + cacheBustSuffix, controller: "eventsController2"}).
         when("/condition", {templateUrl: "partials/rfi_condition.html?cb=" + cacheBustSuffix, controller: "requestController2"}).
-        when("/duplicate", {templateUrl: "partials/rfi_duplicate.html?cb=" + cacheBustSuffix, controller: "requestController2"}).
+        when("/duplicate", {templateUrl: "partials/rfi_duplicate2.html?cb=" + cacheBustSuffix, controller: "requestController2"}).
         when("/population", {templateUrl: "partials/rfi_population.html?cb=" + cacheBustSuffix, controller: "requestController2"}).
         when("/location", {templateUrl: "partials/rfi_location.html?cb=" + cacheBustSuffix, controller: "requestController2"}).
         when("/location/:id", {templateUrl: "partials/rfi_location.html?cb=" + cacheBustSuffix, controller: "requestController2"}).

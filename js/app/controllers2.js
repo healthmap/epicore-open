@@ -276,6 +276,12 @@ controller('requestController2', function($rootScope, $window, $scope, $routePar
             if (valid_population && valid_animal) {
 
                 if (direction === 'next') {
+
+                    // Check for duplicate RFI only for original RFI requester
+                    var bypass = $scope.userInfo.superuser && !$scope.isRequester; // bypass for superusers that are not the original requester
+                    //bypass = false; // for testing
+                    checkDuplicateRFI( bypass );
+
                     $location.path('/condition');
                 }
                 $scope.pop_error_message = '';
@@ -313,8 +319,8 @@ controller('requestController2', function($rootScope, $window, $scope, $routePar
                 if (direction === 'next') {
 
                     // Check for duplicate RFI only for original RFI requester
-                    var bypass = $scope.userInfo.superuser && !$scope.isRequester; // bypass for superusers that are not the original requester
-                    checkDuplicateRFI( bypass );
+                    //var bypass = $scope.userInfo.superuser && !$scope.isRequester; // bypass for superusers that are not the original requester
+                    //checkDuplicateRFI( bypass );
 
                 } else if (direction === 'back') {
                     $location.path('/population');
@@ -370,22 +376,30 @@ controller('requestController2', function($rootScope, $window, $scope, $routePar
         } else {
             var rfi_data = {};
             rfi_data['population_type'] = $scope.rfiData.population.type;
-            rfi_data['health_condition'] = $scope.rfiData.health_condition;
+            //rfi_data['health_condition'] = $scope.rfiData.health_condition;
             rfi_data['location'] = $scope.rfiData.location.location;
+
             $http({
-                url: urlBase + 'scripts/checkDuplicateRFI.php', method: "POST", data: rfi_data
+                url: urlBase + 'scripts/checkDuplicateRFI2.php', method: "POST", data: rfi_data
             }).success(function (respdata, status, headers, config) {
 
-                var dup_event_id = respdata['event_id'];
-                var dup_event_status = respdata['event_status'];
-                if (respdata['status'] == 'success' && dup_event_id > 0) { // got to duplicate page
+                //console.log(respdata);
+
+                var dup_events = respdata['events'];
+
+                if (respdata['status'] == 'success' && dup_events) { // got to duplicate page
+                    //var dup_event_id = respdata['event_id'];
+                    //var dup_event_status = respdata['event_status'];
+
+                    $scope.rfiData.duplicate_rfis = dup_events;
                     $scope.rfiData.duplicate_rfi = {};
-                    $scope.rfiData.duplicate_rfi.rfi_id = dup_event_id;
-                    $scope.rfiData.duplicate_rfi.rfi_status = dup_event_status;
+
+                    //$scope.rfiData.duplicate_rfi.rfi_id = dup_event_id;
+                    //$scope.rfiData.duplicate_rfi.rfi_status = dup_event_status;
                     $location.path('/duplicate');
 
-                } else if (respdata['status'] == 'notfound') { // go to purpose page
-                    $location.path('/purpose');
+                } else if (respdata['status'] == 'notfound') { // go to condition page
+                    $location.path('/condition');
                 } else {
                     alert(respdata['message']);
                 }
@@ -395,7 +409,7 @@ controller('requestController2', function($rootScope, $window, $scope, $routePar
 
     }
 
-    //////////////////////////////////////// Duplicate RFI Action ////////////////////////////////////////
+    //////////////////////////////////////// Duplicate RFI(s) Action ////////////////////////////////////////
     $scope.duplicateAction = function () {
 
         if ($scope.rfiData.duplicate_rfi.rfi_same == '1'){  // same RFI, do not send
@@ -410,12 +424,20 @@ controller('requestController2', function($rootScope, $window, $scope, $routePar
 
         } else if ($scope.rfiData.duplicate_rfi.rfi_same == '2'){ // same RFI, track existing RFI
 
-            if (confirm('Are you sure?  This will clear the RFI you have just entered and you will receive all emails and notifications regarding the existing RFI.')){
+            if (confirm('Are you sure?  This will clear the RFI you have just entered and you will receive all emails and notifications regarding the existing RFIs')){
 
                 // Track RFI
-                var rfi_id = $scope.rfiData.duplicate_rfi.rfi_id;
+                //var rfi_id = $scope.rfiData.duplicate_rfi.rfi_id;
                 var user_id = $scope.userInfo.uid;
-                $http({ url: urlBase + 'scripts/trackDuplicateRFI.php', method: "POST", data: {'event_id' :rfi_id, 'user_id': user_id}
+                var dup_events = $scope.rfiData.duplicate_rfis;
+                var event_ids = [];
+                dup_events.forEach(function (event) {
+                    event_ids.push(event.event_id);
+                });
+
+                //$http({ url: urlBase + 'scripts/trackDuplicateRFI.php', method: "POST", data: {'event_id' :rfi_id, 'user_id': user_id}
+
+                $http({ url: urlBase + 'scripts/trackDuplicateRFI2.php', method: "POST", data: {'event_ids' :event_ids, 'user_id': user_id}
                 }).success(function (respdata, status, headers, config) {
 
                     if (respdata['status'] == 'success'){
@@ -434,8 +456,8 @@ controller('requestController2', function($rootScope, $window, $scope, $routePar
 
         } else if ($scope.rfiData.duplicate_rfi.rfi_same == '3'){ // different RFI, so go ahead and send a new RFI
 
-            // go to purpose
-            $location.path('/purpose');
+            // go to condition
+            $location.path('/condition');
 
         } else {
             console.log('error');
@@ -738,7 +760,7 @@ controller('requestController2', function($rootScope, $window, $scope, $routePar
             formData['title'] =  $scope.rfiData.event_title;
             formData['additionalText'] = $scope.rfiData.additionalText;
             formData['duplicate_rfi_detected'] = ($scope.rfiData.duplicate_rfi && ($scope.rfiData.duplicate_rfi.rfi_same == '3')) ? 1:0; // possibile duplicate RFI
-            formData['duplicate_rfi_id'] = ($scope.rfiData.duplicate_rfi && $scope.rfiData.duplicate_rfi.rfi_id) ? $scope.rfiData.duplicate_rfi.rfi_id : 0;
+            //formData['duplicate_rfi_id'] = ($scope.rfiData.duplicate_rfi && $scope.rfiData.duplicate_rfi.rfi_id) ? $scope.rfiData.duplicate_rfi.rfi_id : 0;
                 $http({
                 url: urlBase + 'scripts/sendrequest2.php', method: "POST", data: formData
             }).success(function (respdata, status, headers, config) {
@@ -836,6 +858,29 @@ controller('requestController2', function($rootScope, $window, $scope, $routePar
 
     $scope.cbsuffix = Date.now();
 
+    // get list of months for selecting event month
+    var dateStart = moment('2017-10-30'); // starting date of EpiCore v2.0
+    var dateEnd = moment(); // now
+    var timeValues = [];
+    var i =0;
+    while (dateEnd > dateStart || dateStart.format('M') === dateEnd.format('M')) {
+        timeValues.push({name: dateStart.format('YYYY-MMMM'), value: i});
+        dateStart.add(1,'month');
+        i++;
+    }
+    $scope.event_months = timeValues.reverse();
+    $scope.selected_month = timeValues[0];
+
+    // get events for selected month
+    $scope.getEventMonth = function (month) {
+        var start_date = moment(month.name);
+        var end_date = moment(month.name);
+        end_date.add(1,'month');
+        var s_date = start_date.format('YYYY-MM') + '-01';
+        var e_date = end_date.format('YYYY-MM') + '-01';
+        getAllEvents(s_date, e_date);
+    };
+
     // upload response files
     $scope.ufiles = [];
     $scope.uploadFiles = function(files, errFiles) {
@@ -921,31 +966,53 @@ controller('requestController2', function($rootScope, $window, $scope, $routePar
 
     };
 
-    eventAPIservice2.getEvents($scope.id).success(function (response) {
+    getAllEvents = function (start_date, end_date) {
+        $scope.isRouteLoading = true;
 
-        if (typeof($scope.userinfo) != "undefined") {
-            $scope.isOrganization = $scope.userInfo.fetp_id > 0 ? false : true;
-            // if RFI requester is the logged in user or of same org, they get different action items
-            if (response.EventsList != null) {
-                console.log($scope.userInfo);
-                //$scope.isAuthorizedToFollowup = $scope.userInfo.organization_id == response.EventsList.org_requester_id ? true : false;
-                $scope.isAuthorizedToFollowup = (($scope.userInfo.organization_id == response.EventsList.org_requester_id) || ($scope.userInfo.superuser)) ? true : false;
-                $scope.changeStatusText = response.EventsList.estatus == "C" ? 'Re open' : 'Close';
-                $scope.changeStatusType = response.EventsList.estatus == "C" ? 'reopen' : 'close';
-                $scope.isAuthorizedFETP = false;
-                $scope.isRequester = response.EventsList.requester_id == $scope.userInfo.uid ? true : false;
-                if (response.EventsList.fetp_ids != null && response.EventsList.fetp_ids.indexOf($scope.userInfo.fetp_id) != -1) {
-                    $scope.isAuthorizedFETP = true;
-                }
-                if (response.EventsList.fetp_ids) {
-                    $scope.num_fetp = response.EventsList.fetp_ids.length;
-                }
+        $scope.eventsList = [];
+        eventAPIservice2.getEvents($scope.id, start_date, end_date).success(function (response) {
 
+            if (typeof($scope.userinfo) != "undefined") {
+                $scope.isOrganization = $scope.userInfo.fetp_id > 0 ? false : true;
+                // if RFI requester is the logged in user or of same org, they get different action items
+                if (response.EventsList != null) {
+
+                    //$scope.isAuthorizedToFollowup = $scope.userInfo.organization_id == response.EventsList.org_requester_id ? true : false;
+                    $scope.isAuthorizedToFollowup = (($scope.userInfo.organization_id == response.EventsList.org_requester_id) || ($scope.userInfo.superuser)) ? true : false;
+                    $scope.changeStatusText = response.EventsList.estatus == "C" ? 'Re open' : 'Close';
+                    $scope.changeStatusType = response.EventsList.estatus == "C" ? 'reopen' : 'close';
+                    $scope.isAuthorizedFETP = false;
+                    $scope.isRequester = response.EventsList.requester_id == $scope.userInfo.uid ? true : false;
+                    if (response.EventsList.fetp_ids != null && response.EventsList.fetp_ids.indexOf($scope.userInfo.fetp_id) != -1) {
+                        $scope.isAuthorizedFETP = true;
+                    }
+                    if (response.EventsList.fetp_ids) {
+                        $scope.num_fetp = response.EventsList.fetp_ids.length;
+                    }
+
+                    $scope.eventsList = response.EventsList;
+                    $scope.filePreview = response.EventsList.filePreview ? response.EventsList.filePreview : '';
+
+
+                    if ($scope.eventsList.purpose) {
+                        $scope.outcome = {};
+                        $scope.outcome.phe_purpose = 'N';
+                        if ($scope.eventsList.purpose.indexOf("Verification") >= 0) {
+                            $scope.outcome.phe_purpose = 'V';
+                        } else if ($scope.eventsList.purpose.indexOf("Update") >= 0) {
+                            $scope.outcome.phe_purpose = 'U';
+                        }
+                        $scope.summary = {};
+                        $scope.summary.phe_title = $scope.eventsList.title;
+                        $scope.summary.phe_description = $scope.eventsList.phe_description;
+                        $scope.summary.phe_additional = $scope.eventsList.phe_additional;
+                        $scope.summary.outcome = $scope.eventsList.outcome;
+
+                    }
+                }
+            } else if (typeof($scope.userinfo) == "undefined") {
                 $scope.eventsList = response.EventsList;
-                $scope.filePreview = response.EventsList.filePreview ? response.EventsList.filePreview : '';
-
-
-                if ($scope.eventsList.purpose) {
+                if($scope.eventsList.purpose) {
                     $scope.outcome = {};
                     $scope.outcome.phe_purpose = 'N';
                     if ($scope.eventsList.purpose.indexOf("Verification") >= 0) {
@@ -955,97 +1022,91 @@ controller('requestController2', function($rootScope, $window, $scope, $routePar
                     }
                     $scope.summary = {};
                     $scope.summary.phe_title = $scope.eventsList.title;
-                    $scope.summary.phe_description = $scope.eventsList.phe_description;
-                    $scope.summary.phe_additional = $scope.eventsList.phe_additional;
-                    $scope.summary.outcome = $scope.eventsList.outcome;
-
                 }
             }
-        } else if (typeof($scope.userinfo) == "undefined") {
-            $scope.eventsList = response.EventsList;
-            if($scope.eventsList.purpose) {
-                $scope.outcome = {};
-                $scope.outcome.phe_purpose = 'N';
-                if ($scope.eventsList.purpose.indexOf("Verification") >= 0) {
-                    $scope.outcome.phe_purpose = 'V';
-                } else if ($scope.eventsList.purpose.indexOf("Update") >= 0) {
-                    $scope.outcome.phe_purpose = 'U';
+
+            // today's date
+            var today = new Date();
+            var dd = today.getDate();
+            var mm = today.getMonth(); //January is 0!
+            var yyyy = today.getFullYear();
+            var month = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+            $scope.today_date = dd + '-' + month[mm] + '-' + yyyy;
+
+            // get response
+            $scope.response_text = '';
+            if ($routeParams.response_id){
+                var formData = {};
+                formData['uid'] = $scope.userInfo.uid;
+                formData['org_id'] = $scope.userInfo.organization_id;
+                formData['fetp_id'] = $scope.userInfo.fetp_id;
+                formData['response_id'] = $routeParams.response_id;
+                $http({ url: urlBase + 'scripts/getresponse.php', method: "POST", data: formData
+                }).success(function (respdata, status, headers, config) {
+                    $scope.response_text = respdata['response'];
+                    $scope.responder_id = respdata['responder_id'];
+                    $scope.permission_id = respdata['response_permission_id'];
+                });
+            }
+
+            // count unrated responses in closed events
+            $scope.num_notrated_responses = 0;
+            if ($scope.onOpen) {
+                $scope.num_notrated_responses = response.numNotRatedResponses;
+            } else if ($scope.eventsList){
+                for (var n in $scope.eventsList.yours) {
+                    $scope.num_notrated_responses += parseInt($scope.eventsList.yours[n].num_notrated_responses);
                 }
-                $scope.summary = {};
-                $scope.summary.phe_title = $scope.eventsList.title;
             }
-        }
 
-        // today's date
-        var today = new Date();
-        var dd = today.getDate();
-        var mm = today.getMonth(); //January is 0!
-        var yyyy = today.getFullYear();
-        var month = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-        $scope.today_date = dd + '-' + month[mm] + '-' + yyyy;
-
-        // get response
-        $scope.response_text = '';
-        if ($routeParams.response_id){
-            var formData = {};
-            formData['uid'] = $scope.userInfo.uid;
-            formData['org_id'] = $scope.userInfo.organization_id;
-            formData['fetp_id'] = $scope.userInfo.fetp_id;
-            formData['response_id'] = $routeParams.response_id;
-            $http({ url: urlBase + 'scripts/getresponse.php', method: "POST", data: formData
-            }).success(function (respdata, status, headers, config) {
-                $scope.response_text = respdata['response'];
-                $scope.responder_id = respdata['responder_id'];
-                $scope.permission_id = respdata['response_permission_id'];
-            });
-        }
-
-        // count unrated responses in closed events
-        $scope.num_notrated_responses = 0;
-        if ($scope.onOpen) {
-            $scope.num_notrated_responses = response.numNotRatedResponses;
-        } else if ($scope.eventsList){
-            for (var n in $scope.eventsList.yours) {
-                $scope.num_notrated_responses += parseInt($scope.eventsList.yours[n].num_notrated_responses);
+            // count responses with content
+            for (var h in $scope.eventsList.history) {
+                if (($scope.eventsList.history[h].permission !== '0') && ($scope.eventsList.history[h].type == 'Member Response')
+                    && ($scope.userInfo.uid)){
+                    $scope.validResponses++;
+                }
             }
-        }
 
-        // count responses with content
-        for (var h in $scope.eventsList.history) {
-            if (($scope.eventsList.history[h].permission !== '0') && ($scope.eventsList.history[h].type == 'Member Response')
-                && ($scope.userInfo.uid)){
-                $scope.validResponses++;
+            // check for active search
+            $scope.activeSearch = false;
+            for (var h in $scope.eventsList.history) {
+                if (($scope.eventsList.history[h].permission == '4') && ($scope.eventsList.history[h].type == 'Member Response')
+                    && ($scope.eventsList.history[h].fetp_id == $scope.userInfo.fetp_id)){
+                    $scope.activeSearch = true;
+                }
             }
-        }
 
-        // check for active search
-        $scope.activeSearch = false;
-        for (var h in $scope.eventsList.history) {
-            if (($scope.eventsList.history[h].permission == '4') && ($scope.eventsList.history[h].type == 'Member Response')
-                && ($scope.eventsList.history[h].fetp_id == $scope.userInfo.fetp_id)){
-                $scope.activeSearch = true;
+            // check unclosed RFIs with no activity in the last two weeks
+            Date.prototype.yyyymmdd = function() {
+                var yyyy = this.getFullYear().toString();
+                var mm = (this.getMonth()+1).toString(); // getMonth() is zero-based
+                var dd  = this.getDate().toString();
+                return yyyy + "-" + (mm[1]?mm:"0"+mm[0]) + "-" + (dd[1]?dd:"0"+dd[0]); // padding
+            };
+            var d = new Date();
+            $scope.date = d.setDate(d.getDate() - 14); // now minus 14 days
+            $scope.unclosed = 0;
+            for (var n in $scope.eventsList.yours){
+                newdate = $scope.eventsList.yours[n].num_followups[0].iso_date;
+                if (newdate < d.yyyymmdd()) {
+                    $scope.unclosed++;
+                }
             }
-        }
+            $scope.isRouteLoading = false;
 
-        // check unclosed RFIs with no activity in the last two weeks
-        Date.prototype.yyyymmdd = function() {
-            var yyyy = this.getFullYear().toString();
-            var mm = (this.getMonth()+1).toString(); // getMonth() is zero-based
-            var dd  = this.getDate().toString();
-            return yyyy + "-" + (mm[1]?mm:"0"+mm[0]) + "-" + (dd[1]?dd:"0"+dd[0]); // padding
-        };
-        var d = new Date();
-        $scope.date = d.setDate(d.getDate() - 14); // now minus 14 days
-        $scope.unclosed = 0;
-        for (var n in $scope.eventsList.yours){
-            newdate = $scope.eventsList.yours[n].num_followups[0].iso_date;
-            if (newdate < d.yyyymmdd()) {
-                $scope.unclosed++;
-            }
-        }
-        $scope.isRouteLoading = false;
+        });
 
-    });
+    }
+
+    // get all events on load for open events
+    // get events for current month for closed events
+    if ($scope.onOpen) {
+        getAllEvents('2017-10-30', moment().format('YYYY-MM-DD'));
+    } else {
+        var end_date = moment().format('YYYY-MM-DD'); // now
+        var start_date = moment().subtract(1, 'months').format('YYYY-MM-DD'); // one month ago
+        getAllEvents(start_date, end_date);
+    }
 
     $scope.sendFollowup = function(formData, isValid) {
         if(isValid) {
@@ -1072,7 +1133,7 @@ controller('requestController2', function($rootScope, $window, $scope, $routePar
         var useful_rids = [];
         var usefulpromed_rids = [];
         var notuseful_rids = [];
-        console.log($scope.eventsList);
+
         if(isValid && (thestatus == 'Close' || thestatus == 'Update') && ($scope.validResponses > 0)) {
             for (var h in $scope.eventsList.history) {
                 var h_rid = $scope.eventsList.history[h].response_id;
@@ -1121,7 +1182,6 @@ controller('requestController2', function($rootScope, $window, $scope, $routePar
 
             formData['condition_details'] = $scope.eventsList.condition_details;
 
-            console.log(formData);
             $http({ url: urlBase + 'scripts/changestatus2.php', method: "POST", data: formData
             }).success(function (data, status, headers, config) {
                 if (data['status'] == 'success') {
