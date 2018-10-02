@@ -864,7 +864,7 @@ controller('requestController2', function($rootScope, $window, $scope, $routePar
     var timeValues = [];
     var i =0;
     while (dateEnd > dateStart || dateStart.format('M') === dateEnd.format('M')) {
-        timeValues.push({name: dateStart.format('YYYY-MMMM'), value: i});
+        timeValues.push({name: dateStart.format('YYYY-MMMM'), value: dateStart.format('YYYY-MM')});
         dateStart.add(1,'month');
         i++;
     }
@@ -873,11 +873,11 @@ controller('requestController2', function($rootScope, $window, $scope, $routePar
 
     // get events for selected month
     $scope.getEventMonth = function (month) {
-        var start_date = moment(month.name);
-        var end_date = moment(month.name);
+        var start_date = moment(month.value + '-01');
+        var end_date = moment(month.value + '-01');
         end_date.add(1,'month');
-        var s_date = start_date.format('YYYY-MM') + '-01';
-        var e_date = end_date.format('YYYY-MM') + '-01';
+        var s_date = start_date.format('YYYY-MM-DD');
+        var e_date = end_date.format('YYYY-MM-DD');
         getAllEvents(s_date, e_date);
     };
 
