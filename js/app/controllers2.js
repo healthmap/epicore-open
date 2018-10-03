@@ -424,7 +424,7 @@ controller('requestController2', function($rootScope, $window, $scope, $routePar
 
         } else if ($scope.rfiData.duplicate_rfi.rfi_same == '2'){ // same RFI, track existing RFI
 
-            if (confirm('Are you sure?  This will clear the RFI you have just entered and you will receive all emails and notifications regarding the existing RFIs')){
+            if (confirm('Are you sure?  This will clear the RFI you have just entered and you will receive all emails regarding the existing RFIs')){
 
                 // Track RFI
                 //var rfi_id = $scope.rfiData.duplicate_rfi.rfi_id;
@@ -869,7 +869,7 @@ controller('requestController2', function($rootScope, $window, $scope, $routePar
         i++;
     }
     $scope.event_months = timeValues.reverse();
-    $scope.selected_month = timeValues[0];
+    $scope.selected_month = timeValues[1];
 
     // get events for selected month
     $scope.getEventMonth = function (month) {
