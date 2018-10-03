@@ -321,6 +321,7 @@ controller('requestController2', function($rootScope, $window, $scope, $routePar
                     // Check for duplicate RFI only for original RFI requester
                     //var bypass = $scope.userInfo.superuser && !$scope.isRequester; // bypass for superusers that are not the original requester
                     //checkDuplicateRFI( bypass );
+                    $location.path('/purpose');
 
                 } else if (direction === 'back') {
                     $location.path('/population');
@@ -372,7 +373,7 @@ controller('requestController2', function($rootScope, $window, $scope, $routePar
     function checkDuplicateRFI(bypass) {
 
         if (bypass) {
-            $location.path('/purpose');
+            $location.path('/condition');
         } else {
             var rfi_data = {};
             rfi_data['population_type'] = $scope.rfiData.population.type;
