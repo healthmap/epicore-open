@@ -1102,7 +1102,7 @@ controller('requestController2', function($rootScope, $window, $scope, $routePar
     // get all events on load for open events
     // get events for current month for closed events
     if ($scope.onOpen) {
-        getAllEvents('2017-10-30', moment().format('YYYY-MM-DD'));
+        getAllEvents('2017-10-30', moment().add(1, 'days').format('YYYY-MM-DD'));
     } else {
         var end_date = moment().format('YYYY-MM-DD'); // now
         var start_date = moment().subtract(1, 'months').format('YYYY-MM-DD'); // one month ago
