@@ -869,17 +869,29 @@ controller('requestController2', function($rootScope, $window, $scope, $routePar
         dateStart.add(1,'month');
         i++;
     }
+
+    timeValues.push({ name: 'All', value: 'all'});
+    timeValues.push({ name: 'Most Recent', value: 'recent'});
     $scope.event_months = timeValues.reverse();
-    $scope.selected_month = timeValues[1];
+    $scope.selected_month = timeValues[0];
 
     // get events for selected month
     $scope.getEventMonth = function (month) {
-        var start_date = moment(month.value + '-01');
-        var end_date = moment(month.value + '-01');
-        end_date.add(1,'month');
-        var s_date = start_date.format('YYYY-MM-DD');
-        var e_date = end_date.format('YYYY-MM-DD');
-        getAllEvents(s_date, e_date);
+
+        var start_date = '';
+        var end_date = '';
+        if (month.value == 'all') {
+            start_date = moment('2017-10-30').format('YYYY-MM-DD'); // starting date of EpiCore v2.0
+            end_date = moment().format('YYYY-MM-DD'); // now
+        } else if (month.value == 'recent'){
+            start_date = moment().subtract(1, 'months').format('YYYY-MM-DD'); // one month ago
+            end_date = moment().format('YYYY-MM-DD'); // now
+        } else {
+            start_date = moment(month.value + '-01').format('YYYY-MM-DD'); // selected month
+            end_date = moment(month.value + '-01').add(1,'month').format('YYYY-MM-DD'); // next month
+        }
+
+        getAllEvents(start_date, end_date);
     };
 
     // upload response files
