@@ -52,7 +52,7 @@
             <button type="button" class="btn btn-secondary secondary-color btn-tab mb24" ng-click="sendReminder('launch_reminder')">Join Epicore</button>
 
             <p>Click on a table heading to sort the table or filter the table using the search tool.</p>
-            <p><i class="fa fa-search"></i> <input ng-model="query"> &nbsp;&nbsp;&nbsp;&nbsp;
+            <p><i class="fa fa-search"></i> <input ng-model="query_input" ng-keypress="searchMembers($event)"> &nbsp;&nbsp;&nbsp;&nbsp;
                 <button ng-show="!allapp" type="button" ng-click="selectMembers(true)" class="btn btn-default btn-sm stacked">Show All Members</button>
                 <button ng-show="allapp" type="button" ng-click="selectMembers(false)" class="btn btn-default btn-sm stacked">Show Inactive Members</button>
                 {{waitmessage}}

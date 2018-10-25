@@ -1011,6 +1011,14 @@ controller('userController', function($rootScope, $routeParams, $scope, $route, 
 
         };
 
+        $scope.searchMembers = function (keyEvent) {
+
+            if (keyEvent.keyCode == 13){
+                $scope.query = $scope.query_input;
+            }
+
+        }
+
         $scope.approveApplicant = function(maillist_id, action){
             data = {maillist_id: maillist_id, action:action};
             $http({ url: urlBase  + 'scripts/setMemberStatus.php', method: "POST", data: data
