@@ -880,18 +880,20 @@ controller('requestController2', function($rootScope, $window, $scope, $routePar
 
         var start_date = '';
         var end_date = '';
+        var num_events = 'all';
         if (month.value == 'all') {
             start_date = moment('2017-10-30').format('YYYY-MM-DD'); // starting date of EpiCore v2.0
             end_date = moment().format('YYYY-MM-DD'); // now
         } else if (month.value == 'recent'){
             start_date = moment().subtract(1, 'months').format('YYYY-MM-DD'); // one month ago
             end_date = moment().format('YYYY-MM-DD'); // now
+            num_events = 10;
         } else {
             start_date = moment(month.value + '-01').format('YYYY-MM-DD'); // selected month
             end_date = moment(month.value + '-01').add(1,'month').format('YYYY-MM-DD'); // next month
         }
 
-        getAllEvents(start_date, end_date);
+        getAllEvents(start_date, end_date, num_events, num_events);
     };
 
     // upload response files
@@ -979,7 +981,7 @@ controller('requestController2', function($rootScope, $window, $scope, $routePar
 
     };
 
-    getAllEvents = function (start_date, end_date) {
+    getAllEvents = function (start_date, end_date, num_events = 'all') {
         $scope.isRouteLoading = true;
 
         $scope.eventsList = [];
@@ -1006,6 +1008,14 @@ controller('requestController2', function($rootScope, $window, $scope, $routePar
                     $scope.eventsList = response.EventsList;
                     $scope.filePreview = response.EventsList.filePreview ? response.EventsList.filePreview : '';
 
+                    if (num_events == 'all') {
+                        $scope.eventsList.all = response.EventsList.all;
+                        $scope.eventsList.other = response.EventsList.other;
+
+                    } else {
+                        $scope.eventsList.all = response.EventsList.all.slice(0,num_events);
+                        $scope.eventsList.other = response.EventsList.other.slice(0,num_events);
+                    }
 
                     if ($scope.eventsList.purpose) {
                         $scope.outcome = {};
@@ -1118,7 +1128,7 @@ controller('requestController2', function($rootScope, $window, $scope, $routePar
     } else {
         var end_date = moment().format('YYYY-MM-DD'); // now
         var start_date = moment().subtract(1, 'months').format('YYYY-MM-DD'); // one month ago
-        getAllEvents(start_date, end_date);
+        getAllEvents(start_date, end_date, 10);
     }
 
     $scope.sendFollowup = function(formData, isValid) {
