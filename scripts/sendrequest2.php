@@ -31,7 +31,8 @@ if ($formvars->uid && $formvars->fetp_ids && $formvars->population && $formvars-
     $event_info['title'] = (string)$formvars->title;
     $fetp_ids = $formvars->fetp_ids;
     $duplicate_rfi_detected = (int)$formvars->duplicate_rfi_detected == 1;
-    //$duplicate_rfi_id = (int)$formvars->duplicate_rfi_id;
+    $duplicate_events = $formvars->duplicate_events ? $formvars->duplicate_events : false; // array of objects
+
 
     // related tables
     $event_table['health_condition'] = $formvars->health_condition;
@@ -71,7 +72,7 @@ if ($formvars->uid && $formvars->fetp_ids && $formvars->population && $formvars-
             $aws_resp = AWSMail::mailfunc($recipient, $subject, $custom_emailtext, EMAIL_NOREPLY, $extra_headers);
 
             // send push notification
-            $push->sendPush($pushevent, $fetp_id);
+            //$push->sendPush($pushevent, $fetp_id);
 
         }
 
@@ -98,14 +99,28 @@ if ($formvars->uid && $formvars->fetp_ids && $formvars->population && $formvars-
 
         // send copy to Epicore Admin if duplicate RFI detected
         if ($duplicate_rfi_detected) {
-            $subject2 = "EPICORE: DUPLICATE ALERT - RFI #" . $event_id . " : " . $event_info['title'];
-            $admin_emailtext = $ei->buildEmailForEvent($event_info, 'rfi_admin', $custom_vars, 'text');
-            //$admin_message = "Possible duplicate of RFI ID: $duplicate_rfi_id.  Requester: $name sent the following RFI.";
-            $admin_message = "Possible duplicate of RFI ID: $event_id.  Requester: $name sent the following RFI.";
-            $custom_emailtext_admin = trim(str_replace("[PRO_IN]", $admin_message, $admin_emailtext));
+            $this_event_info = $ei->getInfo();
+            $this_location = $this_event_info['location'];
+            $this_population = $this_event_info['population'];
+            $subject2 = "EPICORE RFI: Similar RFI(s) Detected";
+            $admin_emailtext = $ei->buildEmailForEvent($event_info, 'rfi2_admin', $custom_vars, 'text');
+            $match_location = "Matching country in location: " . $this_location;
+            $match_population = "Matching population: " . $this_population;
+            $custom_emailtext1 = trim(str_replace("[MATCHING_LOCATION]", $match_location, $admin_emailtext));
+            $custom_emailtext2 = trim(str_replace("[MATCHING_POPULATION]", $match_population, $custom_emailtext1));
+            $similar_message = "Similar RFI ID: $event_id.  Requester: $name sent the following RFI >";
+            $custom_emailtext3 = trim(str_replace("[SIMILAR_RFI]", $similar_message, $custom_emailtext2));
+            $duplicate_list = '';
+            foreach($duplicate_events as $dup_event){
+                $dup_title = $dup_event->title;
+                $dup_id = $dup_event->id;
+                $dup_url = EPICORE_URL . "/#/events2/" . $dup_id;
+                $duplicate_list .= '<p><a style="margin:12px 0;" href= '.$dup_url.'>' . $dup_title . '</a></p>';
+            }
+            $custom_emailtext_last = trim(str_replace("[SIMILAR_RFI_LIST]", $duplicate_list, $custom_emailtext3));
             $idlist[0] = EPICORE_ID;
             $extra_headers['user_ids'] = $idlist;
-            $aws_resp = AWSMail::mailfunc(EMAIL_EPICORE_ADMIN, $subject2, $custom_emailtext_admin, EMAIL_NOREPLY, $extra_headers);
+            $aws_resp = AWSMail::mailfunc(EMAIL_EPICORE_ADMIN, $subject2, $custom_emailtext_last, EMAIL_NOREPLY, $extra_headers);
         }
 
         $status = 'success';

@@ -279,7 +279,7 @@ controller('requestController2', function($rootScope, $window, $scope, $routePar
 
                     // Check for duplicate RFI only for original RFI requester
                     var bypass = $scope.userInfo.superuser && !$scope.isRequester; // bypass for superusers that are not the original requester
-                    //bypass = false; // for testing
+                    bypass = false; // for testing
                     checkDuplicateRFI( bypass );
 
                     $location.path('/condition');
@@ -761,6 +761,17 @@ controller('requestController2', function($rootScope, $window, $scope, $routePar
             formData['title'] =  $scope.rfiData.event_title;
             formData['additionalText'] = $scope.rfiData.additionalText;
             formData['duplicate_rfi_detected'] = ($scope.rfiData.duplicate_rfi && ($scope.rfiData.duplicate_rfi.rfi_same == '3')) ? 1:0; // possibile duplicate RFI
+
+            if (formData['duplicate_rfi_detected'] && typeof ($scope.rfiData.duplicate_rfis) != 'undefined') {
+                var dup_events = [];
+                $scope.rfiData.duplicate_rfis.forEach(function (event) {
+                    dup_events.push({id: event.event_id, title: event.title});
+                });
+                formData['duplicate_events'] = dup_events;
+            }
+
+            console.log(formData);
+
             //formData['duplicate_rfi_id'] = ($scope.rfiData.duplicate_rfi && $scope.rfiData.duplicate_rfi.rfi_id) ? $scope.rfiData.duplicate_rfi.rfi_id : 0;
                 $http({
                 url: urlBase + 'scripts/sendrequest2.php', method: "POST", data: formData
