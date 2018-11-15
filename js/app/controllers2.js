@@ -79,7 +79,12 @@ controller('requestController2', function($rootScope, $window, $scope, $routePar
 
         // get city, state, country from location string
         var mylocation = $scope.rfiData.location.location.split(",");
-        if (mylocation.length == 3) {
+        if (mylocation.length == 4) {
+            $scope.rfiData.default_city = mylocation[1];
+            $scope.rfiData.default_state = mylocation[2];
+            $scope.rfiData.default_country = mylocation[3];
+            $scope.rfiData.location.location = mylocation[1] + ',' + mylocation[2] + ',' + mylocation[3]; // set location to only city,state,country
+        } else if (mylocation.length == 3) {
             $scope.rfiData.default_city = mylocation[0];
             $scope.rfiData.default_state = mylocation[1];
             $scope.rfiData.default_country = mylocation[2];
