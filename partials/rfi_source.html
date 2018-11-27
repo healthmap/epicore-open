@@ -16,7 +16,7 @@
                 </div>
 
                 <div class="intro">
-                    <h3>Information Source</h3>
+                    <h3>Information Source  <span class="error">*</span></h3>
                     <h5>RFI requesters need to be specific if the original source of information about the PHE is a web-report or not,
                         and in case it is it should be clarified if the information is a media report or an official document online.
                         In case of multiple web-items available the Requester should include recent information of as much as possible reliable sources.
@@ -45,7 +45,7 @@
                     </div>
 
                     <div class="form-group" ng-if="rfiData.source.source">
-                        <label class="" for="details">Source details</label>
+                        <label class="" for="details">Source details  <span class="error">*</span></label>
                         <input type="text" class="form-control" ng-model="rfiData.source.details" name="details" id="details" placeholder='details...' value=""  required>
                     </div>
 

@@ -81,7 +81,7 @@ if ($formvars->uid && $formvars->fetp_ids && $formvars->population && $formvars-
         $moderator = $ei->getEventPerson($event_id); // get event moderator name
         $name = $moderator['name'];
         $email = $moderator['email'];
-        $modfetp = "Requester: $name sent the following RFI";
+        $modfetp = "EpiCore asks for your assistance on the following RFI"; //"Requester: $name sent the following RFI";
         $custom_emailtext_proin = trim(str_replace("[PRO_IN]", $modfetp, $proin_emailtext));
 
 

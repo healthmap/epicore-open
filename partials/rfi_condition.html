@@ -17,7 +17,7 @@
                         <span style="float: right;"><a href ng-click="clearRequest()" class="btn btn-default">Clear RFI</a></span><br>
                     </div>
 
-                    <h4>Human Health Condition:</h4>
+                    <h4>Human Health Condition: <span class="error">*</span></h4>
                     <div class="intro">
                         <h5>Details on the health condition may be poor at initial stages. Requesters should try to classify the Public Health Event, if possible, into the syndromes suggested to avoid influencing the verification process.
                         </h5>
@@ -96,7 +96,7 @@
 
                 <!-- Checkboxes for Animals -->
                 <div ng-show="rfiData.population.type == 'A'">
-                    <h4>Animal Health Condition:</h4>
+                    <h4>Animal Health Condition: <span class="error">*</span></h4>
                     <div class="intro">
                         <h5>Details on the health condition may be poor at initial stages. Requesters should try to classify the Public Health Event, if possible, into the syndromes suggested to avoid influencing the verification process.
                         </h5>
@@ -163,7 +163,7 @@
 
                 <!-- Text input questions -->
                 <div class="form-group">
-                    <h4 >Health Condition Details:</h4>
+                    <h4 >Health Condition Details: <span class="error">*</span></h4>
                     <p><b>NOTE:</b> These details appear in the email to the responders, along with the RFI title. This is a critical field.</p>
                     <p>Please include all available details on the event, for example number of cases (suspected, confirmed, fatalities etc) and symptoms</p>
                     <textarea class="form-control" style="height:300px" ng-model="rfiData.health_condition.disease_details" id="disease_details" name="disease_details" placeholder="Available details..." ng-required="!goback"></textarea>
