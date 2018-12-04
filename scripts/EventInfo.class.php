@@ -1656,6 +1656,11 @@ class EventInfo
         // get info of person for the event
         $event_person = $this->getEventPerson($event_id);
 
+        // get event info
+        $ei = new EventInfo($event_id);
+        $event_info = $ei->getInfo();
+
+
         // save all followups, responses, and event notes in a message array
         $i = 0;
         foreach ($followups as $followup ){
@@ -1686,6 +1691,7 @@ class EventInfo
             $messages[$i]['useful'] = $response['useful'];
             $messages[$i]['person_id'] = $event_person['user_id'];
             $messages[$i]['organization_id'] = $event_person['organization_id'];
+            $messages[$i]['event_location'] = $event_info['location'];
             $messages[$i++]['date'] = date('j-M-Y H:i', strtotime($response['response_date']));
         }
         foreach ($enotes as $enote){

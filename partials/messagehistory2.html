@@ -69,7 +69,7 @@
         <a href="" class="inherit" ng-click="isCollapsed = !isCollapsed"><span ng-if="history_item.permission != 0 && history_item.permission != 4"><i class="fa fa-plus"></i></span></a>
                     <span ng-if="userInfo.uid">
                         Member {{history_item.fetp_id}} Response,
-                        {{history_item.country}},
+                        {{history_item.event_location}},
                                     <span ng-if="history_item.permission == 0"><i class="fa fa-circle perm0"></i> no contribution</span>
                                     <span ng-if="history_item.permission == 4"><i class="fa fa-circle perm0"></i> active search</span>
                                     <span ng-if="history_item.permission == 1"><i class="fa fa-circle perm1"></i> don't quote / don't attribute</span>
