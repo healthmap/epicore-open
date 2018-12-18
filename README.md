@@ -1,6 +1,5 @@
 # Epicore
 
-
 ## Development Environment
 
 The development evenironment is typically set up in the user's sandbox on the AWS server in /home/username/public_html.
