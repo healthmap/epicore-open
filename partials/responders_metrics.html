@@ -1,0 +1,74 @@
+<div ng-include src="'header.html'"></div>
+<div class="jumbotron dashboard">
+    <div class="container">
+        <h1>EpiCore Metrics</h1>
+    </div>
+</div>
+
+<div class="wrapper dashboard">
+
+    <div class="container" >
+
+        <div  >
+            <div class="row">
+                <h2>Responder Metrics</h2>
+            </div>
+
+            <div class="row">
+                <h4>EpiCore Membership Summary</h4>
+                <!--<img src="img/metrics/membership.png" height="400px" alt="Region">-->
+                <div ng-include="'data/membership.html'" ></div>
+            </div>
+            <br>
+
+            <div class="row">
+                <h4>Overall Health Expertise</h4>
+                <img src="img/metrics/health_expertise.png" height="350S0px" alt="Health Expertise">
+            </div>
+            <br>
+
+            <div class="row">
+                <h4>Professional Background</h4>
+                <div ng-include="'data/experience_table.html'" ></div>
+                <!--<img src="img/metrics/experience_table.png" height="350px" alt="Health Experience">-->
+            </div>
+            <br>
+
+            <div class="row">
+                <h4>New Applicants by country</h4>
+                <div ng-include="'data/new_applicants_table.html'" ></div>
+                <!--<img src="img/metrics/new_applicants_table.png" height="400px" alt="New applicants">-->
+            </div>
+            <br>
+
+            <div class="row">
+                <h4>Applicants by Year</h4>
+                <img src="img/metrics/applicants_year.png" height="450px" alt="Applicants by year">
+            </div>
+            <br>
+
+            <div class="row">
+                <h4>Applicants by Region</h4>
+                <div ng-include="'data/region_table.html'" ></div>
+                <!--<img src="img/metrics/region_table.png" height="350px" alt="Region">-->
+            </div>
+            <br>
+
+            <div class="row">
+                <h4>Members per country: n and Density (members per 1,000,000 population, latest UN figures)</h4>
+                <p>"Members Density" <0.5/1,000,000 population is considered not ideal</p>
+                <div ng-include="'data/country_table.html'" ></div>
+                <!--<img src="img/metrics/country_table.png" height="2500px" alt="Applicants by Country">-->
+            </div>
+            <br>
+
+            <div class="row">
+                <h4>Countries With No Members</h4>
+                <div ng-include="'data/country_table.html'" ></div>
+                <!--<img src="img/metrics/no_applicants_countries_table.png" height="1200px" alt="No applicants">-->
+            </div>
+            <br>
+
+        </div>
+    </div><!--container-->
+</div><!--wrapper-->
