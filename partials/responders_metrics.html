@@ -11,8 +11,21 @@
 
         <div  >
             <div class="row">
-                <h2>Responder Metrics</h2>
+                <h2>Responder Metrics - {{month}}, {{year}} </h2>
             </div>
+
+            <div class="row">
+                <h4>Epicore Requests for Information (RFIs)</h4>
+            </div>
+            <div class="row">
+                <div ng-include="'data/opened_rfis.html'" ></div>
+            </div>
+            <br>
+
+            <div class="row">
+                <div ng-include="'data/closed_rfis.html'" ></div>
+            </div>
+            <br>
 
             <div class="row">
                 <h4>EpiCore Membership Summary</h4>
@@ -69,6 +82,16 @@
             </div>
             <br>
 
+
+
         </div>
     </div><!--container-->
 </div><!--wrapper-->
+
+<style>
+
+    th, td {
+        padding: 5px;
+        text-align: left;
+    }
+</style>

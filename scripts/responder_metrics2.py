@@ -122,14 +122,24 @@ rfistats_df.columns = rfistats_df.columns.to_series().str.strip().str.lower().st
 # format dates
 rfistats_df['create_date'] = pd.to_datetime(rfistats_df['create_date'])
 rfistats_df['event_date'] = pd.to_datetime(rfistats_df['event_date'], errors='coerce')
+print(rfistats_df)
 
-#get RFIs for the month
+#get all closed rfis
+mask = rfistats_df['status'] == 'C'
+rfi_all_closed_df = rfistats_df.loc[mask]
+
+
+#get RFIs for the current month
 mask = (rfistats_df['create_date'] > pd.Timestamp(datetime.date(year, month, 1)) ) & (rfistats_df['create_date'] < pd.Timestamp(datetime.date(year, next_month, 1)) )
 rfi_month_df = rfistats_df.loc[mask]
+print(rfi_month_df)
 
-# get open RFIs
-mask = rfi_month_df['status'] == 'O'
-rfi_open_df = rfi_month_df.loc[mask]
+
+# get closed RFIs for current month
+mask = rfi_month_df['status'] == 'C'
+rfi_closed_month_df = rfi_month_df.loc[mask]
+print(rfi_closed_month_df)
+
 
 # group and sort applicants and approved members by date
 app_df = member_df.groupby(['application_date']).application_date.count().reset_index(name='applicants').sort_values(['application_date'])
@@ -307,6 +317,6 @@ data = [['Total members', total_approved], \
 membership_df = pd.DataFrame(data, columns=['Metric','Value'])
 membership_df.to_csv(save_data_dir + 'membership.csv', sep='|', index=False)
 membership_df.to_html(save_data_dir + 'membership.html', index=False)
-print(membership_df)
+#print(membership_df)
 
 df_table_image(membership_df, image_dir + 'membership.png', '')

@@ -106,7 +106,7 @@ app.config(function($routeProvider) {
         when("/certificate", {templateUrl: "partials/certificate.html?cb=" + cacheBustSuffix, controller: "certController"}).
         when("/modaccess", {templateUrl: "partials/modaccess.html?cb=" + cacheBustSuffix, controller: "modaccessController"}).
         when("/member_locations", {templateUrl: "partials/member_locations.html?cb=" + cacheBustSuffix, controller: "memberLocationsController"}).
-        when("/metrics", {templateUrl: "partials/responders_metrics.html?cb=" + cacheBustSuffix}).
+        when("/metrics", {templateUrl: "partials/responders_metrics.html?cb=" + cacheBustSuffix, controller: "metricsController"}).
   otherwise({redirectTo: '/home'});
     });
 

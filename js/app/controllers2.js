@@ -1338,4 +1338,13 @@ controller('requestController2', function($rootScope, $window, $scope, $routePar
         $scope.showModal = !$scope.showModal;
     };
 
+}).controller('metricsController', function($scope) {
+
+    $scope.date_now = Date.now();
+    var today = new Date();
+    $scope.year = today.getFullYear();
+    var last_month_num = today.getMonth() -1;
+    var months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+    $scope.month = months[last_month_num];
+
 });
