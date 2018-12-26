@@ -115,32 +115,6 @@ member_df['application_date'] = pd.to_datetime(member_df['application_date'])
 member_df['approval_date'] = pd.to_datetime(member_df['approval_date'])
 member_df['acceptance_date'] = pd.to_datetime(member_df['acceptance_date'])
 
-# read rfi stats
-rfistats_df = pd.read_csv(data_dir + 'rfistats.csv')
-# clean up data column names
-rfistats_df.columns = rfistats_df.columns.to_series().str.strip().str.lower().str.replace(' ', '_').str.replace('(', '').str.replace(')', '')
-# format dates
-rfistats_df['create_date'] = pd.to_datetime(rfistats_df['create_date'])
-rfistats_df['event_date'] = pd.to_datetime(rfistats_df['event_date'], errors='coerce')
-print(rfistats_df)
-
-#get all closed rfis
-mask = rfistats_df['status'] == 'C'
-rfi_all_closed_df = rfistats_df.loc[mask]
-
-
-#get RFIs for the current month
-mask = (rfistats_df['create_date'] > pd.Timestamp(datetime.date(year, month, 1)) ) & (rfistats_df['create_date'] < pd.Timestamp(datetime.date(year, next_month, 1)) )
-rfi_month_df = rfistats_df.loc[mask]
-print(rfi_month_df)
-
-
-# get closed RFIs for current month
-mask = rfi_month_df['status'] == 'C'
-rfi_closed_month_df = rfi_month_df.loc[mask]
-print(rfi_closed_month_df)
-
-
 # group and sort applicants and approved members by date
 app_df = member_df.groupby(['application_date']).application_date.count().reset_index(name='applicants').sort_values(['application_date'])
 # group and sort by approval_date
