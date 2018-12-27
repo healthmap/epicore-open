@@ -88,7 +88,7 @@ total_rfi_month = len(rfi_month_df)
 # 5 - EpiCore
 # 6 - MSF - Spain
 # 7 - Geosentinel
-print(rfi_month_df[['outcome','create_date','organization_id', 'country']])
+#print(rfi_month_df[['outcome','create_date','organization_id', 'country']])
 
 rfi_healthmap = rfi_month_df[rfi_month_df['organization_id'] == 1]
 total_rfi_healthmap = len(rfi_healthmap)
@@ -108,7 +108,7 @@ total_rfi_geosentinel = len(rfi_geosentinel)
 rfi_month_country_df =rfi_month_df[['outcome','create_date','organization_id', 'country']].country.unique()
 #rfi_month_unique_country_df = rfi_month_country_df.country.unique()
 total_rfi_month_country = len(rfi_month_country_df)
-print(total_rfi_month_country)
+#print(total_rfi_month_country)
 
 
 
@@ -135,23 +135,15 @@ total_unverified_month = len(rfi_unverified_month_df)
 #print(rfi_unverified_month_df[['outcome','create_date','organization_id']])
 
 # Print results for RFIs for the month
-print('Opened RFIs: ' + str(total_rfi_month))
-print('EpiCore: ' + str(total_rfi_epicore))
-print('HealthMap: ' + str(total_rfi_healthmap))
-print('MSF Spain (OCBA):' + str(total_rfi_msf))
-print('ProMED: ' + str(total_rfi_promed))
-print('Ending Pandemics: ' + str(total_rfi_endingpandemics))
-print('Tephinet: ' + str(total_rfi_tephinet))
-print('Geosentinel: ' + str(total_rfi_geosentinel))
-print('Countries involved in RFIs: ' + str(total_rfi_month_country))
-print('')
-
-
-# Print results for Closed RFIs for the month
-print('Closed RFIs: ' + str(total_closed_month))
-print('Verified (+/-): ' + str(total_verified_month))
-print('Updated (+/-): ' + str(total_updated_month))
-print('Unverified: ' + str(total_unverified_month))
+#print('Opened RFIs: ' + str(total_rfi_month))
+#print('EpiCore: ' + str(total_rfi_epicore))
+#print('HealthMap: ' + str(total_rfi_healthmap))
+#print('MSF Spain (OCBA):' + str(total_rfi_msf))
+#print('ProMED: ' + str(total_rfi_promed))
+#print('Ending Pandemics: ' + str(total_rfi_endingpandemics))
+#print('Tephinet: ' + str(total_rfi_tephinet))
+#print('Geosentinel: ' + str(total_rfi_geosentinel))
+#print('Countries involved in RFIs: ' + str(total_rfi_month_country))
 
 # create data frame for Opened RFIs for the month
 data = [['EpiCore', str(total_rfi_epicore), str(int(round(total_rfi_epicore/100*total_rfi_month))) ], \
@@ -160,7 +152,6 @@ data = [['EpiCore', str(total_rfi_epicore), str(int(round(total_rfi_epicore/100*
 ['ProMED', str(total_rfi_promed), str(int(round(100*total_rfi_promed/total_rfi_month)))] ]
 
 opened_rfis_df = pd.DataFrame(data, columns=['Opened RFIs', str(total_rfi_month), '  %  '])
-print(opened_rfis_df)
 opened_rfis_df.to_html(save_data_dir + 'opened_rfis.html', index=False)
 
 # create data frame for Opened RFIs for the month
@@ -169,5 +160,4 @@ data = [['Verified (+/-)', str(total_verified_month), str(int(round(100*total_ve
 ['Unverified', str(total_unverified_month), str(int(round(100*total_unverified_month/total_closed_month)))] ]
 
 closed_rfis_df = pd.DataFrame(data, columns=['Closed RFIs',str(total_closed_month), '  %  '])
-print(closed_rfis_df)
 closed_rfis_df.to_html(save_data_dir + 'closed_rfis.html', index=False)
