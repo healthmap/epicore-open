@@ -177,7 +177,7 @@ rfi_df['reaction_time'].fillna("-", inplace = True)
 rfi_df['organization_id'].replace(organizations, inplace=True)
 rfi_df['Quick link'] = epicore_url + rfi_df['event_id'].astype(str)
 rfi_dashboard_df = rfi_df[['event_id','title','create_date','organization_id','person','Quick link','status','outcome', \
-                           'action_date', 'answered', 'reaction_time', 'iso_create_date']]
+                           'action_date', 'answered', 'reaction_time']]
 rfi_dashboard_df['create_date'] = rfi_dashboard_df['create_date'].dt.strftime('%d-%m-%Y')
 rfi_dashboard_df.sort_values(by='create_date', inplace=True)
 rfi_dashboard_df.rename({'title': 'Title','person': 'Requester','action_date':'Closure Date', 'organization_id': 'Organization', \
