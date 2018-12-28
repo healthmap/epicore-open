@@ -1945,6 +1945,8 @@ class EventInfo
             $event_stats['title'] = $event['title'];
             $event_stats['create_date'] = $event['create_date'];
             $event_stats['event_date'] = $event['event_date'];  // new
+            $event_stats['iso_create_date'] = $event['iso_create_date']; // new
+            $event_stats['action_date'] = $event['action_date']; // new
             $event_stats['location'] = $event['location'];
             $event_stats['location_details'] = $event['location_details'];  // new
             $event_stats['affected_population'] = $event['affected_population'];  // new

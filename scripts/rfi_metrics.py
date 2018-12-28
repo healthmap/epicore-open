@@ -1,15 +1,15 @@
 # Jeff Andre
 # December, 26 2018
 #
-# Generates EpiCore RFI Metrics
+# Generates tables for Responder RFI metrics, RFI metrics dashboard, and Requester metrics dashboard.
 #
 # usage:
 #
 #  - no args: generates report for last month of data
-#    resonder_metrics.py
+#    rfi_metrics.py
 #
 #  - with args: generates report for month and year
-#    responder_metrics.py month year
+#    rfi_metrics.py month year
 #    where month = 1..12, year = 2018..2100
 #
 #
@@ -24,6 +24,9 @@ import itertools
 from pandas.plotting import table
 import sys
 import os
+
+reload(sys)
+sys.setdefaultencoding('utf-8')
 
 # set month and year
 d = datetime.date.today()
@@ -52,8 +55,7 @@ if month == 12:
     next_month = 1
     
 months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
-
-#print(months[month] + ', ' +  str(year))
+organizations = { 1: 'HealthMap', 2: 'Tephinet', 3: 'Ending Pandemics', 4: 'ProMed', 5: 'EpiCore', 6: 'MSF - Spain', 7: 'Geosentinel' }
 
 data_dir = '/var/www/html/prod.epicore.org/data/'
 image_dir = os.path.abspath(os.path.join(os.path.dirname( __file__ ), '..', 'img/metrics')) +'/';
@@ -61,11 +63,13 @@ save_data_dir = os.path.abspath(os.path.join(os.path.dirname( __file__ ), '..', 
 
 
 # read rfi stats
-rfistats_df = pd.read_csv(data_dir + 'rfistats.csv')
+rfistats_df = pd.read_csv(data_dir + 'rfistats.csv', encoding = "utf-8")
 # clean up data column names
 rfistats_df.columns = rfistats_df.columns.to_series().str.strip().str.lower().str.replace(' ', '_').str.replace('(', '').str.replace(')', '')
 # format dates
 rfistats_df['create_date'] = pd.to_datetime(rfistats_df['create_date'])
+rfistats_df['iso_create_date'] = pd.to_datetime(rfistats_df['iso_create_date'])
+rfistats_df['first_response_date'] = pd.to_datetime(rfistats_df['first_response_date'])
 rfistats_df['event_date'] = pd.to_datetime(rfistats_df['event_date'], errors='coerce')
 
 #get all closed rfis
@@ -145,7 +149,7 @@ total_unverified_month = len(rfi_unverified_month_df)
 #print('Geosentinel: ' + str(total_rfi_geosentinel))
 #print('Countries involved in RFIs: ' + str(total_rfi_month_country))
 
-# create data frame for Opened RFIs for the month
+# create data frame for Opened (all open and closed) RFIs for the month
 data = [['EpiCore', str(total_rfi_epicore), str(int(round(total_rfi_epicore/100*total_rfi_month))) ], \
 ['HealthMap', str(total_rfi_healthmap), str(int(round(100*total_rfi_healthmap/total_rfi_month))) ], \
 ['MSF Spain (OCBA)', str(total_rfi_msf), str(int(round(100*total_rfi_msf/total_rfi_month))) ], \
@@ -154,10 +158,29 @@ data = [['EpiCore', str(total_rfi_epicore), str(int(round(total_rfi_epicore/100*
 opened_rfis_df = pd.DataFrame(data, columns=['Opened RFIs', str(total_rfi_month), '  %  '])
 opened_rfis_df.to_html(save_data_dir + 'opened_rfis.html', index=False)
 
-# create data frame for Opened RFIs for the month
+# create data frame for closed RFIs for the month
 data = [['Verified (+/-)', str(total_verified_month), str(int(round(100*total_verified_month/total_closed_month))) ], \
 ['Updated (+/-)', str(total_updated_month), str(int(round(100*total_updated_month/total_closed_month))) ], \
 ['Unverified', str(total_unverified_month), str(int(round(100*total_unverified_month/total_closed_month)))] ]
-
 closed_rfis_df = pd.DataFrame(data, columns=['Closed RFIs',str(total_closed_month), '  %  '])
 closed_rfis_df.to_html(save_data_dir + 'closed_rfis.html', index=False)
+
+########### Dataframe for RFI dashboard #######################
+# need to add closure date, answered, and reaction time columns
+# reaction time = first response datetime - rfi datetime
+# answered = first response datetime not null
+epicore_url = 'https://epicore.org/#/events2/'
+rfi_df = rfistats_df[['event_id','title','create_date','iso_create_date','action_date','first_response_date', 'organization_id','person','status','outcome']]
+rfi_df['answered'] = np.where(rfi_df['first_response_date'].notnull(), 'yes', 'no')
+rfi_df['reaction_time'] = rfi_df['first_response_date'] - rfi_df['iso_create_date']
+rfi_df['reaction_time'].fillna("-", inplace = True)
+rfi_df['organization_id'].replace(organizations, inplace=True)
+rfi_df['Quick link'] = epicore_url + rfi_df['event_id'].astype(str)
+rfi_dashboard_df = rfi_df[['event_id','title','create_date','organization_id','person','Quick link','status','outcome', \
+                           'action_date', 'answered', 'reaction_time', 'iso_create_date']]
+rfi_dashboard_df['create_date'] = rfi_dashboard_df['create_date'].dt.strftime('%d-%m-%Y')
+rfi_dashboard_df.sort_values(by='create_date', inplace=True)
+rfi_dashboard_df.rename({'title': 'Title','person': 'Requester','action_date':'Closure Date', 'organization_id': 'Organization', \
+                         'create_date': 'RFI Date', 'event_id': 'RFI'}, axis='columns', inplace=True)
+#print(rfi_dashboard_df)
+rfi_dashboard_df.to_html(save_data_dir + 'rfi_dashboard.html', index=False)

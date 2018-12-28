@@ -136,7 +136,7 @@ exp_df.percent = exp_df.percent.round().astype(int)
 exp_df.rename({'count': 'n','percent':'%'}, axis='columns', inplace=True)
 # create image for report
 exp_df.to_html(save_data_dir + 'experience_table.html', index=False)
-df_table_image3(exp_df, image_dir + 'experience_table.png', 'Professional Background')
+#df_table_image3(exp_df, image_dir + 'experience_table.png', 'Professional Background')
 
 
 # get total human experience, filtered by "human"
@@ -234,7 +234,7 @@ app_country_month = app_country_date_df.loc[mask]
 app_by_country = app_country_month.groupby(['country']).country.count().reset_index(name='new applicants')
 # create image for report
 app_by_country.to_html(save_data_dir + 'new_applicants_table.html', index=False)
-df_table_image(app_by_country, image_dir + 'new_applicants_table.png', '')
+#df_table_image(app_by_country, image_dir + 'new_applicants_table.png', '')
 
 # group and sort by country
 app_country_df = member_df.groupby(['country','country_code','who_region']).country.count().reset_index(name='applicants').sort_values(['country'])
@@ -266,14 +266,14 @@ no_member_countries = no_member_countries[no_member_countries.un_country_code.no
 no_member_countries_region = no_member_countries[['country','un_country_code']]
 total_no_member_countries = len(no_member_countries.index)
 total_member_countries = len(all_country_df.index) - total_no_member_countries
-df_table_image1(no_member_countries, image_dir + 'no_applicants_countries_table.png', '')
+#df_table_image1(no_member_countries, image_dir + 'no_applicants_countries_table.png', '')
 no_member_countries.to_html(save_data_dir + 'no_applicants_countries_table.html', index=False)
 
 # applicants by country table image
 app_country_density_df = app_country_pop_un_df[['country','applicants','member_density']]
 app_country_density_df.rename(columns={'applicants':'n'}, inplace=True)
 app_country_density_df.to_html(save_data_dir + 'country_table.html', index=False)
-df_table_image2(app_country_density_df, image_dir + 'country_table.png', '')
+#df_table_image2(app_country_density_df, image_dir + 'country_table.png', '')
 
 # group and sort by region
 app_region_df = member_df.groupby(['who_region']).who_region.count().reset_index(name='applicants').sort_values(['who_region'])
@@ -288,7 +288,7 @@ new_region_df = app_region_df.drop([3,7])
 new_region_df.rename(columns={'who_region':'Region'}, inplace=True)
 
 # create image
-df_table_image(new_region_df, image_dir + 'region_table.png', 'Applicants by Region')
+#df_table_image(new_region_df, image_dir + 'region_table.png', 'Applicants by Region')
 new_region_df.to_html(save_data_dir + 'region_table.html', index=False)
 
 
@@ -302,7 +302,7 @@ data = [['Total members', total_approved], \
 membership_df = pd.DataFrame(data, columns=['Metric','Value'])
 membership_df.to_csv(save_data_dir + 'membership.csv', sep='|', index=False)
 membership_df.to_html(save_data_dir + 'membership.html', index=False)
-df_table_image(membership_df, image_dir + 'membership.png', '')
+#df_table_image(membership_df, image_dir + 'membership.png', '')
 
 
 
