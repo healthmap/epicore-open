@@ -107,7 +107,8 @@ app.config(function($routeProvider) {
         when("/modaccess", {templateUrl: "partials/modaccess.html?cb=" + cacheBustSuffix, controller: "modaccessController"}).
         when("/member_locations", {templateUrl: "partials/member_locations.html?cb=" + cacheBustSuffix, controller: "memberLocationsController"}).
         when("/metrics", {templateUrl: "partials/responders_metrics.html?cb=" + cacheBustSuffix, controller: "metricsController"}).
-        when("/rfi_dashboard", {templateUrl: "partials/rfi_dashboard.html?cb=" + cacheBustSuffix, controller: "metricsController"}).
+        when("/rfi_dashboard", {templateUrl: "partials/events_metrics.html?cb=" + cacheBustSuffix, controller: "eventsController2"}).
+        when("/rfi_dashboard/closed", {templateUrl: "partials/events_metrics.html?cb=" + cacheBustSuffix, controller: "eventsController2"}).
 
   otherwise({redirectTo: '/home'});
     });

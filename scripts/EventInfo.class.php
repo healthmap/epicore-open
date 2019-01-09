@@ -923,6 +923,13 @@ class EventInfo
             // get source details
             $row['source_details'] = $db->getOne("SELECT details FROM source WHERE event_id = ?", array($row['event_id']));
 
+            // get metrics
+            $row['event_metrics_id'] = $db->getOne("SELECT event_metrics_id FROM event_metrics WHERE event_id = ?", array($row['event_id']));
+            $metric_score = $db->getOne("SELECT score FROM event_metrics WHERE event_id = ?", array($row['event_id']));
+            $row['metric_score'] = is_numeric($metric_score) ? (int)$metric_score : null;
+            $row['metric_creation'] = $db->getOne("SELECT creation FROM event_metrics WHERE event_id = ?", array($row['event_id']));
+            $row['metric_notes'] = $db->getOne("SELECT notes FROM event_metrics WHERE event_id = ?", array($row['event_id']));
+            $row['metric_action'] = $db->getOne("SELECT action FROM event_metrics WHERE event_id = ?", array($row['event_id']));
 
             // get population, health conditions, source and purpose
             $ei = new EventInfo($row['event_id']);
@@ -976,6 +983,10 @@ class EventInfo
             $row['event_id_int'] = (int)$row['event_id'];
             $row['create_date'] = date('j-M-Y', strtotime($row['create_date']));
             $row['event_date'] = date('j-M-Y', strtotime($row['event_date']));
+            $first_response_date = new DateTime($row['first_response_date']);
+            $event_create_date = new DateTime($row['iso_create_date']);
+            $reaction_time =  $first_response_date->diff($event_create_date);
+            $row['reaction_time'] = $reaction_time->format('%a days, %H:%I');
 
             //$row['title'] = iconv("UTF-8", "ISO-8859-1//IGNORE", $row['title']);
 
@@ -1335,7 +1346,7 @@ class EventInfo
     static function replaceEventTable($table_name,$table)
     {
         // check valid table name
-        $valid_table = ($table_name == 'population' || $table_name == 'health_condition' || $table_name == 'purpose' || $table_name == 'source');
+        $valid_table = ($table_name == 'population' || $table_name == 'health_condition' || $table_name == 'purpose' || $table_name == 'source' || $table_name == 'event_metrics');
         if (!$valid_table) {
             return 'invalid table name.';
         }
@@ -1362,6 +1373,18 @@ class EventInfo
             $db->commit();
             return $table_id;
         }
+    }
+
+    // update event metrics
+    static function updateEventMetrics($table_data){
+        $table_name = 'event_metrics';
+        $table_id = EventInfo::replaceEventTable($table_name, $table_data);
+        if (is_numeric($table_id)) {
+            $status = $table_id;     // success
+        } else {
+            $status = 'failed to insert event table: ' . $table_name . ', error message: ' .$table_id;
+        }
+        return $status;
     }
 
     // updates purpose, returns true if updated or error message.

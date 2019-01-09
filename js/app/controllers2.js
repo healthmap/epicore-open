@@ -1147,6 +1147,26 @@ controller('requestController2', function($rootScope, $window, $scope, $routePar
         getAllEvents(start_date, end_date, 10);
     }
 
+    $scope.updateRFIMetrics = function(event){
+        //console.log(event);
+        var metric_data = { event_metrics_id: event.event_metrics_id,
+                            score: event.metric_score,
+                            creation: event.metric_creation,
+                            notes: event.metric_notes,
+                            action: event.metric_action,
+                            event_id: event.event_id};
+
+        $http({ url: urlBase + 'scripts/updatemetrics.php', method: "POST", data: metric_data
+        }).success(function (data, status, headers, config) {
+            //console.log(data);
+
+        }).error(function (data, status, headers, config) {
+            console.log(status);
+        });
+
+
+    };
+
     $scope.sendFollowup = function(formData, isValid) {
         if(isValid) {
             $scope.submitDisabled = true;

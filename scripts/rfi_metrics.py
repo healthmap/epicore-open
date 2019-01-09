@@ -169,18 +169,19 @@ closed_rfis_df.to_html(save_data_dir + 'closed_rfis.html', index=False)
 # need to add closure date, answered, and reaction time columns
 # reaction time = first response datetime - rfi datetime
 # answered = first response datetime not null
-epicore_url = 'https://epicore.org/#/events2/'
-rfi_df = rfistats_df[['event_id','title','create_date','iso_create_date','action_date','first_response_date', 'organization_id','person','status','outcome']]
-rfi_df['answered'] = np.where(rfi_df['first_response_date'].notnull(), 'yes', 'no')
-rfi_df['reaction_time'] = rfi_df['first_response_date'] - rfi_df['iso_create_date']
-rfi_df['reaction_time'].fillna("-", inplace = True)
-rfi_df['organization_id'].replace(organizations, inplace=True)
-rfi_df['Quick link'] = epicore_url + rfi_df['event_id'].astype(str)
-rfi_dashboard_df = rfi_df[['event_id','title','create_date','organization_id','person','Quick link','status','outcome', \
-                           'action_date', 'answered', 'reaction_time']]
-rfi_dashboard_df['create_date'] = rfi_dashboard_df['create_date'].dt.strftime('%d-%m-%Y')
-rfi_dashboard_df.sort_values(by='create_date', inplace=True)
-rfi_dashboard_df.rename({'title': 'Title','person': 'Requester','action_date':'Closure Date', 'organization_id': 'Organization', \
-                         'create_date': 'RFI Date', 'event_id': 'RFI'}, axis='columns', inplace=True)
-#print(rfi_dashboard_df)
-rfi_dashboard_df.to_html(save_data_dir + 'rfi_dashboard.html', index=False)
+### not used now
+#epicore_url = 'https://epicore.org/#/events2/'
+#rfi_df = rfistats_df[['event_id','title','create_date','iso_create_date','action_date','first_response_date', 'organization_id','person','status','outcome']]
+#rfi_df['answered'] = np.where(rfi_df['first_response_date'].notnull(), 'yes', 'no')
+#rfi_df['reaction_time'] = rfi_df['first_response_date'] - rfi_df['iso_create_date']
+#rfi_df['reaction_time'].fillna("-", inplace = True)
+#rfi_df['organization_id'].replace(organizations, inplace=True)
+#rfi_df['Quick link'] = epicore_url + rfi_df['event_id'].astype(str)
+#rfi_dashboard_df = rfi_df[['event_id','title','create_date','organization_id','person','Quick link','status','outcome', \
+#                           'action_date', 'answered', 'reaction_time']]
+#rfi_dashboard_df['create_date'] = rfi_dashboard_df['create_date'].dt.strftime('%d-%m-%Y')
+#rfi_dashboard_df.sort_values(by='create_date', inplace=True)
+#rfi_dashboard_df.rename({'title': 'Title','person': 'Requester','action_date':'Closure Date', 'organization_id': 'Organization', \
+#                         'create_date': 'RFI Date', 'event_id': 'RFI'}, axis='columns', inplace=True)
+
+#rfi_dashboard_df.to_html(save_data_dir + 'rfi_dashboard.html', index=False)
