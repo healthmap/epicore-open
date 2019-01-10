@@ -71,6 +71,7 @@ class UserInfo
             $db2 = getDB('hm');
             $mods = $db2->getAll("SELECT hmu_id, email, name FROM hmu WHERE hmu_id in ($hmuid_list)");
             $i=0;
+            $six_months_ago = date("Y-m-d H:i:s", strtotime("-6 months"));
             if ($mods) {
                 foreach ($mods as $mod){
                     $hmu_id = $mod['hmu_id'];
@@ -78,6 +79,21 @@ class UserInfo
                     $mod['user_id'] = $user_id;
                     $user_org_id = $db1->getOne("SELECT organization_id FROM user WHERE hmu_id = $hmu_id");
                     $mod['org_name'] = $db1->getOne("SELECT name FROM organization WHERE organization_id = ?", array($user_org_id));
+                    $mod['rfi_total'] = (int)$db1->getOne("SELECT count(*) from event WHERE requester_id=?", array($user_id));
+                    $mod['rfi_6months'] = (int)$db1->getOne("SELECT count(*) from event WHERE requester_id=?  AND create_date > ?", array($user_id, $six_months_ago));
+                    $q_scores = $db1->getAll("SELECT score FROM event, event_metrics 
+	                                                    WHERE requester_id=? AND event.event_id=event_metrics.event_id
+                                                        ORDER BY event.event_id DESC LIMIT 5", array($user_id));
+                    $scores = array('','','','','');
+                    $n = 0;
+                    foreach($q_scores as $score){
+                        $scores[$n++] = $score['score'];
+                    }
+                    $mod['rfi_score1'] = $scores[0];
+                    $mod['rfi_score2'] = $scores[1];
+                    $mod['rfi_score3'] = $scores[2];
+                    $mod['rfi_score4'] = $scores[3];
+                    $mod['rfi_score5'] = $scores[4];
 
                     $mods[$i++] = $mod;
                 }

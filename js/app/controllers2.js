@@ -1364,6 +1364,11 @@ controller('requestController2', function($rootScope, $window, $scope, $routePar
     var today = new Date();
     $scope.year = today.getFullYear();
     var last_month_num = today.getMonth() -1;
+    if (today.getMonth() == 0){
+        last_month_num = 11;
+        $scope.year = $scope.year -1;
+    }
+
     var months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
     $scope.month = months[last_month_num];
 
