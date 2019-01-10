@@ -188,6 +188,8 @@ fig1.savefig(image_dir + "applicants_year.png",  bbox_inches='tight')
 # get applicants for another plot
 plot_year = year
 plot_start_month = month
+if plot_start_month == 12:
+    plot_year = year-1
 mask = (app_df['application_date'] > pd.Timestamp(datetime.date(plot_year, plot_start_month, 1)) ) & (app_df['application_date'] < pd.Timestamp(datetime.datetime.now()) )
 applicants_plot_df = app_df.loc[mask]
 # generate plot
@@ -198,9 +200,11 @@ plt.xlim([datetime.date(plot_year, plot_start_month, 1), datetime.datetime.now()
 plt.ylim([0,20])
 fig1.savefig(image_dir + "applicants_month.png",  bbox_inches='tight')
 
-
 # get total applicants for the month
-mask = (app_df['application_date'] > pd.Timestamp(datetime.date(plot_year, plot_start_month, 1)) ) & (app_df['application_date'] < pd.Timestamp(datetime.date(plot_year, next_month, 1)) )
+start_year = year
+if next_month == 1:
+    start_year = year-1
+mask = (app_df['application_date'] > pd.Timestamp(datetime.date(start_year, month, 1)) ) & (app_df['application_date'] < pd.Timestamp(datetime.date(year, next_month, 1)) )
 applicants_month = app_df.loc[mask]
 total_applicants = applicants_month['applicants'].sum()
 
@@ -213,14 +217,17 @@ app_no_training_df = app_no_training_df[['acceptance_date','member_id']]
 app_no_training_df.to_html(save_data_dir + 'app_no_training_table.html', index=False)
 
 # get heard about applicants
-mask = (member_df['application_date'] > pd.Timestamp(datetime.date(year, month, 1)) ) & (member_df['application_date'] < pd.Timestamp(datetime.date(year, next_month, 1)) )
+start_year = year
+if next_month == 1:
+    start_year = year-1
+mask = (member_df['application_date'] > pd.Timestamp(datetime.date(start_year, month, 1)) ) & (member_df['application_date'] < pd.Timestamp(datetime.date(year, next_month, 1)) )
 members_month_df = member_df.loc[mask]
 members_month_df.rename(columns={'heard_about_epicore_by':'heard_about'}, inplace=True)
 heard_about_df = members_month_df.groupby(['heard_about']).heard_about.count().reset_index(name='applicants').sort_values(['heard_about'])
 heard_about_df.to_html(save_data_dir + 'heard_about_table.html', index=False)
 
 # get total approved members for the month
-mask = (approved_df['approval_date'] > pd.Timestamp(datetime.date(year, month, 1)) ) & (approved_df['approval_date'] < pd.Timestamp(datetime.date(year, next_month, 1)) )
+mask = (approved_df['approval_date'] > pd.Timestamp(datetime.date(start_year, month, 1)) ) & (approved_df['approval_date'] < pd.Timestamp(datetime.date(year, next_month, 1)) )
 approved_month = approved_df.loc[mask]
 total_approved_month = approved_month['approved'].sum()
 total_approved = approved_df['approved'].sum()
@@ -229,7 +236,7 @@ total_approved = approved_df['approved'].sum()
 app_country_date_df = member_df.groupby(['country','application_date']).country.count().reset_index(name='applicants').sort_values(['country'])
 
 # get new applicants for each country by month
-mask = (app_country_date_df['application_date'] > pd.Timestamp(datetime.date(year, month, 1)) ) & (app_country_date_df['application_date'] < pd.Timestamp(datetime.date(year, next_month, 1)) )
+mask = (app_country_date_df['application_date'] > pd.Timestamp(datetime.date(start_year, month, 1)) ) & (app_country_date_df['application_date'] < pd.Timestamp(datetime.date(year, next_month, 1)) )
 app_country_month = app_country_date_df.loc[mask]
 app_by_country = app_country_month.groupby(['country']).country.count().reset_index(name='new applicants')
 # create image for report
@@ -277,7 +284,6 @@ app_country_density_df.to_html(save_data_dir + 'country_table.html', index=False
 
 # group and sort by region
 app_region_df = member_df.groupby(['who_region']).who_region.count().reset_index(name='applicants').sort_values(['who_region'])
-#print(app_region_df)
 
 # re-arrange regions
 central_america_df = app_region_df[app_region_df['who_region'].str.lower().str.contains("central america")]

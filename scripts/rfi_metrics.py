@@ -78,9 +78,12 @@ rfi_all_closed_df = rfistats_df.loc[mask]
 
 
 #get RFIs for last full month
-#print( datetime.date(year, month, 1))
+start_year = year
+if next_month == 1:
+    start_year = year-1
+#print( datetime.date(start_year, month, 1))
 #print(datetime.date(year, next_month, 1))
-mask = (rfistats_df['create_date'] > pd.Timestamp(datetime.date(year, month, 1)) ) & (rfistats_df['create_date'] < pd.Timestamp(datetime.date(year, next_month, 1)) )
+mask = (rfistats_df['create_date'] > pd.Timestamp(datetime.date(start_year, month, 1)) ) & (rfistats_df['create_date'] < pd.Timestamp(datetime.date(year, next_month, 1)) )
 rfi_month_df = rfistats_df.loc[mask]
 total_rfi_month = len(rfi_month_df)
 
