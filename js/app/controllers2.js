@@ -284,7 +284,7 @@ controller('requestController2', function($rootScope, $window, $scope, $routePar
 
                     // Check for duplicate RFI only for original RFI requester
                     var bypass = $scope.userInfo.superuser && !$scope.isRequester; // bypass for superusers that are not the original requester
-                    bypass = false; // for testing
+                    //bypass = false; // for testing
                     checkDuplicateRFI( bypass );
 
                     $location.path('/condition');
