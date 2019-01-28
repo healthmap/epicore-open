@@ -1,7 +1,7 @@
 # Jeff Andre
 # December, 26 2018
 #
-# Generates tables for Responder RFI metrics, RFI metrics dashboard, and Requester metrics dashboard.
+# Generates RFI tables on Responder RFI metrics dashboard.
 #
 # usage:
 #
@@ -168,7 +168,7 @@ data = [['Verified (+/-)', str(total_verified_month), str(int(round(100*total_ve
 closed_rfis_df = pd.DataFrame(data, columns=['Closed RFIs',str(total_closed_month), '  %  '])
 closed_rfis_df.to_html(save_data_dir + 'closed_rfis.html', index=False)
 
-########### Dataframe for RFI dashboard #######################
+########### Dataframe for RFI dashboard - not used now #######################
 # need to add closure date, answered, and reaction time columns
 # reaction time = first response datetime - rfi datetime
 # answered = first response datetime not null
