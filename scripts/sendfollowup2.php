@@ -11,6 +11,8 @@ require_once 'ePush.class.php';
 
 $event_id = $formvars->event_id;
 $requester_id = $formvars->uid;
+$superuser = (int)$formvars->superuser;
+
 if(!is_numeric($event_id) || !is_numeric($requester_id)) {
     print json_encode(array('status' => 'failed', 'reason' => 'invalid event id or requester id'));
     exit;
@@ -20,12 +22,12 @@ $ei = new EventInfo($event_id);
 $event_info = $ei->getInfo();
 
 // make sure the person trying to send the email was the originator of the request
-// or from the same organization
+// or from the same organization or is a superuser
 $roid =0 ;
 if($requester_id != $event_info['requester_id']) {
     $rui = new UserInfo($requester_id,null);
     $roid = $rui->getOrganizationId();
-    if($event_info['org_requester_id'] != $roid) {
+    if(($event_info['org_requester_id'] != $roid) || $superuser == 1) {
         print json_encode(array('status' => 'failed', 'reason' => 'unauthorized', 'requester' => $requester_id, 'owner' => $event_info['requester_id']));
         exit;
     }
@@ -89,7 +91,7 @@ foreach($fetp_emails as $fetp_id => $recipient) {
     $retval = AWSMail::mailfunc($recipient, $subject, $emailtext, EMAIL_NOREPLY, $extra_headers);
 
     // send push notification
-    $push->sendPush($pushevent, $fetp_id);
+    //$push->sendPush($pushevent, $fetp_id);
 
 }
 

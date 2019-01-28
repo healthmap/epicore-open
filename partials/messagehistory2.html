@@ -87,7 +87,7 @@
                         {{history_item.date}}
                     </span>
         <!-- show reply button -->
-        <a ng-if="!closerfi && (history_item.organization_id == userInfo.organization_id) " class="pull-right btn btn-default btn-sm" href="#/followup2/{{id}}/{{history_item.response_id}}">Reply</a>
+        <a ng-if="!closerfi && ((history_item.organization_id == userInfo.organization_id) || userInfo.superuser ) " class="pull-right btn btn-default btn-sm" href="#/followup2/{{id}}/{{history_item.response_id}}">Reply</a>
         <!-- show ratings for closed event -->
         <span ng-if=" userInfo.uid && ((history_item.permission != 0 && history_item.permission != 4) && ((closerfi && ( (history_item.organization_id == userInfo.organization_id) ||userInfo.superuser)) || (changeStatusText != 'Close')))" >
             &nbsp;&nbsp;<label><input type="radio" ng-model="history_item.useful" value="0" ng-disabled="history_item.useful && !isRequester"> <i class="fa fa-thumbs-o-down black"></i></label>&nbsp;&nbsp;

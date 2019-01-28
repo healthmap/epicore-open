@@ -89,7 +89,7 @@ foreach($fetp_emails as $fetp_id => $recipient) {
     $retval = AWSMail::mailfunc($recipient, $subject, $emailtext, EMAIL_NOREPLY, $extra_headers);
 
     // send push notification
-    $push->sendPush($pushevent, $fetp_id);
+    //$push->sendPush($pushevent, $fetp_id);
 
 }
 

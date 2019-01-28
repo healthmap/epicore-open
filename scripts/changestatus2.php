@@ -158,7 +158,7 @@ if(is_numeric($event_id) && is_numeric($user_id)) {
             AWSMail::mailfunc($recipient, $subject, $custom_emailtext, EMAIL_NOREPLY, $extra_headers);
 
             // send push notification
-            $push->sendPush($pushevent, $fetp_id);
+            //$push->sendPush($pushevent, $fetp_id);
 
         }
 

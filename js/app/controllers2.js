@@ -1172,6 +1172,7 @@ controller('requestController2', function($rootScope, $window, $scope, $routePar
             $scope.submitDisabled = true;
             formData['uid'] = $scope.userInfo.uid;
             formData['event_id'] = $routeParams.id;
+            formData['superuser'] = $scope.userInfo.superuser ? 1 : 0;
             if ($routeParams.id){
                 var eid = $routeParams.id;
             }
