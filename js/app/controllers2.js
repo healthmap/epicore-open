@@ -22,6 +22,7 @@ controller('requestController2', function($rootScope, $window, $scope, $routePar
         $http({ url: urlBase + 'scripts/getrequest2.php', method: "POST", data: eventData
         }).success(function (data, status, headers, config) {
 
+            console.log(data);
             // populate form
             $scope.rfiData.location = {};
             $scope.rfiData.health_condition = {};
@@ -33,6 +34,7 @@ controller('requestController2', function($rootScope, $window, $scope, $routePar
             $scope.rfiData.location.event_date_details = data.event.event_date_details;
             $scope.rfiData.location.latlon = data.event.latlon;
             $scope.rfiData.location.location_details = data.event.location_details;
+            $scope.rfiData.additionalText = data.event.personalized_text;
 
             $scope.rfiData.population = data.population;
             $scope.rfiData.purpose = data.purpose;
@@ -775,7 +777,6 @@ controller('requestController2', function($rootScope, $window, $scope, $routePar
                 formData['duplicate_events'] = dup_events;
             }
 
-            console.log(formData);
 
             //formData['duplicate_rfi_id'] = ($scope.rfiData.duplicate_rfi && $scope.rfiData.duplicate_rfi.rfi_id) ? $scope.rfiData.duplicate_rfi.rfi_id : 0;
                 $http({
