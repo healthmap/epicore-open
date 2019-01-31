@@ -864,6 +864,8 @@ controller('requestController2', function($rootScope, $window, $scope, $routePar
     $scope.allFETPs = $routeParams.response_id ? false : true;
     // if we're on the closed requests page
     $scope.onOpen = $location.path().indexOf("/closed") > 0 ? false : true;
+    // check if public dashboard
+    $scope.publicDashboard = $location.path().indexOf("/events_public") >= 0 ? true : false;
     $scope.anonymous_disabled = false;
     if(!$scope.formData) {
         $scope.formData = {};
@@ -1003,6 +1005,7 @@ controller('requestController2', function($rootScope, $window, $scope, $routePar
 
         $scope.eventsList = [];
         eventAPIservice2.getEvents($scope.id, start_date, end_date).success(function (response) {
+            $scope.isRouteLoading = false;
 
             if (typeof($scope.userinfo) != "undefined") {
                 $scope.isOrganization = $scope.userInfo.fetp_id > 0 ? false : true;
@@ -1138,13 +1141,18 @@ controller('requestController2', function($rootScope, $window, $scope, $routePar
 
     }
 
+    // get most recent events for public dashboard
     // get all events on load for open events
     // get events for current month for closed events
-    if ($scope.onOpen) {
-        getAllEvents('2017-10-30', moment().add(1, 'days').format('YYYY-MM-DD'));
-    } else {
+    if ($scope.publicDashboard){
         var end_date = moment().format('YYYY-MM-DD'); // now
         var start_date = moment().subtract(1, 'months').format('YYYY-MM-DD'); // one month ago
+        getAllEvents(start_date, end_date);
+    } else if ($scope.onOpen) {
+        getAllEvents('2017-10-30', moment().add(1, 'days').format('YYYY-MM-DD'));
+    } else {
+        end_date = moment().format('YYYY-MM-DD'); // now
+        start_date = moment().subtract(1, 'months').format('YYYY-MM-DD'); // one month ago
         getAllEvents(start_date, end_date, 10);
     }
 

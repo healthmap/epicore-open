@@ -13,6 +13,12 @@
     <div class="row">
         <div class="col-xs-12">
 
+            <!-- RFI filter -->
+            <div class="form-group" >
+                <label class="form-label" >RFI List Filter</label>
+                <select ng-options="month as month.name for month in event_months " ng-model="selected_month" ng-change="getEventMonth(selected_month)"></select>
+            </div>
+
             <!-- view for organizations -->
             <div ng-init="predicate = 'iso_create_date'; reverse=!reverse">
                 <table class='small table table-hover table-bordered'>
