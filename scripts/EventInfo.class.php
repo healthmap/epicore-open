@@ -986,7 +986,9 @@ class EventInfo
             $first_response_date = new DateTime($row['first_response_date']);
             $event_create_date = new DateTime($row['iso_create_date']);
             $reaction_time =  $first_response_date->diff($event_create_date);
-            $row['reaction_time'] = $reaction_time->format('%a days, %H:%I');
+            //$row['reaction_time'] = $reaction_time->format('%a days, %H:%I'); // days, hh:mm
+            $minutes =  $reaction_time->days*24*60 + $reaction_time->h*60 + $reaction_time->i;
+            $row['reaction_time'] = $minutes; // total minutes
 
             //$row['title'] = iconv("UTF-8", "ISO-8859-1//IGNORE", $row['title']);
 
