@@ -5,55 +5,61 @@
     </div>
 </div>
 
-<div class="wrapper dashboard">
+<div class="wrapper dashboard metrics-tables">
 
     <div class="container" >
 
             <div class="row">
 
-                    <h4>Requests for Information (RFIs)</h4>
-
-                <div class="col-xs-6 col-md-3">
+                <div class="col-xs-12">
+                    <h2>RFI Metrics</h2>
+                </div>
+                <div class="col-xs-12 col-md-6">
                     <div ng-include="'data/opened_rfis.html'" ></div>
                 </div>
-                <div class="col-xs-6 col-md-3">
+                <div class="col-xs-12 col-md-6">
                     <div ng-include="'data/closed_rfis.html'" ></div>
                 </div>
 
             </div>
-            <br><br>
 
             <div class="row">
+                <div class="col-xs-12">
+                    <h2 class="mt48">Responder Metrics</h2>
+                </div>
+                <div class="col-xs-12 col-sm-3">
                 <h4>Membership Summary</h4>
-                <div class="col-xs-6 col-md-4">
                     <!--<img src="img/metrics/membership.png" height="400px" alt="Region">-->
                     <div ng-include="'data/membership.html'" ></div>
                 </div>
-            </div>
-            <br>
-
-            <div class="row">
-                <div class="col-xs-12 col-md-6">
-                    <h4>Overall Health Expertise</h4>
-                    <img src="img/metrics/health_expertise.png" height="400px" alt="Health Expertise">
+                <div class="col-xs-12 col-sm-3">
+                    <h4>Members by Region</h4>
+                    <div ng-include="'data/region_table.html'" ></div>
+                    <!--<img src="img/metrics/region_table.png" height="350px" alt="Region">-->
                 </div>
-
-                <div class="col-xs-12 col-md-6">
+                <div class="col-xs-12 col-sm-3">
                     <h4>Professional Background</h4>
                     <div ng-include="'data/experience_table.html'" ></div>
                     <!--<img src="img/metrics/experience_table.png" height="350px" alt="Health Experience">-->
                 </div>
-
+                <div class="col-xs-12 col-sm-3">
+                    <h4>Overall Health Expertise</h4>
+                    <img src="img/metrics/health_expertise.png" class="auto-size" alt="Health Expertise">
+                </div>
             </div>
             <br>
 
-
-            <div class="row">
+            <div class="row mt48">
+                <div class="col-xs-12 col-md-6">
                 <h4>New Applicants by country</h4>
                 <div ng-include="'data/new_applicants_table.html'" ></div>
                 <!--<img src="img/metrics/new_applicants_table.png" height="400px" alt="New applicants">-->
             </div>
-            <br>
+                <div class="col-xs-12 col-md-6">
+                    <h4>Recent Applicants</h4>
+                    <img src="img/metrics/applicants_month.png" height="450px" alt="Recent Applicants">
+                </div>
+            </div>
 
             <div class="row">
                 <div class="col-xs-12 col-md-6">
@@ -73,10 +79,6 @@
 
             <div class="row">
                 <div class="col-xs-12 col-md-6">
-                    <h4>Recent Applicants</h4>
-                    <img src="img/metrics/applicants_month.png" height="450px" alt="Recent Applicants">
-                </div>
-                <div class="col-xs-12 col-md-6">
                     <h4>Applicants by Year</h4>
                     <img src="img/metrics/applicants_year.png" height="450px" alt="Applicants by year">
                 </div>
@@ -86,11 +88,6 @@
 
 
             <div class="row">
-                <div class="col-xs-12 col-md-6">
-                    <h4>Members by Region</h4>
-                    <div ng-include="'data/region_table.html'" ></div>
-                    <!--<img src="img/metrics/region_table.png" height="350px" alt="Region">-->
-                </div>
             </div>
             <br>
 
