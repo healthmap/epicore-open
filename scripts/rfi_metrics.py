@@ -24,6 +24,7 @@ import itertools
 from pandas.plotting import table
 import sys
 import os
+from decimal import Decimal
 
 reload(sys)
 sys.setdefaultencoding('utf-8')
@@ -153,18 +154,20 @@ total_unverified_month = len(rfi_unverified_month_df)
 #print('Countries involved in RFIs: ' + str(total_rfi_month_country))
 
 # create data frame for Opened (all open and closed) RFIs for the month
-data = [['EpiCore', str(total_rfi_epicore), str(int(round(total_rfi_epicore/100*total_rfi_month))) ], \
-['HealthMap', str(total_rfi_healthmap), str(int(round(100*total_rfi_healthmap/total_rfi_month))) ], \
-['MSF Spain (OCBA)', str(total_rfi_msf), str(int(round(100*total_rfi_msf/total_rfi_month))) ], \
-['ProMED', str(total_rfi_promed), str(int(round(100*total_rfi_promed/total_rfi_month)))] ]
+data = [['EpiCore', str(total_rfi_epicore), str(round(Decimal(100*float(total_rfi_epicore)/total_rfi_month,1))) ], \
+['HealthMap', str(total_rfi_healthmap), str(round(Decimal(100*float(total_rfi_healthmap)/total_rfi_month,1))) ], \
+['MSF Spain (OCBA)', str(total_rfi_msf), str(round(Decimal(100*float(total_rfi_msf)/total_rfi_month,1))) ], \
+['ProMED', str(total_rfi_promed), str(round(Decimal(100*float(total_rfi_promed)/total_rfi_month,1)))] , \
+['GeoSentinel', str(total_rfi_geosentinel), str(round(Decimal(100*float(total_rfi_geosentinel)/total_rfi_month,2)))] ]
 
 opened_rfis_df = pd.DataFrame(data, columns=['Opened RFIs', str(total_rfi_month), '  %  '])
 opened_rfis_df.to_html(save_data_dir + 'opened_rfis.html', index=False)
 
 # create data frame for closed RFIs for the month
-data = [['Verified (+/-)', str(total_verified_month), str(int(round(100*total_verified_month/total_closed_month))) ], \
-['Updated (+/-)', str(total_updated_month), str(int(round(100*total_updated_month/total_closed_month))) ], \
-['Unverified', str(total_unverified_month), str(int(round(100*total_unverified_month/total_closed_month)))] ]
+data = [['Verified (+/-)', str(total_verified_month), str(round(Decimal(100*float(total_verified_month))/total_closed_month,1)) ], \
+['Updated (+/-)', str(total_updated_month), str(round(Decimal(100*float(total_updated_month))/total_closed_month,1)) ], \
+['Unverified', str(total_unverified_month), str(round(Decimal(100*float(total_unverified_month))/total_closed_month,1))], \
+['Verified+Unverified', str(total_unverified_month+total_verified_month), str(round(Decimal(100*(float(total_unverified_month+total_verified_month))/total_closed_month,1)))] ]
 closed_rfis_df = pd.DataFrame(data, columns=['Closed RFIs',str(total_closed_month), '  %  '])
 closed_rfis_df.to_html(save_data_dir + 'closed_rfis.html', index=False)
 

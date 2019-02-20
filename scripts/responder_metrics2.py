@@ -167,7 +167,10 @@ x = np.arange(3)
 y = [total_human_exp, total_animal_exp, total_environmental_exp]
 #y = [human_exp, animal_exp, env_exp]
 #plt.title('Overall Health Expertise (%)')
-plt.bar(x, y, width=0.4, align="center")
+hm,an,en = plt.bar(x, y, width=0.4, align="center")
+hm.set_facecolor('#015163')
+an.set_facecolor('#0089aa')
+en.set_facecolor('#00bbe8')
 plt.xticks(x,('Human','Animal','Environmental'))
 #add value labels to bars
 for a,b in zip(x, y):
@@ -182,7 +185,7 @@ member_title = 'Epicore Applicants ' + str(last_year) + '-' + str(this_year)
 plt.plot(app_df.application_date, app_df.applicants)
 plt.xticks(rotation=40)
 plt.xlim([datetime.date(last_year, 1, 1), datetime.datetime.now()])
-plt.ylim([0,50])
+plt.ylim([0,10])
 fig1.savefig(image_dir + "applicants_year.png",  bbox_inches='tight')
 
 # get applicants for another plot
@@ -197,7 +200,7 @@ fig1 = plt.figure()
 plt.plot(applicants_plot_df.application_date, applicants_plot_df.applicants)
 plt.xticks(rotation=40)
 plt.xlim([datetime.date(plot_year, plot_start_month, 1), datetime.datetime.now()])
-plt.ylim([0,20])
+plt.ylim([0,10])
 fig1.savefig(image_dir + "applicants_month.png",  bbox_inches='tight')
 
 # get total applicants for the month
@@ -224,6 +227,8 @@ mask = (member_df['application_date'] > pd.Timestamp(datetime.date(start_year, m
 members_month_df = member_df.loc[mask]
 members_month_df.rename(columns={'heard_about_epicore_by':'heard_about'}, inplace=True)
 heard_about_df = members_month_df.groupby(['heard_about']).heard_about.count().reset_index(name='applicants').sort_values(['heard_about'])
+# remove problem decodes chars for to_html
+heard_about_df['heard_about'] = heard_about_df.heard_about.str.decode('ascii', errors='ignore')
 heard_about_df.to_html(save_data_dir + 'heard_about_table.html', index=False)
 
 # get total approved members for the month
@@ -259,7 +264,7 @@ del app_country_pop_un_df['country_y']
 # include member density (responders per 1 million population) and sort by density
 app_country_pop_un_df['member_density'] = 1000*app_country_pop_un_df['applicants']/app_country_pop_un_df['population']
 app_country_pop_un_df['member_density'] = app_country_pop_un_df['member_density'].round(2)
-app_country_pop_un_df = app_country_pop_un_df.sort_values(['member_density'], ascending=False)
+app_country_pop_un_df = app_country_pop_un_df.sort_values(['country'])
 
 #get countries with no members
 all_country_df = un_country_codes_df.merge(app_country_df, how='left', on='country_code')
