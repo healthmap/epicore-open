@@ -332,8 +332,8 @@ no_members_region_df.to_html(save_data_dir + 'no_members_region_table.html', ind
 
 # creat data frame for memebership summary
 data = [['Total members', total_approved], \
-['Applicants for month', str(total_applicants)], \
-['Approved for month', str(total_approved_month)], \
+['New Applicants', str(total_applicants)], \
+['New Responders', str(total_approved_month)], \
 ['Countries represented', str(total_member_countries) ], \
 ['Countries not represented', str(total_no_member_countries)] ]
 
@@ -341,6 +341,13 @@ membership_df = pd.DataFrame(data, columns=['Metric','Value'])
 membership_df.to_csv(save_data_dir + 'membership.csv', sep='|', index=False)
 membership_df.to_html(save_data_dir + 'membership.html', index=False)
 #df_table_image(membership_df, image_dir + 'membership.png', '')
+
+# creat data frame for memebers in region
+data_region = [ ['COUNTRIES included*: ' + str(total_member_countries), 'COUNTRIES missing**: ' +str(total_no_member_countries) ] ]
+
+data_region_df = pd.DataFrame(data_region, columns=['', ''])
+data_region_df.to_html(save_data_dir + 'members_regions.html', index=False)
+
 
 
 
