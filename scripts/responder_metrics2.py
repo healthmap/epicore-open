@@ -25,6 +25,9 @@ from pandas.plotting import table
 import sys
 import os
 
+# set max width
+pd.set_option('display.max_colwidth', -1)
+
 # set month and year
 d = datetime.date.today()
 year = d.year
@@ -105,6 +108,9 @@ population_df = pd.read_csv(data_dir + 'population_2018.csv', encoding = "ISO-88
 
 # read un country codes
 un_country_codes_df = pd.read_csv(data_dir + 'un_countrycode.csv', encoding = "ISO-8859-1")
+
+# read un country codes
+un_country_codes_region_df = pd.read_csv(data_dir + 'un_countrycode_region.csv', encoding = "ISO-8859-1")
 
 # read member data into dataframe
 member_df = pd.read_csv(data_dir + 'approval.csv')
@@ -275,19 +281,27 @@ mask = all_country_df['applicants'].isnull()
 no_member_countries = all_country_df.loc[mask]
 no_member_countries = no_member_countries[['country','un_country_code']]
 no_member_countries = no_member_countries[no_member_countries.un_country_code.notnull()]
-no_member_countries_region = no_member_countries[['country','un_country_code']]
 total_no_member_countries = len(no_member_countries.index)
 total_member_countries = len(all_country_df.index) - total_no_member_countries
 #df_table_image1(no_member_countries, image_dir + 'no_applicants_countries_table.png', '')
 no_member_countries.to_html(save_data_dir + 'no_applicants_countries_table.html', index=False)
 
-# applicants by country table image
+#merge no member countries with regions
+no_member_countries_regions_df = no_member_countries.merge(un_country_codes_region_df, how='left', on='un_country_code')
+no_member_countries_regions_df = no_member_countries_regions_df[['country_x','country_code','un_country_code','who_region']]
+no_member_countries_regions_df.rename(columns={'country_x':'country', 'who_region':'Region'}, inplace=True)
+
+
+# group by region
+no_members_reg = no_member_countries_regions_df.groupby('Region').agg({'un_country_code': lambda x: ', '.join(x) } )
+
+# applicants by country table
 app_country_density_df = app_country_pop_un_df[['country','applicants','member_density']]
 app_country_density_df.rename(columns={'applicants':'n'}, inplace=True)
 app_country_density_df.to_html(save_data_dir + 'country_table.html', index=False)
 #df_table_image2(app_country_density_df, image_dir + 'country_table.png', '')
 
-# group and sort by region
+# group by region, count members in regions, and sort by region
 app_region_df = member_df.groupby(['who_region']).who_region.count().reset_index(name='applicants').sort_values(['who_region'])
 
 # re-arrange regions
@@ -302,8 +316,21 @@ new_region_df.rename(columns={'who_region':'Region'}, inplace=True)
 #df_table_image(new_region_df, image_dir + 'region_table.png', 'Applicants by Region')
 new_region_df.to_html(save_data_dir + 'region_table.html', index=False)
 
+# data frame for members by region merged with counties with no memebers
+# calculate %
+total_region_applicants = new_region_df.applicants.sum()
+new_region_df['% members'] = (100*new_region_df['applicants']/total_region_applicants).round().astype(int)
+#exp_df.percent = exp_df.percent.round().astype(int)
+new_region_df.rename(columns={'applicants':'# members'}, inplace=True)
 
-# creat data frame
+# merge with no members regions
+no_members_region_df = new_region_df.merge(no_members_reg, how='left', on='Region')
+no_members_region_df.rename(columns={'un_country_code':'Countries with no members (UN-3-letter codes)'}, inplace=True)
+no_members_region_df.fillna('', inplace=True)
+
+no_members_region_df.to_html(save_data_dir + 'no_members_region_table.html', index=False)
+
+# creat data frame for memebership summary
 data = [['Total members', total_approved], \
 ['Applicants for month', str(total_applicants)], \
 ['Approved for month', str(total_approved_month)], \
