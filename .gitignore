@@ -9,4 +9,4 @@
 composer.*
 /cache
 /responsefiles
-/img/metrics
+/img/metrics/
