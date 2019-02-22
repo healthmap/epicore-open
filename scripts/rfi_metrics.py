@@ -18,6 +18,7 @@ matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import csv
 import datetime
+from datetime import timedelta
 import pandas as pd
 import numpy as np
 import itertools
@@ -28,6 +29,8 @@ from decimal import Decimal
 
 reload(sys)
 sys.setdefaultencoding('utf-8')
+
+pd.set_option('display.max_rows', 1000)
 
 # set month and year
 d = datetime.date.today()
@@ -171,23 +174,177 @@ data = [['Verified (+/-)', str(total_verified_month), str(round(Decimal(100*floa
 closed_rfis_df = pd.DataFrame(data, columns=['Closed RFIs',str(total_closed_month), '  %  '])
 closed_rfis_df.to_html(save_data_dir + 'closed_rfis.html', index=False)
 
-########### Dataframe for RFI dashboard - not used now #######################
-# need to add closure date, answered, and reaction time columns
-# reaction time = first response datetime - rfi datetime
-# answered = first response datetime not null
-### not used now
-#epicore_url = 'https://epicore.org/#/events2/'
-#rfi_df = rfistats_df[['event_id','title','create_date','iso_create_date','action_date','first_response_date', 'organization_id','person','status','outcome']]
-#rfi_df['answered'] = np.where(rfi_df['first_response_date'].notnull(), 'yes', 'no')
-#rfi_df['reaction_time'] = rfi_df['first_response_date'] - rfi_df['iso_create_date']
-#rfi_df['reaction_time'].fillna("-", inplace = True)
-#rfi_df['organization_id'].replace(organizations, inplace=True)
-#rfi_df['Quick link'] = epicore_url + rfi_df['event_id'].astype(str)
-#rfi_dashboard_df = rfi_df[['event_id','title','create_date','organization_id','person','Quick link','status','outcome', \
-#                           'action_date', 'answered', 'reaction_time']]
-#rfi_dashboard_df['create_date'] = rfi_dashboard_df['create_date'].dt.strftime('%d-%m-%Y')
-#rfi_dashboard_df.sort_values(by='create_date', inplace=True)
-#rfi_dashboard_df.rename({'title': 'Title','person': 'Requester','action_date':'Closure Date', 'organization_id': 'Organization', \
-#                         'create_date': 'RFI Date', 'event_id': 'RFI'}, axis='columns', inplace=True)
 
-#rfi_dashboard_df.to_html(save_data_dir + 'rfi_dashboard.html', index=False)
+####### RFI Response Metrics  #############
+min_response_time = 5
+max_response_time = 3500
+rfi_response_df = rfistats_df[['country','event_id','create_date','iso_create_date','action_date','first_response_date','status','outcome']]
+
+#### RFI - month
+month_mask = (rfi_response_df['create_date'] > pd.Timestamp(datetime.date(start_year, month, 1)) ) & (rfi_response_df['create_date'] < pd.Timestamp(datetime.date(year, next_month, 1)) )
+rfi_df = rfi_response_df.loc[month_mask]
+#print(rfi_df)
+
+# Closed RFIs
+close_mask = rfi_df['status'] == 'C'
+rfi_closed_df = rfi_df.loc[close_mask]
+rfi_closed = len(rfi_closed_df)
+
+# Responses, time, and rate
+rfi_df['answered'] = np.where(rfi_df['first_response_date'].notnull(), 1, 0)
+rfi_df['reaction_time'] = (rfi_df['first_response_date'] - rfi_df['iso_create_date']).astype('timedelta64[m]')
+lt24hr_response = len(rfi_df[rfi_df.reaction_time < 1440])
+
+# Response time
+rfi_minmax_df = rfi_df[(rfi_df.reaction_time >  min_response_time) & (rfi_df.reaction_time <  max_response_time) ]
+response_time_month = rfi_minmax_df.reaction_time.sum()
+
+responses_month = rfi_df.answered.sum()
+response_rate_month = 100*responses_month/rfi_closed
+avg_response_rate_month = int(round(response_time_month/responses_month))
+avg_response_rate_hm_month = str(timedelta(minutes=avg_response_rate_month))[:-3]
+lt24hr_response_percent_month = int(round(100*lt24hr_response/responses_month))
+rfi_closed_month = rfi_closed
+
+#### RFI - year to date
+ytd_mask = (rfi_response_df['create_date'] > pd.Timestamp(datetime.date(start_year, 1, 1)) ) & (rfi_response_df['create_date'] < pd.Timestamp(datetime.date(year, next_month+1, 1)) )
+rfi_df = rfi_response_df.loc[ytd_mask]
+
+# Closed RFIs
+close_mask = rfi_df['status'] == 'C'
+rfi_closed_df = rfi_df.loc[close_mask]
+rfi_closed = len(rfi_closed_df)
+
+# Responses, time, and rate
+rfi_df['answered'] = np.where(rfi_df['first_response_date'].notnull(), 1, 0)
+rfi_df['reaction_time'] = (rfi_df['first_response_date'] - rfi_df['iso_create_date']).astype('timedelta64[m]')
+lt24hr_response = len(rfi_df[rfi_df.reaction_time < 1440])
+
+
+# Response time
+rfi_minmax_df = rfi_df[(rfi_df.reaction_time >  min_response_time) & (rfi_df.reaction_time <  max_response_time) ]
+response_time_ytd = rfi_minmax_df.reaction_time.sum()
+
+responses_ytd = rfi_df.answered.sum()
+response_rate_ytd = 100*responses_ytd/rfi_closed
+avg_response_rate_ytd = int(round(response_time_ytd/responses_ytd))
+avg_response_rate_hm_ytd = str(timedelta(minutes=avg_response_rate_ytd))[:-3]
+lt24hr_response_percent_ytd = int(round(100*lt24hr_response/responses_ytd))
+rfi_closed_ytd = rfi_closed
+
+#### RFI - last year
+lyear_mask = (rfi_response_df['create_date'] > pd.Timestamp(datetime.date(year-1, 1, 1)) ) & (rfi_response_df['create_date'] < pd.Timestamp(datetime.date(year, 1, 1)) )
+rfi_df = rfi_response_df.loc[lyear_mask]
+#print(rfi_df)
+
+# Closed RFIs
+close_mask = rfi_df['status'] == 'C'
+rfi_closed_df = rfi_df.loc[close_mask]
+rfi_closed = len(rfi_closed_df)
+
+# Responses, time, and rate
+rfi_df['answered'] = np.where(rfi_df['first_response_date'].notnull(), 1, 0)
+rfi_df['reaction_time'] = (rfi_df['first_response_date'] - rfi_df['iso_create_date']).astype('timedelta64[m]')
+lt24hr_response = len(rfi_df[rfi_df.reaction_time < 1440])
+
+# Response time
+rfi_minmax_df = rfi_df[(rfi_df.reaction_time >  min_response_time) & (rfi_df.reaction_time <  max_response_time) ]
+response_time_lyear = rfi_minmax_df.reaction_time.sum()
+
+responses_lyear = rfi_df.answered.sum()
+response_rate_lyear = 100*responses_lyear/rfi_closed
+avg_response_rate_lyear = int(round(response_time_lyear/responses_lyear))
+avg_response_rate_hm_lyear = str(timedelta(minutes=avg_response_rate_lyear))[:-3]
+lt24hr_response_percent_lyear = int(round(100*lt24hr_response/responses_lyear))
+rfi_closed_lyear = rfi_closed
+
+#### Print RFI Response Metrics Table
+# Month
+#print(months[month-1] + " " + str(year))
+#print('closed rfis: ' + str(rfi_closed_month))
+#print('repsonses: ' + str(responses_month))
+#print('response rate: ' + str(response_rate_month) + '%')
+#print('average response rate (h:mm) : ' + avg_response_rate_hm_month)
+#print('RFI answered < 24 hrs/RFIs answered (%): ' + str(lt24hr_response_percent_month))
+
+# Year to date
+#print("Overall - " + str(year))
+#print('closed rfis: ' + str(rfi_closed_ytd))
+#print('repsonses: ' + str(responses_ytd))
+#print('response rate: ' + str(response_rate_ytd) + '%')
+#print('average response rate (h:mm) : ' + avg_response_rate_hm_ytd)
+#print('RFI answered < 24 hrs/RFIs answered (%): ' + str(lt24hr_response_percent_ytd))
+
+# Last year
+#print("Overall - " + str(year-1))
+#print('closed rfis: ' + str(rfi_closed_lyear))
+#print('repsonses: ' + str(responses_lyear))
+#print('response rate: ' + str(response_rate_lyear) + '%')
+#print('average response rate (h:mm) : ' + avg_response_rate_hm_lyear)
+#print('RFI answered < 24 hrs/RFIs answered (%): ' + str(lt24hr_response_percent_lyear))
+
+# RFI Response Metrics Data frame for html
+rfi_metrics_data = [[months[month-1] + " " + str(year), str(rfi_closed_month),  str(responses_month), str(response_rate_month) + "%", avg_response_rate_hm_month, str(lt24hr_response_percent_month) + "%"], \
+["Overall - " + str(year), str(rfi_closed_ytd),  str(responses_ytd), str(response_rate_ytd) + "%", avg_response_rate_hm_ytd, str(lt24hr_response_percent_ytd) + "%"], \
+["Overall - " + str(year-1), str(rfi_closed_lyear),  str(responses_lyear), str(response_rate_lyear) + "%", avg_response_rate_hm_lyear, str(lt24hr_response_percent_lyear) + "%"] ]
+rfi_response_metrics_df = pd.DataFrame(rfi_metrics_data, columns=['Response Metrics','Closed RFIs', 'RFIs Responded', 'Response rate', 'Average Response Time (h:min)', 'RFIs answered <24hrs/RFIs answered'])
+rfi_response_metrics_df.to_html(save_data_dir + 'rfi_response_metrics.html', index=False)
+
+
+######## Verification rates per country
+
+
+#### Unverified RFIs - Year to date
+ytd_mask = (rfi_response_df['create_date'] > pd.Timestamp(datetime.date(start_year, 1, 1)) ) & (rfi_response_df['create_date'] < pd.Timestamp(datetime.date(year, next_month+1, 1)) )
+rfi_df = rfi_response_df.loc[ytd_mask]
+
+# Closed RFIs
+close_mask = rfi_df['status'] == 'C'
+rfi_closed_df = rfi_df.loc[close_mask]
+
+unverified_df = rfi_closed_df[rfi_df.outcome == 'Unverified']
+rfi_country_unverified_df = unverified_df.groupby(['country']).outcome.count().reset_index(name='unverified').sort_values(['country'])
+rfi_country_unverified_df.sort_values(['unverified'], ascending=False, inplace=True)
+rfi_country_unverified_df=rfi_country_unverified_df.rename(columns = {'country':'Country' + " - " +str(year)})
+#print(rfi_country_unverified_df)
+rfi_country_unverified_df.to_html(save_data_dir + 'rfi_country_unverified.html', index=False)
+
+
+#### Lowest verification rates - Last year
+lyear_mask = (rfi_response_df['create_date'] > pd.Timestamp(datetime.date(year-1, 1, 1)) ) & (rfi_response_df['create_date'] < pd.Timestamp(datetime.date(year, 1, 1)) )
+rfi_df = rfi_response_df.loc[lyear_mask]
+
+# Closed RFIs
+close_mask = rfi_df['status'] == 'C'
+rfi_closed_df = rfi_df.loc[close_mask]
+
+#strip leading and trail spaces in country name
+rfi_closed_df['country'] = rfi_closed_df['country'].str.strip()
+# fix repeat countries
+rfi_closed_df = rfi_closed_df.replace({'United States':'USA'})
+
+# get total rfi count for each country
+rfi_country = rfi_closed_df.groupby(['country']).size().reset_index(name='rfi_count')
+#print(rfi_country)
+
+# get verified rfi count for each country
+verified_df = rfi_closed_df[(rfi_df.outcome == "Verified (+)") | (rfi_df.outcome == "Verified (-)")]
+rfi_country_verified = verified_df.groupby(['country']).outcome.count().reset_index(name='verified').sort_values(['country'])
+#print(rfi_country_verified)
+
+# merge total rfi and verified rfi dataframes
+rfi_ver_country = rfi_country.merge(rfi_country_verified, how='left', on='country')
+rfi_ver_country.fillna(0, inplace=True)
+#print(rfi_ver_country)
+
+# calculate verification rate
+rfi_ver_country['ver_rate'] = (100*rfi_ver_country['verified']/rfi_ver_country['rfi_count']).round()
+
+# save lowest verification rate and sort
+rfi_ver_country_min = rfi_ver_country[(rfi_ver_country.ver_rate < 40) & (rfi_ver_country.rfi_count > 4)]
+rfi_ver_country_min.sort_values(['ver_rate'], inplace=True)
+
+rfi_ver_country_min=rfi_ver_country_min.rename(columns = {'country':'Country' + " - " +str(year-1 ), 'rfi_count':'# RFIs', 'ver_rate': 'Verification Rate (%)'})
+#print(rfi_ver_country_min)
+rfi_ver_country_min.to_html(save_data_dir + 'rfi_ver_country.html', index=False)
+
