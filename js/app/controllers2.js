@@ -904,7 +904,7 @@ controller('requestController2', function($rootScope, $window, $scope, $routePar
             start_date = moment('2017-10-30').format('YYYY-MM-DD'); // starting date of EpiCore v2.0
             end_date = moment().format('YYYY-MM-DD'); // now
         } else if (month.value == 'recent'){
-            start_date = moment().subtract(1, 'months').format('YYYY-MM-DD'); // one month ago
+            start_date = moment().subtract(3, 'months').format('YYYY-MM-DD'); // one month ago
             end_date = moment().format('YYYY-MM-DD'); // now
             num_events = 10;
         } else {
@@ -912,7 +912,7 @@ controller('requestController2', function($rootScope, $window, $scope, $routePar
             end_date = moment(month.value + '-01').add(1,'month').format('YYYY-MM-DD'); // next month
         }
 
-        getAllEvents(start_date, end_date, num_events, num_events);
+        getAllEvents(start_date, end_date, num_events);
     };
 
     // upload response files
@@ -1001,6 +1001,7 @@ controller('requestController2', function($rootScope, $window, $scope, $routePar
     };
 
     getAllEvents = function (start_date, end_date, num_events = 'all') {
+
         $scope.isRouteLoading = true;
 
         $scope.eventsList = [];
@@ -1053,8 +1054,22 @@ controller('requestController2', function($rootScope, $window, $scope, $routePar
 
                     }
                 }
+                //////// public events
             } else if (typeof($scope.userinfo) == "undefined") {
                 $scope.eventsList = response.EventsList;
+
+                if (num_events != 'all') {
+
+                    var all_events = response.EventsList.all;
+                    var public_events = [];
+                    all_events.forEach(function (event) {
+                        if ($scope.publicEvents(event)){
+                            public_events.push(event);
+                        }
+                    })
+                    $scope.eventsList.all = public_events.splice(0,num_events);
+                }
+
                 if($scope.eventsList.purpose) {
                     $scope.outcome = {};
                     $scope.outcome.phe_purpose = 'N';
@@ -1146,8 +1161,8 @@ controller('requestController2', function($rootScope, $window, $scope, $routePar
     // get events for current month for closed events
     if ($scope.publicDashboard){
         var end_date = moment().format('YYYY-MM-DD'); // now
-        var start_date = moment().subtract(1, 'months').format('YYYY-MM-DD'); // one month ago
-        getAllEvents(start_date, end_date);
+        var start_date = moment().subtract(3, 'months').format('YYYY-MM-DD'); // 3 month ago
+        getAllEvents(start_date, end_date, 10);
     } else if ($scope.onOpen) {
         getAllEvents('2017-10-30', moment().add(1, 'days').format('YYYY-MM-DD'));
     } else {
