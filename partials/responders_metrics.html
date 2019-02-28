@@ -32,36 +32,43 @@
                     <div ng-include="'data/rfi_response_metrics.html'" ></div>
                     <p>** average value excluding higher and lower values</p>
                 </div>
+
+            </div>
+            <div class="row">
                 <div class="col-xs-12 col-sm-3">
-                    <h4>Unverfiied RFIs</h4>
+                    <h4>Unverified RFIs last month</h4>
                     <div ng-include="'data/rfi_country_unverified.html'" ></div>
                 </div>
-                <div class="col-xs-12 col-sm-3">
-                    <h4>Lowest Verification Rates</h4>
+                <div class="col-xs-12 col-sm-4">
+                    <h4>Lowest Verification Rates - 2018</h4>
                     <div ng-include="'data/rfi_ver_country.html'" ></div>
                 </div>
+                <div class="col-xs-12 col-sm-4">
+                    <h4>Lowest Verification Rates - 2019</h4>
+                    <div ng-include="'data/rfi_ver_country_ytd.html'" ></div>
+                </div>
             </div>
+
             <br>
 
             <div class="row">
                 <div class="col-xs-12 col-sm-3">
-                <h4>Membership Summary</h4>
-                    <!--<img src="img/metrics/membership.png" height="400px" alt="Region">-->
+                <h4>Responder Summary</h4>
                     <div ng-include="'data/membership.html'" ></div>
                 </div>
+<!--
                 <div class="col-xs-12 col-sm-3">
                     <h4>Members by Region</h4>
                     <div ng-include="'data/region_table.html'" ></div>
-                    <!--<img src="img/metrics/region_table.png" height="350px" alt="Region">-->
                 </div>
+-->
                 <div class="col-xs-12 col-sm-3">
                     <h4>Professional Background</h4>
                     <div ng-include="'data/experience_table.html'" ></div>
-                    <!--<img src="img/metrics/experience_table.png" height="350px" alt="Health Experience">-->
                 </div>
                 <div class="col-xs-12 col-sm-3">
                     <h4>Overall Health Expertise</h4>
-                    <img src="img/metrics/health_expertise.png" class="auto-size" alt="Health Expertise">
+                    <img src="img/metrics/health_expertise.png"  height="400px" alt="Health Expertise">
                 </div>
             </div>
             <br>
@@ -70,7 +77,6 @@
                 <div class="col-xs-12 col-md-6">
                 <h4>New Applicants by country</h4>
                 <div ng-include="'data/new_applicants_table.html'" ></div>
-                <!--<img src="img/metrics/new_applicants_table.png" height="400px" alt="New applicants">-->
             </div>
                 <div class="col-xs-12 col-md-6">
                     <h4>Recent Applicants</h4>
@@ -128,12 +134,10 @@
                     <p>(members per 1,000,000 population, latest UN figures)</p>
                     <p>"Members Density" <0.5/1,000,000 population is considered not ideal</p>
                     <div ng-include="'data/country_table.html'" ></div>
-                    <!--<img src="img/metrics/country_table.png" height="2500px" alt="Applicants by Country">-->
                 </div>
                 <div class="col-xs-12 col-md-6">
                     <h4>Countries With No Members</h4>
                     <div ng-include="'data/no_applicants_countries_table.html'" ></div>
-                    <!--<img src="img/metrics/no_applicants_countries_table.png" height="1200px" alt="No applicants">-->
 
                 </div>
             </div>

@@ -158,10 +158,11 @@ total_unverified_month = len(rfi_unverified_month_df)
 
 # create data frame for Opened (all open and closed) RFIs for the month
 data = [['EpiCore', str(total_rfi_epicore), str(round(Decimal(100*float(total_rfi_epicore)/total_rfi_month,1))) ], \
+['GeoSentinel', str(total_rfi_geosentinel), str(round(Decimal(100*float(total_rfi_geosentinel)/total_rfi_month,2)))], \
 ['HealthMap', str(total_rfi_healthmap), str(round(Decimal(100*float(total_rfi_healthmap)/total_rfi_month,1))) ], \
 ['MSF Spain (OCBA)', str(total_rfi_msf), str(round(Decimal(100*float(total_rfi_msf)/total_rfi_month,1))) ], \
-['ProMED', str(total_rfi_promed), str(round(Decimal(100*float(total_rfi_promed)/total_rfi_month,1)))] , \
-['GeoSentinel', str(total_rfi_geosentinel), str(round(Decimal(100*float(total_rfi_geosentinel)/total_rfi_month,2)))] ]
+['ProMED', str(total_rfi_promed), str(round(Decimal(100*float(total_rfi_promed)/total_rfi_month,1)))]
+ ]
 
 opened_rfis_df = pd.DataFrame(data, columns=['Opened RFIs', str(total_rfi_month), '  %  '])
 opened_rfis_df.to_html(save_data_dir + 'opened_rfis.html', index=False)
@@ -169,8 +170,9 @@ opened_rfis_df.to_html(save_data_dir + 'opened_rfis.html', index=False)
 # create data frame for closed RFIs for the month
 data = [['Verified (+/-)', str(total_verified_month), str(round(Decimal(100*float(total_verified_month))/total_closed_month,1)) ], \
 ['Updated (+/-)', str(total_updated_month), str(round(Decimal(100*float(total_updated_month))/total_closed_month,1)) ], \
+['Verified+Updated', str(total_verified_month+total_updated_month), str(round(Decimal(100*(float(total_verified_month+total_updated_month))/total_closed_month,1)))], \
 ['Unverified', str(total_unverified_month), str(round(Decimal(100*float(total_unverified_month))/total_closed_month,1))], \
-['Verified+Unverified', str(total_unverified_month+total_verified_month), str(round(Decimal(100*(float(total_unverified_month+total_verified_month))/total_closed_month,1)))] ]
+]
 closed_rfis_df = pd.DataFrame(data, columns=['Closed RFIs',str(total_closed_month), '  %  '])
 closed_rfis_df.to_html(save_data_dir + 'closed_rfis.html', index=False)
 
@@ -294,9 +296,10 @@ rfi_response_metrics_df.to_html(save_data_dir + 'rfi_response_metrics.html', ind
 ######## Verification rates per country
 
 
-#### Unverified RFIs - Year to date
-ytd_mask = (rfi_response_df['create_date'] > pd.Timestamp(datetime.date(start_year, 1, 1)) ) & (rfi_response_df['create_date'] < pd.Timestamp(datetime.date(year, next_month+1, 1)) )
-rfi_df = rfi_response_df.loc[ytd_mask]
+#### Unverified RFIs - last month
+#ytd_mask = (rfi_response_df['create_date'] > pd.Timestamp(datetime.date(start_year, 1, 1)) ) & (rfi_response_df['create_date'] < pd.Timestamp(datetime.date(year, next_month+1, 1)) )
+month_mask = (rfi_response_df['create_date'] > pd.Timestamp(datetime.date(start_year, month, 1)) ) & (rfi_response_df['create_date'] < pd.Timestamp(datetime.date(year, next_month, 1)) )
+rfi_df = rfi_response_df.loc[month_mask]
 
 # Closed RFIs
 close_mask = rfi_df['status'] == 'C'
@@ -305,14 +308,14 @@ rfi_closed_df = rfi_df.loc[close_mask]
 unverified_df = rfi_closed_df[rfi_df.outcome == 'Unverified']
 rfi_country_unverified_df = unverified_df.groupby(['country']).outcome.count().reset_index(name='unverified').sort_values(['country'])
 rfi_country_unverified_df.sort_values(['unverified'], ascending=False, inplace=True)
-rfi_country_unverified_df=rfi_country_unverified_df.rename(columns = {'country':'Country' + " - " +str(year)})
+rfi_country_unverified_df=rfi_country_unverified_df.rename(columns = {'country':'Country'})
 #print(rfi_country_unverified_df)
 rfi_country_unverified_df.to_html(save_data_dir + 'rfi_country_unverified.html', index=False)
 
 
 #### Lowest verification rates - Last year
-lyear_mask = (rfi_response_df['create_date'] > pd.Timestamp(datetime.date(year-1, 1, 1)) ) & (rfi_response_df['create_date'] < pd.Timestamp(datetime.date(year, 1, 1)) )
-rfi_df = rfi_response_df.loc[lyear_mask]
+tyear_mask = (rfi_response_df['create_date'] > pd.Timestamp(datetime.date(year-1, 1, 1)) ) & (rfi_response_df['create_date'] < pd.Timestamp(datetime.date(year, 1, 1)) )
+rfi_df = rfi_response_df.loc[tyear_mask]
 
 # Closed RFIs
 close_mask = rfi_df['status'] == 'C'
@@ -335,16 +338,58 @@ rfi_country_verified = verified_df.groupby(['country']).outcome.count().reset_in
 # merge total rfi and verified rfi dataframes
 rfi_ver_country = rfi_country.merge(rfi_country_verified, how='left', on='country')
 rfi_ver_country.fillna(0, inplace=True)
+rfi_ver_country['verified'] = rfi_ver_country['verified'].astype(int)
 #print(rfi_ver_country)
 
 # calculate verification rate
-rfi_ver_country['ver_rate'] = (100*rfi_ver_country['verified']/rfi_ver_country['rfi_count']).round()
+rfi_ver_country['ver_rate'] = (100*rfi_ver_country['verified']/rfi_ver_country['rfi_count']).round(1)
 
 # save lowest verification rate and sort
 rfi_ver_country_min = rfi_ver_country[(rfi_ver_country.ver_rate < 40) & (rfi_ver_country.rfi_count > 4)]
 rfi_ver_country_min.sort_values(['ver_rate'], inplace=True)
 
-rfi_ver_country_min=rfi_ver_country_min.rename(columns = {'country':'Country' + " - " +str(year-1 ), 'rfi_count':'# RFIs', 'ver_rate': 'Verification Rate (%)'})
+rfi_ver_country_min=rfi_ver_country_min.rename(columns = {'country':'Country', 'rfi_count':'# RFIs', 'ver_rate': 'Verification Rate (%)'})
 #print(rfi_ver_country_min)
 rfi_ver_country_min.to_html(save_data_dir + 'rfi_ver_country.html', index=False)
+
+
+
+#### Lowest verification rates - Year to date
+ytd_mask = (rfi_response_df['create_date'] > pd.Timestamp(datetime.date(start_year, 1, 1)) ) & (rfi_response_df['create_date'] < pd.Timestamp(datetime.date(year, next_month+1, 1)) )
+rfi_df = rfi_response_df.loc[ytd_mask]
+
+# Closed RFIs
+close_mask = rfi_df['status'] == 'C'
+rfi_closed_df = rfi_df.loc[close_mask]
+
+#strip leading and trail spaces in country name
+rfi_closed_df['country'] = rfi_closed_df['country'].str.strip()
+# fix repeat countries
+rfi_closed_df = rfi_closed_df.replace({'United States':'USA'})
+
+# get total rfi count for each country
+rfi_country = rfi_closed_df.groupby(['country']).size().reset_index(name='rfi_count')
+#print(rfi_country)
+
+# get verified rfi count for each country
+verified_df = rfi_closed_df[(rfi_df.outcome == "Verified (+)") | (rfi_df.outcome == "Verified (-)")]
+rfi_country_verified = verified_df.groupby(['country']).outcome.count().reset_index(name='verified').sort_values(['country'])
+#print(rfi_country_verified)
+
+# merge total rfi and verified rfi dataframes
+rfi_ver_country = rfi_country.merge(rfi_country_verified, how='left', on='country')
+rfi_ver_country.fillna(0, inplace=True)
+rfi_ver_country['verified'] = rfi_ver_country['verified'].astype(int)
+#print(rfi_ver_country)
+
+# calculate verification rate
+rfi_ver_country['ver_rate'] = (100*rfi_ver_country['verified']/rfi_ver_country['rfi_count']).round(1)
+
+# save lowest verification rate and sort
+rfi_ver_country_min = rfi_ver_country[(rfi_ver_country.ver_rate < 40) & (rfi_ver_country.rfi_count > 4)]
+rfi_ver_country_min.sort_values(['ver_rate'], inplace=True)
+
+rfi_ver_country_min=rfi_ver_country_min.rename(columns = {'country':'Country', 'rfi_count':'# RFIs', 'ver_rate': 'Verification Rate (%)'})
+#print(rfi_ver_country_min)
+rfi_ver_country_min.to_html(save_data_dir + 'rfi_ver_country_ytd.html', index=False)
 
