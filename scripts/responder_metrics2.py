@@ -28,6 +28,8 @@ import os
 # set max width
 pd.set_option('display.max_colwidth', -1)
 
+pd.set_option('display.max_rows', 1000)
+
 # set month and year
 d = datetime.date.today()
 year = d.year
@@ -105,6 +107,7 @@ save_data_dir = os.path.abspath(os.path.join(os.path.dirname( __file__ ), '..', 
 
 # read world population data
 population_df = pd.read_csv(data_dir + 'population_2018.csv', encoding = "ISO-8859-1")
+population_df['country_code'].fillna('NA', inplace=True) # fix for Namibia (country code NA)
 
 # read un country codes
 un_country_codes_df = pd.read_csv(data_dir + 'un_countrycode.csv', encoding = "ISO-8859-1")
@@ -123,6 +126,7 @@ member_df['acceptance_date'] = pd.to_datetime(member_df['acceptance_date'])
 # remove null member id rows and convert ids to int
 member_df = member_df[member_df.member_id.notnull()]
 member_df['member_id'] = member_df.member_id.astype(int)
+member_df['country_code'].fillna('NA', inplace=True) # fix for Namibia (country code NA)
 
 # group and sort applicants and approved members by date
 app_df = member_df.groupby(['application_date']).application_date.count().reset_index(name='applicants').sort_values(['application_date'])
@@ -220,7 +224,8 @@ total_applicants = applicants_month['applicants'].sum()
 # get accepted applicants with no training
 today = datetime.datetime.now()
 two_months_ago = today - datetime.timedelta(days=60)
-mask = (member_df['user_status'] == 'Accepted') & member_df['course_type'].isnull() & (member_df['acceptance_date'] > two_months_ago)
+#mask = (member_df['user_status'] == 'Accepted') & member_df['course_type'].isnull() & (member_df['acceptance_date'] > two_months_ago)
+mask = (member_df['user_status'] == 'Accepted') & member_df['course_type'].isnull() & (member_df['acceptance_date'] > pd.Timestamp(datetime.date(2018, 1, 1)))
 app_no_training_df = member_df.loc[mask]
 app_no_training_df = app_no_training_df[['acceptance_date','member_id']]
 app_no_training_df.to_html(save_data_dir + 'app_no_training_table.html', index=False)
@@ -255,8 +260,9 @@ app_by_country.to_html(save_data_dir + 'new_applicants_table.html', index=False)
 #df_table_image(app_by_country, image_dir + 'new_applicants_table.png', '')
 
 # group and sort by country
-app_country_df = member_df.groupby(['country','country_code','who_region']).country.count().reset_index(name='applicants').sort_values(['country'])
-
+approved_mask = member_df['user_status'] == 'Approved'
+member_approved_df = member_df.loc[approved_mask]
+app_country_df = member_approved_df.groupby(['country','country_code','who_region']).country.count().reset_index(name='applicants').sort_values(['country'])
 # merge country and population tables
 app_country_pop_df = app_country_df.merge(population_df, how='left', on='country_code')
 app_country_pop_df.rename(columns={'country_x':'country'}, inplace=True)
@@ -282,7 +288,7 @@ no_member_countries = all_country_df.loc[mask]
 no_member_countries = no_member_countries[['country','un_country_code']]
 no_member_countries = no_member_countries[no_member_countries.un_country_code.notnull()]
 total_no_member_countries = len(no_member_countries.index)
-total_member_countries = len(all_country_df.index) - total_no_member_countries
+total_member_countries = len(app_country_df) #len(all_country_df.index) - total_no_member_countries
 #df_table_image1(no_member_countries, image_dir + 'no_applicants_countries_table.png', '')
 no_member_countries.to_html(save_data_dir + 'no_applicants_countries_table.html', index=False)
 

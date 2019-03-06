@@ -287,8 +287,8 @@ rfi_closed_lyear = rfi_closed
 
 # RFI Response Metrics Data frame for html
 rfi_metrics_data = [[months[month-1] + " " + str(year), str(rfi_closed_month),  str(responses_month), str(response_rate_month) + "%", avg_response_rate_hm_month, str(lt24hr_response_percent_month) + "%"], \
-["Overall - " + str(year), str(rfi_closed_ytd),  str(responses_ytd), str(response_rate_ytd) + "%", avg_response_rate_hm_ytd, str(lt24hr_response_percent_ytd) + "%"], \
-["Overall - " + str(year-1), str(rfi_closed_lyear),  str(responses_lyear), str(response_rate_lyear) + "%", avg_response_rate_hm_lyear, str(lt24hr_response_percent_lyear) + "%"] ]
+[str(year), str(rfi_closed_ytd),  str(responses_ytd), str(response_rate_ytd) + "%", avg_response_rate_hm_ytd, str(lt24hr_response_percent_ytd) + "%"], \
+[str(year-1), str(rfi_closed_lyear),  str(responses_lyear), str(response_rate_lyear) + "%", avg_response_rate_hm_lyear, str(lt24hr_response_percent_lyear) + "%"] ]
 rfi_response_metrics_df = pd.DataFrame(rfi_metrics_data, columns=['Response Metrics','Closed RFIs', 'RFIs Responded', 'Response rate', 'Average Response Time (h:min)**', 'RFIs answered <24hrs/RFIs answered'])
 rfi_response_metrics_df.to_html(save_data_dir + 'rfi_response_metrics.html', index=False)
 
