@@ -178,8 +178,6 @@ closed_rfis_df.to_html(save_data_dir + 'closed_rfis.html', index=False)
 
 
 ####### RFI Response Metrics  #############
-min_response_time = 5
-max_response_time = 3500
 rfi_response_df = rfistats_df[['country','event_id','create_date','iso_create_date','action_date','first_response_date','status','outcome']]
 
 #### RFI - month
@@ -198,12 +196,15 @@ rfi_df['reaction_time'] = (rfi_df['first_response_date'] - rfi_df['iso_create_da
 lt24hr_response = len(rfi_df[rfi_df.reaction_time < 1440])
 
 # Response time
+min_response_time = np.min(rfi_df['reaction_time'])
+max_response_time = np.max(rfi_df['reaction_time'])
 rfi_minmax_df = rfi_df[(rfi_df.reaction_time >  min_response_time) & (rfi_df.reaction_time <  max_response_time) ]
 response_time_month = rfi_minmax_df.reaction_time.sum()
+responses_avg_month = len(rfi_minmax_df['reaction_time'])
 
 responses_month = rfi_df.answered.sum()
 response_rate_month = 100*responses_month/rfi_closed
-avg_response_rate_month = int(round(response_time_month/responses_month))
+avg_response_rate_month = int(round(response_time_month/responses_avg_month))
 avg_response_rate_hm_month = str(timedelta(minutes=avg_response_rate_month))[:-3]
 lt24hr_response_percent_month = int(round(100*lt24hr_response/responses_month))
 rfi_closed_month = rfi_closed
@@ -224,12 +225,15 @@ lt24hr_response = len(rfi_df[rfi_df.reaction_time < 1440])
 
 
 # Response time
+min_response_time = np.min(rfi_df['reaction_time'])
+max_response_time = np.max(rfi_df['reaction_time'])
 rfi_minmax_df = rfi_df[(rfi_df.reaction_time >  min_response_time) & (rfi_df.reaction_time <  max_response_time) ]
 response_time_ytd = rfi_minmax_df.reaction_time.sum()
+responses_avg_ytd = len(rfi_minmax_df['reaction_time'])
 
 responses_ytd = rfi_df.answered.sum()
 response_rate_ytd = 100*responses_ytd/rfi_closed
-avg_response_rate_ytd = int(round(response_time_ytd/responses_ytd))
+avg_response_rate_ytd = int(round(response_time_ytd/responses_avg_ytd))
 avg_response_rate_hm_ytd = str(timedelta(minutes=avg_response_rate_ytd))[:-3]
 lt24hr_response_percent_ytd = int(round(100*lt24hr_response/responses_ytd))
 rfi_closed_ytd = rfi_closed
@@ -250,40 +254,18 @@ rfi_df['reaction_time'] = (rfi_df['first_response_date'] - rfi_df['iso_create_da
 lt24hr_response = len(rfi_df[rfi_df.reaction_time < 1440])
 
 # Response time
+min_response_time = np.min(rfi_df['reaction_time'])
+max_response_time = np.max(rfi_df['reaction_time'])
 rfi_minmax_df = rfi_df[(rfi_df.reaction_time >  min_response_time) & (rfi_df.reaction_time <  max_response_time) ]
 response_time_lyear = rfi_minmax_df.reaction_time.sum()
+responses_avg_lyear = len(rfi_minmax_df['reaction_time'])
 
 responses_lyear = rfi_df.answered.sum()
 response_rate_lyear = 100*responses_lyear/rfi_closed
-avg_response_rate_lyear = int(round(response_time_lyear/responses_lyear))
+avg_response_rate_lyear = int(round(response_time_lyear/responses_avg_lyear))
 avg_response_rate_hm_lyear = str(timedelta(minutes=avg_response_rate_lyear))[:-3]
 lt24hr_response_percent_lyear = int(round(100*lt24hr_response/responses_lyear))
 rfi_closed_lyear = rfi_closed
-
-#### Print RFI Response Metrics Table
-# Month
-#print(months[month-1] + " " + str(year))
-#print('closed rfis: ' + str(rfi_closed_month))
-#print('repsonses: ' + str(responses_month))
-#print('response rate: ' + str(response_rate_month) + '%')
-#print('average response rate (h:mm) : ' + avg_response_rate_hm_month)
-#print('RFI answered < 24 hrs/RFIs answered (%): ' + str(lt24hr_response_percent_month))
-
-# Year to date
-#print("Overall - " + str(year))
-#print('closed rfis: ' + str(rfi_closed_ytd))
-#print('repsonses: ' + str(responses_ytd))
-#print('response rate: ' + str(response_rate_ytd) + '%')
-#print('average response rate (h:mm) : ' + avg_response_rate_hm_ytd)
-#print('RFI answered < 24 hrs/RFIs answered (%): ' + str(lt24hr_response_percent_ytd))
-
-# Last year
-#print("Overall - " + str(year-1))
-#print('closed rfis: ' + str(rfi_closed_lyear))
-#print('repsonses: ' + str(responses_lyear))
-#print('response rate: ' + str(response_rate_lyear) + '%')
-#print('average response rate (h:mm) : ' + avg_response_rate_hm_lyear)
-#print('RFI answered < 24 hrs/RFIs answered (%): ' + str(lt24hr_response_percent_lyear))
 
 # RFI Response Metrics Data frame for html
 rfi_metrics_data = [[months[month-1] + " " + str(year), str(rfi_closed_month),  str(responses_month), str(response_rate_month) + "%", avg_response_rate_hm_month, str(lt24hr_response_percent_month) + "%"], \
