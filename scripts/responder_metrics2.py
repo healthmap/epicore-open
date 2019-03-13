@@ -123,8 +123,9 @@ member_df.columns = member_df.columns.to_series().str.strip().str.lower().str.re
 member_df['application_date'] = pd.to_datetime(member_df['application_date'])
 member_df['approval_date'] = pd.to_datetime(member_df['approval_date'])
 member_df['acceptance_date'] = pd.to_datetime(member_df['acceptance_date'])
-# remove null member id rows and convert ids to int
-member_df = member_df[member_df.member_id.notnull()]
+# convert ids to int, set id NA values to 0
+#member_df = member_df[member_df.member_id.notnull()]
+member_df['member_id'].fillna('0', inplace=True)
 member_df['member_id'] = member_df.member_id.astype(int)
 member_df['country_code'].fillna('NA', inplace=True) # fix for Namibia (country code NA)
 
@@ -132,7 +133,6 @@ member_df['country_code'].fillna('NA', inplace=True) # fix for Namibia (country 
 app_df = member_df.groupby(['application_date']).application_date.count().reset_index(name='applicants').sort_values(['application_date'])
 # group and sort by approval_date
 approved_df = member_df.groupby(['approval_date']).approval_date.count().reset_index(name='approved').sort_values(['approval_date'])
-
 
 # group approved members by health experience
 experience_df = member_df.groupby(['health_experience','approval_date']).health_experience.count().reset_index(name='count')
@@ -217,7 +217,7 @@ fig1.savefig(image_dir + "applicants_month.png",  bbox_inches='tight')
 start_year = year
 if next_month == 1:
     start_year = year-1
-mask = (app_df['application_date'] > pd.Timestamp(datetime.date(start_year, month, 1)) ) & (app_df['application_date'] < pd.Timestamp(datetime.date(year, next_month, 1)) )
+mask = (app_df['application_date'] >= pd.Timestamp(datetime.date(start_year, month, 1)) ) & (app_df['application_date'] < pd.Timestamp(datetime.date(year, next_month, 1)) )
 applicants_month = app_df.loc[mask]
 total_applicants = applicants_month['applicants'].sum()
 
@@ -243,7 +243,7 @@ heard_about_df['heard_about'] = heard_about_df.heard_about.str.decode('ascii', e
 heard_about_df.to_html(save_data_dir + 'heard_about_table.html', index=False)
 
 # get total approved members for the month
-mask = (approved_df['approval_date'] > pd.Timestamp(datetime.date(start_year, month, 1)) ) & (approved_df['approval_date'] < pd.Timestamp(datetime.date(year, next_month, 1)) )
+mask = (approved_df['approval_date'] >= pd.Timestamp(datetime.date(start_year, month, 1)) ) & (approved_df['approval_date'] < pd.Timestamp(datetime.date(year, next_month, 1)) )
 approved_month = approved_df.loc[mask]
 total_approved_month = approved_month['approved'].sum()
 total_approved = approved_df['approved'].sum()
