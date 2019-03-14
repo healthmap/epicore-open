@@ -181,9 +181,9 @@ closed_rfis_df.to_html(save_data_dir + 'closed_rfis.html', index=False)
 rfi_response_df = rfistats_df[['country','event_id','create_date','iso_create_date','action_date','first_response_date','status','outcome']]
 
 #### RFI - month
-month_mask = (rfi_response_df['create_date'] > pd.Timestamp(datetime.date(start_year, month, 1)) ) & (rfi_response_df['create_date'] < pd.Timestamp(datetime.date(year, next_month, 1)) )
+rfi_response_df['action_date'] = pd.to_datetime(rfi_response_df.action_date)
+month_mask = (rfi_response_df['action_date'] >= pd.Timestamp(datetime.date(start_year, month, 1)) ) & (rfi_response_df['action_date'] < pd.Timestamp(datetime.date(year, next_month, 1)) )
 rfi_df = rfi_response_df.loc[month_mask]
-#print(rfi_df)
 
 # Closed RFIs
 close_mask = rfi_df['status'] == 'C'
@@ -210,7 +210,8 @@ lt24hr_response_percent_month = int(round(100*lt24hr_response/responses_month))
 rfi_closed_month = rfi_closed
 
 #### RFI - year to date
-ytd_mask = (rfi_response_df['create_date'] > pd.Timestamp(datetime.date(start_year, 1, 1)) ) & (rfi_response_df['create_date'] < pd.Timestamp(datetime.date(year, next_month+1, 1)) )
+rfi_response_df['action_date'] = pd.to_datetime(rfi_response_df.action_date)
+ytd_mask = (rfi_response_df['action_date'] > pd.Timestamp(datetime.date(start_year, 1, 1)) ) & (rfi_response_df['action_date'] < pd.Timestamp(datetime.date(year, next_month+1, 1)) )
 rfi_df = rfi_response_df.loc[ytd_mask]
 
 # Closed RFIs
@@ -239,7 +240,8 @@ lt24hr_response_percent_ytd = int(round(100*lt24hr_response/responses_ytd))
 rfi_closed_ytd = rfi_closed
 
 #### RFI - last year
-lyear_mask = (rfi_response_df['create_date'] > pd.Timestamp(datetime.date(year-1, 1, 1)) ) & (rfi_response_df['create_date'] < pd.Timestamp(datetime.date(year, 1, 1)) )
+rfi_response_df['action_date'] = pd.to_datetime(rfi_response_df.action_date)
+lyear_mask = (rfi_response_df['action_date'] > pd.Timestamp(datetime.date(year-1, 1, 1)) ) & (rfi_response_df['action_date'] < pd.Timestamp(datetime.date(year, 1, 1)) )
 rfi_df = rfi_response_df.loc[lyear_mask]
 #print(rfi_df)
 
@@ -276,7 +278,6 @@ rfi_response_metrics_df.to_html(save_data_dir + 'rfi_response_metrics.html', ind
 
 
 ######## Verification rates per country
-
 
 #### Unverified RFIs - last month
 #ytd_mask = (rfi_response_df['create_date'] > pd.Timestamp(datetime.date(start_year, 1, 1)) ) & (rfi_response_df['create_date'] < pd.Timestamp(datetime.date(year, next_month+1, 1)) )

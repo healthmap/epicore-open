@@ -70,7 +70,7 @@
                             </td>
                             <td><span ng-if="!onOpen">{{event.action_date}}</span></td>
                             <td><span ng-if="event.first_response_date" > Yes </span><span ng-if="!event.first_response_date" > No </span></td>
-                            <td>{{event.reaction_time}}</td>
+                            <td><span ng-if="event.first_response_date" >{{event.reaction_time}}</span></td>
                             <td>
                                 <div class="form-group">
                                     <input type="number" min="0" class="form-control" ng-model="event.metric_score" name="metric_score">
