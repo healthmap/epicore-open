@@ -2,8 +2,12 @@
 
 ## Development Environment
 
-The development evenironment is typically set up in the user's sandbox on the server in /home/username/public_html.
+The development evenironment is set up in the user's sandbox on the server in /home/username/public_html.
 
+The user must be added to the sandboxes in NGINX:
+/etc/nginx/sites-available/default
+
+Be sure to restart nginx.
 
 ### Clone Epicore repository in user's sandbox
 
@@ -92,6 +96,12 @@ Production deployment status: [![Deployment status from DeployBot](https://bosto
 
 
 
+
+## Approval Portal
+
+Only superusers can access the approval portal (with username and pw). Supersers are added in the da.ini.php config file.
+
+
 ## Cron Jobs
 
 All cron jobs run in root.  There are two sets of cron jobs described below.
@@ -112,3 +122,4 @@ epicore/scripts/rfi_metrics.py
 epicore/scripts/responder_metrics2.py
 
 These scripts use data from the csv files in #1.
+
