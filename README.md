@@ -2,7 +2,7 @@
 
 ## Development Environment
 
-The development evenironment is typically set up in the user's sandbox on the AWS server in /home/username/public_html.
+The development evenironment is typically set up in the user's sandbox on the server in /home/username/public_html.
 
 
 ### Clone Epicore repository in user's sandbox
@@ -14,7 +14,7 @@ git clone https://github.com/healthmap/epicore.git
 ```
 
 
-**Important**: You can view your changes at https://epicore.org/~username/epicore/ after completing the following required steps.
+**Important**: You can view your changes at https://epicore.org/~username/epicore/ after completing the following steps.
 
 
 ### Copy data files and set permissions
@@ -57,13 +57,10 @@ cp push-epicore.pem epicore_root/scripts/conf/.
 
 ```
 *Contact Epicore admin for a copy of the config files.
-
-### Set app version and mode
-
-Edit epicoreConfig.js
+These files are in the staging and production directories on the server.
 
 
-### Install library for Mobile Push Notifications
+### Install library for Mobile Push Notifications (optional)
 
 ```sh
 cd epicore_root
@@ -93,3 +90,25 @@ Only authorized users can deploy to production using the Deploybot dashboard.
 
 Production deployment status: [![Deployment status from DeployBot](https://boston-childrens-hosptial.deploybot.com/badge/02267418033975/87596.svg)](http://deploybot.com)
 
+
+
+## Cron Jobs
+
+All cron jobs run in root.  There are two sets of cron jobs described below.
+
+### Email Reminders
+
+Email reminders are sent for auto-close and warning notifications for RFIs.
+
+
+### Member and RFI stats
+
+1. Member and RFI stats are saved weekly in a CSV file. See scripts:
+epicore/crontab/getMembers.sh
+epicore/crontab/getRFIstats.sh
+
+2. Stats for the member and RFI dashboards are generated weekly with two python scripts:
+epicore/scripts/rfi_metrics.py
+epicore/scripts/responder_metrics2.py
+
+These scripts use data from the csv files in #1.
