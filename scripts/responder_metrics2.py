@@ -136,7 +136,9 @@ approved_df = member_df.groupby(['approval_date']).approval_date.count().reset_i
 
 # group approved members by health experience
 experience_df = member_df.groupby(['health_experience','approval_date']).health_experience.count().reset_index(name='count')
-exp_df = member_df.groupby(['health_experience']).health_experience.count().reset_index(name='count')
+members_approved_df = member_df[member_df.approval_date.notnull()]
+#exp_df = member_df.groupby(['health_experience']).health_experience.count().reset_index(name='count')
+exp_df = members_approved_df.groupby(['health_experience']).health_experience.count().reset_index(name='count')
 
 # total experience
 total_exp = exp_df['count'].sum()
@@ -308,7 +310,7 @@ app_country_density_df.to_html(save_data_dir + 'country_table.html', index=False
 #df_table_image2(app_country_density_df, image_dir + 'country_table.png', '')
 
 # group by region, count members in regions, and sort by region
-app_region_df = member_df.groupby(['who_region']).who_region.count().reset_index(name='applicants').sort_values(['who_region'])
+app_region_df = members_approved_df.groupby(['who_region']).who_region.count().reset_index(name='applicants').sort_values(['who_region'])
 
 # re-arrange regions
 central_america_df = app_region_df[app_region_df['who_region'].str.lower().str.contains("central america")]
@@ -329,12 +331,14 @@ new_region_df['% members'] = (100*new_region_df['applicants']/total_region_appli
 #exp_df.percent = exp_df.percent.round().astype(int)
 new_region_df.rename(columns={'applicants':'# members'}, inplace=True)
 
+
 # merge with no members regions
 no_members_region_df = new_region_df.merge(no_members_reg, how='left', on='Region')
 no_members_region_df.rename(columns={'un_country_code':'Countries with no members (UN-3-letter codes)'}, inplace=True)
 no_members_region_df.fillna('', inplace=True)
 
 no_members_region_df.to_html(save_data_dir + 'no_members_region_table.html', index=False)
+
 
 # creat data frame for memebership summary
 data = [['Responders', total_approved], \

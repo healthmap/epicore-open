@@ -87,7 +87,7 @@ if next_month == 1:
     start_year = year-1
 #print( datetime.date(start_year, month, 1))
 #print(datetime.date(year, next_month, 1))
-mask = (rfistats_df['create_date'] > pd.Timestamp(datetime.date(start_year, month, 1)) ) & (rfistats_df['create_date'] < pd.Timestamp(datetime.date(year, next_month, 1)) )
+mask = (rfistats_df['create_date'] >= pd.Timestamp(datetime.date(start_year, month, 1)) ) & (rfistats_df['create_date'] < pd.Timestamp(datetime.date(year, next_month, 1)) )
 rfi_month_df = rfistats_df.loc[mask]
 total_rfi_month = len(rfi_month_df)
 
@@ -124,8 +124,13 @@ total_rfi_month_country = len(rfi_month_country_df)
 
 
 # get closed RFIs for last full month
-mask = rfi_month_df['status'] == 'C'
-rfi_closed_month_df = rfi_month_df.loc[mask]
+rfistats_df['action_date'] = pd.to_datetime(rfistats_df.action_date)
+mask = (rfistats_df['action_date'] >= pd.Timestamp(datetime.date(start_year, month, 1)) ) & (rfistats_df['action_date'] < pd.Timestamp(datetime.date(year, next_month, 1)) )
+rfi_month_action_df = rfistats_df.loc[mask]
+#mask = rfi_month_df['status'] == 'C'
+mask = rfi_month_action_df['status'] == 'C'
+#rfi_closed_month_df = rfi_month_df.loc[mask]
+rfi_closed_month_df = rfi_month_action_df.loc[mask]
 total_closed_month = len(rfi_closed_month_df)
 
 # get verified (+/-) for last full month
