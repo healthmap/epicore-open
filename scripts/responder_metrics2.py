@@ -226,8 +226,8 @@ total_applicants = applicants_month['applicants'].sum()
 # get accepted applicants with no training
 today = datetime.datetime.now()
 two_months_ago = today - datetime.timedelta(days=60)
-#mask = (member_df['user_status'] == 'Accepted') & member_df['course_type'].isnull() & (member_df['acceptance_date'] > two_months_ago)
-mask = (member_df['user_status'] == 'Accepted') & member_df['course_type'].isnull() & (member_df['acceptance_date'] > pd.Timestamp(datetime.date(2018, 1, 1)))
+mask = (member_df['user_status'] == 'Accepted') & member_df['course_type'].isnull() & (member_df['acceptance_date'] > two_months_ago)
+#mask = (member_df['user_status'] == 'Accepted') & member_df['course_type'].isnull() & (member_df['acceptance_date'] > pd.Timestamp(datetime.date(2018, 1, 1)))
 app_no_training_df = member_df.loc[mask]
 app_no_training_df = app_no_training_df[['acceptance_date','member_id']]
 app_no_training_df.to_html(save_data_dir + 'app_no_training_table.html', index=False)
