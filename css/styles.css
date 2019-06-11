@@ -774,3 +774,6 @@ th {
   color: inherit;
   font-weight: 700;
 }
+.layout-fixed {
+  table-layout: fixed;
+}
