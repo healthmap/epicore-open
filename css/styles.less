@@ -568,6 +568,9 @@ line-height: 1.5;
     margin-top: 48px;
     }
 
+.mt6 {
+    margin-top: 6px;
+}
 .npt {
     padding-top: 0px;
     }
@@ -760,6 +763,13 @@ th {
 .table-responsive>.table>tbody>tr>th.nowrap-mobile {
     white-space: nowrap;
 }
+.row.flex {
+    flex-wrap: wrap;
+    -webkit-flex-wrap: wrap;
+}
+.card.flex {
+    flex-basis: auto;
+}
 
 }
 
@@ -775,7 +785,7 @@ th {
     width: 100%;
 }
     th, td {
-    padding: 10px 12px;
+    padding: 8px 16px;
     line-height: 1.5;
     border: 0px;
 }
@@ -788,9 +798,47 @@ th {
     background: lighten(@light-gray, 30%);
     color: inherit;
     font-weight: 700;
+    font-size: 13px;
+    line-height: 1.71428571428571;
+    line-height: 1.846153846;
+}
+td {
+font-size: 15px;
+line-height: 1.6;
 }
 }
 
 .layout-fixed {
       table-layout:fixed;
     }
+
+.card {
+  background: #fff;
+  padding: 24px;
+}
+.row.flex {
+    display: flex;
+}
+
+.flex {
+    display: flex;
+    display: -webkit-flex; /* Safari */
+}
+
+.card.flex {
+    display: flex;
+    flex-direction: column;
+    display: -webkit-flex; /* Safari */
+    -webkit-flex-direction:column;
+    flex-grow: 1;
+    flex-basis: 0;
+}
+
+.flex.col {
+    flex-grow: 1;
+    margin: 24px 15px 24px 15px;
+}
+
+.mb0 {
+     margin-bottom: 0px;
+}

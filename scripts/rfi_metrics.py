@@ -162,23 +162,23 @@ total_unverified_month = len(rfi_unverified_month_df)
 #print('Countries involved in RFIs: ' + str(total_rfi_month_country))
 
 # create data frame for Opened (all open and closed) RFIs for the month
-data = [['EpiCore', str(total_rfi_epicore), str(round(Decimal(100*float(total_rfi_epicore)/total_rfi_month,1))) ], \
-['GeoSentinel', str(total_rfi_geosentinel), str(round(Decimal(100*float(total_rfi_geosentinel)/total_rfi_month,2)))], \
-['HealthMap', str(total_rfi_healthmap), str(round(Decimal(100*float(total_rfi_healthmap)/total_rfi_month,1))) ], \
-['MSF Spain (OCBA)', str(total_rfi_msf), str(round(Decimal(100*float(total_rfi_msf)/total_rfi_month,1))) ], \
-['ProMED', str(total_rfi_promed), str(round(Decimal(100*float(total_rfi_promed)/total_rfi_month,1)))]
+data = [['EpiCore', str(total_rfi_epicore), str(round(Decimal(100*float(total_rfi_epicore)/total_rfi_month,1))) + '%'], \
+['GeoSentinel', str(total_rfi_geosentinel), str(round(Decimal(100*float(total_rfi_geosentinel)/total_rfi_month,2))) + '%'], \
+['HealthMap', str(total_rfi_healthmap), str(round(Decimal(100*float(total_rfi_healthmap)/total_rfi_month,1))) + '%'], \
+['MSF Spain (OCBA)', str(total_rfi_msf), str(round(Decimal(100*float(total_rfi_msf)/total_rfi_month,1))) + '%'], \
+['ProMED', str(total_rfi_promed), str(round(Decimal(100*float(total_rfi_promed)/total_rfi_month,1))) + '%']
  ]
 
-opened_rfis_df = pd.DataFrame(data, columns=['Opened RFIs', str(total_rfi_month), '  %  '])
+opened_rfis_df = pd.DataFrame(data, columns=['Organization', 'Opened (' + str(total_rfi_month) + ')', 'Percent'])
 opened_rfis_df.to_html(save_data_dir + 'opened_rfis.html', index=False)
 
 # create data frame for closed RFIs for the month
-data = [['Verified (+/-)', str(total_verified_month), str(round(Decimal(100*float(total_verified_month))/total_closed_month,1)) ], \
-['Updated (+/-)', str(total_updated_month), str(round(Decimal(100*float(total_updated_month))/total_closed_month,1)) ], \
-['Verified+Updated', str(total_verified_month+total_updated_month), str(round(Decimal(100*(float(total_verified_month+total_updated_month))/total_closed_month,1)))], \
-['Unverified', str(total_unverified_month), str(round(Decimal(100*float(total_unverified_month))/total_closed_month,1))], \
+data = [['Verified (+/-)', str(total_verified_month), str(round(Decimal(100*float(total_verified_month))/total_closed_month,1)) + '%'], \
+['Updated (+/-)', str(total_updated_month), str(round(Decimal(100*float(total_updated_month))/total_closed_month,1)) + '%'], \
+['Verified+Updated', str(total_verified_month+total_updated_month), str(round(Decimal(100*(float(total_verified_month+total_updated_month))/total_closed_month,1))) + '%'], \
+['Unverified', str(total_unverified_month), str(round(Decimal(100*float(total_unverified_month))/total_closed_month,0)) + '%'], \
 ]
-closed_rfis_df = pd.DataFrame(data, columns=['Closed RFIs',str(total_closed_month), '  %  '])
+closed_rfis_df = pd.DataFrame(data, columns=['Outcome','Closed (' + str(total_closed_month) +')', 'Percent'])
 closed_rfis_df.to_html(save_data_dir + 'closed_rfis.html', index=False)
 
 
@@ -211,6 +211,8 @@ responses_month = rfi_df.answered.sum()
 response_rate_month = 100*responses_month/rfi_closed
 avg_response_rate_month = int(round(response_time_month/responses_avg_month))
 avg_response_rate_hm_month = str(timedelta(minutes=avg_response_rate_month))[:-3]
+avg_response_rate_hm_month_h = avg_response_rate_hm_month.split(':')[0] 
+avg_response_rate_hm_month_m = avg_response_rate_hm_month.split(':')[1] 
 lt24hr_response_percent_month = int(round(100*lt24hr_response/responses_month))
 rfi_closed_month = rfi_closed
 
@@ -241,6 +243,8 @@ responses_ytd = rfi_df.answered.sum()
 response_rate_ytd = 100*responses_ytd/rfi_closed
 avg_response_rate_ytd = int(round(response_time_ytd/responses_avg_ytd))
 avg_response_rate_hm_ytd = str(timedelta(minutes=avg_response_rate_ytd))[:-3]
+avg_response_rate_hm_ytd_h = avg_response_rate_hm_ytd.split(':')[0] 
+avg_response_rate_hm_ytd_m = avg_response_rate_hm_ytd.split(':')[1] 
 lt24hr_response_percent_ytd = int(round(100*lt24hr_response/responses_ytd))
 rfi_closed_ytd = rfi_closed
 
@@ -271,14 +275,16 @@ responses_lyear = rfi_df.answered.sum()
 response_rate_lyear = 100*responses_lyear/rfi_closed
 avg_response_rate_lyear = int(round(response_time_lyear/responses_avg_lyear))
 avg_response_rate_hm_lyear = str(timedelta(minutes=avg_response_rate_lyear))[:-3]
+avg_response_rate_hm_lyear_h = avg_response_rate_hm_lyear.split(':')[0]
+avg_response_rate_hm_lyear_m = avg_response_rate_hm_lyear.split(':')[1]
 lt24hr_response_percent_lyear = int(round(100*lt24hr_response/responses_lyear))
 rfi_closed_lyear = rfi_closed
 
 # RFI Response Metrics Data frame for html
-rfi_metrics_data = [[months[month-1] + " " + str(year), str(rfi_closed_month),  str(responses_month), str(response_rate_month) + "%", avg_response_rate_hm_month, str(lt24hr_response_percent_month) + "%"], \
-[str(year), str(rfi_closed_ytd),  str(responses_ytd), str(response_rate_ytd) + "%", avg_response_rate_hm_ytd, str(lt24hr_response_percent_ytd) + "%"], \
-[str(year-1), str(rfi_closed_lyear),  str(responses_lyear), str(response_rate_lyear) + "%", avg_response_rate_hm_lyear, str(lt24hr_response_percent_lyear) + "%"] ]
-rfi_response_metrics_df = pd.DataFrame(rfi_metrics_data, columns=['Response Metrics','Closed RFIs', 'RFIs Responded', 'Response rate', 'Average Response Time (h:min)**', 'RFIs answered <24hrs/RFIs answered'])
+rfi_metrics_data = [[months[month-1] + " " + str(year), str(rfi_closed_month),  str(responses_month), str(response_rate_month) + "%", str(avg_response_rate_hm_month_h) + "h " + str(avg_response_rate_hm_month_m) + "min", str(lt24hr_response_percent_month) + "%"], \
+[str(year), str(rfi_closed_ytd),  str(responses_ytd), str(response_rate_ytd) + "%", str(avg_response_rate_hm_ytd_h) + "h " + str(avg_response_rate_hm_ytd_m) + "min", str(lt24hr_response_percent_ytd) + "%"], \
+[str(year-1), str(rfi_closed_lyear),  str(responses_lyear), str(response_rate_lyear) + "%", str(avg_response_rate_hm_lyear_h) + "h " + str(avg_response_rate_hm_lyear_m) + "min", str(lt24hr_response_percent_lyear) + "%"] ]
+rfi_response_metrics_df = pd.DataFrame(rfi_metrics_data, columns=['Time Frame','Closed', 'Responded', 'Response Rate', 'Response Time', 'Responded in 24hrs'])
 rfi_response_metrics_df.to_html(save_data_dir + 'rfi_response_metrics.html', index=False)
 
 
@@ -296,7 +302,7 @@ rfi_closed_df = rfi_df.loc[close_mask]
 unverified_df = rfi_closed_df[rfi_df.outcome == 'Unverified']
 rfi_country_unverified_df = unverified_df.groupby(['country']).outcome.count().reset_index(name='unverified').sort_values(['country'])
 rfi_country_unverified_df.sort_values(['unverified'], ascending=False, inplace=True)
-rfi_country_unverified_df=rfi_country_unverified_df.rename(columns = {'country':'Country'})
+rfi_country_unverified_df=rfi_country_unverified_df.rename(columns = {'country':'Country','unverified':'Unverified'})
 #print(rfi_country_unverified_df)
 rfi_country_unverified_df.to_html(save_data_dir + 'rfi_country_unverified.html', index=False)
 
@@ -336,7 +342,7 @@ rfi_ver_country['ver_rate'] = (100*rfi_ver_country['verified']/rfi_ver_country['
 rfi_ver_country_min = rfi_ver_country[(rfi_ver_country.ver_rate < 40) & (rfi_ver_country.rfi_count > 4)]
 rfi_ver_country_min.sort_values(['ver_rate'], inplace=True)
 
-rfi_ver_country_min=rfi_ver_country_min.rename(columns = {'country':'Country', 'rfi_count':'# RFIs', 'ver_rate': 'Verification Rate (%)'})
+rfi_ver_country_min=rfi_ver_country_min.rename(columns = {'country':'Country', 'rfi_count':'RFIs', 'verified':'Verified', 'ver_rate': 'Verification Rate (%)'})
 #print(rfi_ver_country_min)
 rfi_ver_country_min.to_html(save_data_dir + 'rfi_ver_country.html', index=False)
 
@@ -377,7 +383,7 @@ rfi_ver_country['ver_rate'] = (100*rfi_ver_country['verified']/rfi_ver_country['
 rfi_ver_country_min = rfi_ver_country[(rfi_ver_country.ver_rate < 40) & (rfi_ver_country.rfi_count > 4)]
 rfi_ver_country_min.sort_values(['ver_rate'], inplace=True)
 
-rfi_ver_country_min=rfi_ver_country_min.rename(columns = {'country':'Country', 'rfi_count':'# RFIs', 'ver_rate': 'Verification Rate (%)'})
+rfi_ver_country_min=rfi_ver_country_min.rename(columns = {'country':'Country', 'rfi_count':'RFIs', 'verified':'Verified', 'ver_rate': 'Verification Rate (%)'})
 #print(rfi_ver_country_min)
 rfi_ver_country_min.to_html(save_data_dir + 'rfi_ver_country_ytd.html', index=False)
 
