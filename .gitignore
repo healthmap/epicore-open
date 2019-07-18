@@ -10,3 +10,5 @@ composer.*
 /cache
 /responsefiles
 /img/metrics/
+/node_modules
+
