@@ -28,23 +28,23 @@
 
             <!-- view for organizations -->
             <div ng-show="isOrganization" ng-init="predicate = 'iso_create_date';" class="table-responsive">
-                <table class='small table table-hover table-bordered'>
+                <table class='layout-fixed small table table-hover table-bordered'>
                     <tbody>
                         <tr>
                             <th width="50px" ng-click="predicate = 'event_id_int'; reverse=!reverse">ID <i class="fa fa-sort"></i></th>
-                            <th ng-click="predicate = 'title'; reverse=!reverse">Title <i class="fa fa-sort"></i></th>
+                            <th width="200px" ng-click="predicate = 'title'; reverse=!reverse">Title <i class="fa fa-sort"></i></th>
                             <th width="110px" ng-click="predicate = 'iso_create_date'; reverse=!reverse" class="nowrap-mobile">RFI Date <i class="fa fa-sort"></i></th>
                             <th width="110px" ng-click="predicate = 'person'; reverse=!reverse" class="nowrap-mobile">Requester <i class="fa fa-sort"></i></th>
-                            <th width="50px"><span data-toggle="tooltip" title="current verfication status of the RFI">RFI Status</span></th>
-                            <th width="50px"><span data-toggle="tooltip" title="information about the final outcome of the verification process">Outcome</span></th>
-                            <th width="50px"><span data-toggle="tooltip" title="date when rfi was closed">Closure Date</span></th>
-                            <th width="50px"><span data-toggle="tooltip" title="rfi had at least one repsonse">Answered</span></th>
-                            <th width="70px"><span data-toggle="tooltip" title="time delta between rfi date and first response">Reaction Time (minutes)</span></th>
-                            <th width="200px"><span data-toggle="tooltip" title="">RFI Score</span></th>
-                            <th width="300px"><span data-toggle="tooltip" title="">RFI Creation</span></th>
-                            <th width="300px"><span data-toggle="tooltip" title="">Notes</span></th>
+                            <th width="80px"><span data-toggle="tooltip" title="current verfication status of the RFI">RFI Status</span></th>
+                            <th width="80px"><span data-toggle="tooltip" title="information about the final outcome of the verification process">Outcome</span></th>
+                            <th width="80px"><span data-toggle="tooltip" title="date when rfi was closed">Closure Date</span></th>
+                            <th width="80px"><span data-toggle="tooltip" title="rfi had at least one repsonse">Answered</span></th>
+                            <th width="86px"><span data-toggle="tooltip" title="time delta between rfi date and first response">Reaction Time (min)</span></th>
+                            <th width="110px"><span data-toggle="tooltip" title="">RFI Score</span></th>
+                            <th width="200px"><span data-toggle="tooltip" title="">RFI Creation</span></th>
+                            <th width="200px"><span data-toggle="tooltip" title="">Notes</span></th>
                             <th width="200px"><span data-toggle="tooltip" title="">Action</span></th>
-                            <th width="50px"><span data-toggle="tooltip" title="">Update</span></th>
+                            <th width="110px"><span data-toggle="tooltip" title="">Update</span></th>
                         </tr>
 
 
@@ -88,7 +88,7 @@
                             </td>
                             <td>
                                 <div class="form-group">
-                                    <input type="text" class="form-control" ng-model="event.metric_action" name="metric_action">
+                                    <textarea type="text" class="form-control" ng-model="event.metric_action" name="metric_action" />
                                 </div>
                             </td>
                             <td><button class="btn btn-default btn-sm stacked" type="button" ng-click="updateRFIMetrics(event)">Update</button></td>
@@ -122,3 +122,27 @@
     // TOOLTIP
     $('[data-toggle="tooltip"]').tooltip( {html: true,trigger:'hover'});
 </script>
+
+<style>
+/*.table > tbody:first-child > tr:first-child > th:first-child {
+        position: absolute;
+            display: inline-block;
+                    height: 100%;
+}
+
+.table > tbody > tr > td:first-child {
+        position: absolute;
+            display: inline-block;
+            background-color: #fff;
+                    height: 100%;
+}
+
+.table > tbody:first-child > tr:first-child > th:nth-child(2) {
+        padding-left: 60px;
+}
+
+.table > tbody > tr > td:nth-child(2) {
+        padding-left: 60px !important;
+}
+*/
+</style>

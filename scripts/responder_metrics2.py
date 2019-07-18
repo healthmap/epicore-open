@@ -145,26 +145,26 @@ total_exp = exp_df['count'].sum()
 # add column for percent values
 exp_df['percent'] = exp_df['count']*100/total_exp
 exp_df.percent = exp_df.percent.round().astype(int)
-exp_df.rename({'count': 'n','percent':'%'}, axis='columns', inplace=True)
+exp_df.rename({'health_experience':'Experience', 'count': 'Members','percent':'%'}, axis='columns', inplace=True)
 # create image for report
 exp_df.to_html(save_data_dir + 'experience_table.html', index=False)
 #df_table_image3(exp_df, image_dir + 'experience_table.png', 'Professional Background')
 
 
 # get total human experience, filtered by "human"
-human_exp_df = exp_df[exp_df['health_experience'].str.lower().str.contains("human")]
+human_exp_df = exp_df[exp_df['Experience'].str.lower().str.contains("human")]
 total_human_exp = human_exp_df['%'].sum()
 #human_exp_df = experience_df[experience_df['health_experience'].str.lower().str.contains("human")]
 #total_human_exp = human_exp_df['n'].sum()
 
 # get total animal experience, filtered by "animal:
-animal_exp_df = exp_df[exp_df['health_experience'].str.lower().str.contains("animal")]
+animal_exp_df = exp_df[exp_df['Experience'].str.lower().str.contains("animal")]
 total_animal_exp = animal_exp_df['%'].sum()
 #animal_exp_df = experience_df[experience_df['health_experience'].str.lower().str.contains("animal")]
 #total_animal_exp = animal_exp_df['n'].sum()
 
 # get total environmental experience, filtered by "environmental"
-environmental_exp_df = exp_df[exp_df['health_experience'].str.lower().str.contains("environmental")]
+environmental_exp_df = exp_df[exp_df['Experience'].str.lower().str.contains("environmental")]
 total_environmental_exp = environmental_exp_df['%'].sum()
 #environmental_exp_df = experience_df[experience_df['health_experience'].str.lower().str.contains("environmental")]
 #total_environmental_exp = environmental_exp_df['n'].sum()
@@ -179,26 +179,33 @@ x = np.arange(3)
 y = [total_human_exp, total_animal_exp, total_environmental_exp]
 #y = [human_exp, animal_exp, env_exp]
 #plt.title('Overall Health Expertise (%)')
-hm,an,en = plt.bar(x, y, width=0.4, align="center")
+hm,an,en = plt.bar(x, y, align="center", edgecolor = "none")
 hm.set_facecolor('#015163')
-an.set_facecolor('#0089aa')
-en.set_facecolor('#00bbe8')
+an.set_facecolor('#3fc8c8')
+en.set_facecolor('#2e3335')
 plt.xticks(x,('Human','Animal','Environmental'))
+plt.tick_params(top='off', bottom='off', left='off', right='off', labelleft='off', labelbottom='on', labelsize=14)
+plt.box(False)
 #add value labels to bars
 for a,b in zip(x, y):
-    plt.text(a, b+0.5, str(b)+'%')
-fig2.savefig(image_dir + "health_expertise.png", bbox_inches='tight')
+    plt.text(a, b+2, str(b)+'%', ha="center", color="#2e3335", fontsize=18)
+fig2.savefig(image_dir + "health_expertise.svg", bbox_inches='tight', format='svg')
 
 # generate member applications plot
 fig1 = plt.figure()
 this_year = datetime.date.today().year
 member_title = 'Epicore Applicants ' + str(last_year) + '-' + str(this_year)
 #plt.title(member_title)
-plt.plot(app_df.application_date, app_df.applicants)
-plt.xticks(rotation=40)
+plt.plot(app_df.application_date, app_df.applicants, color='#3fc8c8')
+plt.tick_params(top='off', bottom='off', left='off', right='off', labelleft='on', labelbottom='on', labelsize=12, labelcolor='#878c8d')
+plt.xticks(rotation=20)
+plt.gca().spines['right'].set_color('none')
+plt.gca().spines['top'].set_color('none')
+plt.gca().spines['left'].set_color('#d5d7d8')
+plt.gca().spines['bottom'].set_color('#d5d7d8')
 plt.xlim([datetime.date(last_year, 1, 1), datetime.datetime.now()])
 plt.ylim([0,10])
-fig1.savefig(image_dir + "applicants_year.png",  bbox_inches='tight')
+fig1.savefig(image_dir + "applicants_year.svg", format='svg',  bbox_inches='tight')
 
 # get applicants for another plot
 plot_year = year
@@ -209,11 +216,16 @@ mask = (app_df['application_date'] > pd.Timestamp(datetime.date(plot_year, plot_
 applicants_plot_df = app_df.loc[mask]
 # generate plot
 fig1 = plt.figure()
-plt.plot(applicants_plot_df.application_date, applicants_plot_df.applicants)
-plt.xticks(rotation=40)
+plt.plot(applicants_plot_df.application_date, applicants_plot_df.applicants, color='#3fc8c8')
+plt.tick_params(top='off', bottom='off', left='off', right='off', labelleft='on', labelbottom='on', labelsize=12, labelcolor='#878c8d')
+plt.xticks(rotation=20)
+plt.gca().spines['right'].set_color('none')
+plt.gca().spines['top'].set_color('none')
+plt.gca().spines['left'].set_color('#d5d7d8')
+plt.gca().spines['bottom'].set_color('#d5d7d8')
 plt.xlim([datetime.date(plot_year, plot_start_month, 1), datetime.datetime.now()])
 plt.ylim([0,10])
-fig1.savefig(image_dir + "applicants_month.png",  bbox_inches='tight')
+fig1.savefig(image_dir + "applicants_month.svg", format='svg', bbox_inches='tight')
 
 # get total applicants for the month
 start_year = year
@@ -226,10 +238,11 @@ total_applicants = applicants_month['applicants'].sum()
 # get accepted applicants with no training
 today = datetime.datetime.now()
 two_months_ago = today - datetime.timedelta(days=60)
-#mask = (member_df['user_status'] == 'Accepted') & member_df['course_type'].isnull() & (member_df['acceptance_date'] > two_months_ago)
-mask = (member_df['user_status'] == 'Accepted') & member_df['course_type'].isnull() & (member_df['acceptance_date'] > pd.Timestamp(datetime.date(2018, 1, 1)))
+mask = (member_df['user_status'] == 'Accepted') & member_df['course_type'].isnull() & (member_df['acceptance_date'] > two_months_ago)
+#mask = (member_df['user_status'] == 'Accepted') & member_df['course_type'].isnull() & (member_df['acceptance_date'] > pd.Timestamp(datetime.date(2018, 1, 1)))
 app_no_training_df = member_df.loc[mask]
-app_no_training_df = app_no_training_df[['acceptance_date','member_id']]
+app_no_training_df.rename(columns={'acceptance_date':'Acceptance Date', 'member_id':'Member ID'}, inplace=True)
+app_no_training_df = app_no_training_df[['Acceptance Date','Member ID']]
 app_no_training_df.to_html(save_data_dir + 'app_no_training_table.html', index=False)
 
 # get heard about applicants
@@ -238,10 +251,10 @@ if next_month == 1:
     start_year = year-1
 mask = (member_df['application_date'] > pd.Timestamp(datetime.date(start_year, month, 1)) ) & (member_df['application_date'] < pd.Timestamp(datetime.date(year, next_month, 1)) )
 members_month_df = member_df.loc[mask]
-members_month_df.rename(columns={'heard_about_epicore_by':'heard_about'}, inplace=True)
-heard_about_df = members_month_df.groupby(['heard_about']).heard_about.count().reset_index(name='applicants').sort_values(['heard_about'])
+members_month_df.rename(columns={'heard_about_epicore_by':'Source'}, inplace=True)
+heard_about_df = members_month_df.groupby(['Source']).Source.count().reset_index(name='Applicants').sort_values(['Source'])
 # remove problem decodes chars for to_html
-heard_about_df['heard_about'] = heard_about_df.heard_about.str.decode('ascii', errors='ignore')
+heard_about_df['Source'] = heard_about_df.Source.str.decode('ascii', errors='ignore')
 heard_about_df.to_html(save_data_dir + 'heard_about_table.html', index=False)
 
 # get total approved members for the month
@@ -256,7 +269,7 @@ app_country_date_df = member_df.groupby(['country','application_date']).country.
 # get new applicants for each country by month
 mask = (app_country_date_df['application_date'] > pd.Timestamp(datetime.date(start_year, month, 1)) ) & (app_country_date_df['application_date'] < pd.Timestamp(datetime.date(year, next_month, 1)) )
 app_country_month = app_country_date_df.loc[mask]
-app_by_country = app_country_month.groupby(['country']).country.count().reset_index(name='new applicants')
+app_by_country = app_country_month.groupby(['country']).country.count().reset_index(name='New Members')
 # create image for report
 app_by_country.to_html(save_data_dir + 'new_applicants_table.html', index=False)
 #df_table_image(app_by_country, image_dir + 'new_applicants_table.png', '')
@@ -305,7 +318,7 @@ no_members_reg = no_member_countries_regions_df.groupby('Region').agg({'un_count
 
 # applicants by country table
 app_country_density_df = app_country_pop_un_df[['country','applicants','member_density']]
-app_country_density_df.rename(columns={'applicants':'n'}, inplace=True)
+app_country_density_df.rename(columns={'country':'Country','applicants':'n','member_density':'Density'}, inplace=True)
 app_country_density_df.to_html(save_data_dir + 'country_table.html', index=False)
 #df_table_image2(app_country_density_df, image_dir + 'country_table.png', '')
 
@@ -327,14 +340,14 @@ new_region_df.to_html(save_data_dir + 'region_table.html', index=False)
 # data frame for members by region merged with counties with no memebers
 # calculate %
 total_region_applicants = new_region_df.applicants.sum()
-new_region_df['% members'] = (100*new_region_df['applicants']/total_region_applicants).round().astype(int)
+new_region_df['Members(%)'] = (100*new_region_df['applicants']/total_region_applicants).round().astype(int)
 #exp_df.percent = exp_df.percent.round().astype(int)
-new_region_df.rename(columns={'applicants':'# members'}, inplace=True)
+new_region_df.rename(columns={'applicants':'Members'}, inplace=True)
 
 
 # merge with no members regions
 no_members_region_df = new_region_df.merge(no_members_reg, how='left', on='Region')
-no_members_region_df.rename(columns={'un_country_code':'Countries with no members (UN-3-letter codes)'}, inplace=True)
+no_members_region_df.rename(columns={'un_country_code':'Countries with No Members'}, inplace=True)
 no_members_region_df.fillna('', inplace=True)
 
 no_members_region_df.to_html(save_data_dir + 'no_members_region_table.html', index=False)
@@ -344,7 +357,7 @@ no_members_region_df.to_html(save_data_dir + 'no_members_region_table.html', ind
 data = [['Responders', total_approved], \
 ['New Applicants', str(total_applicants)], \
 ['New Responders', str(total_approved_month)], \
-['Countries represented', str(total_member_countries) ], \
+['Countries Represented', str(total_member_countries) ], \
 #['Countries not represented', str(total_no_member_countries)]
 ]
 
@@ -354,7 +367,7 @@ membership_df.to_html(save_data_dir + 'membership.html', index=False)
 #df_table_image(membership_df, image_dir + 'membership.png', '')
 
 # creat data frame for memebers in region
-data_region = [ ['COUNTRIES included*: ' + str(total_member_countries), 'COUNTRIES missing**: ' +str(total_no_member_countries) ] ]
+data_region = [ ['Countries included: ' + str(total_member_countries), 'Countries missing: ' +str(total_no_member_countries) ] ]
 
 data_region_df = pd.DataFrame(data_region, columns=['', ''])
 data_region_df.to_html(save_data_dir + 'members_regions.html', index=False)
