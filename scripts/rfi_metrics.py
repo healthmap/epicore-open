@@ -319,7 +319,7 @@ rfi_country = rfi_closed_df.groupby(['country']).size().reset_index(name='rfi_co
 #print(rfi_country)
 
 # get verified rfi count for each country
-verified_df = rfi_closed_df[(rfi_df.outcome == "Verified (+)") | (rfi_df.outcome == "Verified (-)")]
+verified_df = rfi_closed_df[(rfi_df.outcome == "Verified (+)") | (rfi_df.outcome == "Verified (-)") | (rfi_df.outcome == "Updated (+)") | (rfi_df.outcome == "Updated (-)")]
 rfi_country_verified = verified_df.groupby(['country']).outcome.count().reset_index(name='verified').sort_values(['country'])
 #print(rfi_country_verified)
 
@@ -360,7 +360,7 @@ rfi_country = rfi_closed_df.groupby(['country']).size().reset_index(name='rfi_co
 #print(rfi_country)
 
 # get verified rfi count for each country
-verified_df = rfi_closed_df[(rfi_df.outcome == "Verified (+)") | (rfi_df.outcome == "Verified (-)")]
+verified_df = rfi_closed_df[(rfi_df.outcome == "Verified (+)") | (rfi_df.outcome == "Verified (-)") | (rfi_df.outcome == "Updated (+)") | (rfi_df.outcome == "Updated (-)")]
 rfi_country_verified = verified_df.groupby(['country']).outcome.count().reset_index(name='verified').sort_values(['country'])
 #print(rfi_country_verified)
 
