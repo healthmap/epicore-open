@@ -13,18 +13,19 @@
 #    where month = 1..12, year = 2018..2100
 #
 #
-import pandas as pd
-import os
-import sys
-from pandas.plotting import table
-import itertools
-import numpy as np
-
-import datetime
 import csv
-import matplotlib.pyplot as plt
+import datetime
+import numpy as np
+import itertools
+from pandas.plotting import table
+import sys
+import os
+import pandas as pd
 import matplotlib
 matplotlib.use('Agg')
+
+import matplotlib.pyplot as plt
+
 
 # set max width
 pd.set_option('display.max_colwidth', -1)
@@ -416,22 +417,19 @@ total_no_member_countries = len(no_member_countries.index)
 # len(all_country_df.index) - total_no_member_countries
 total_member_countries = len(app_country_df)
 # df_table_image1(no_member_countries, image_dir + 'no_applicants_countries_table.png', '')
-no_member_countries.to_html(
-    save_data_dir + 'no_applicants_countries_table.html', index=False)
+no_member_countries.to_html(save_data_dir + 'no_applicants_countries_table.html', index=False)
 
 # merge no member countries with regions
 no_member_countries_regions_df = no_member_countries.merge(
     un_country_codes_region_df, how='left', on='un_country_code')
 no_member_countries_regions_df = no_member_countries_regions_df[[
     'country_x', 'country_code', 'un_country_code', 'who_region', 'sub-region']]
-no_member_countries_regions_df.rename(
-    columns={'country_x': 'country', 'who_region': 'Region', 'sub-region': 'sub_region'}, inplace=True)
+no_member_countries_regions_df.rename(columns={'country_x': 'country', 'who_region': 'Region', 'sub-region': 'sub_region'}, inplace=True)
 
 # print("No member country with Regions => ", no_member_countries_regions_df)
 
 # group by region
-no_members_reg = no_member_countries_regions_df.groupby(
-    'Region').agg({'un_country_code': lambda x: ', '.join(x)})
+no_members_reg = no_member_countries_regions_df.groupby('Region').agg({'un_country_code': lambda x: ', '.join(x)})
 
 # print("No Member Countries Group by Region ==> ", no_members_reg)
 
@@ -448,41 +446,33 @@ no_members_reg = no_member_countries_regions_df.groupby(
 ####################################################################
 
 # Merge current approval data to the new regions list
-no_member_countries_new_df = member_approved_df.merge(
-    un_country_codes_region_df, how='left', on='country_code')
+no_member_countries_new_df = member_approved_df.merge(un_country_codes_region_df, how='left', on='country_code')
 
 # Pick few columns for ease
-no_member_countries_new_df = no_member_countries_new_df[[
-    'approval_date', 'country_code', 'un_country_code', 'who_region_x', 'who_region_y']]
+no_member_countries_new_df = no_member_countries_new_df[['approval_date', 'country_code', 'un_country_code', 'who_region_x', 'who_region_y']]
 
 # Rename Columns
-no_member_countries_new_df.rename(
-    columns={'approval_date': 'approval_date', 'country_code': 'country_code', 'un_country_code': 'un_country_code', 'who_region_x': 'who_region_old', 'who_region_y': 'Region'}, inplace=True)
+no_member_countries_new_df.rename(columns={'approval_date': 'approval_date', 'country_code': 'country_code', 'un_country_code': 'un_country_code', 'who_region_x': 'who_region_old', 'who_region_y': 'Region'}, inplace=True)
 
 # Group by Region and sum up the total applicants from that region
-po_grouped_df = no_member_countries_new_df.groupby(['Region']).Region.count(
-).reset_index(name='applicants').sort_values(['Region'])
+po_grouped_df = no_member_countries_new_df.groupby(['Region']).Region.count().reset_index(name='applicants').sort_values(['Region'])
 
 # Finally Merge the above output to the list of NO MEMBER countries in the region
 final_output_df = po_grouped_df.merge(no_members_reg, how='left', on='Region')
 
 total_region_applicants = final_output_df.applicants.sum()
 
-final_output_df['Members(%)'] = (
-    100*final_output_df['applicants']/total_region_applicants).round().astype(int)
+final_output_df['Members(%)'] = (100*final_output_df['applicants']/total_region_applicants).round().astype(int)
 # exp_df.percent = exp_df.percent.round().astype(int)
 final_output_df.rename(columns={'applicants': 'Members'}, inplace=True)
 
-final_output_df.rename(
-    columns={'un_country_code': 'Countries with No Members'}, inplace=True)
+final_output_df.rename(columns={'un_country_code': 'Countries with No Members'}, inplace=True)
 
 final_output_df.fillna('', inplace=True)
 
-print("No Member Countries with New countries from UN list==> ",
-      final_output_df)
+print("No Member Countries with New countries from UN list==> ",final_output_df)
 
-final_output_df.to_html(
-    save_data_dir + 'no_members_region_table.html', index=False)
+final_output_df.to_html(save_data_dir + 'no_members_region_table.html', index=False)
 
 ####################################################################
 
@@ -492,24 +482,19 @@ final_output_df.to_html(
 
 
 # applicants by country table
-app_country_density_df = app_country_pop_un_df[[
-    'country', 'applicants', 'member_density']]
-app_country_density_df.rename(columns={
-                              'country': 'Country', 'applicants': 'n', 'member_density': 'Density'}, inplace=True)
-app_country_density_df.to_html(
-    save_data_dir + 'country_table.html', index=False)
+app_country_density_df = app_country_pop_un_df[['country', 'applicants', 'member_density']]
+app_country_density_df.rename(columns={'country': 'Country', 'applicants': 'n', 'member_density': 'Density'}, inplace=True)
+app_country_density_df.to_html(save_data_dir + 'country_table.html', index=False)
 # df_table_image2(app_country_density_df, image_dir + 'country_table.png', '')
 
 
 # group by region, count members in regions, and sort by region
-app_region_df = members_approved_df.groupby(['who_region']).who_region.count(
-).reset_index(name='applicants').sort_values(['who_region'])
+app_region_df = members_approved_df.groupby(['who_region']).who_region.count().reset_index(name='applicants').sort_values(['who_region'])
 
 # print("App Region DF = > ", app_region_df)
 
 # re-arrange regions
-central_america_df = app_region_df[app_region_df['who_region'].str.lower(
-).str.contains("central america")]
+central_america_df = app_region_df[app_region_df['who_region'].str.lower().str.contains("central america")]
 central_america_total = central_america_df['applicants'].sum()
 app_region_df.at[5, 'who_region'] = 'Central-South America'
 app_region_df.at[5, 'applicants'] = int(central_america_total)
@@ -525,8 +510,7 @@ new_region_df.to_html(save_data_dir + 'region_table.html', index=False)
 # data frame for members by region merged with counties with no members
 # calculate %
 total_region_applicants = new_region_df.applicants.sum()
-new_region_df['Members(%)'] = (
-    100*new_region_df['applicants']/total_region_applicants).round().astype(int)
+new_region_df['Members(%)'] = (100*new_region_df['applicants']/total_region_applicants).round().astype(int)
 # exp_df.percent = exp_df.percent.round().astype(int)
 new_region_df.rename(columns={'applicants': 'Members'}, inplace=True)
 
@@ -534,8 +518,7 @@ new_region_df.rename(columns={'applicants': 'Members'}, inplace=True)
 # print("No Members Region -> ", no_members_reg)
 
 # merge with no members regions
-no_members_region_df = new_region_df.merge(
-    no_members_reg, how='left', on='Region')
+no_members_region_df = new_region_df.merge(no_members_reg, how='left', on='Region')
 # no_members_region_df.rename(
 #     columns={'un_country_code': 'Countries with No Members'}, inplace=True)
 # no_members_region_df.fillna('', inplace=True)
@@ -558,8 +541,7 @@ membership_df.to_html(save_data_dir + 'membership.html', index=False)
 # df_table_image(membership_df, image_dir + 'membership.png', '')
 
 # creat data frame for memebers in region
-data_region = [['Countries included: ' +
-                str(total_member_countries), 'Countries missing: ' + str(total_no_member_countries)]]
+data_region = [['Countries included: ' + str(total_member_countries), 'Countries missing: ' + str(total_no_member_countries)]]
 
 data_region_df = pd.DataFrame(data_region, columns=['', ''])
 data_region_df.to_html(save_data_dir + 'members_regions.html', index=False)
