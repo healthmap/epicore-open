@@ -13,12 +13,13 @@
 #    where month = 1..12, year = 2018..2100
 #
 #
+import pandas as pd
 import os
 import sys
 from pandas.plotting import table
 import itertools
 import numpy as np
-import pandas as pd
+
 import datetime
 import csv
 import matplotlib.pyplot as plt
@@ -195,11 +196,16 @@ exp_blank_df = exp_blank_df_cols.query(
 
 exp_none_df = exp_df[exp_df['Experience'].str.lower().str.contains("none")]
 
+total_none_applicants = exp_blank_df.iloc[1]['count'] + \
+    exp_df.iloc[7]['Members']
+
+
 modDfObj = exp_df.append(
-    {'Experience': 'Unselected Entries', 'Members': exp_blank_df.iloc[1]['count'], '%': "NA"}, ignore_index=True)
+    {'Experience': 'None', 'Members': total_none_applicants, '%': "NA"}, ignore_index=True)
 
+exp_obj_with_total_none = modDfObj.drop(modDfObj.index[7])
 
-print("Null - Left Blank ?? Experience => ", modDfObj)
+print("Null - Left Blank ?? Experience => ", exp_obj_with_total_none)
 
 ####################################################################
 #END#
@@ -207,7 +213,8 @@ print("Null - Left Blank ?? Experience => ", modDfObj)
 
 
 # create image for report
-modDfObj.to_html(save_data_dir + 'experience_table.html', index=False)
+exp_obj_with_total_none.to_html(
+    save_data_dir + 'experience_table.html', index=False)
 # df_table_image3(exp_df, image_dir + 'experience_table.png', 'Professional Background')
 
 
