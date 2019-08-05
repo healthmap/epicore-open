@@ -119,7 +119,7 @@ total_rfi_geosentinel = len(rfi_geosentinel)
 rfi_month_country_df =rfi_month_df[['outcome','create_date','organization_id', 'country']].country.unique()
 #rfi_month_unique_country_df = rfi_month_country_df.country.unique()
 total_rfi_month_country = len(rfi_month_country_df)
-#print(total_rfi_month_country)
+print("Total RFI Month => ", total_rfi_month_country)
 
 
 
@@ -292,7 +292,22 @@ rfi_response_metrics_df.to_html(save_data_dir + 'rfi_response_metrics.html', ind
 
 #### Unverified RFIs - last month
 #ytd_mask = (rfi_response_df['create_date'] > pd.Timestamp(datetime.date(start_year, 1, 1)) ) & (rfi_response_df['create_date'] < pd.Timestamp(datetime.date(year, next_month+1, 1)) )
-month_mask = (rfi_response_df['create_date'] > pd.Timestamp(datetime.date(start_year, month, 1)) ) & (rfi_response_df['create_date'] < pd.Timestamp(datetime.date(year, next_month, 1)) )
+
+############################################################
+#   Following was commented out by Sam, Ch157135
+#   Closed RFIs table is representing Closed status
+#   with date mask for "Created_date". But the table
+#   "Unverified RFIs Last Month" is calculated based
+#   on "action_date"
+############################################################
+
+
+# month_mask = (rfi_response_df['create_date'] > pd.Timestamp(datetime.date(start_year, month, 1)) ) & (rfi_response_df['create_date'] < pd.Timestamp(datetime.date(year, next_month, 1)) )
+month_mask = (rfi_response_df['action_date'] > pd.Timestamp(datetime.date(start_year, month, 1)) ) & (rfi_response_df['action_date'] < pd.Timestamp(datetime.date(year, next_month, 1)) )
+
+############################################################
+#                   END 
+############################################################
 rfi_df = rfi_response_df.loc[month_mask]
 
 # Closed RFIs
@@ -303,7 +318,8 @@ unverified_df = rfi_closed_df[rfi_df.outcome == 'Unverified']
 rfi_country_unverified_df = unverified_df.groupby(['country']).outcome.count().reset_index(name='unverified').sort_values(['country'])
 rfi_country_unverified_df.sort_values(['unverified'], ascending=False, inplace=True)
 rfi_country_unverified_df=rfi_country_unverified_df.rename(columns = {'country':'Country','unverified':'Unverified'})
-#print(rfi_country_unverified_df)
+# print("Unverified DF output -> ", unverified_df)
+# print("RFI COuntry Unverified => ", rfi_country_unverified_df)
 rfi_country_unverified_df.to_html(save_data_dir + 'rfi_country_unverified.html', index=False)
 
 
