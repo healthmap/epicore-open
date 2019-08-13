@@ -822,3 +822,15 @@ th {
 .mb0 {
   margin-bottom: 0px;
 }
+.mr1 {
+  margin-right: 0.5rem;
+}
+.outer-border {
+  border: 1px solid #d5d7d8;
+}
+tr:hover .more-link {
+  color: #3fc8c8;
+}
+tr.link {
+  cursor: pointer;
+}

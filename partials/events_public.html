@@ -15,23 +15,24 @@
 
             <!-- RFI filter -->
             <div class="form-group" >
-                <label class="form-label" >RFI List Filter</label>
+                <label class="mr1 form-label">Time frame</label>
                 <select ng-options="month as month.name for month in event_months " ng-model="selected_month" ng-change="getEventMonth(selected_month)"></select>
             </div>
 
             <!-- view for organizations -->
             <div ng-init="predicate = 'iso_create_date'; reverse=!reverse">
-                <table class='small table table-hover table-bordered'>
+                <table class='outer-border small table table-hover'>
                     <tbody>
                         <tr>
-                            <th width="50px" ng-click="predicate = 'event_id_int'; reverse=!reverse">ID <i class="fa fa-sort"></i></th>
-                            <th ng-click="predicate = 'title'; reverse=!reverse">Title <i class="fa fa-sort"></i></th>
-                            <th width="110px" ng-click="predicate = 'iso_create_date'; reverse=!reverse">RFI Date <i class="fa fa-sort"></i></th>
-                            <th width="110px" ng-click="predicate = 'country'; reverse=!reverse">Location <i class="fa fa-sort"></i></th>
-                            <th width="50px"><span data-toggle="tooltip" title="information about the final outcome of the verification process">Outcome</span></th>
+                            <!--<th ng-click="predicate = 'event_id_int'; reverse=!reverse">ID <i class="fa fa-sort"></i></th>-->
+                            <th ng-click="predicate = 'title'; reverse=!reverse">Title</th>
+                            <th ng-click="predicate = 'iso_create_date'; reverse=!reverse">Creation Date <i class="fa fa-sort"></i></th>
+                            <th ng-click="predicate = 'country'; reverse=!reverse">Country <i class="fa fa-sort"></i></th>
+                            <th><span data-toggle="tooltip" title="information about the final outcome of the verification process">Outcome</span></th>
+                            <th></th>
                         </tr>
-                        <tr ng-repeat="event in eventsList['all'] | filter:publicEvents | orderBy:predicate:reverse" >
-                            <td>{{event.event_id_int}}</td>
+                        <tr class="link" ng-click="showSummary(event.phe_description, event.phe_additional, event.title, event.source, event.source_details, event.outcome, event.action_date)" ng-repeat="event in eventsList['all'] | filter:publicEvents | orderBy:predicate:reverse" >
+                            <!--<td>{{event.event_id_int}}</td>-->
                             <td>{{event.title}}</td>
                             <td>{{event.create_date}}</td>
                             <td>{{event.country}}</td>
@@ -39,7 +40,10 @@
                                 <span ng-if="event.outcome == 'VP'">Verified (+)</span>
                                 <span ng-if="event.outcome == 'VN'">Verified (-)</span>
                                 <span ng-if="event.outcome == 'UP'">Updated (+)</span>
-                                <a href="" ng-click="showSummary(event.phe_description, event.phe_additional, event.title, event.source, event.source_details, event.outcome, event.action_date)" ng-show="event.outcome && event.phe_description">Summary</a>
+                                <!--<a href="" ng-click="showSummary(event.phe_description, event.phe_additional, event.title, event.source, event.source_details, event.outcome, event.action_date)" ng-show="event.outcome && event.phe_description">Summary</a>-->
+                            </td>
+                            <td>
+                                <a>Summary <i class="more-link fa fa-long-arrow-right"></i></a>
                             </td>
                         </tr>
                     </tbody>
