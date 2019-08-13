@@ -367,7 +367,7 @@ mask = (app_country_date_df['application_date'] > pd.Timestamp(datetime.date(sta
     app_country_date_df['application_date'] < pd.Timestamp(datetime.date(year, next_month, 1)))
 app_country_month = app_country_date_df.loc[mask]
 app_by_country = app_country_month.groupby(
-    ['country']).sum()
+    ['country']).sum().reset_index('country')
 
 print("App by Country -> ", app_country_month)
 print("App group by C -> ", app_by_country)
