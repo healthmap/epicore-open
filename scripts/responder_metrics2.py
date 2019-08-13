@@ -367,10 +367,10 @@ mask = (app_country_date_df['application_date'] > pd.Timestamp(datetime.date(sta
     app_country_date_df['application_date'] < pd.Timestamp(datetime.date(year, next_month, 1)))
 app_country_month = app_country_date_df.loc[mask]
 app_by_country = app_country_month.groupby(
-    ['country']).country.count().reset_index(name='New Members')
+    ['country']).sum()
 
-# print("App by Country -> ", app_country_month)
-# print("App group by C -> ", app_by_country)
+print("App by Country -> ", app_country_month)
+print("App group by C -> ", app_by_country)
 
 
 # create image for report
