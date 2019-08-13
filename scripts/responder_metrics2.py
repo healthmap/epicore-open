@@ -314,7 +314,7 @@ mask = (app_df['application_date'] >= pd.Timestamp(datetime.date(start_year, mon
 applicants_month = app_df.loc[mask]
 total_applicants = applicants_month['applicants'].sum()
 
-print("Total Applicants ==> ", applicants_month)
+# print("Total Applicants ==> ", applicants_month)
 
 # get accepted applicants with no training
 today = datetime.datetime.now()
@@ -369,8 +369,8 @@ app_country_month = app_country_date_df.loc[mask]
 app_by_country = app_country_month.groupby(
     ['country']).country.count().reset_index(name='New Members')
 
-print("App by Country -> ", app_country_month)
-print("App group by C -> ", app_by_country)
+# print("App by Country -> ", app_country_month)
+# print("App group by C -> ", app_by_country)
 
 
 # create image for report
