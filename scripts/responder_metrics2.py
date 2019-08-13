@@ -206,7 +206,7 @@ modDfObj = exp_df.append(
 
 exp_obj_with_total_none = modDfObj.drop(modDfObj.index[7])
 
-print("Null - Left Blank ?? Experience => ", exp_obj_with_total_none)
+# print("Null - Left Blank ?? Experience => ", exp_obj_with_total_none)
 
 ####################################################################
 #END#
@@ -314,6 +314,8 @@ mask = (app_df['application_date'] >= pd.Timestamp(datetime.date(start_year, mon
 applicants_month = app_df.loc[mask]
 total_applicants = applicants_month['applicants'].sum()
 
+print("Total Applicants ==> ", applicants_month)
+
 # get accepted applicants with no training
 today = datetime.datetime.now()
 two_months_ago = today - datetime.timedelta(days=60)
@@ -343,6 +345,8 @@ heard_about_df['Source'] = heard_about_df.Source.str.decode(
     'ascii', errors='ignore')
 heard_about_df.to_html(save_data_dir + 'heard_about_table.html', index=False)
 
+# print("Heard about start -> ", datetime.date(start_year, month, 1), "END --->", datetime.date(year, next_month, 1))
+
 # get total approved members for the month
 mask = (approved_df['approval_date'] >= pd.Timestamp(datetime.date(start_year, month, 1))) & (
     approved_df['approval_date'] < pd.Timestamp(datetime.date(year, next_month, 1)))
@@ -364,6 +368,10 @@ mask = (app_country_date_df['application_date'] > pd.Timestamp(datetime.date(sta
 app_country_month = app_country_date_df.loc[mask]
 app_by_country = app_country_month.groupby(
     ['country']).country.count().reset_index(name='New Members')
+
+print("App by Country -> ", app_country_month)
+print("App group by C -> ", app_by_country)
+
 
 # create image for report
 app_by_country.to_html(
@@ -470,7 +478,7 @@ final_output_df.rename(columns={'un_country_code': 'Countries with No Members'},
 
 final_output_df.fillna('', inplace=True)
 
-print("No Member Countries with New countries from UN list==> ",final_output_df)
+# print("No Member Countries with New countries from UN list==> ",final_output_df)
 
 final_output_df.to_html(save_data_dir + 'no_members_region_table.html', index=False)
 
@@ -541,7 +549,7 @@ membership_df.to_html(save_data_dir + 'membership.html', index=False)
 # df_table_image(membership_df, image_dir + 'membership.png', '')
 
 # creat data frame for memebers in region
-data_region = [['Countries included: ' + str(total_member_countries), 'Countries missing: ' + str(total_no_member_countries)]]
+data_region = [['Countries and territories included: ' + str(total_member_countries), 'Countries and territories missing: ' + str(total_no_member_countries)]]
 
 data_region_df = pd.DataFrame(data_region, columns=['', ''])
 data_region_df.to_html(save_data_dir + 'members_regions.html', index=False)
