@@ -1,0 +1,64 @@
+<div ng-include src="'header_new.html'">
+
+
+</div>
+
+<div class="jumbotron dashboard">
+    <div class="container">
+        <h1>
+            <span>RFI Summary</span>
+        </h1>
+    </div>
+</div>
+
+
+
+<div class="publicrfi_maindiv">
+    <div class="container">
+        <div class="row">
+            <div>
+                <!-- RFI filter -->
+                <div>
+                    <a href="#/events_public" class="backlink">
+                        <span class="chevron-double-left">&#171;</span> View all public RFIs</a>
+                    <br />
+                    <br />
+                </div>
+                <div data-ng-init="getPublicEventsByID()">
+                    <div class="title-style">
+                        {{eventTitle}}
+                        <br />
+                    </div>
+                    <br />
+                    <div>
+                        Description: {{phe_description}}
+                    </div>
+                    <br />
+                    <div>
+                        Additional Details: {{phe_additional}}
+                    </div>
+
+                    <div class="articleFooterDiv">
+                        <br />
+                        <span class="rfi-outcome-text">RFI Outcome: </span> {{event_outcome}}
+                        <br />
+                        <span class="rfi-outcome-text">RFI Colsure date: </span>
+                        <br />
+                        <span class="rfi-outcome-text">Initial Source: </span> {{initialSource}}
+                        <br />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--wrapper-->
+<div ng-include src="'disclaimer.html'"></div>
+<div ng-include src="'footer.html'"></div>
+<script type="text/javascript">
+    var uri = window.location.href;
+    var result = uri.substring(window.location.href.lastIndexOf('/') + 1);
+    localStorage.setItem('articleID', result);
+    console.log("Result Output ==> ", result);
+</script>
