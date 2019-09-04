@@ -622,6 +622,9 @@ a.inherit,
   background: #efefef;
   padding: 24px;
 }
+.note-dark {
+  background: #D5D7D8;
+}
 .form-group {
   margin-bottom: 24px;
 }
