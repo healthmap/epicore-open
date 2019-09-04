@@ -16,36 +16,27 @@
 <div class="publicrfi_maindiv">
     <div class="container">
         <div class="row">
-            <div>
-                <!-- RFI filter -->
-                <div>
+            <div class="col-xs-12 col-sm-8">    
+            <!-- RFI filter -->
+            <div class="mt16 mb24">
                     <a href="#/events_public" class="backlink">
-                        <span class="chevron-double-left">&#171;</span> View all public RFIs</a>
-                    <br />
-                    <br />
+                        <i class="fa fa-angle-double-left"></i> View all public RFIs</a>
                 </div>
                 <div data-ng-init="getPublicEventsByID()">
-                    <div class="title-style">
+                    <h3 class="mb16">
                         {{eventTitle}}
-                        <br />
+                    </h3>
+                    <div class="mb16">
+                        {{phe_description}}
                     </div>
-                    <br />
                     <div>
-                        Description: {{phe_description}}
-                    </div>
-                    <br />
-                    <div>
-                        Additional Details: {{phe_additional}}
+                        {{phe_additional}}
                     </div>
 
-                    <div class="articleFooterDiv">
-                        <br />
-                        <span class="rfi-outcome-text">RFI Outcome: </span> {{event_outcome}}
-                        <br />
-                        <span class="rfi-outcome-text">RFI Colsure date: </span>
-                        <br />
-                        <span class="rfi-outcome-text">Initial Source: </span> {{initialSource}}
-                        <br />
+                    <div class="mt32 mb72 small-text note">
+                        <p class="mb16"><strong>Outcome:</strong> {{event_outcome}}</p>
+                        <p class="mb16"><strong>Closure Date:</strong></p>
+                        <p class="mb0"><strong>Source:</strong> {{initialSource}}</p>
                     </div>
                 </div>
             </div>
