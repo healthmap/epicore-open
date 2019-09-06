@@ -1006,13 +1006,15 @@ angular.module('EpicoreApp.controllers2', []).
                 } else if ($scope.eventsListPublic.outcome == 'NU') {
                     outcome = 'Updated (negative)';
                 }
-		
 
-		//console.log($scope.eventsListPublic);
-		//$scope.modifiedEventTitle = $scope.eventsListPublic.title.replace(",", "&#183;");
-                $scope.closureDate = $scope.eventsListPublic.history[0].date;
-		$scope.event_outcome = outcome;
-		//$scope.eventTitle = $scope.modifiedEventTitle
+
+                //console.log($scope.eventsListPublic);
+                //$scope.modifiedEventTitle = $scope.eventsListPublic.title.replace(",", "&#183;");
+                //$scope.closureDate = $scope.eventsListPublic.history[0].date;
+                $scope.cd = $scope.eventsListPublic.history[0].date;
+                $scope.closureDate = $scope.cd.split(' ')[0];
+                $scope.event_outcome = outcome;
+                //$scope.eventTitle = $scope.modifiedEventTitle
                 $scope.eventTitle = $scope.eventsListPublic.title;
                 $scope.phe_description = $scope.eventsListPublic.phe_description;
                 $scope.phe_additional = $scope.eventsListPublic.phe_additional;
