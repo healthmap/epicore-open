@@ -531,7 +531,7 @@ angular.module('EpicoreApp.controllers2', []).
                     $scope.rfiData.event_location = getLocation();
                     $scope.rfiData.event_population = getPopulation();
                     $scope.rfiData.event_conditions = getConditions();
-                    $scope.rfiData.event_title = $scope.rfiData.event_population + ' &middot; ' + $scope.rfiData.event_conditions + ' &middot; ' + $scope.rfiData.event_location + ' &middot; ' + $scope.rfiData.location.event_date;
+                    $scope.rfiData.event_title = $scope.rfiData.event_population + ' - ' + $scope.rfiData.event_conditions + ' - ' + $scope.rfiData.event_location + ' - ' + $scope.rfiData.location.event_date;
                     $scope.rfiData.event_purpose = getPurpose();
                     $scope.rfiData.event_source = getSource();
                     $location.path('/sendrequest');
@@ -1006,15 +1006,15 @@ angular.module('EpicoreApp.controllers2', []).
                 } else if ($scope.eventsListPublic.outcome == 'NU') {
                     outcome = 'Updated (negative)';
                 }
+		
 
-
-                //console.log($scope.eventsListPublic);
-                //$scope.modifiedEventTitle = $scope.eventsListPublic.title.replace(",", "&#183;");
+		//console.log($scope.eventsListPublic);
+		//$scope.modifiedEventTitle = $scope.eventsListPublic.title.replace(",", "&#183;");
                 //$scope.closureDate = $scope.eventsListPublic.history[0].date;
-                $scope.cd = $scope.eventsListPublic.history[0].date;
-                $scope.closureDate = $scope.cd.split(' ')[0];
-                $scope.event_outcome = outcome;
-                //$scope.eventTitle = $scope.modifiedEventTitle
+		$scope.cd = $scope.eventsListPublic.history[0].date;
+		$scope.closureDate = $scope.cd.split(' ')[0];
+		$scope.event_outcome = outcome;
+		//$scope.eventTitle = $scope.modifiedEventTitle
                 $scope.eventTitle = $scope.eventsListPublic.title;
                 $scope.phe_description = $scope.eventsListPublic.phe_description;
                 $scope.phe_additional = $scope.eventsListPublic.phe_additional;
