@@ -200,7 +200,6 @@ exp_none_df = exp_df[exp_df['Experience'].str.lower().str.contains("none")]
 total_none_applicants = exp_blank_df.iloc[1]['count'] + \
     exp_df.iloc[7]['Members']
 
-
 modDfObj = exp_df.append(
     {'Experience': 'None', 'Members': total_none_applicants, '%': "NA"}, ignore_index=True)
 
@@ -214,7 +213,7 @@ exp_obj_with_total_none = modDfObj.drop(modDfObj.index[7])
 
 
 # create image for report
-exp_obj_with_total_none.to_html(
+exp_df.to_html(
     save_data_dir + 'experience_table.html', index=False)
 # df_table_image3(exp_df, image_dir + 'experience_table.png', 'Professional Background')
 
@@ -314,8 +313,6 @@ mask = (app_df['application_date'] >= pd.Timestamp(datetime.date(start_year, mon
 applicants_month = app_df.loc[mask]
 total_applicants = applicants_month['applicants'].sum()
 
-# print("Total Applicants ==> ", applicants_month)
-
 # get accepted applicants with no training
 today = datetime.datetime.now()
 two_months_ago = today - datetime.timedelta(days=60)
@@ -328,6 +325,7 @@ app_no_training_df.rename(columns={
 app_no_training_df = app_no_training_df[['Acceptance Date', 'Member ID']]
 app_no_training_df.to_html(
     save_data_dir + 'app_no_training_table.html', index=False)
+
 
 # get heard about applicants
 start_year = year
@@ -349,10 +347,12 @@ heard_about_df.to_html(save_data_dir + 'heard_about_table.html', index=False)
 
 # get total approved members for the month
 mask = (approved_df['approval_date'] >= pd.Timestamp(datetime.date(start_year, month, 1))) & (
-    approved_df['approval_date'] < pd.Timestamp(datetime.date(year, next_month, 1)))
+approved_df['approval_date'] < pd.Timestamp(datetime.date(year, next_month, 1)))
 approved_month = approved_df.loc[mask]
 total_approved_month = approved_month['approved'].sum()
 total_approved = approved_df['approved'].sum()
+
+# print("Approve Month => ", approved_month)
 
 # group and sort by application_date, country
 app_country_date_df = member_df.groupby(['country', 'application_date']).country.count(
@@ -360,7 +360,7 @@ app_country_date_df = member_df.groupby(['country', 'application_date']).country
 
 # app_country_data = member_df.groupby(['country']).country.count().reset_index(name='applicants').sort_values(['country'])
 
-# print(app_country_date_df)
+# print("App Country Date => ", app_country_date_df)
 
 # get new applicants for each country by month
 mask = (app_country_date_df['application_date'] > pd.Timestamp(datetime.date(start_year, month, 1))) & (
@@ -369,13 +369,40 @@ app_country_month = app_country_date_df.loc[mask]
 app_by_country = app_country_month.groupby(
     ['country']).sum().reset_index('country')
 
-print("App by Country -> ", app_country_month)
-print("App group by C -> ", app_by_country)
+# print("App by Country -> ", app_country_month)
+# print("App group by C -> ", app_by_country)
+
+
+
+
+
+new_responders_basic_table = member_df[['application_date','approval_date','country_code','country']]
+
+new_responders_grp_by_country = new_responders_basic_table.groupby(['country', 'approval_date']).country.count(
+).reset_index(name='applicants').sort_values(['country'])
+
+new_responders_mask = (new_responders_grp_by_country['approval_date'] >= pd.Timestamp(datetime.date(start_year, month, 1))) & (
+    new_responders_grp_by_country['approval_date'] < pd.Timestamp(datetime.date(year, next_month, 1)))
+
+masked_new_responders_grp_by_country = new_responders_grp_by_country.loc[new_responders_mask]
+
+output_new_responders = masked_new_responders_grp_by_country.groupby(['country']).sum().reset_index()
+
+print("print_v  ----- >", masked_new_responders_grp_by_country)
+print("compare ==> ", output_new_responders)
+
+output_new_responders.to_html(
+    save_data_dir + 'new_applicants_table.html', index=False)
+
+
+
+
+
 
 
 # create image for report
-app_by_country.to_html(
-    save_data_dir + 'new_applicants_table.html', index=False)
+# app_by_country.to_html(
+#     save_data_dir + 'new_applicants_table.html', index=False)
 # df_table_image(app_by_country, image_dir + 'new_applicants_table.png', '')
 
 # group and sort by country
