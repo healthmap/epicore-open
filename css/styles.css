@@ -857,3 +857,7 @@ a.footer-link {
   color: #2e3335;
   margin-right: 30px;
 }
+
+.whitespace {
+  white-space: pre-line;
+}
