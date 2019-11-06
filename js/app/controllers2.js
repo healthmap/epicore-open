@@ -1006,15 +1006,15 @@ angular.module('EpicoreApp.controllers2', []).
                 } else if ($scope.eventsListPublic.outcome == 'NU') {
                     outcome = 'Updated (negative)';
                 }
-		
 
-		//console.log($scope.eventsListPublic);
-		//$scope.modifiedEventTitle = $scope.eventsListPublic.title.replace(",", "&#183;");
+
+                //console.log($scope.eventsListPublic);
+                //$scope.modifiedEventTitle = $scope.eventsListPublic.title.replace(",", "&#183;");
                 //$scope.closureDate = $scope.eventsListPublic.history[0].date;
-		$scope.cd = $scope.eventsListPublic.history[0].date;
-		$scope.closureDate = $scope.cd.split(' ')[0];
-		$scope.event_outcome = outcome;
-		//$scope.eventTitle = $scope.modifiedEventTitle
+                $scope.cd = $scope.eventsListPublic.history[0].date;
+                $scope.closureDate = $scope.cd.split(' ')[0];
+                $scope.event_outcome = outcome;
+                //$scope.eventTitle = $scope.modifiedEventTitle
                 $scope.eventTitle = $scope.eventsListPublic.title;
                 $scope.phe_description = $scope.eventsListPublic.phe_description;
                 $scope.phe_additional = $scope.eventsListPublic.phe_additional;
@@ -1024,12 +1024,15 @@ angular.module('EpicoreApp.controllers2', []).
 
         // get events for public dashboard for Responders view
         $scope.getEvents2 = function (dbtype) {
-
+            // console.log("Scope inside GetEvents 2 ----> ", $scope)
             $scope.isRouteLoading = false;
             $rootScope.dashboardType = dbtype;
             if (dbtype == "PR" && !$scope.eventsListPublic) {
                 $scope.isRouteLoading = true;
-                eventAPIservice2.getEvents($scope.id).success(function (response) {
+                var end_date = moment().format('YYYY-MM-DD'); // now
+                var start_date = moment().subtract(2, 'months').format('YYYY-MM-DD'); // 2 months ago
+                eventAPIservice2.getEvents($scope.id, start_date, end_date).success(function (response) {
+                    // console.log("Success Function output getEvents2 -> ", response)
                     $scope.isRouteLoading = false;
                     $scope.eventsListPublic = response.EventsList;
                     if ($scope.eventsListPublic.purpose) {
@@ -1055,7 +1058,7 @@ angular.module('EpicoreApp.controllers2', []).
             $scope.eventsList = [];
             eventAPIservice2.getEvents($scope.id, start_date, end_date).success(function (response) {
                 $scope.isRouteLoading = false;
-
+                console.log("Response output -> ", response)
                 if (typeof ($scope.userinfo) != "undefined") {
                     $scope.isOrganization = $scope.userInfo.fetp_id > 0 ? false : true;
                     // if RFI requester is the logged in user or of same org, they get different action items
