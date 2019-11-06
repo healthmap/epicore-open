@@ -26,6 +26,15 @@ matplotlib.use('Agg')
 
 import matplotlib.pyplot as plt
 
+# Version issue is resolved by using following registration
+from pandas.plotting import register_matplotlib_converters
+register_matplotlib_converters()
+
+# Suppressing Errors
+
+import warnings
+import matplotlib.cbook
+warnings.filterwarnings("ignore",category=matplotlib.cbook.mplDeprecation)
 
 # set max width
 pd.set_option('display.max_colwidth', -1)
@@ -373,13 +382,10 @@ app_by_country = app_country_month.groupby(
 # print("App group by C -> ", app_by_country)
 
 
-
-
-
 new_responders_basic_table = member_df[['application_date','approval_date','country_code','country']]
 
 new_responders_grp_by_country = new_responders_basic_table.groupby(['country', 'approval_date']).country.count(
-).reset_index(name='applicants').sort_values(['country'])
+).reset_index(name='Members').sort_values(['country'])
 
 new_responders_mask = (new_responders_grp_by_country['approval_date'] >= pd.Timestamp(datetime.date(start_year, month, 1))) & (
     new_responders_grp_by_country['approval_date'] < pd.Timestamp(datetime.date(year, next_month, 1)))
@@ -388,16 +394,8 @@ masked_new_responders_grp_by_country = new_responders_grp_by_country.loc[new_res
 
 output_new_responders = masked_new_responders_grp_by_country.groupby(['country']).sum().reset_index()
 
-print("print_v  ----- >", masked_new_responders_grp_by_country)
-print("compare ==> ", output_new_responders)
-
 output_new_responders.to_html(
     save_data_dir + 'new_applicants_table.html', index=False)
-
-
-
-
-
 
 
 # create image for report
