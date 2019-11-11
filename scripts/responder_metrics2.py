@@ -144,7 +144,7 @@ population_df['country_code'].fillna('NA', inplace=True)
 # un_country_codes_df = pd.read_csv(
 #     data_dir + 'un_countrycode.csv', encoding="ISO-8859-1")
 un_country_codes_df = pd.read_csv(
-    data_dir + 'un_countrycode_new.csv', encoding="ISO-8859-1")
+    data_dir + 'un_countrycode_new.csv', encoding="ISO-8859-1", keep_default_na=False, na_values=['_'])
 # read un country codes
 # un_country_codes_region_df = pd.read_csv(
 #     data_dir + 'un_countrycode_region.csv', encoding="ISO-8859-1")
@@ -442,9 +442,6 @@ no_member_countries = all_country_df.loc[mask]
 no_member_countries = no_member_countries[['country', 'un_country_code']]
 no_member_countries = no_member_countries[no_member_countries.un_country_code.notnull(
 )]
-
-# print("NO MEMBERS Country ++ Member Countries  => ", no_member_countries)
-
 
 total_no_member_countries = len(no_member_countries.index)
 # len(all_country_df.index) - total_no_member_countries
