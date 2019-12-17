@@ -24,13 +24,36 @@ $event_info = $ei->getInfo();
 // make sure the person trying to send the email was the originator of the request
 // or from the same organization or is a superuser
 $roid =0 ;
+//if($requester_id != $event_info['requester_id']) {
+  //  $rui = new UserInfo($requester_id,null);
+   // $roid = $rui->getOrganizationId();
+   // if(($event_info['org_requester_id'] != $roid) || $superuser == 1) {
+    //    print json_encode(array('status' => 'failed', 'reason' => 'unauthorized', 'requester' => $requester_id, 'owner' => $event_info['requester_id']));
+     //   exit;
+  //  }
+//}
+
+/* ****************************************************************
+   
+   Following is added by Sam, CH157135.
+   Above condition is checking to see if the email is being sent
+   by originator, same organization. But, check for superuser is 
+   implemented differently. 
+
+    // make sure the person trying to send the email was the originator of the request
+    // or from the same organization or is a superuser
+
+*****************************************************************/
+
+if($superuser != 1) {
 if($requester_id != $event_info['requester_id']) {
     $rui = new UserInfo($requester_id,null);
     $roid = $rui->getOrganizationId();
-    if(($event_info['org_requester_id'] != $roid) || $superuser == 1) {
+    if(($event_info['org_requester_id'] != $roid)) {
         print json_encode(array('status' => 'failed', 'reason' => 'unauthorized', 'requester' => $requester_id, 'owner' => $event_info['requester_id']));
         exit;
     }
+  }
 }
 
 // start building the email text
