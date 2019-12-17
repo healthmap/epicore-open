@@ -218,7 +218,7 @@ rfi_closed_month = rfi_closed
 
 #### RFI - year to date
 rfi_response_df['action_date'] = pd.to_datetime(rfi_response_df.action_date)
-ytd_mask = (rfi_response_df['action_date'] > pd.Timestamp(datetime.date(start_year, 1, 1)) ) & (rfi_response_df['action_date'] < pd.Timestamp(datetime.date(year, next_month+1, 1)) )
+ytd_mask = (rfi_response_df['action_date'] > pd.Timestamp(datetime.date(start_year, 1, 1)) ) & (rfi_response_df['action_date'] < pd.Timestamp(datetime.date(year, next_month, 1)) )
 rfi_df = rfi_response_df.loc[ytd_mask]
 
 # Closed RFIs
@@ -365,7 +365,7 @@ rfi_ver_country_min.to_html(save_data_dir + 'rfi_ver_country.html', index=False)
 
 
 #### Lowest verification rates - Year to date
-ytd_mask = (rfi_response_df['create_date'] > pd.Timestamp(datetime.date(start_year, 1, 1)) ) & (rfi_response_df['create_date'] < pd.Timestamp(datetime.date(year, next_month+1, 1)) )
+ytd_mask = (rfi_response_df['create_date'] > pd.Timestamp(datetime.date(start_year, 1, 1)) ) & (rfi_response_df['create_date'] < pd.Timestamp(datetime.date(year, next_month, 1)) )
 rfi_df = rfi_response_df.loc[ytd_mask]
 
 # Closed RFIs
