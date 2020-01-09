@@ -26,9 +26,10 @@ from pandas.plotting import table
 import sys
 import os
 from decimal import Decimal
+#from importlib import reload
 
-reload(sys)
-sys.setdefaultencoding('utf-8')
+#reload(sys)
+# sys.setdefaultencoding('utf-8')
 
 pd.set_option('display.max_rows', 1000)
 
@@ -61,10 +62,15 @@ if month == 12:
 months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
 organizations = { 1: 'HealthMap', 2: 'Tephinet', 3: 'Ending Pandemics', 4: 'ProMed', 5: 'EpiCore', 6: 'MSF - Spain', 7: 'Geosentinel' }
 
-data_dir = '/var/www/html/prod.epicore.org/data/'
+
+
+# PROD Location
+# data_dir = '/var/www/html/prod.epicore.org/data/'
+# Local Location'
+# data_dir = '/Users/sampathchennuri/Documents/workSpace/Nodejs/healthmap/epicore/data/';
 image_dir = os.path.abspath(os.path.join(os.path.dirname( __file__ ), '..', 'img/metrics')) +'/';
 save_data_dir = os.path.abspath(os.path.join(os.path.dirname( __file__ ), '..', 'data')) +'/';
-
+data_dir = save_data_dir
 
 # read rfi stats
 rfistats_df = pd.read_csv(data_dir + 'rfistats.csv', encoding = "utf-8")
@@ -119,7 +125,7 @@ total_rfi_geosentinel = len(rfi_geosentinel)
 rfi_month_country_df =rfi_month_df[['outcome','create_date','organization_id', 'country']].country.unique()
 #rfi_month_unique_country_df = rfi_month_country_df.country.unique()
 total_rfi_month_country = len(rfi_month_country_df)
-print("Total RFI Month => ", total_rfi_month_country)
+# print("Total RFI Month => ", total_rfi_month_country)
 
 
 
@@ -127,10 +133,12 @@ print("Total RFI Month => ", total_rfi_month_country)
 rfistats_df['action_date'] = pd.to_datetime(rfistats_df.action_date)
 mask = (rfistats_df['action_date'] >= pd.Timestamp(datetime.date(start_year, month, 1)) ) & (rfistats_df['action_date'] < pd.Timestamp(datetime.date(year, next_month, 1)) )
 rfi_month_action_df = rfistats_df.loc[mask]
+
 #mask = rfi_month_df['status'] == 'C'
 mask = rfi_month_action_df['status'] == 'C'
 #rfi_closed_month_df = rfi_month_df.loc[mask]
 rfi_closed_month_df = rfi_month_action_df.loc[mask]
+
 total_closed_month = len(rfi_closed_month_df)
 
 # get verified (+/-) for last full month
@@ -169,10 +177,10 @@ data = [['EpiCore', str(total_rfi_epicore), str(round(Decimal(100*float(total_rf
 ['ProMED', str(total_rfi_promed), str(round(Decimal(100*float(total_rfi_promed)/total_rfi_month,1))) + '%']
  ]
 
-opened_rfis_df = pd.DataFrame(data, columns=['Organization', 'Opened (' + str(total_rfi_month) + ')', 'Percent'])
-opened_rfis_df.to_html(save_data_dir + 'opened_rfis.html', index=False)
+# opened_rfis_df = pd.DataFrame(data, columns=['Organization', 'Opened (' + str(total_rfi_month) + ')', 'Percent'])
+# opened_rfis_df.to_html(save_data_dir + 'opened_rfis.html', index=False)
 
-# create data frame for closed RFIs for the month
+# # create data frame for closed RFIs for the month
 data = [['Verified (+/-)', str(total_verified_month), str(round(Decimal(100*float(total_verified_month))/total_closed_month,1)) + '%'], \
 ['Updated (+/-)', str(total_updated_month), str(round(Decimal(100*float(total_updated_month))/total_closed_month,1)) + '%'], \
 ['Verified+Updated', str(total_verified_month+total_updated_month), str(round(Decimal(100*(float(total_verified_month+total_updated_month))/total_closed_month,1))) + '%'], \
@@ -208,7 +216,7 @@ response_time_month = rfi_minmax_df.reaction_time.sum()
 responses_avg_month = len(rfi_minmax_df['reaction_time'])
 
 responses_month = rfi_df.answered.sum()
-response_rate_month = 100*responses_month/rfi_closed
+response_rate_month = round(100*responses_month/rfi_closed)
 avg_response_rate_month = int(round(response_time_month/responses_avg_month))
 avg_response_rate_hm_month = str(timedelta(minutes=avg_response_rate_month))[:-3]
 avg_response_rate_hm_month_h = avg_response_rate_hm_month.split(':')[0] 
@@ -239,25 +247,49 @@ rfi_minmax_df = rfi_df[(rfi_df.reaction_time >  min_response_time) & (rfi_df.rea
 response_time_ytd = rfi_minmax_df.reaction_time.sum()
 responses_avg_ytd = len(rfi_minmax_df['reaction_time'])
 
-responses_ytd = rfi_df.answered.sum()
-response_rate_ytd = 100*responses_ytd/rfi_closed
-avg_response_rate_ytd = int(round(response_time_ytd/responses_avg_ytd))
-avg_response_rate_hm_ytd = str(timedelta(minutes=avg_response_rate_ytd))[:-3]
-avg_response_rate_hm_ytd_h = avg_response_rate_hm_ytd.split(':')[0] 
-avg_response_rate_hm_ytd_m = avg_response_rate_hm_ytd.split(':')[1] 
-lt24hr_response_percent_ytd = int(round(100*lt24hr_response/responses_ytd))
+# responses_ytd = rfi_df.answered.sum()
+# response_rate_ytd = 100*responses_ytd/rfi_closed
+# avg_response_rate_ytd = int(round(response_time_ytd/responses_avg_ytd))
+# avg_response_rate_hm_ytd = str(timedelta(minutes=avg_response_rate_ytd))[:-3]
+# avg_response_rate_hm_ytd_h = avg_response_rate_hm_ytd.split(':')[0] 
+# avg_response_rate_hm_ytd_m = avg_response_rate_hm_ytd.split(':')[1] 
+# lt24hr_response_percent_ytd = int(round(100*lt24hr_response/responses_ytd))
 rfi_closed_ytd = rfi_closed
 
 #### RFI - last year
 rfi_response_df['action_date'] = pd.to_datetime(rfi_response_df.action_date)
 lyear_mask = (rfi_response_df['action_date'] > pd.Timestamp(datetime.date(year-1, 1, 1)) ) & (rfi_response_df['action_date'] < pd.Timestamp(datetime.date(year, 1, 1)) )
 rfi_df = rfi_response_df.loc[lyear_mask]
-#print(rfi_df)
 
 # Closed RFIs
 close_mask = rfi_df['status'] == 'C'
 rfi_closed_df = rfi_df.loc[close_mask]
 rfi_closed = len(rfi_closed_df)
+
+############################################################
+#   Following was added by Sam, Ch157135
+#   Closed RFI's inteh current year (2020)
+#   Data > 2019-12-31 and <= 2020-12-31
+############################################################
+total_closed_till_date = rfi_response_df['status'] == 'C'
+current_rfi_closed_df = rfi_response_df.loc[total_closed_till_date]
+
+current_year_mask = (current_rfi_closed_df['action_date'] >= pd.Timestamp(datetime.date(year, 1, 1)) ) & (current_rfi_closed_df['action_date'] <= pd.Timestamp(datetime.date(year, 12, 31)) )
+current_year_rfi_df = current_rfi_closed_df.loc[current_year_mask]
+current_year_rfi_closed_count = len(current_year_rfi_df)
+
+current_year_rfi_df['answered'] = np.where(current_year_rfi_df['first_response_date'].notnull(), 1, 0)
+current_year_rfi_df['reaction_time'] = (current_year_rfi_df['first_response_date'] - current_year_rfi_df['iso_create_date']).astype('timedelta64[m]')
+lt24hr_response = len(current_year_rfi_df[current_year_rfi_df.reaction_time < 1440])
+
+responses_ytd = current_year_rfi_df.answered.sum()
+response_rate_ytd = round(100*(responses_ytd/current_year_rfi_closed_count))
+avg_response_rate_ytd = int(round(response_time_ytd/responses_avg_ytd))
+avg_response_rate_hm_ytd = str(timedelta(minutes=avg_response_rate_ytd))[:-3]
+avg_response_rate_hm_ytd_h = avg_response_rate_hm_ytd.split(':')[0] 
+avg_response_rate_hm_ytd_m = avg_response_rate_hm_ytd.split(':')[1] 
+lt24hr_response_percent_ytd = int(round(100*lt24hr_response/responses_ytd))
+
 
 # Responses, time, and rate
 rfi_df['answered'] = np.where(rfi_df['first_response_date'].notnull(), 1, 0)
@@ -272,7 +304,7 @@ response_time_lyear = rfi_minmax_df.reaction_time.sum()
 responses_avg_lyear = len(rfi_minmax_df['reaction_time'])
 
 responses_lyear = rfi_df.answered.sum()
-response_rate_lyear = 100*responses_lyear/rfi_closed
+response_rate_lyear = round(100*responses_lyear/rfi_closed)
 avg_response_rate_lyear = int(round(response_time_lyear/responses_avg_lyear))
 avg_response_rate_hm_lyear = str(timedelta(minutes=avg_response_rate_lyear))[:-3]
 avg_response_rate_hm_lyear_h = avg_response_rate_hm_lyear.split(':')[0]
@@ -280,11 +312,23 @@ avg_response_rate_hm_lyear_m = avg_response_rate_hm_lyear.split(':')[1]
 lt24hr_response_percent_lyear = int(round(100*lt24hr_response/responses_lyear))
 rfi_closed_lyear = rfi_closed
 
+############################################################
+#   Following was added by Sam, Ch157135
+#   RFI's closed in December of any year should have an
+#   year value of (Year-1)
+############################################################
+if(str(month) == '12'):
+    currentYear = str(last_year)
+else:
+    currentYear = str(year)
+
 # RFI Response Metrics Data frame for html
-rfi_metrics_data = [[months[month-1] + " " + str(year), str(rfi_closed_month),  str(responses_month), str(response_rate_month) + "%", str(avg_response_rate_hm_month_h) + "h " + str(avg_response_rate_hm_month_m) + "min", str(lt24hr_response_percent_month) + "%"], \
-[str(year), str(rfi_closed_ytd),  str(responses_ytd), str(response_rate_ytd) + "%", str(avg_response_rate_hm_ytd_h) + "h " + str(avg_response_rate_hm_ytd_m) + "min", str(lt24hr_response_percent_ytd) + "%"], \
+rfi_metrics_data = [[months[month-1] + " " + str(currentYear), str(rfi_closed_month),  str(responses_month), str(response_rate_month) + "%", str(avg_response_rate_hm_month_h) + "h " + str(avg_response_rate_hm_month_m) + "min", str(lt24hr_response_percent_month) + "%"], \
+[str(year), str(current_year_rfi_closed_count),  str(responses_ytd), str(response_rate_ytd) + "%", str(avg_response_rate_hm_ytd_h) + "h " + str(avg_response_rate_hm_ytd_m) + "min", str(lt24hr_response_percent_ytd) + "%"], \
 [str(year-1), str(rfi_closed_lyear),  str(responses_lyear), str(response_rate_lyear) + "%", str(avg_response_rate_hm_lyear_h) + "h " + str(avg_response_rate_hm_lyear_m) + "min", str(lt24hr_response_percent_lyear) + "%"] ]
 rfi_response_metrics_df = pd.DataFrame(rfi_metrics_data, columns=['Time Frame','Closed', 'Responded', 'Response Rate', 'Response Time', 'Responded in 24hrs'])
+
+
 rfi_response_metrics_df.to_html(save_data_dir + 'rfi_response_metrics.html', index=False)
 
 
