@@ -868,9 +868,10 @@ a.footer-link {
 }
 
 /* Public RFI Table Adjustment */
-@media (max-width: 480px) {
+@media (min-width: 480px) {
 
-  .public-rfi th:nth-child(3) {
+  .public-rfi th:nth-child(3),
+  .public-rfi td:nth-child(3) {
     display: none;;
   }
 
