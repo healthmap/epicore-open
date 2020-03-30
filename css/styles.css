@@ -861,3 +861,17 @@ a.footer-link {
 .whitespace {
   white-space: pre-line;
 }
+
+/* Vimeo Fix */
+.video-container iframe {
+  width: 100%;
+}
+
+/* Public RFI Table Adjustment */
+@media (max-width: 480px) {
+
+  .public-rfi th:nth-child(3) {
+    display: none;;
+  }
+
+}
