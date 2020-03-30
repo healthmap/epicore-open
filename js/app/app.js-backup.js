@@ -303,46 +303,6 @@ app.directive('modal', function () {
     };
 });
 
-/* Popup directive */
-app.directive('magnificPopup', function() {
-    return {
-        restrict: 'A',
-        scope: {},
-        link: function($scope, element, attr) {
-            
-            var isSmallDevice = $(window).width() < 1024,
-                activeLink = attr.magnificPopup
-                isThirdPartyUrl = /(ftp|http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/.test(activeLink),
-                targetType = function(curTarget){ return (curTarget || isSmallDevice) ? '_system' : '_self'; };
-
-            if(isSmallDevice){
-                if(isThirdPartyUrl || attr.third){
-                    element[0].addEventListener('click', function(e){
-                        e.preventDefault();
-                        window.open(activeLink, targetType(attr.target));
-                        return false;
-                    });
-                }else{
-                    element.magnificPopup({
-                        items: {
-                            src: activeLink
-                        },
-                        type: 'iframe',
-                        removalDelay: 300,
-                        mainClass: 'mfp-fade'
-                    });
-                }
-            }else{
-                element[0].addEventListener('click', function(e){
-                    e.preventDefault();
-                    window.open(activeLink, targetType(attr.target));
-                    return false;
-                });
-            }
-        }
-    }
-});
-
 app.value('epicoreCountries', [
     { name: 'Afghanistan', code: 'AF' },
     { name: 'Åland Islands', code: 'AX' },
