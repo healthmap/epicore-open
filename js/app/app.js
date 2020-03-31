@@ -316,13 +316,13 @@ app.directive('magnificPopup', function() {
                 targetType = function(curTarget){ return (curTarget || isSmallDevice) ? '_system' : '_self'; };
 
             if(isSmallDevice){
-                if(isThirdPartyUrl || attr.third){
-                    element[0].addEventListener('click', function(e){
-                        e.preventDefault();
-                        window.open(activeLink, targetType(attr.target));
-                        return false;
-                    });
-                }else{
+                // if(isThirdPartyUrl || attr.third){
+                //     element[0].addEventListener('click', function(e){
+                //         e.preventDefault();
+                //         window.open(activeLink, targetType(attr.target));
+                //         return false;
+                //     });
+                // }else{
                     element.magnificPopup({
                         items: {
                             src: activeLink
@@ -331,7 +331,7 @@ app.directive('magnificPopup', function() {
                         removalDelay: 300,
                         mainClass: 'mfp-fade'
                     });
-                }
+                // }
             }else{
                 element[0].addEventListener('click', function(e){
                     e.preventDefault();
