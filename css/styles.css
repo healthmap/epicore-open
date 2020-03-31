@@ -878,3 +878,8 @@ a.footer-link {
   }
 
 }
+
+/* Modal Window Adjustment */
+.mfp-fade.mfp-wrap.mfp-ready .mfp-content {
+  height: 90%;
+}
