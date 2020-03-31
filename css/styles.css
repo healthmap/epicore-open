@@ -35,12 +35,12 @@
 .fullwidth {
   width: 100%;
 }
-.video-container {
+/* .video-container {
   position: relative;
   width: 100%;
   height: 0;
   padding-bottom: 56.25%;
-}
+} */
 .video {
   position: absolute;
   top: 0;
@@ -865,6 +865,8 @@ a.footer-link {
 /* Vimeo Fix */
 .video-container iframe {
   width: 100%;
+  height: 350px;
+  display: block;
 }
 
 /* Public RFI Table Adjustment */
