@@ -310,12 +310,12 @@ app.directive('magnificPopup', function() {
         scope: {},
         link: function($scope, element, attr) {
             
-            var isSmallDevice = $(window).width() < 1024,
+            var isSmallDevice = $(window).width() <= 1024,
                 activeLink = attr.magnificPopup
                 isThirdPartyUrl = /(ftp|http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/.test(activeLink),
                 targetType = function(curTarget){ return (curTarget || isSmallDevice) ? '_system' : '_self'; };
 
-            if(isSmallDevice){
+            if(isSmallDevice && /iPad|iPhone|iPod/.test(navigator.userAgent)){
                 // if(isThirdPartyUrl || attr.third){
                 //     element[0].addEventListener('click', function(e){
                 //         e.preventDefault();
