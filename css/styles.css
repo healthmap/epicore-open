@@ -881,10 +881,12 @@ a.footer-link {
 
 /* Modal Window Adjustment */
 #popup-preloader {
-  background-color: #fff;
-  height: 230px;
+  color: #fff;
+  height: 75%;
   text-align: center;
   padding: 60px 25px;
+  display: flex;
+  align-items: center;
 }
 .mfp-fade.mfp-wrap.mfp-ready .mfp-content {
   height: 90%;
