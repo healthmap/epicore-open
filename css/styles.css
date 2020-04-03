@@ -883,3 +883,13 @@ a.footer-link {
 .mfp-fade.mfp-wrap.mfp-ready .mfp-content {
   height: 90%;
 }
+
+.mfp-iframe-holder {
+  padding-top: 27px;
+}
+
+.mfp-iframe-holder .mfp-close {
+  font-size: 60px;
+  top: -50px;
+  opacity: .98;
+}
