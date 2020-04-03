@@ -880,6 +880,12 @@ a.footer-link {
 }
 
 /* Modal Window Adjustment */
+#popup-preloader {
+  background-color: #fff;
+  height: 230px;
+  text-align: center;
+  padding: 60px 25px;
+}
 .mfp-fade.mfp-wrap.mfp-ready .mfp-content {
   height: 90%;
 }
@@ -888,8 +894,10 @@ a.footer-link {
   padding-top: 27px;
 }
 
-.mfp-iframe-holder .mfp-close {
+.mfp-iframe-holder .mfp-close,
+.mfp-close-btn-in .mfp-close {
+  color: #fff !important;
   font-size: 60px;
   top: -50px;
-  opacity: .98;
+  opacity: .98 !important;
 }
