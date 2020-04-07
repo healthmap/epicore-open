@@ -887,6 +887,8 @@ a.footer-link {
   padding: 60px 25px;
   display: flex;
   align-items: center;
+  justify-content: center;
+  flex-direction: column;
 }
 .mfp-fade.mfp-wrap.mfp-ready .mfp-content {
   height: 90%;
