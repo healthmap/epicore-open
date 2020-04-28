@@ -1262,11 +1262,15 @@ controller('requestController2', function ($rootScope, $window, $scope, $routePa
 
             if(!($scope.newMetricsId)){
                 $scope.newMetricsId = 0;
-            }
-            
+            } 
+
             $scope.updateRFIMetrics = function (event,field_to_update) {
                 
                 // console.log("Event incoming -> ", event);
+
+                if(event.event_metrics_id){
+                    $scope.newMetricsId = event.event_metrics_id;
+                }
                 // console.log("New Metrics event ID ====> ", $scope.newMetricsId);
 
                 var currentFieldValue = eval("event." + field_to_update);
