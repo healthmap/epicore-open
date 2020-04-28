@@ -16,14 +16,14 @@ class PlaceInfo
 
     static function insertLocation($latlon = '', $locname = '') {
         $db = getDB();
-        list($lat,$lon) = split(",", $latlon);
+        list($lat,$lon) = explode(",", $latlon);
         if(!is_numeric($lat) || !is_numeric($lon)) {
             return 0;
         }
         $llhash = md5(round($lat, LAT_LON_PRECISION) .",". round($lon, LAT_LON_PRECISION));
-        $place_id = $db->getOne("SELECT place_id FROM place WHERE latlon_hash = ?", array($llhash));
+        $place_id = $db->getOne("SELECT place_id FROM epicore.place WHERE latlon_hash = ?", array($llhash));
         if(!$place_id) {
-            $q = $db->query("INSERT INTO place (name, lat, lon, latlon_hash) VALUES (?, ?, ?, ?)", array($locname, $lat, $lon, $llhash));
+            $q = $db->query("INSERT INTO epicore.place (name, lat, lon, latlon_hash) VALUES (?, ?, ?, ?)", array($locname, $lat, $lon, $llhash));
             $place_id = $db->getOne("SELECT LAST_INSERT_ID()");
             $db->commit();
         }
@@ -32,7 +32,7 @@ class PlaceInfo
 
     static function insertLocation2($latlon = '', $locname = '', $locdetails = '') {
         $db = getDB();
-        list($lat,$lon) = split(",", $latlon);
+        list($lat,$lon) = explode(",", $latlon);
         if(!is_numeric($lat) || !is_numeric($lon)) {
             return 0;
         }
@@ -47,7 +47,7 @@ class PlaceInfo
     }
     static function updateLocation($place_id, $latlon = '', $locname = '') {
         $db = getDB();
-        list($lat,$lon) = split(",", $latlon);
+        list($lat,$lon) = explode(",", $latlon);
         if(!is_numeric($lat) || !is_numeric($lon)) {
             return 'invalid lat, lon';
         }
@@ -71,7 +71,7 @@ class PlaceInfo
 
     static function updateLocation2($place_id, $latlon = '', $locname = '', $location_details = '') {
         $db = getDB();
-        list($lat,$lon) = split(",", $latlon);
+        list($lat,$lon) = explode(",", $latlon);
         if(!is_numeric($lat) || !is_numeric($lon)) {
             return 'invalid lat, lon';
         }

@@ -7,7 +7,7 @@
  *
  */
 require_once 'const.inc.php';
-require_once 'approveaccess.php';
+// require_once 'approveaccess.php';
 require_once 'UserInfo.class.php';
 
 // connect to memcache

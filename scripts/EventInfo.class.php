@@ -709,7 +709,7 @@ class EventInfo
                 if (is_numeric($table_id)) {
                     $status = $eid;     // success
                 } else {
-                    $status = 'failed to insert event table: ' . $table_name . ', error message: ' .$table_id;
+                    $status = 'Failed within updateEvent2 function - failed to insert event table: ' . $table_name . ', error message: ' .$table_id;
                     break;
                 }
             }
@@ -865,14 +865,13 @@ class EventInfo
         if(!is_numeric($uid)) {
             return 0;
         }
-
         $start_date = $sdate ? $sdate: V2START_DATE;
         $end_date = $edate ? $edate: date("Y-m-d H:i:s");
         $db = getDB();
-        $oid = $db->getOne("SELECT organization_id FROM user WHERE user_id = ?", array($uid));
+        $oid = $db->getOne("SELECT organization_id FROM epicore.user WHERE user_id = ?", array($uid));
         $status = $status ? $status : 'O'; // if status is not passed in, get open events
         // join on the event_fetp table b/c if there is no row in there, the request was never sent (may have been started, but didn't get sent
-        $q = $db->query("SELECT DISTINCT(event.event_id), event.*, place.name AS location, place.location_details FROM place, event, event_fetp 
+        $q = $db->query("SELECT DISTINCT(event.event_id), event.*, place.name AS location, place.location_details FROM epicore.place, epicore.event, epicore.event_fetp 
                           WHERE event.place_id = place.place_id AND event.event_id = event_fetp.event_id AND event.create_date >= ? AND event.create_date <= ?
                           ORDER BY event.create_date DESC", array($start_date, $end_date));
 
@@ -1054,16 +1053,23 @@ class EventInfo
         $db = getDB();
         $q = $db->query("SELECT * FROM event where requester_id = ? AND create_date > ?", array($uid, $start_date));
         $num_notrated_responses = 0;
+        $listofEventIds = [];
+        
         while($row = $q->fetchRow()) {
             // get the current status - open or closed
             $status = $db->getOne("SELECT status FROM event_notes WHERE event_id = ? ORDER BY action_date DESC LIMIT 1", array($row['event_id']));
             $status = $status ? $status : 'O'; // if no value for status, it's open
             if ($status == 'C') {
-                $num_notrated_responses += $db->getOne("SELECT count(*) FROM response WHERE useful IS NULL AND response_permission <>0 AND response_permission <>4 AND event_id = ?", array($row['event_id']));
+                // $num_notrated_responses += $db->getOne("SELECT count(*) FROM response WHERE useful IS NULL AND response_permission <>0 AND response_permission <>4 AND event_id = ?", array($row['event_id']));
+                $sample = $db->getOne("SELECT count(*) FROM response WHERE useful IS NULL AND response_permission <>0 AND response_permission <>4 AND event_id = ?", array($row['event_id']));
+                $num_notrated_responses += $sample;
+                if($sample !=0){
+                    array_push($listofEventIds,array($row['event_id']));
+                }
+                
             }
-
         }
-        return $num_notrated_responses;
+        return array($num_notrated_responses,$listofEventIds);
     }
 
     // Returns inactive open events for a Mod:
@@ -1294,12 +1300,11 @@ class EventInfo
                 if (is_numeric($table_id)) {
                     $status = 'success';
                 } else {
-                    $status = 'failed to insert event table: ' . $table_name . ', error message: ' .$table_id;
+                    $status = 'Failed within insertEvent2 -- failed to insert event table: ' . $table_name . ', error message: ' .$table_id;
                     break;
                 }
             }
         }
-
         return array('status'=>$status, 'event_id' =>$event_id);
 
     }
@@ -1358,14 +1363,27 @@ class EventInfo
         foreach($table as $key => $val) {
             $pvals[$key] = strip_tags($val);
         }
-
+        
         // replace row
         $db = getDB();
         $key_vals = join(",", array_keys($pvals));
         $qmarks = join(",", array_fill(0, count($pvals), '?'));
         $qvals = array_values($pvals);
-        $q2 = "REPLACE INTO {$table_name} ({$key_vals}) VALUES ({$qmarks})";
-        $res = $db->query($q2, $qvals);
+        if($table_name == 'event_metrics'){
+            if($pvals['event_metrics_id'] == 0){
+                // INSERT -- Old school
+                $res = $db->query("INSERT INTO event_metrics (event_metrics_id, event_id, score, creation, notes, action) VALUES (?, ?, ?, ?, ?, ?)",
+                array($pvals['event_metrics_id'], $pvals['event_id'], $pvals['score'], $pvals['creation'], $pvals['notes'], $pvals['action']));
+
+            } else {
+                // UPDATE
+                $res = $db->query("UPDATE event_metrics SET event_id = ?, score = ?, creation = ?, notes = ?, action = ? WHERE event_metrics_id = ?", array($pvals['event_id'], $pvals['score'], $pvals['creation'], $pvals['notes'], $pvals['action'], $pvals['event_metrics_id']));
+            }
+        } else {
+            $q2 = "REPLACE INTO {$table_name} ({$key_vals}) VALUES ({$qmarks})"; 
+            $res = $db->query($q2, $qvals);           
+        }
+        
         // check that result is not an error
         if (PEAR::isError($res)) {
             //die($res->getMessage());
@@ -1373,7 +1391,18 @@ class EventInfo
         } else {
             $table_id = $db->getOne("SELECT LAST_INSERT_ID()");
             $db->commit();
-            return $table_id;
+            /*  
+                **********************************************************
+                    Added by Sam, Ch157135. For new insert, table id will
+                    be the new row id. But on an update it will be 0.
+                **********************************************************
+            */
+            if($table_id == 0){
+                return $pvals['event_metrics_id'];
+            } else {
+                return $table_id;
+            }
+            
         }
     }
 
@@ -1381,10 +1410,12 @@ class EventInfo
     static function updateEventMetrics($table_data){
         $table_name = 'event_metrics';
         $table_id = EventInfo::replaceEventTable($table_name, $table_data);
+        // print("*********** TABLE ID in UpdateEventMetrics Function ***********");
+        // print_r($table_id);
         if (is_numeric($table_id)) {
             $status = $table_id;     // success
         } else {
-            $status = 'failed to insert event table: ' . $table_name . ', error message: ' .$table_id;
+            $status = 'Failed within updateEventMetrics -- failed to insert event table: ' . $table_name . ', error message: ' .$table_id;
         }
         return $status;
     }

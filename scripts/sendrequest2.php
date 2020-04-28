@@ -10,7 +10,7 @@ require_once "const.inc.php";
 require_once "EventInfo.class.php";
 require_once "UserInfo.class.php";
 require_once "AWSMail.class.php";
-require_once 'ePush.class.php';
+// require_once 'ePush.class.php';
 
 $formvars = json_decode(file_get_contents("php://input"));
 
@@ -58,10 +58,10 @@ if ($formvars->uid && $formvars->fetp_ids && $formvars->population && $formvars-
         $emailtext = $ei->buildEmailForEvent($event_info, 'rfi2', $custom_vars, 'text');
 
         // set up push notification
-        $push = new ePush();
-        $pushevent['id'] = $event_id;
-        $pushevent['title'] = $event_info['title'];
-        $pushevent['type'] = 'RFI';
+        // $push = new ePush();
+        // $pushevent['id'] = $event_id;
+        // $pushevent['title'] = $event_info['title'];
+        // $pushevent['type'] = 'RFI';
 
         foreach ($fetp_emails as $fetp_id => $recipient) {
             // send email

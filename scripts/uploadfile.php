@@ -13,7 +13,6 @@ $savefilename = $_POST['event_id'] . "_" . $_POST['fetp_id'] . "." . $_FILES['fi
 
 $destination = "../" . RESPONSEFILE_DIR . $savefilename;
 $status = move_uploaded_file( $_FILES['file']['tmp_name'] , $destination );
-
 if ($status) {
 $response=array("status"=>1,"message"=>"File Uploaded: " . $filename, "filename"=>$filename, "savefilename"=>$savefilename);
 } else {

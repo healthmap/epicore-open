@@ -64,11 +64,15 @@ app.config(function ($routeProvider) {
         when("/followup2/:id", { templateUrl: "partials/followup2.html?cb=" + cacheBustSuffix, controller: "eventsController2" }).
         when("/followup/:id/:response_id", { templateUrl: "partials/followup.html?cb=" + cacheBustSuffix, controller: "eventsController" }).
         when("/followup2/:id/:response_id", { templateUrl: "partials/followup2.html?cb=" + cacheBustSuffix, controller: "eventsController2" }).
+        when("/rfi_step3", { templateUrl: "partials/rfi_step3.html?cb=" + cacheBustSuffix, controller: "requestController2" }).
+        when("/rfi_step2", { templateUrl: "partials/rfi_step2.html?cb=" + cacheBustSuffix, controller: "requestController2" }).
+        when("/rfi_step1", { templateUrl: "partials/rfi_step1.html?cb=" + cacheBustSuffix, controller: "requestController2" }).
         when("/condition", { templateUrl: "partials/rfi_condition.html?cb=" + cacheBustSuffix, controller: "requestController2" }).
         when("/duplicate", { templateUrl: "partials/rfi_duplicate2.html?cb=" + cacheBustSuffix, controller: "requestController2" }).
         when("/population", { templateUrl: "partials/rfi_population.html?cb=" + cacheBustSuffix, controller: "requestController2" }).
         when("/location", { templateUrl: "partials/rfi_location.html?cb=" + cacheBustSuffix, controller: "requestController2" }).
         when("/location/:id", { templateUrl: "partials/rfi_location.html?cb=" + cacheBustSuffix, controller: "requestController2" }).
+        when("/rfi_step1/:id", { templateUrl: "partials/rfi_step1.html?cb=" + cacheBustSuffix, controller: "requestController2" }).
         when("/time", { templateUrl: "partials/rfi_time.html?cb=" + cacheBustSuffix, controller: "requestController2" }).
         when("/purpose", { templateUrl: "partials/rfi_purpose.html?cb=" + cacheBustSuffix, controller: "requestController2" }).
         when("/source", { templateUrl: "partials/rfi_source.html?cb=" + cacheBustSuffix, controller: "requestController2" }).
@@ -97,6 +101,10 @@ app.config(function ($routeProvider) {
         when("/application_confirm", { templateUrl: "partials/application_confirm.html?cb=" + cacheBustSuffix }).
         when("/application/:id/:action/:idtype", { templateUrl: "partials/application_new.html?cb=" + cacheBustSuffix, controller: "userController" }).
         when("/approval", { templateUrl: "partials/approval.html?cb=" + cacheBustSuffix, controller: "approvalController" }).
+        when("/approval/accepted", { templateUrl: "partials/approval.html?cb=" + cacheBustSuffix, controller: "approvalController" }).
+        when("/approval/pre_approved", { templateUrl: "partials/approval.html?cb=" + cacheBustSuffix, controller: "approvalController" }).
+        when("/approval/members", { templateUrl: "partials/approval.html?cb=" + cacheBustSuffix, controller: "approvalController" }).
+        when("/approval/denied", { templateUrl: "partials/approval.html?cb=" + cacheBustSuffix, controller: "approvalController" }).
         when("/login", { templateUrl: "partials/login.html?cb=" + cacheBustSuffix }).
         when("/login_mobile", { templateUrl: "partials/login_mobile.html?cb=" + cacheBustSuffix }).
         when("/setpassword", { templateUrl: "partials/setpassword.html?cb=" + cacheBustSuffix }).
@@ -301,46 +309,6 @@ app.directive('modal', function () {
             });
         }
     };
-});
-
-/* Popup directive */
-app.directive('magnificPopup', function() {
-    return {
-        restrict: 'A',
-        scope: {},
-        link: function($scope, element, attr) {
-            
-            var isSmallDevice = $(window).width() < 1024,
-                activeLink = attr.magnificPopup
-                isThirdPartyUrl = /(ftp|http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/.test(activeLink),
-                targetType = function(curTarget){ return (curTarget || isSmallDevice) ? '_system' : '_self'; };
-
-            if(isSmallDevice){
-                if(isThirdPartyUrl || attr.third){
-                    element[0].addEventListener('click', function(e){
-                        e.preventDefault();
-                        window.open(activeLink, targetType(attr.target));
-                        return false;
-                    });
-                }else{
-                    element.magnificPopup({
-                        items: {
-                            src: activeLink
-                        },
-                        type: 'iframe',
-                        removalDelay: 300,
-                        mainClass: 'mfp-fade'
-                    });
-                }
-            }else{
-                element[0].addEventListener('click', function(e){
-                    e.preventDefault();
-                    window.open(activeLink, targetType(attr.target));
-                    return false;
-                });
-            }
-        }
-    }
 });
 
 app.value('epicoreCountries', [

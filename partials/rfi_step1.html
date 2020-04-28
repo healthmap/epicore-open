@@ -20,7 +20,7 @@
                         <label>Event Location</label>
                         <!--<input type="text" class="form-control" ng-model="rfiData.location.location" ng-focus="rfiData.location.location = ''; rfiData.location.latlon=''" name="location" id="searchTextField" placeholder="" value="" required>-->
                         <!--<input type="hidden" name="latlon" ng-model="rfiData.location.latlon" id="default_location" value="{{rfiData.location.latlon}}">-->
-                        <input class="form-control" g-places-autocomplete options="autocompleteOptions" force-selection="true" ng-model="rfiData.place" ng-focus="rfiData.place = ''; rfiData.location.latlon=''" id="autocompleteText" required ng-blur="saveLocation('next')" />
+                        <input class="form-control" g-places-autocomplete options="autocompleteOptions" force-selection="true" ng-click="filtertype=null" ng-model="rfiData.place" ng-focus="rfiData.place = ''; rfiData.location.latlon=''" id="autocompleteText" required />
 
                     </div>
 
@@ -35,10 +35,12 @@
                 <div class="form-group more-space">
                     <label class="mb0">Select RFI Responders</label>
 
-                    <div class="radio"><label><input type="radio" name="filtertype" ng-value="radius" ng-click="recalcUsers('radius');" ng-checked="radiussel">Select responders near the event location {{rfiData.members.display_location}}</label></div>
-                    <div class="radio"><label><input type="radio" name="filtertype" ng-value="country" ng-click="recalcUsers('country');" ng-checked="!radiussel">Select responders by country</label></div>
-
-                    <ui-gmap-google-map center="map.center" zoom="map.zoom" draggable="true" options="options" bounds="map.bounds" ng-if="radiussel" >
+                    <div class="radio"><label class="radio"><input type="radio" ng-model="filtertype" ng-disabled="!(rfiData.place)" name="filtertype" value="radius" ng-click="recalcUsers('radius');">Select responders near the event location</label></div>
+                    <div class="radio"><label class="radio"><input type="radio" ng-model="filtertype" name="filtertype" ng-disabled="!(rfiData.place)" value="country" ng-click="recalcUsers('country');">Select responders by country</label></div>
+                    
+                    <p ng-if="rfiData.members.numUniqueFetps && rfiData.place!='' && filtertype!=null" class="mb0 highlight active">{{rfiData.members.numUniqueFetps}} responders at {{rfiData.members.numFetps}} locations selected</p>
+                    
+                    <ui-gmap-google-map center="map.center" zoom="map.zoom" draggable="true" options="options" bounds="map.bounds" ng-if="radiussel && rfiData.place!='' && filtertype!=null">
                     <ui-gmap-rectangle bounds="rectangle.bounds" stroke="rectangle.stroke" visible="true" fill="rectangle.fill" fit="false" editable="true" draggable="true" events="eventsRectangle">
                     </ui-gmap-rectangle>
                     <ui-gmap-markers models="markers" coords="'self'" icon="'icon'" click="'onClick'">
@@ -49,7 +51,7 @@
                     </ui-gmap-google-map>
 
                     <div ng-include src="'partials/rfi_members_select.html'"></div>
-                    <p class="red">{{rfiData.members.numUniqueFetps}} responders at {{rfiData.members.numFetps}} locations selected</p>
+                    <p class="hide" ng-if="!rfiData.members.numUniqueFetps" class="highlight">Enter the event location to see nearby responders.</p>
 
                     <span class="error" ng-if="submitDisabled">Must select at least one member.</span>
                 </div>
@@ -61,8 +63,9 @@
                 <form name="locationForm">
 
                     <div class="form-group more-space">
-                        <label>Date of the Event <i class="tooltip-icon fa fa-info-circle" data-toggle="tooltip" title="Please enter date of onset of first case/s; if no specific date is available consider the date of the source report. In case of an update of an already verified PHE consider today's date."></i></label>
+                        <label>Date of the Event <i class="tooltip-icon fa fa-info-circle" data-toggle="tooltip" title="<h4>Date of the Event</h4><p class='mb0'>Enter the date of onset of the first case. If no specific date is available consider the date of the source report. In case of an update of an already verified PHE consider today's date.</p>"></i></label>
                         <input type="text" class="form-control-small form-control" ng-model="rfiData.location.event_date" name="event_date" id="datepicker" data-provide="datepicker" autocomplete="off" required>
+                    <span class="error">{{time_error_message}}</span>
                     </div>
 
                     <div class="hide form-group" data-toggle="tooltip" title=" Please specify if the date selected is date of symptom onset or date of confirmation of case, etc">
@@ -75,7 +78,6 @@
                         <button ng-click="saveTime('back')" type="submit" class="submit btn btn-primary"><i class="fa fa-arrow-circle-left"></i> Back </button> &nbsp; &nbsp;
                         <button ng-click="saveTime('next')" type="submit" class="submit btn btn-primary btn-auto-width">Next</button>
                     </div><!-- /input-group -->
-                    <span class="error">{{time_error_message}}</span>
 
                 </form>
 
@@ -87,28 +89,28 @@
             <div id="form-container" class="col-xs-12 col-md-8">
                 <form name="requestForm">
                     <div class="form-group more-space">
-                        <label class="mb0">How did you hear about this event? <i class="tooltip-icon fa fa-info-circle" data-toggle="tooltip" title="RFI requesters need to be specific if the original source of information about the PHE is a web-report or not, and in case it is it should be clarified if the information is a media report or an official document online. In case of multiple web-items available the Requester should include recent information of as much as possible reliable sources. If the source of information used is a personal communication to Requesters (from EPICORE responders or not), Requesters should try to search actively for information on the web before sending out the RFI."></i></label>
+                        <label class="mb0">How did you hear about this event?</label>
                         <div class="form-group">
 
                             <div class="radio">
-                                <label class="radio" data-toggle="tooltip" title="The RFI is based on media information. In case of web-based media items at least one link should be included; if there is no media report available online, then any other detail about the original source should be included (e.g. “link removed”, “only paper version available”, “name of original newspaper”, “early warning system reporting”) ">
-                                    <input type="radio" ng-model="rfiData.source.source" value="MR" ng-required="!rfiData.source.source">Media Report</label>
+                                <label class="radio"> 
+                                    <input type="radio" ng-model="rfiData.source.source" value="MR" ng-required="!rfiData.source.source">Media Report<i class="tooltip-icon fa fa-info-circle" data-toggle="tooltip" title="<h4>Media Report</h4><p class='mb0'>The RFI is based on media information. If possible, include the link to the media report.</p>"></i></label>
                             </div>
                             <div class="secondary-input" ng-if="rfiData.source.source=='MR'">
-                                <label>Please provide a link to the report if available</label>
-                                <input type="text" class="form-control" ng-model="rfiData.source.medialink" name="media-link" id="media-link" value=""  placeholder="Enter the link to the media report">
+                                <label class="radio">Please provide a link to the report if available</label>
+                                <input type="text" class="form-control" ng-model="rfiData.source.details" name="media-link" id="media-link" value=""  placeholder="Enter the link to the media report">
                             </div>
                             <div class="radio">
-                                <label class="radio" data-toggle="tooltip" title="The RFI is based on an official report (this can happen if more details are needed). In case of an official document available online, at least one link should be included; if there is no official document available online, then any other detail about the original source should be included (e.g. WHO information, reported by local health authorities from X)">
-                                    <input type="radio" ng-model="rfiData.source.source" value="OR" ng-required="!rfiData.source.source">Official Report</label>
+                                <label class="radio">
+                                    <input type="radio" ng-model="rfiData.source.source" value="OR" ng-required="!rfiData.source.source">Official Report<i class="tooltip-icon fa fa-info-circle" data-toggle="tooltip" title="<h4>Official Report</h4><p class='mb0'>The RFI is based on an official report. In case of an official document available online, at least one link should be included; if there is no official document available online, then any other detail about the original source should be included.</p>"></i></label>
                             </div>
                             <div class="secondary-input" ng-if="rfiData.source.source=='OR'">
                                 <label>Please provide a link to the report if available</label>
-                                <input type="text" class="form-control" ng-model="rfiData.source.officiallink" name="official-link" id="official-link" value=""  placeholder="Enter the link to the official report">
+                                <input type="text" class="form-control" ng-model="rfiData.source.details" name="official-link" id="official-link" value=""  placeholder="Enter the link to the official report">
                             </div>
                             <div class="radio">
-                                <label class="radio" data-toggle="tooltip" title="The RFI is based on a direct communication from an EPICORE member or an external that has not provided any further documentation (no personal details should be included). Before choosing this option, RFI Requesters should actively search for any online report about the mentioned event on the web: in case information about the PHE is identified, the information source should be classified as media/official (i.e. options 1 or 2), with the inclusion of at least one link. ">
-                                    <input type="radio" ng-model="rfiData.source.source" value="OC" ng-required="!rfiData.source.source">Other communication</label>
+                                <label class="radio"> 
+                                    <input type="radio" ng-model="rfiData.source.source" value="OC" ng-required="!rfiData.source.source">Other Communication<i class="tooltip-icon fa fa-info-circle" data-toggle="tooltip" title="<h4>Other Communication</h4><p class='mb0'>The RFI is based on direct communication from an EPICORE member or an external that has not provided any further documentation. Before choosing this option, RFI Requesters should search for any online report about the event. If information about the PHE is identified, the information source should be classified as media or official.</p>"></i></label>
                             </div>
 
                         </div>
@@ -122,7 +124,7 @@
 
                     </div>
                     <div class="form-group text-right">
-                        <button ng-click="saveMembers('next')" type="submit" class="submit btn btn-primary btn-auto-width">Next</button>
+                        <button ng-click="saveStep1('next')" type="submit" class="submit btn btn-primary btn-auto-width">Next</button>
                     </div><!-- /input-group -->
 
                 </form>

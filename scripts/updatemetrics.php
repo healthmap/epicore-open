@@ -25,7 +25,7 @@ if (is_numeric($event_metrics['event_id']) && $event_metrics['event_id'] > 0) {
     $table_id = EventInfo::updateEventMetrics($event_metrics);
 
     if (is_numeric($table_id))
-        print json_encode(array('status' => 'success'));
+        print json_encode(array('status' => 'success', 'tableID' => $table_id));
     else
         print json_encode(array('status' => 'failed', 'reason' => $table_id));
 

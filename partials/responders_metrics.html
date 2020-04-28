@@ -1,4 +1,4 @@
-<div ng-include src="'header.html'"></div>
+<div ng-include src="'header.html?c'"></div>
 <div class="jumbotron dashboard">
   <div class="container">
     <h1>Responder Metrics for {{ month }}, {{ year }}</h1>
@@ -43,14 +43,14 @@
     </div>
     <div class="row flex">
       <div class="flex col card">
-        <h4 class="mb12">2018 Lowest Verification Rates</h4>
+        <h4 class="mb12">2019 Lowest Verification Rates</h4>
         <div ng-include="'data/rfi_ver_country.html'"></div>
         <p class="small mt6">
           Cutoff of at least five RFIs in that country in the last month used for lowest verification rate
         </p>
       </div>
       <div class="flex col card">
-        <h4 class="mb12">2019 Lowest Verification Rates</h4>
+        <h4 class="mb12">2020 Lowest Verification Rates</h4>
         <div ng-include="'data/rfi_ver_country_ytd.html'"></div>
       </div>
     </div>
@@ -83,7 +83,7 @@
         <div ng-include="'data/members_regions.html'"></div>
         <p class="small mt6">
           Numbers may vary based on definitions of countries. See
-          <a magnific-popup="https://unstats.un.org/unsd/tradekb/knowledgebase/country-code" third="true">UN 3-letter codes</a>.
+          <a href="https://unstats.un.org/unsd/tradekb/knowledgebase/country-code">UN 3-letter codes</a>.
         </p>
       </div>
     </div>

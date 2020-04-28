@@ -2,6 +2,12 @@
 // get config file
 $conf = parse_ini_file(dirname(__FILE__) . '/conf/da.ini.php', true);
 
+// Environment (Local, Test and Prod)
+// Change this variable based on the corresponding environment you're on.
+// There are few variables that will have to be changed when on local and this
+// ENV var will dictate the change.
+define('ENVIRONMENT', 'Local');
+
 // approval username and password
 define('APPROVAL_USERNAME', $conf['approval']['username']);
 define('APPROVAL_PASSWORD', $conf['approval']['password']);

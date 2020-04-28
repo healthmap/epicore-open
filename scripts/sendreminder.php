@@ -11,6 +11,7 @@ $db = getDB();
 
 $data = json_decode(file_get_contents("php://input"));
 $action = (string)$data->action;
+$memberid = (int)$data->memberid;
 
 $maillist = '';
 // unsubscribed/pre-approved members with no password and accepted at least one week ago
@@ -22,6 +23,36 @@ if ($action == 'preapprove_reminder') {
     }
     sendMail('info@epicore.org', 'Info', "Reminder | You're almost there!", $action, '0');
 }
+
+/* ***************************************************************************
+    Following block of conditions is added by Sam, CH157135..
+    
+    Based on the incoming action and maillistID, we collect the email for the 
+    corrensponding applicant and send an email.
+
+*** ***************************************************************************/
+
+if ($action == 'applicant_setpassword_reminder') {
+    
+    $applicant_info = $db->getRow("select fetp_id, f.email,firstname from epicore.fetp as f, epicore.maillist as m  where f.maillist_id=m.maillist_id  AND m.maillist_id='$memberid'");
+    
+    print_r($applicant_info);
+    
+    sendMail($applicant_info['email'], $applicant_info['firstname'], "Reminder | You're almost there!", 'setpassword_reminder', $applicant_info['fetp_id']);
+    // sendMail('info@epicore.org', 'Info', "Reminder | You're almost there!", $action, '0');
+}
+
+if ($action == 'applicant_finishtraining_reminder') {
+    
+    $applicant_training_info = $db->getRow("select fetp_id, f.email,firstname from epicore.fetp as f, epicore.maillist as m  where f.maillist_id=m.maillist_id  AND m.maillist_id='$memberid'");
+    
+    print_r($applicant_training_info);
+    
+    sendMail($applicant_training_info['email'], $applicant_training_info['firstname'], "Reminder | You're almost there!", 'training_reminder', $applicant_training_info['fetp_id']);
+    // sendMail('info@epicore.org', 'Info', "Reminder | You're almost there!", $action, '0');
+}
+
+/*  *********************           END            ****************************/ 
 
 // get accepted members with no password and accepted at least one week ago
 if ($action == 'setpassword_reminder') {

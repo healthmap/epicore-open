@@ -11,69 +11,58 @@
         <div id="form-container" class="col-xs-12 col-md-8">
             <form name="sendRequestForm">
 
-                <div class="form-group">
-                    <span style="float: right;"><a href ng-click="clearRequest()" class="btn btn-default">Clear RFI</a></span><br>
+                <div class="form-group clear">
+                    <a href ng-click="clearRequest()" class="pull-right btn btn-transparent">Clear RFI</a>
+            <a href="#/rfi_step1" class="pull-left btn btn-default">Edit RFI</a>
                 </div>
-                <ul>
-                    <li ng-if="!rfiData.event_id" > Your RFI will be routed to {{rfiData.members.numFetps}} responders.</li>
-                    <li> Please review the content of your RFI as well as your RFI title.
+                    <p ng-if="!rfiData.event_id" >Your RFI will be sent to {{rfiData.members.numFetps}} responders.</p>
 
-                        <ul>
-                            <li> Please page back to correct any errors </li>
-                        </ul>
-                    </li>
-                </ul>
 
             <div class="form-group">
-            <p><a href="#/location" class="btn btn-default"><i class="fa fa-arrow-circle-left"></i> Edit RFI</a></p>
 
-                <ul>
-                    <li>Title: {{rfiData.event_title}}</li>
-                    <li>Location: {{rfiData.event_location}}</li>
-                        <ul>
-                            <li>Available Details: <pre style="white-space: pre-wrap; word-wrap: break-word">{{rfiData.location.location_details}}</pre></li>
-                        </ul>
-                    <li>Date: {{rfiData.location.event_date}}
-                        <ul>
-                            <li>Available Details: <pre style="white-space: pre-wrap; word-wrap: break-word"> {{rfiData.location.event_date_details}}</pre></li>
-                        </ul>
-                    </li>
-                    <li>Affected Population: {{rfiData.event_population}}
-                        <ul>
-                            <li>Available Details: <pre style="white-space: pre-wrap; word-wrap: break-word"> {{rfiData.population.description}}</pre></li>
-                        </ul>
-                    </li>
-                    <li>Health Condition: {{rfiData.event_conditions}}
-                        <ul>
-                            <li>Health Condition Details: <pre style="white-space: pre-wrap; word-wrap: break-word"> {{rfiData.health_condition.disease_details}}</pre></li>
-                            <li>Other Relevant Public Health Details: <pre style="white-space: pre-wrap; word-wrap: break-word"> {{rfiData.health_condition.ph_details}}</pre></li>
-                        </ul>
-                    </li>
-                    <li> Purpose:
-                        <ul>
-                            <li ng-repeat="purpose in rfiData.event_purpose"> {{purpose}} </li>
-                            <li>Personalized Message: <pre style="white-space: pre-wrap; word-wrap: break-word">{{rfiData.additionalText}}</pre> </li>
-                        </ul>
-                    </li>
+                    <h5 class="mb4 secondary">Title</h5> 
+                    <p>{{rfiData.event_title}}</p>
+                    
+                    <h5 class="mb4 secondary">Location</h5> 
+                    <p>{{rfiData.event_location}}</p>
+                    
+                    <h5 class="mb4 secondary">Date</h5> 
+                    <p>{{rfiData.location.event_date}}</p>
 
-                    <li>Source(s): {{rfiData.event_source}}
-                        <ul>
-                            <li>Available Details: <pre style="white-space: pre-wrap; word-wrap: break-word"> {{rfiData.source.details}}</pre></li>
-                        </ul>
-                    </li>
-                </ul>
+                    <h5 class="mb4 secondary">Affected Population</h5> 
+                    <p>{{rfiData.event_population}}</p>
+
+                    <h5 class="mb4 secondary">Health Condition</h5> 
+                    <p>{{rfiData.event_conditions}}</p>
+
+                    <h5 class="mb4 secondary">Health Condition Details</h5> 
+                    <p>{{rfiData.health_condition.disease_details}}</p>
+                    
+                    <h5 class="mb4 secondary">Purpose</h5>
+                    <ul class="mb24"><li ng-repeat="purpose in rfiData.event_purpose">{{purpose}}</li></ul>
+                    
+                    <h5 class="mb4 secondary">Personalized Message</h5> 
+                    <p>{{rfiData.additionalText}}</p>
+
+                    <h5 class="mb4 secondary">Source</h5> 
+                    <p>{{rfiData.event_source}}
+                    <!-- <span ng-if="rfiData.source.medialink"><br />{{rfiData.source.medialink}}</span>
+                    <span ng-if="rfiData.source.officiallink"><br />{{rfiData.source.officiallink}}</span> -->
+                    <span ng-if="rfiData.event_source=='Media Report'"><br />{{rfiData.source.details}}</span>
+                    <span ng-if="rfiData.event_source=='Official Report'"><br />{{rfiData.source.details}}</span>
+                    </p>
 
             </div>
 
                 <!-- Send request buttons-->
                 <div class="form-group" ng-if="!rfiData.event_id">
-                    <button ng-click="sendRequest2('back')" type="submit" class="submit btn btn-primary"><i class="fa fa-arrow-circle-left"></i> Back </button> &nbsp; &nbsp;
-                    <button ng-click="sendRequest2('next')" ng-disabled="submitDisabled" type="submit" class="submit btn btn-primary">Send RFI</button>
+                    <button ng-click="sendRequest2('back')" type="submit" class="submit btn btn-secondary btn-color-secondary pull-left">Back</button>
+                    <button ng-click="sendRequest2('next')" ng-disabled="submitDisabled" type="submit" class="submit btn btn-primary pull-right">{{sendRFIButtonText}}</button>
                 </div>
                 <!-- Update request buttons-->
                 <div class="form-group" ng-if="rfiData.event_id">
-                    <button ng-click="updateRequest('back')" type="submit" class="submit btn btn-primary"><i class="fa fa-arrow-circle-left"></i> Back </button> &nbsp; &nbsp;
-                    <button ng-click="updateRequest('next')" ng-disabled="submitDisabled" type="submit" class="submit btn btn-primary">Update RFI</button>
+                    <button ng-click="updateRequest('back')" type="submit" class="submit btn btn-secondary btn-color-secondary pull-left">Back</button>
+                    <button ng-click="updateRequest('next')" ng-disabled="submitDisabled" type="submit" class="submit btn btn-primary pull-right">Update RFI</button>
                 </div>
 
             </form>

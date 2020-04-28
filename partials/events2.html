@@ -22,7 +22,15 @@
 
             <p class="red" ng-if="onOpen && unclosed > 0" > * You have {{unclosed}} RFI(s) highlighted below that are past due closing. </p>
             <p class="red" ng-if="num_notrated_responses > 0">
-                <span ng-if="onOpen">* You have received responses after closing one or more RFIs that are still unrated. Please go to the "CLOSED EVENTS" tab to locate and rate these responses.</span>
+                <span ng-if="onOpen">
+                    * You have received responses after closing one or more RFIs that are still unrated.
+                    Please click the link(s) below to access the RFI directly
+                    <ul>
+                        <li ng-repeat="item in listofEventIdsToDisplay">
+                            <a href="#/events2/{{item}}">{{item}}</a> 
+                        </li>
+                    </ul>
+                </span>
                 <span ng-if="!onOpen">* Please rate the unrated responses in the RFI(s) highlighted below.</span>
             </p>
 
