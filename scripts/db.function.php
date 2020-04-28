@@ -4,13 +4,8 @@
  * Sue Aman 2014-01-31
  */
 
+require_once('DB.php');
 require_once('const.inc.php');
-
-if(ENVIRONMENT == 'Local'){
-    require_once(dirname(__FILE__) . '/DB/DB.php');
-} else {
-    require_once('DB.php');
-}
 
 function getDB($which = '')
 {
