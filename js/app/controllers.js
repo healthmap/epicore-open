@@ -1114,12 +1114,18 @@ angular.module('EpicoreApp.controllers', []).
             $scope.allapp = false;
             $scope.inactive_applicants = inactive_applicants;
             $scope.applicants = outputList;
-
+            $scope.searchResetList = outputList;
             $scope.all_applicants = respdata;
             $scope.inactive_applicants = inactive_applicants;
             $scope.num_applicants = $scope.applicants.length;
             $scope.showpage = true;
 
+            $scope.clearSearch = function(clickEvent) {
+                if(clickEvent.target.attributes[0].nodeValue == 'far fa-search fa-times'){
+                    $scope.query_input = ""; 
+                    $scope.searchMembers("reset");
+                }
+            }
             $scope.searchMembers = function (keyEvent) {
                 // $scope.query = $scope.query_input;
                 if (keyEvent.keyCode == 13) {
@@ -1130,7 +1136,10 @@ angular.module('EpicoreApp.controllers', []).
                     } else {
                         $scope.applicants = outputList;
                     }
-
+                } else if(keyEvent == "reset"){
+                    $scope.query = "";
+                    searchTermSubmitted = true;
+                    $scope.applicants = outputList;
                 }
             }
 

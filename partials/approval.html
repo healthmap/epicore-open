@@ -71,7 +71,7 @@
 
                 <ul ng-class="{'search-open': searchOpen}" class="nav nav-pills pt6 pb6">
                     <li class="search-expand" ng-click="searchOpen = !searchOpen" data-toggle="collapse" href="#collapseSearch">
-                        <i class="far fa-search" ng-class="{'fa-times': searchOpen}"></i>
+                        <i class="far fa-search" ng-click="clearSearch($event)" ng-class="{'fa-times': searchOpen}"></i>
                     </li>
                     <li ng-class="{'active' : activeHeaderItem === 'New Applicants'}">
                         <a href="#/approval">New Applicants ({{num_inactive}})</a>
