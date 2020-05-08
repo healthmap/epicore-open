@@ -880,6 +880,28 @@ a.footer-link {
 }
 
 /* Modal Window Adjustment */
+#popup-preloader {
+  color: #fff;
+  height: 75%;
+  text-align: center;
+  padding: 60px 25px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
 .mfp-fade.mfp-wrap.mfp-ready .mfp-content {
   height: 90%;
+}
+
+.mfp-iframe-holder {
+  padding-top: 27px;
+}
+
+.mfp-iframe-holder .mfp-close,
+.mfp-close-btn-in .mfp-close {
+  color: #fff !important;
+  font-size: 60px;
+  top: -50px;
+  opacity: .98 !important;
 }
