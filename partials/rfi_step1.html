@@ -97,16 +97,16 @@
                                     <input type="radio" ng-model="rfiData.source.source" value="MR" ng-required="!rfiData.source.source">Media Report<i class="tooltip-icon fa fa-info-circle" data-toggle="tooltip" title="<h4>Media Report</h4><p class='mb0'>The RFI is based on media information. If possible, include the link to the media report.</p>"></i></label>
                             </div>
                             <div class="secondary-input" ng-if="rfiData.source.source=='MR'">
-                                <label class="radio">Please provide a link to the report if available</label>
-                                <input type="text" class="form-control" ng-model="rfiData.source.details" name="media-link" id="media-link" value=""  placeholder="Enter the link to the media report">
+                                <label class="radio">Please provide a link to the report or describe the source if a link is not avaible.</label>
+                                <input type="text" class="form-control" ng-model="rfiData.source.details" name="media-link" id="media-link" value=""  placeholder="">
                             </div>
                             <div class="radio">
                                 <label class="radio">
                                     <input type="radio" ng-model="rfiData.source.source" value="OR" ng-required="!rfiData.source.source">Official Report<i class="tooltip-icon fa fa-info-circle" data-toggle="tooltip" title="<h4>Official Report</h4><p class='mb0'>The RFI is based on an official report. In case of an official document available online, at least one link should be included; if there is no official document available online, then any other detail about the original source should be included.</p>"></i></label>
                             </div>
                             <div class="secondary-input" ng-if="rfiData.source.source=='OR'">
-                                <label>Please provide a link to the report if available</label>
-                                <input type="text" class="form-control" ng-model="rfiData.source.details" name="official-link" id="official-link" value=""  placeholder="Enter the link to the official report">
+                                <label>Please provide a link to the report or describe the source if a link is not available.</label>
+                                <input type="text" class="form-control" ng-model="rfiData.source.details" name="official-link" id="official-link" value=""  placeholder="">
                             </div>
                             <div class="radio">
                                 <label class="radio"> 
