@@ -266,7 +266,7 @@ controller('requestController2', function ($rootScope, $window, $scope, $routePa
 
         // next or back
         if (direction === 'next') {
-            if($scope.rfiData.population.type && !($scope.rfiData.population.other)){
+            if(($scope.rfiData.population.type == 'E' || $scope.rfiData.population.type == 'U') && !($scope.rfiData.population.other)){
                 $scope.populationOtherError = "Please fill the details above";
                 return;
             }
