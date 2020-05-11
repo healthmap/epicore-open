@@ -240,12 +240,17 @@ controller('requestController2', function ($rootScope, $window, $scope, $routePa
         }
     };
 
+    $scope.sourceDetailsError = "";
 
     /* go next or back */
     $scope.saveStep1 = function (direction) {
         if ((direction === 'back') || $scope.rfiData.location.event_date && $scope.rfiData.source.source ) {
             // next or back
             if (direction === 'next') {
+                if($scope.rfiData.source && !($scope.rfiData.source.details)){
+                    $scope.sourceDetailsError = "Please fill the details above";
+                    return;
+                }
                 $location.path('/rfi_step2');
             }
             $scope.time_error_message = '';
@@ -256,10 +261,16 @@ controller('requestController2', function ($rootScope, $window, $scope, $routePa
         }
     };
 
+    $scope.populationOtherError = "";
     $scope.saveStep2 = function (direction) {
 
         // next or back
         if (direction === 'next') {
+            if($scope.rfiData.population.type && !($scope.rfiData.population.other)){
+                $scope.populationOtherError = "Please fill the details above";
+                return;
+            }
+            console.log("RFI Data Step 3 --> ", $scope.rfiData)
             $location.path('/rfi_step3');
         } else if (direction === 'back') {
             $location.path('/rfi_step1');
