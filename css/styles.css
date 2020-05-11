@@ -11,11 +11,11 @@ animation: animatedBackground 20s linear infinite;
 }*/
 .xsmall-text {
   font-size: 12px;
-  line-height: 1.666666666666666;
+  line-height: 1.66666667;
 }
 .small-text {
   font-size: 14px;
-  line-height: 1.71428571428571;
+  line-height: 1.71428571;
 }
 .row-border .row {
   border-top: 1px solid #efefef;
@@ -66,7 +66,7 @@ p {
 }
 .small,
 small {
-  font-size: .875em;
+  font-size: 0.875em;
 }
 .link {
   cursor: pointer;
@@ -184,6 +184,9 @@ h4.small,
 }
 h5.secondary {
   color: #878c8d;
+  font-weight: 600;
+}
+h5.bold {
   font-weight: 600;
 }
 h5,
@@ -393,7 +396,7 @@ h3,
 a.logo {
   color: #195b72;
   font-weight: 700;
-  letter-spacing: .05em;
+  letter-spacing: 0.05em;
   padding-right: 15px;
   font-size: 1.4em;
 }
@@ -408,10 +411,10 @@ a.logo {
   background: linear-gradient(to right, rgba(6, 51, 66, 0.6) 0%, rgba(6, 51, 66, 0) 100%);
 }
 .tagline {
-  letter-spacing: .1em;
+  letter-spacing: 0.1em;
 }
 .tagline-first {
-  font-size: .775em;
+  font-size: 0.775em;
   font-weight: 300;
 }
 .tagline-second {
@@ -552,7 +555,7 @@ btn.active.focus,
 .btn-sm {
   padding: 6px 12px;
   min-width: 0px;
-  font-size: .875em;
+  font-size: 0.875em;
   margin-top: -6px;
 }
 .btn.stacked,
@@ -774,7 +777,7 @@ th {
 @media (max-width: 1200px) {
   .nav > li > a,
   .nav .btn {
-    font-size: .875em;
+    font-size: 0.875em;
   }
 }
 @media (max-width: 991px) {
@@ -861,8 +864,8 @@ th {
   color: inherit;
   font-weight: 700;
   font-size: 13px;
-  line-height: 1.71428571428571;
-  line-height: 1.846153846;
+  line-height: 1.71428571;
+  line-height: 1.84615385;
 }
 .metrics-tables td {
   font-size: 15px;
@@ -981,7 +984,7 @@ a.footer-link {
   margin-bottom: 0px;
 }
 .floated-heading h1 {
-  line-height: 1.333333333333;
+  line-height: 1.33333333;
 }
 .floated-heading a {
   line-height: 3;
@@ -1138,7 +1141,7 @@ button.transparent {
   margin-right: 24px;
   color: #195b72;
   z-index: 1;
-  transition: height .35s ease;
+  transition: height 0.35s ease;
 }
 .search-open .search-expand {
   float: right;
@@ -1286,7 +1289,7 @@ button.transparent {
   background: #fff;
   border-radius: 0px;
   padding: 24px;
-  letter-spacing: .2;
+  letter-spacing: 0.2;
   box-shadow: 0 0 6px 0 rgba(46, 51, 53, 0.4);
   text-align: left;
   max-width: 320px;
