@@ -52,12 +52,20 @@
 
                     <div class="radio" data-toggle="tooltip" title="">
                         <label class="radio"><input type="radio" name="environment" ng-model="rfiData.population.type" value="E" ng-required="!rfiData.population.type && !goback" > Environmental</label>
-                        <input ng-if="rfiData.population.type == 'E'" type="text" class="form-control" ng-model="rfiData.population.other" name="other" id="other_environment" placeholder='Provide a short description (i.e. Chemical spill)' value="" required>
                     </div>
+
+			<div class="secondary-input" ng-if="rfiData.population.type == 'E'">
+                                <label class="radio">Please provide a short description. This description will appear in the RFI title.</label>
+                        <input type="text" class="form-control-small form-control" ng-model="rfiData.population.other" name="other" id="other_environment" maxlength = "40" value="" required>
+                            </div>
+
 
                     <div class="radio">
                         <label class="radio"><input type="radio" name="unknown" ng-model="rfiData.population.type" value="U" ng-required="!rfiData.population.type && !goback" > Other</label>
-                        <input ng-if="rfiData.population.type == 'U'" type="text" class="form-control" ng-model="rfiData.population.other" name="other" id="other_unknown" placeholder='Please describe the population affected' value="" required>
+                    </div>
+			<div class="secondary-input" ng-if="rfiData.population.type == 'U'" >
+				<label class="radio">Please provide a short description. This description will appear in the RFI title.</label>
+                        <input type="text" class="form-control-small form-control" maxlength = "40" ng-model="rfiData.population.other" name="other" id="other_unknown" placeholder='' value="" required>
                     </div>
                 </div>
 
