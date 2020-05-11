@@ -67,6 +67,7 @@
 			        <div class="secondary-input" ng-if="rfiData.population.type == 'U'" >
 				    <label class="radio">Please provide a short description. This description will appear in the RFI title.</label>
                         <input type="text" class="form-control-small form-control" maxlength = "40" ng-model="rfiData.population.other" name="other" id="other_unknown" placeholder='' value="" required>
+                        <span class="error">{{populationOtherError}}</span>
                     </div>
                 </div>
 
