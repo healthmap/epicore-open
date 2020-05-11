@@ -112,6 +112,10 @@
                                 <label class="radio"> 
                                     <input type="radio" ng-model="rfiData.source.source" value="OC" ng-required="!rfiData.source.source">Other Communication<i class="tooltip-icon fa fa-info-circle" data-toggle="tooltip" title="<h4>Other Communication</h4><p class='mb0'>The RFI is based on direct communication from an EPICORE member or an external that has not provided any further documentation. Before choosing this option, RFI Requesters should search for any online report about the event. If information about the PHE is identified, the information source should be classified as media or official.</p>"></i></label>
                             </div>
+			    <div class="secondary-input" ng-if="rfiData.source.source=='OC'">
+                                <label>Please describe how you heard about this event.</label>
+                                <input type="text" class="form-control" ng-model="rfiData.source.details" name="official-link" id="official-link" value=""  placeholder="">
+                            </div>
 
                         </div>
 
