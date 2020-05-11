@@ -11,11 +11,11 @@
 }*/
 .xsmall-text {
   font-size: 12px;
-  line-height: 1.666666666666666;
+  line-height: 1.66666667;
 }
 .small-text {
   font-size: 14px;
-  line-height: 1.71428571428571;
+  line-height: 1.71428571;
 }
 .row-border .row {
   border-top: 1px solid #efefef;
@@ -35,12 +35,12 @@
 .fullwidth {
   width: 100%;
 }
-/* .video-container {
+.video-container {
   position: relative;
   width: 100%;
   height: 0;
   padding-bottom: 56.25%;
-} */
+}
 .video {
   position: absolute;
   top: 0;
@@ -66,7 +66,7 @@ p {
 }
 .small,
 small {
-  font-size: .875em;
+  font-size: 0.875em;
 }
 .link {
   cursor: pointer;
@@ -379,7 +379,7 @@ h3,
 a.logo {
   color: #195b72;
   font-weight: 700;
-  letter-spacing: .05em;
+  letter-spacing: 0.05em;
   padding-right: 15px;
   font-size: 1.4em;
 }
@@ -394,10 +394,10 @@ a.logo {
   background: linear-gradient(to right, rgba(6, 51, 66, 0.6) 0%, rgba(6, 51, 66, 0) 100%);
 }
 .tagline {
-  letter-spacing: .1em;
+  letter-spacing: 0.1em;
 }
 .tagline-first {
-  font-size: .775em;
+  font-size: 0.775em;
   font-weight: 300;
 }
 .tagline-second {
@@ -530,7 +530,7 @@ btn.active.focus,
 .btn-sm {
   padding: 6px 12px;
   min-width: 0px;
-  font-size: .875em;
+  font-size: 0.875em;
   margin-top: -6px;
 }
 .btn.stacked,
@@ -715,7 +715,7 @@ th {
 @media (max-width: 1200px) {
   .nav > li > a,
   .nav .btn {
-    font-size: .875em;
+    font-size: 0.875em;
   }
 }
 @media (max-width: 991px) {
@@ -802,8 +802,8 @@ th {
   color: inherit;
   font-weight: 700;
   font-size: 13px;
-  line-height: 1.71428571428571;
-  line-height: 1.846153846;
+  line-height: 1.71428571;
+  line-height: 1.84615385;
 }
 .metrics-tables td {
   font-size: 15px;
@@ -857,28 +857,22 @@ a.footer-link {
   color: #2e3335;
   margin-right: 30px;
 }
-
 .whitespace {
   white-space: pre-line;
 }
-
 /* Vimeo Fix */
 .video-container iframe {
   width: 100%;
   height: 350px;
   display: block;
 }
-
 /* Public RFI Table Adjustment */
 @media (max-width: 480px) {
-
   .public-rfi th:nth-child(3),
   .public-rfi td:nth-child(3) {
-    display: none;;
+    display: none;
   }
-
 }
-
 /* Modal Window Adjustment */
 #popup-preloader {
   color: #fff;
@@ -893,15 +887,13 @@ a.footer-link {
 .mfp-fade.mfp-wrap.mfp-ready .mfp-content {
   height: 90%;
 }
-
 .mfp-iframe-holder {
   padding-top: 27px;
 }
-
 .mfp-iframe-holder .mfp-close,
 .mfp-close-btn-in .mfp-close {
   color: #fff !important;
   font-size: 60px;
   top: -50px;
-  opacity: .98 !important;
+  opacity: 0.98 !important;
 }
