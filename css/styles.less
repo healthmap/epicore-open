@@ -1449,3 +1449,52 @@ color: @light-gray;
 padding: 12px;
 color: @dark-gray;
 }
+
+.whitespace {
+    white-space: pre-line;
+}
+
+/* Vimeo Fix */
+.video-container iframe {
+    width: 100%;
+    height: 350px;
+    display: block;
+}
+
+/* Public RFI Table Adjustment */
+@media (max-width: 480px) {
+
+    .public-rfi th:nth-child(3),
+    .public-rfi td:nth-child(3) {
+        display: none;;
+    }
+
+}
+
+/* Modal Window Adjustment */
+#popup-preloader {
+    color: #fff;
+    height: 75%;
+    text-align: center;
+    padding: 60px 25px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+}
+
+.mfp-fade.mfp-wrap.mfp-ready .mfp-content {
+    height: 90%;
+}
+
+.mfp-iframe-holder {
+    padding-top: 27px;
+}
+
+.mfp-iframe-holder .mfp-close,
+.mfp-close-btn-in .mfp-close {
+    color: #fff !important;
+    font-size: 60px;
+    top: -50px;
+    opacity: .98 !important;
+}

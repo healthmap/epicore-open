@@ -3,6 +3,7 @@
 <head>
   <link href='https://fonts.googleapis.com/css?family=Lato:400,400italic' rel='stylesheet' type='text/css'>
   <link href='https://fonts.googleapis.com/css?family=Pinyon+Script' rel='stylesheet' type='text/css'>
+  <link rel="stylesheet" href="../css/styles.css">
 
   <style>
   em {
@@ -92,12 +93,20 @@
         body {
         -webkit-print-color-adjust: exact;
       }
+      .btn { display: none; }
+      }
+
+      .back-btn {
+        text-decoration: none;
+        /* background-color: #fff;
+        border-radius: 20px; */
       }
   </style>
 </head>
   
 <body>
 <br>
+<a class="back-btn btn-primary btn" href="#/trainingvideos.html">Go back</a>
   <div class="certificate center" id="printableArea">
     <div class="certificate-inner">
       <img class="logo" src="img/logos/epicore.png" height="" alt="logo">
@@ -113,7 +122,7 @@
 
 <br><br><br><br><br><br>
   <div class="center">
-    <input type="button" ng-click="printPage('printableArea')" value="Print or Save Certificate" />
+    <input id="printBtn" type="button" ng-click="printPage('printableArea')" value="Print or Save Certificate" />
   </div>
 
 </body>
