@@ -499,7 +499,7 @@ class EventInfo
 
     function setResponseStatus($rid, $status) {
         $res = $this->db->query("UPDATE response SET useful='$status' WHERE response_id in ($rid)");
-
+        print_r($res);
         // check that result is not an error
         if (PEAR::isError($res)) {
             //die($res->getMessage());
@@ -1052,7 +1052,7 @@ class EventInfo
         $start_date = $sdate ? $sdate: '2000-01-01';
         $db = getDB();
         $q = $db->query("SELECT * FROM event where requester_id = ? AND create_date > ?", array($uid, $start_date));
-        $num_notrated_responses = 0;
+        // $num_notrated_responses = 0;
         $listofEventIds = [];
         
         while($row = $q->fetchRow()) {
@@ -1060,12 +1060,12 @@ class EventInfo
             $status = $db->getOne("SELECT status FROM event_notes WHERE event_id = ? ORDER BY action_date DESC LIMIT 1", array($row['event_id']));
             $status = $status ? $status : 'O'; // if no value for status, it's open
             if ($status == 'C') {
-                // $num_notrated_responses += $db->getOne("SELECT count(*) FROM response WHERE useful IS NULL AND response_permission <>0 AND response_permission <>4 AND event_id = ?", array($row['event_id']));
-                $sample = $db->getOne("SELECT count(*) FROM response WHERE useful IS NULL AND response_permission <>0 AND response_permission <>4 AND event_id = ?", array($row['event_id']));
-                $num_notrated_responses += $sample;
-                if($sample !=0){
-                    array_push($listofEventIds,array($row['event_id']));
-                }
+                $num_notrated_responses += $db->getOne("SELECT count(*) FROM response WHERE useful IS NULL AND response_permission <>0 AND response_permission <>4 AND event_id = ?", array($row['event_id']));
+                // $sample = $db->getOne("SELECT count(*) FROM response WHERE useful IS NULL AND response_permission <>0 AND response_permission <>4 AND event_id = ?", array($row['event_id']));
+                // $num_notrated_responses += $sample;
+                // if($sample !=0){
+                    // array_push($listofEventIds,array($row['event_id']));
+                // }
                 
             }
         }
