@@ -1215,11 +1215,13 @@ controller('requestController2', function ($rootScope, $window, $scope, $routePa
                     }
                 }
 
+                $scope.validatedResponsesCount = 0;
+
                 // count responses with content
                 for (var h in $scope.eventsList.history) {
                     if (($scope.eventsList.history[h].permission !== '0') && ($scope.eventsList.history[h].type == 'Member Response')
                             && ($scope.userInfo.uid)) {
-                                $scope.validResponses++;
+                                $scope.validatedResponsesCount++;
                             }
                 }
 
@@ -1345,8 +1347,8 @@ controller('requestController2', function ($rootScope, $window, $scope, $routePa
                 var notuseful_rids = [];
                 console.log("Userinfo UID -> ", $scope.userInfo);
                 console.log("SCOPEoutpout => ", $scope.eventsList.history);
-                console.log("Valid Response===> ", $scope.validResponses);
-                if (isValid && (thestatus == 'Close' || thestatus == 'Update') && ($scope.validResponses > 0)) {
+                console.log("Valid Response===> ", $scope.validatedResponsesCount);
+                if (isValid && (thestatus == 'Close' || thestatus == 'Update') && ($scope.validatedResponsesCount > 0)) {
                     for (var h in $scope.eventsList.history) {
                         var h_rid = $scope.eventsList.history[h].response_id;
                         var h_type = $scope.eventsList.history[h].type;
