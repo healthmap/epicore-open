@@ -13,6 +13,7 @@ require_once "AWSMail.class.php";
 require_once "send_email.php";
 require_once "Geocode.php";
 
+
 class UserInfo
 {
     function __construct($user_id, $fetp_id)
