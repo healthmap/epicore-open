@@ -8,7 +8,7 @@
 require_once 'db.function.php';
 require_once 'const.inc.php';
 require_once 'PlaceInfo.class.php';
-// require_once 'pbkdf2.php';
+require_once 'pbkdf2.php';
 require_once "AWSMail.class.php";
 require_once "send_email.php";
 require_once "Geocode.php";
@@ -210,8 +210,8 @@ class UserInfo
         // first try the HealthMap database
         $db = getDB('hm');
         $user = $db->getRow("SELECT hmu_id, username, email, pword_hash FROM hmu WHERE (username = ? OR email = ?) AND confirmed = 1", array($email, $email));
-        // $resp = validate_password($dbdata['password'], $user['pword_hash']);
-        $resp = true;
+        $resp = validate_password($dbdata['password'], $user['pword_hash']);
+        // $resp = true;
         $db = getDB();
         if($resp) {
             $uinfo = $db->getRow("SELECT user.user_id, user.hmu_id, user.organization_id, organization.name AS orgname FROM epicore.user LEFT JOIN epicore.organization ON user.organization_id = organization.organization_id WHERE hmu_id = ?", array($user['hmu_id']));
