@@ -84,8 +84,13 @@
                             <td colspan="8">
 
                                 <div class="form-group small">
-                                    <label>Score</label>
-                                    <input type="number" min="0" ng-blur="updateRFIMetrics(event,'metric_score')" class="form-control" ng-model="event.metric_score" name="metric_score">
+                                    <form name="myForm">
+                                        <label>Score 
+                                            <input type="number" min="0" max="2" ng-blur="updateRFIMetrics(event,'metric_score')" class="form-control" ng-model="event.metric_score" name="metric_score">
+                                        </label>
+                                        <span ng-show="!myForm.metric_score.$valid" style="color:red">Score cannot be greater than 2.</span>
+                                    </form>
+                                    <!-- <input type="number" min="0" ng-init="0" max="2" ng-blur="updateRFIMetrics(event,'metric_score')" class="form-control" ng-model="event.metric_score" name="metric_score"> -->
                                 </div>
 
                                 <div class="form-group">
@@ -97,7 +102,7 @@
                                         <textarea ng-blur="updateRFIMetrics(event,'metric_notes')" class="form-control" ng-model="event.metric_notes" name="metric_notes" />
                                         <span ng-if="displaySavingText">
                                             <br />
-                                            <small class="change-on-hover" >(Saving..)</small>
+                                            <stron class="change-on-hover" >(Saving..)</strong>
                                         </span>
                                     </div>
                                         <div class="form-group mr0">

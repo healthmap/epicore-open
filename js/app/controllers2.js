@@ -1279,6 +1279,11 @@ controller('requestController2', function ($rootScope, $window, $scope, $routePa
                 
                 // console.log("Event incoming -> ", event);
 
+                if(!(event.metric_score) || event.metric_score > 2){
+                    alert("Score cannot be more than 2")
+                    return;
+                }
+
                 if(event.event_metrics_id){
                     $scope.newMetricsId = event.event_metrics_id;
                 }
@@ -1301,6 +1306,7 @@ controller('requestController2', function ($rootScope, $window, $scope, $routePa
                 };
 
                 if(event.metric_score != '' || event.metric_creation != '' || event.metric_notes != '' || event.metric_action != ''){
+                    
                     $scope.displaySavingText = true;
                     $http({
                         url: urlBase + 'scripts/updatemetrics.php', method: "POST", data: metric_data
