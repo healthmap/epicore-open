@@ -50,7 +50,7 @@
 
                         <tbody ng-show="eventType == 'AO'" ng-repeat="event in eventsList['all'] | filter:query | orderBy:predicate:reverse" >
                         <tr ng-class="{'active': isCollapsed1}">
-                            <td><strong class="change-on-hover"><a href="#/events2/{{event.event_id}}">{{event.title}}</a></strong><br />
+                            <td><strong class="change-on-hover"><a href="#/events2/{{event.event_id}}" target="_blank">{{event.title}}</a></strong><br />
                                 <span class="small-text">{{event.event_id_int}}</span>
                             </td>
                             <td>{{event.create_date}}</td>
