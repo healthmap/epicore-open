@@ -247,11 +247,18 @@ controller('requestController2', function ($rootScope, $window, $scope, $routePa
         if ((direction === 'back') || $scope.rfiData.location.event_date && $scope.rfiData.source.source ) {
             // next or back
             if (direction === 'next') {
+                
+                if(!$scope.rfiData.place || !$scope.rfiData.members){
+                    $scope.submitDisabled = true;
+                    return;
+                }
                 if($scope.rfiData.source && !($scope.rfiData.source.details)){
                     $scope.sourceDetailsError = "Please fill the details above";
                     return;
                 }
+                $scope.submitDisabled = false;
                 $location.path('/rfi_step2');
+                
             }
             $scope.time_error_message = '';
         } else if (!$scope.rfiData.location.event_date ){
