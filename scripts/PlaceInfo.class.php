@@ -38,6 +38,8 @@ class PlaceInfo
         }
         $llhash = md5(round($lat, LAT_LON_PRECISION) .",". round($lon, LAT_LON_PRECISION) . "," . $locdetails);
         $place_id = $db->getOne("SELECT place_id FROM place WHERE latlon_hash = ?", array($llhash));
+        print("*********** PLACE ID in PLACEINFO Class ***********");
+        print_r($place_id);
         if(!$place_id) {
             $q = $db->query("INSERT INTO place (name, lat, lon, latlon_hash, location_details) VALUES (?, ?, ?, ?, ?)", array($locname, $lat, $lon, $llhash, $locdetails ));
             $place_id = $db->getOne("SELECT LAST_INSERT_ID()");
