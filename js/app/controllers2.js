@@ -4,12 +4,12 @@ angular.module('EpicoreApp.controllers2', []).
     controller('requestController2', function ($rootScope, $window, $scope, $routeParams, $cookieStore, $location, $http, urlBase, rfiForm, epicoreVersion) {
 
         $scope.userInfo = $rootScope.userInfo = $cookieStore.get('epiUserInfo');
-
+        
         $scope.epicore_version = epicoreVersion;
 
         // get persistant RFI form
         $scope.rfiData = rfiForm.get();
-
+        
         // get event from database if event id is passed in and populate form
         // this is used to edit an RFI (not send a new RFI)
         if ($routeParams.id) {
@@ -19,11 +19,11 @@ angular.module('EpicoreApp.controllers2', []).
             // get event from database
             var eventData = {};
             eventData['event_id'] = $scope.rfiData.event_id;
+        
             $http({
                 url: urlBase + 'scripts/getrequest2.php', method: "POST", data: eventData
             }).success(function (data, status, headers, config) {
 
-                console.log(data);
                 // populate form
                 $scope.rfiData.location = {};
                 $scope.rfiData.health_condition = {};
@@ -63,17 +63,14 @@ angular.module('EpicoreApp.controllers2', []).
 
         $scope.location_error_message = '';
         $scope.saveLocation = function (direction) {
-
+            
             // jquery hack to get the latlon hidden value and autocomplete for location (angular bug)
             //$scope.rfiData.location.latlon = $("#default_location").val();
             //$scope.rfiData.location.location = $("#searchTextField").val(); // format: "country" or "state, country" or "city, state, country"
-
             // only use google places for new events
             if (!$scope.rfiData.event_id) {
                 $scope.rfiData.location.latlon = getPlaceLatLon($scope.rfiData.place);
                 $scope.rfiData.location.location = $("#autocompleteText").val();
-
-
 
                 if (!$scope.rfiData.location.latlon) {
                     $scope.rfiData.location.location_error_message = 'Geolocation failed - please scroll down and select a location from the auto-suggester in the location field so that we have the coordinates of the event.';
@@ -102,6 +99,12 @@ angular.module('EpicoreApp.controllers2', []).
                 $scope.rfiData.default_state = '';
                 $scope.rfiData.default_country = mylocation[0];
             }
+
+            
+            // console.log('--:' + $scope.rfiData.default_city);
+            // console.log('--:' + $scope.rfiData.default_state);
+            // console.log('--:' + $scope.rfiData.default_country);
+            // console.log('--:' + $scope.rfiData.location.location);
 
             // validate and go to next or back path
             if ($scope.rfiData.location.latlon && $scope.rfiData.location.location) {
@@ -247,9 +250,50 @@ angular.module('EpicoreApp.controllers2', []).
 
         /* go next or back */
         $scope.saveStep1 = function (direction) {
+            // console.log('STEP1 - clicked next:', $scope.rfiData);
+
             if ((direction === 'back') || $scope.rfiData.location.event_date && $scope.rfiData.source.source) {
                 // next or back
                 if (direction === 'next') {
+            
+                    
+                    if($scope.rfiData.location.location !== $("#autocompleteText").val()) {
+                        //editing location
+                        // console.log('old location:', $scope.rfiData.location.location); //old
+                        // console.log('new place:', $scope.rfiData.place['formatted_address']); //new
+                        $scope.rfiData.location.latlon = getPlaceLatLon($scope.rfiData.place);
+                        $scope.rfiData.location.location = $("#autocompleteText").val();
+                        // console.log('--place latlon:' + $scope.rfiData.location.latlon);
+                        // console.log('--place loc:' + $scope.rfiData.location.location);
+
+                        if (!$scope.rfiData.location.latlon) {
+                            $scope.rfiData.location.location_error_message = 'Geolocation failed - please scroll down and select a location from the auto-suggester in the location field so that we have the coordinates of the event.';
+                            $scope.rfiData.location.location = '';
+                            return false;
+                        }
+                    }
+                    // get city, state, country from location string
+                    var mylocation;
+                    if($scope.rfiData.location)
+                        mylocation = $scope.rfiData.location.location.split(",");
+                    if (mylocation.length == 4) {
+                        $scope.rfiData.default_city = mylocation[1];
+                        $scope.rfiData.default_state = mylocation[2];
+                        $scope.rfiData.default_country = mylocation[3];
+                        $scope.rfiData.location.location = mylocation[1] + ',' + mylocation[2] + ',' + mylocation[3]; // set location to only city,state,country
+                    } else if (mylocation.length == 3) {
+                        $scope.rfiData.default_city = mylocation[0];
+                        $scope.rfiData.default_state = mylocation[1];
+                        $scope.rfiData.default_country = mylocation[2];
+                    } else if (mylocation.length == 2) {
+                        $scope.rfiData.default_city = '';
+                        $scope.rfiData.default_state = mylocation[0];
+                        $scope.rfiData.default_country = mylocation[1];
+                    } else if (mylocation.length == 1) {
+                        $scope.rfiData.default_city = '';
+                        $scope.rfiData.default_state = '';
+                        $scope.rfiData.default_country = mylocation[0];
+                    }
 
                     // if(!$scope.rfiData.place || !$scope.rfiData.members){
                     //     $scope.submitDisabled = true;
@@ -274,14 +318,15 @@ angular.module('EpicoreApp.controllers2', []).
 
         $scope.populationOtherError = "";
         $scope.saveStep2 = function (direction) {
-
+            // console.log('STEP2 - clicked next:', $scope.rfiData);
+            
             // next or back
             if (direction === 'next') {
                 if (($scope.rfiData.population.type == 'E' || $scope.rfiData.population.type == 'U') && !($scope.rfiData.population.other)) {
                     $scope.populationOtherError = "Please fill the details above";
                     return;
                 }
-                console.log("RFI Data Step 3 --> ", $scope.rfiData)
+                // console.log("RFI Data Step 3 --> ", $scope.rfiData)
                 $location.path('/rfi_step3');
             } else if (direction === 'back') {
                 $location.path('/rfi_step1');
@@ -301,7 +346,6 @@ angular.module('EpicoreApp.controllers2', []).
 
             // validate and go to next or back path
             if ((direction === 'back') || $scope.rfiData.location.event_date) {
-
                 // next or back
                 if (direction === 'next') {
                     $location.path('/population');
@@ -578,6 +622,7 @@ angular.module('EpicoreApp.controllers2', []).
         $scope.source_error_message = '';
         // $scope.saveSource = function (direction) {
         $scope.saveStep3 = function (direction) {
+            // console.log('STEP3 - clicked review and send:', $scope.rfiData);
 
             //  if ((direction === 'back') || $scope.rfiData.source.source && $scope.rfiData.source.details) {
             if (direction === 'next') {
@@ -589,6 +634,9 @@ angular.module('EpicoreApp.controllers2', []).
                 // $scope.rfiData.event_title = $scope.rfiData.event_population + ' - ' + $scope.rfiData.event_conditions + ' - ' + $scope.rfiData.event_location + ' - ' + $scope.rfiData.location.event_date;
                 // $scope.rfiData.event_purpose = getPurpose();
                 // $scope.rfiData.event_source = getSource();
+
+                //Editing location name requires google geolocation to autocomplete                
+                $scope.saveLocation('next'); 
 
                 $scope.rfiData.event_location = $scope.getLocation_2();
                 $scope.rfiData.event_population = $scope.getPopulation_2();
@@ -722,6 +770,7 @@ angular.module('EpicoreApp.controllers2', []).
             return condition.toString();
         }
         $scope.getPurpose_2 = function () {
+            
             var purpose = $scope.rfiData.purpose.purpose == "V" ? "Verification" : "Update";
             var type = [];
 
@@ -1041,21 +1090,31 @@ angular.module('EpicoreApp.controllers2', []).
                 formData['health_condition'] = $scope.rfiData.health_condition;
                 formData['purpose'] = $scope.rfiData.purpose;
                 formData['source'] = $scope.rfiData.source;
-                $http({
-                    url: urlBase + 'scripts/updaterequest2.php', method: "POST", data: formData
-                }).success(function (respdata, status, headers, config) {
 
-                    if (respdata['status'] == 'success') {
-                        // empty out the form values so they aren't pre-filled next time
-                        $window.sessionStorage.clear();
-                        rfiForm.clear();
-                        $location.path('/success/6');
-                    }
-                    else {
-                        console.log(respdata['reason']);
-                    }
-                    $scope.submitDisabled = false;
-
+                $http({ 
+                    url: urlBase + 'scripts/updaterequest2.php', 
+                    method: "POST", 
+                    data: formData
+                })
+                .then(
+                    function(response) {  
+                        if(response.data) {
+                            var respdata = response.data;
+                            // console.log('respData**:', respdata)
+                            if (respdata['status'] == 'success') {
+                                // empty out the form values so they aren't pre-filled next time
+                                $window.sessionStorage.clear();
+                                rfiForm.clear();
+                                $location.path('/success/6');
+                            }
+                            else {
+                                console.log(respdata['reason']);
+                            }
+                        }
+                        $scope.submitDisabled = false;
+                },
+                    function(erroMessage) {
+                        console.error(erroMessage);
                 });
 
             } else if (direction === 'back') {
@@ -1084,7 +1143,7 @@ angular.module('EpicoreApp.controllers2', []).
 
         /* Requester (moderator) & Responder (member) dashboard controller */
     }).controller('eventsController2', function ($scope, $window, $rootScope, $routeParams, $cookieStore, $location, $http, eventAPIservice2, urlBase, epicoreMode, epicoreVersion, Upload, $timeout) {
-
+        
         $scope.mobile = (epicoreMode == 'mobile') ? true : false;
         $scope.epicore_version = epicoreVersion;
         $scope.isRouteLoading = true;
@@ -1210,6 +1269,7 @@ angular.module('EpicoreApp.controllers2', []).
         }
 
         $scope.getPublicEventsByID = function () {
+            
             var article_id = localStorage.getItem('articleID');
             // alert("ID ==> " + article_id);
             eventAPIservice2.getEvents(article_id).success(function (response) {
@@ -1247,7 +1307,7 @@ angular.module('EpicoreApp.controllers2', []).
 
         // get events for public dashboard for Responders view
         $scope.getEvents2 = function (dbtype) {
-            // console.log("Scope inside GetEvents 2 ----> ", $scope)
+            console.log("Scope inside GetEvents2 ----> ", $scope)
             $scope.isRouteLoading = false;
             $rootScope.dashboardType = dbtype;
             if (dbtype == "PR" && !$scope.eventsListPublic) {
@@ -1255,7 +1315,7 @@ angular.module('EpicoreApp.controllers2', []).
                 var end_date = moment().format('YYYY-MM-DD'); // now
                 var start_date = moment().subtract(2, 'months').format('YYYY-MM-DD'); // 2 months ago
                 eventAPIservice2.getEvents($scope.id, start_date, end_date).success(function (response) {
-                    // console.log("Success Function output getEvents2 -> ", response)
+                    console.log("Success Function output getEvents2 -> ", response)
                     $scope.isRouteLoading = false;
                     $scope.eventsListPublic = response.EventsList;
                     if ($scope.eventsListPublic.purpose) {
@@ -1275,13 +1335,14 @@ angular.module('EpicoreApp.controllers2', []).
         };
 
         getAllEvents = function (start_date, end_date, num_events = 'all') {
-
+            console.log("getAllEvents -> ", start_date, end_date);
             $scope.isRouteLoading = true;
 
             $scope.eventsList = [];
-            eventAPIservice2.getEvents($scope.id, start_date, end_date).success(function (response) {
+            eventAPIservice2.getEvents($scope.id, start_date, end_date)
+            .success(function (response) {
                 $scope.isRouteLoading = false;
-                console.log("Response output -> ", response)
+                // console.log("Response output getAllEvents -> ", response)
                 if (typeof ($scope.userinfo) != "undefined") {
                     $scope.isOrganization = $scope.userInfo.fetp_id > 0 ? false : true;
                     // if RFI requester is the logged in user or of same org, they get different action items
@@ -1385,9 +1446,9 @@ angular.module('EpicoreApp.controllers2', []).
                 // count unrated responses in closed events
                 if ($scope.onOpen) {
                     // console.log("Response output ====> ", response)
-                    $scope.listofEventIdsToDisplay = response.numNotRatedResponses[1][0];
+                    $scope.listofEventIdsToDisplay = response.numNotRatedResponses ? response.numNotRatedResponses[1][0]: [];
                     // console.log("scope --====> ", $scope)
-                    $scope.num_notrated_responses = response.numNotRatedResponses[0];
+                    $scope.num_notrated_responses = response.numNotRatedResponses ? response.numNotRatedResponses[0]: 0;
                 } else if ($scope.eventsList) {
                     for (var n in $scope.eventsList.yours) {
                         $scope.num_notrated_responses += parseInt($scope.eventsList.yours[n].num_notrated_responses);

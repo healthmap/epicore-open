@@ -26,7 +26,8 @@ $db = getDB();
 
 // get the events
 require_once "EventInfo.class.php";
-if(isset($rvars['event_id']) && is_numeric($rvars['event_id'])) {
+
+if(isset($rvars['event_id']) && is_numeric($rvars['event_id'])) {    
     $ei = new EventInfo($rvars['event_id']);
     if($rvars['from'] == "responses") {
         $indexed_array = $ei->getResponses();

@@ -19,6 +19,7 @@ if(isset($formvars->ticket_id) && $formvars->usertype == "fetp") { // ticket sys
     if($formvars->ticket_id) { // ticket system for mods coming from dashboard
         $uinfo = UserInfo::authenticateMod($formvars->ticket_id);
     } else { // login system is for mods and fetps
+
         $dbdata['email'] = strip_tags($formvars->username);
         $dbdata['password'] = strip_tags($formvars->password); 
         $uinfo = UserInfo::authenticateUser($dbdata);

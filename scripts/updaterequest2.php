@@ -30,9 +30,13 @@ $event_table['source'] = $formvars->source;
 
 $event_id = EventInfo::updateEvent2($event_info, $event_table);
 
+$status = "success";
+
 if ($event_id == $event_info['event_id'])
-    print json_encode(array('status' => 'success'));
+    print json_encode(array('status' => $status));
 else
     print json_encode(array('status' => 'failed', 'reason' => $event_id));
+
+// print json_encode(array('status' => $status));
 
 ?>

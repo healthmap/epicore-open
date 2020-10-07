@@ -220,13 +220,17 @@ class UserInfo
             $uinfo['email'] = $user['email'];
             return $uinfo;
         } else { 
+
             // first try the MOD user table.  If none, try the FETP user table.
             $uinfo = $db->getRow("SELECT user.*, organization.name AS orgname FROM user LEFT JOIN organization ON user.organization_id = organization.organization_id WHERE email = ?", array($email));
             if(!$uinfo['user_id']) {
+
                 $uinfo = $db->getRow("SELECT fetp_id, pword_hash, lat, lon, countrycode, active, email, status, locations FROM fetp WHERE email = ?", array($email));
                 $uinfo['username'] = "Member ".$uinfo['fetp_id'];
             }
+
             if($uinfo['user_id'] || $uinfo['fetp_id']) {
+
                 $resp = validate_password($dbdata['password'], $uinfo['pword_hash']);
                 if($resp) {
                     unset($uinfo['pword_hash']);
