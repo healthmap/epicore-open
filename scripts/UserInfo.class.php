@@ -213,18 +213,19 @@ class UserInfo
         $user = $db->getRow("SELECT hmu_id, username, email, pword_hash FROM hmu WHERE (username = ? OR email = ?) AND confirmed = 1", array($email, $email));
         $resp = validate_password($dbdata['password'], $user['pword_hash']);
         // $resp = true;
-        echo 'resp is:';
-        echo $resp;
-        echo '--resp is:';
-        echo '****user is:';
-        echo $user;
-        echo '----user is:';
-        $db = getDB();
+        //echo 'resp is:';
+        //echo $resp;
+        //echo '--resp is:';
+        //echo '****user is:';
+        //echo $user;
+        //echo '----user is:';
+        $db = getDB('epicore_db');
         if($resp) {
+            //echo '&&&&IN HERE';
             $uinfo = $db->getRow("SELECT user.user_id, user.hmu_id, user.organization_id, organization.name AS orgname FROM epicore.user LEFT JOIN epicore.organization ON user.organization_id = organization.organization_id WHERE hmu_id = ?", array($user['hmu_id']));
-            echo '^^^^^uinfo is:';
-            echo $uinfo;
-            echo '----uinfo is:';
+            //echo '^^^^^uinfo is:';
+            //echo $uinfo;
+            //echo '----uinfo is:';
             $uinfo['username'] = $user['username'];
             $uinfo['email'] = $user['email'];
             return $uinfo;
@@ -233,9 +234,9 @@ class UserInfo
 
             // first try the MOD user table.  If none, try the FETP user table.
             $uinfo = $db->getRow("SELECT user.*, organization.name AS orgname FROM user LEFT JOIN organization ON user.organization_id = organization.organization_id WHERE email = ?", array($email));
-            echo '&&&&&&uinfo is:';
-            echo $uinfo;
-            echo '----uinfo is:';
+            //echo '&&&&&&uinfo is:';
+            //echo $uinfo;
+            //echo '----uinfo is:';
             if(!$uinfo['user_id']) {
 
                 $uinfo = $db->getRow("SELECT fetp_id, pword_hash, lat, lon, countrycode, active, email, status, locations FROM fetp WHERE email = ?", array($email));
