@@ -212,39 +212,32 @@ class UserInfo
         $db = getDB('hm');
         $user = $db->getRow("SELECT hmu_id, username, email, pword_hash FROM hmu WHERE (username = ? OR email = ?) AND confirmed = 1", array($email, $email));
         $resp = validate_password($dbdata['password'], $user['pword_hash']);
+        
+        
+        if(is_a($user, 'DB_Error')) {
+            print_r($user);
+            die('user error!');
+        }
+        
         // $resp = true;
-        echo 'resp is:';
-        echo $resp;
-        echo '--resp is:';
-        echo '****user is:';
-        echo $user;
-        echo '----user is:';
-        $db = getDB('epicore_db');
+        $db = getDB();
         if($resp) {
-            echo '++Resp is One++';
             $uinfo = $db->getRow("SELECT user.user_id, user.hmu_id, user.organization_id, organization.name AS orgname FROM epicore.user LEFT JOIN epicore.organization ON user.organization_id = organization.organization_id WHERE hmu_id = ?", array($user['hmu_id']));
-            echo '^^^^^uinfo is:';
-            echo $uinfo;
-            echo '----uinfo is:';
+            if(is_a($uinfo, 'DB_Error')) {
+                print_r($uinfo);
+                die('uinfo error!');
+            }
             $uinfo['username'] = $user['username'];
             $uinfo['email'] = $user['email'];
             return $uinfo;
-            
         } else { 
-
             // first try the MOD user table.  If none, try the FETP user table.
             $uinfo = $db->getRow("SELECT user.*, organization.name AS orgname FROM user LEFT JOIN organization ON user.organization_id = organization.organization_id WHERE email = ?", array($email));
-            //echo '&&&&&&uinfo is:';
-            //echo $uinfo;
-            //echo '----uinfo is:';
             if(!$uinfo['user_id']) {
-
                 $uinfo = $db->getRow("SELECT fetp_id, pword_hash, lat, lon, countrycode, active, email, status, locations FROM fetp WHERE email = ?", array($email));
                 $uinfo['username'] = "Member ".$uinfo['fetp_id'];
             }
-
             if($uinfo['user_id'] || $uinfo['fetp_id']) {
-
                 $resp = validate_password($dbdata['password'], $uinfo['pword_hash']);
                 if($resp) {
                     unset($uinfo['pword_hash']);
