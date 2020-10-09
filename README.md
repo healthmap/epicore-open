@@ -75,15 +75,17 @@ composer require sly/notification-pusher
 
 ## Deployment
 
-Epicore uses Deploybot (https://deploybot.com/) for deployment to both staging and production servers.
+Epicore uses Deploybot (https://deploybot.com/) for deployment to both staging and production servers. For access please contact your PM.
 
-### Staging
+### Staging (aka DEV)
 
-The staging URL is at https://epicore.org/~dev
+The staging URL is at https://dev.epicore.org/#/
 
 All of your commits to the epicore git repo are automatically deployed to staging, so you don't need to do anything to see your changes.  
 
-The staging deployment is identical to production , except it uses a test database.  This allows testing of all functionality without affecting production.
+The staging deployment is identical to production , except it uses a test/dev database.  This allows testing of all functionality without affecting 
+
+production.
 
 Staging deployment status: [![Deployment status from DeployBot](https://boston-childrens-hosptial.deploybot.com/badge/23779030056625/85433.svg)](http://deploybot.com)
 
@@ -93,7 +95,6 @@ Staging deployment status: [![Deployment status from DeployBot](https://boston-c
 Only authorized users can deploy to production using the Deploybot dashboard.
 
 Production deployment status: [![Deployment status from DeployBot](https://boston-childrens-hosptial.deploybot.com/badge/02267418033975/87596.svg)](http://deploybot.com)
-
 
 
 
@@ -123,3 +124,12 @@ epicore/scripts/responder_metrics2.py
 
 These scripts use data from the csv files in #1.
 
+
+
+### DB Schema changes as of 10/9/2020
+
+The old codebase for epicore used 2 schemas - hm and epicore (see da.ini.php old files). 
+
+Going forward we have now consolidated da.ini.php file to hold only one schema access - epicore. hm schema was used to access table 'hmu' to fetch logged in 
+
+user or insert new users only. Going forward epicore will have access to schema hm for (SELECT. INSERT ONLY QUERIES).

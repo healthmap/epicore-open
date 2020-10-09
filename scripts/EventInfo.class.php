@@ -180,7 +180,7 @@ class EventInfo
         if ($users) {
 
             // get email for user from hm database
-            $hmdb = getDB('hm');
+            $hmdb = getDB();
 
             $followers = array();
             foreach ($users as $user){
@@ -442,7 +442,7 @@ class EventInfo
         if($user_info['email']) {
             $initiator['email'] = $user_info['email'];
         } else { // get it from the healthmap db
-             $hmdb = getDB('hm');
+             $hmdb = getDB();
              $initiator['email'] = $hmdb->getOne("SELECT email FROM hmu WHERE hmu_id = ?", array($user_info['hmu_id']));
         }
         return $initiator;
@@ -462,7 +462,7 @@ class EventInfo
                 $to[$i++]['organization_id']= $moderator['organization_id'];
             }
             else{// get it from the healthmap db
-                $hmdb = getDB('hm');
+                $hmdb = getDB();
                 $to[$i]['email'] = $hmdb->getOne("SELECT email FROM hmu WHERE hmu_id = ?", array($moderator['hmu_id']));
                 $to[$i]['name'] = $hmdb->getOne("SELECT name FROM hmu WHERE hmu_id = ?", array($moderator['hmu_id']));
                 $to[$i++]['organization_id'] = 1;
