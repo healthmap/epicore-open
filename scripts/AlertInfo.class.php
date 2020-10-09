@@ -14,7 +14,7 @@ class AlertInfo
     function __construct($id)
     {
         $this->id = $id;
-        $this->db =& getDB('hm');
+        $this->db =& getDB();
     }
 
     function getInfo() {
