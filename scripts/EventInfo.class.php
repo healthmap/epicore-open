@@ -1844,7 +1844,7 @@ class EventInfo
         $hmu_id = $row['hmu_id'];
 
         // get user from hmu_id in hm database
-        $db = getDB('hm');
+        $db = getDB();
         $user = $db->getRow(" select name, username, email from hmu where hmu_id='$hmu_id'");
         $user['user_id'] = $row['user_id'];
         $user['organization_id'] = $row['organization_id'];
@@ -1864,7 +1864,7 @@ class EventInfo
         $hmu_id = $row['hmu_id'];
 
         // get user from hmu_id in hm database
-        $db = getDB('hm');
+        $db = getDB();
         $user = $db->getRow(" select name, username, email from hmu where hmu_id='$hmu_id'");
         $user['user_id'] = $row['user_id'];
         $user['organization_id'] = $row['organization_id'];
@@ -1884,7 +1884,7 @@ class EventInfo
         $hmu_id = $row['hmu_id'];
 
         // get user from hmu_id in hm database
-        $db = getDB('hm');
+        $db = getDB();
         $user = $db->getRow(" select name, username, email from hmu where hmu_id='$hmu_id'");
         $user['user_id'] = $row['user_id'];
         $user['organization_id'] = $row['organization_id'];

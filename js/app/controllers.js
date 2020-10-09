@@ -181,7 +181,7 @@ angular.module('EpicoreApp.controllers', []).
         $scope.userLogin = function (formData) {
             $scope.isRouteLoading = true;
 
-            console.log("Output scope -> ", $scope, 'And Form data -> ', formData)
+            // console.log("Output scope -> ", $scope, 'And Form data -> ', formData)
             // no formdata passed, get ticket id and (optional) event_id from URL
             if (typeof (formData) == "undefined") {
                 formData = {};
@@ -215,10 +215,11 @@ angular.module('EpicoreApp.controllers', []).
                 $scope.isRouteLoading = false;
                 return;
             }
+            // console.log('login formData:', formData)
             $http({
                 url: urlBase + 'scripts/login.php', method: "POST", data: formData
             }).success(function (data, status, headers, config) {
-                //console.log("Data output after Login success ---> ", data)
+                console.log("Data output after Login success ---> ", data)
                 //console.log("Status after Login ====> ", status)
                 //console.log("Status after Login from query -----> ", data['status'])
 
@@ -264,6 +265,7 @@ angular.module('EpicoreApp.controllers', []).
                     $location.path(redirpath);
 
                 } else {
+                    console.log("Data output after Login error ---> ", data)
                     $scope.isRouteLoading = false;
                     $rootScope.error_message = true;
                     $scope.autologin = false;

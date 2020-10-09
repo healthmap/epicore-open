@@ -209,7 +209,7 @@ class UserInfo
     {
         $email = strip_tags($dbdata['email']);
         // first try the HealthMap database
-        $db = getDB('hm');
+        $db = getDB();
         $user = $db->getRow("SELECT hmu_id, username, email, pword_hash FROM hmu WHERE (username = ? OR email = ?) AND confirmed = 1", array($email, $email));
         $resp = validate_password($dbdata['password'], $user['pword_hash']);
         
