@@ -63,12 +63,18 @@ angular.module('EpicoreApp.controllers2', []).
 
         $scope.location_error_message = '';
         $scope.saveLocation = function (direction) {
-            
+
+            // console.log('In saveLocation dir:', direction);
+            // console.log('In saveLocation eventID:', $scope.rfiData.event_id);
+            // console.log('In saveLocation location:', $scope.rfiData.location);
+            // console.log('In saveLocation location-location:', $scope.rfiData.location.location);
+            // console.log('In saveLocation autoText:', $("#autocompleteText").val());
             // jquery hack to get the latlon hidden value and autocomplete for location (angular bug)
             //$scope.rfiData.location.latlon = $("#default_location").val();
             //$scope.rfiData.location.location = $("#searchTextField").val(); // format: "country" or "state, country" or "city, state, country"
             // only use google places for new events
-            if (!$scope.rfiData.event_id) {
+            //if (!$scope.rfiData.event_id) {
+            if($("#autocompleteText").val() != undefined && $("#autocompleteText").val() != '') {
                 $scope.rfiData.location.latlon = getPlaceLatLon($scope.rfiData.place);
                 $scope.rfiData.location.location = $("#autocompleteText").val();
 
@@ -80,26 +86,27 @@ angular.module('EpicoreApp.controllers2', []).
             }
 
             // get city, state, country from location string
-            var mylocation = $scope.rfiData.location.location.split(",");
-            if (mylocation.length == 4) {
-                $scope.rfiData.default_city = mylocation[1];
-                $scope.rfiData.default_state = mylocation[2];
-                $scope.rfiData.default_country = mylocation[3];
-                $scope.rfiData.location.location = mylocation[1] + ',' + mylocation[2] + ',' + mylocation[3]; // set location to only city,state,country
-            } else if (mylocation.length == 3) {
-                $scope.rfiData.default_city = mylocation[0];
-                $scope.rfiData.default_state = mylocation[1];
-                $scope.rfiData.default_country = mylocation[2];
-            } else if (mylocation.length == 2) {
-                $scope.rfiData.default_city = '';
-                $scope.rfiData.default_state = mylocation[0];
-                $scope.rfiData.default_country = mylocation[1];
-            } else if (mylocation.length == 1) {
-                $scope.rfiData.default_city = '';
-                $scope.rfiData.default_state = '';
-                $scope.rfiData.default_country = mylocation[0];
+            if($scope.rfiData.location.location) {
+                var mylocation = $scope.rfiData.location.location.split(",");
+                if (mylocation.length == 4) {
+                    $scope.rfiData.default_city = mylocation[1];
+                    $scope.rfiData.default_state = mylocation[2];
+                    $scope.rfiData.default_country = mylocation[3];
+                    $scope.rfiData.location.location = mylocation[1] + ',' + mylocation[2] + ',' + mylocation[3]; // set location to only city,state,country
+                } else if (mylocation.length == 3) {
+                    $scope.rfiData.default_city = mylocation[0];
+                    $scope.rfiData.default_state = mylocation[1];
+                    $scope.rfiData.default_country = mylocation[2];
+                } else if (mylocation.length == 2) {
+                    $scope.rfiData.default_city = '';
+                    $scope.rfiData.default_state = mylocation[0];
+                    $scope.rfiData.default_country = mylocation[1];
+                } else if (mylocation.length == 1) {
+                    $scope.rfiData.default_city = '';
+                    $scope.rfiData.default_state = '';
+                    $scope.rfiData.default_country = mylocation[0];
+                }
             }
-
             
             // console.log('--:' + $scope.rfiData.default_city);
             // console.log('--:' + $scope.rfiData.default_state);
@@ -113,7 +120,7 @@ angular.module('EpicoreApp.controllers2', []).
                 // if ((direction === 'next') && $scope.rfiData.event_id) {
                 //     //   $location.path('/time'); // go to Time form if event id is passed in
                 // } else if ((direction === 'next') && !$scope.rfiData.event_id) {
-                if ((direction === 'next') && $scope.rfiData.event_id) {
+                if ((direction === 'next') && !$scope.rfiData.event_id) {
                     // Get filtered members at initial location or if the location has changed
                     if ((typeof ($scope.rfiData.members) == 'undefined') || ($scope.rfiData.members.location != $scope.rfiData.location.location)) {
 
@@ -127,7 +134,7 @@ angular.module('EpicoreApp.controllers2', []).
                         $scope.rfiData.members.location = $scope.rfiData.location.location;
                         $scope.rfiData.members.display_location = "(" + $("#autocompleteText").val() + ")";
                         $scope.rfiData.members.latlon = $scope.rfiData.location.latlon;
-
+                        // console.log('In saveLocation-rfiData:', $scope.rfiData);
                         // get filtered members at chosen location with default radius
                         fdata = {};
                         fdata.location = $scope.rfiData.members.location;
@@ -135,6 +142,7 @@ angular.module('EpicoreApp.controllers2', []).
                         $http({
                             url: urlBase + 'scripts/filter.php', method: "POST", data: fdata
                         }).success(function (data, status, headers, config) {
+                            // console.log('In saveLocation-filterData:', data);
                             $scope.rfiData.members.userIds = data['userIds'];
                             $scope.rfiData.members.numFetps = data['userList']['sending'];
                             $scope.rfiData.members.numUniqueFetps = data['uniqueList']['sending'];
@@ -213,7 +221,7 @@ angular.module('EpicoreApp.controllers2', []).
 
         /* get members based on selection type */
         $scope.recalcUsers = function (whichclicked) {
-            console.log("Clicked !!!!", $scope.rfiData, " Which Click -> ", whichclicked)
+            // console.log("Clicked !!!!", $scope.rfiData, " Which Click -> ", whichclicked)
             $scope.saveLocation('next');
 
             $scope.rfiData.members.searchType = whichclicked;
@@ -224,7 +232,7 @@ angular.module('EpicoreApp.controllers2', []).
             $http({
                 url: urlBase + 'scripts/filter.php', method: "POST", data: $scope.rfiData.members //filterData
             }).success(function (filtereddata, status, headers, config) {
-                console.log("Filtered Data ====> ", filtereddata);
+                // console.log("Filtered Data ====> ", filtereddata);
                 $scope.rfiData.members.userIds = filtereddata['userIds'];
                 $scope.rfiData.members.numFetps = filtereddata['userList']['sending'];
                 $scope.rfiData.members.numUniqueFetps = filtereddata['uniqueList']['sending'];
@@ -1056,7 +1064,7 @@ angular.module('EpicoreApp.controllers2', []).
 
 
                 //formData['duplicate_rfi_id'] = ($scope.rfiData.duplicate_rfi && $scope.rfiData.duplicate_rfi.rfi_id) ? $scope.rfiData.duplicate_rfi.rfi_id : 0;
-                // console.log("Form data before posting to SendReq2 ---> ", formData);
+                console.log("Form data before posting to SendReq2 ---> ", formData);
                 $http({
                     url: urlBase + 'scripts/sendrequest2.php', method: "POST", data: formData
                 }).success(function (respdata, status, headers, config) {
@@ -1065,7 +1073,6 @@ angular.module('EpicoreApp.controllers2', []).
                     // go to success page
                     $location.path('/sent');
                     $scope.submitDisabled = false;
-
                 });
 
             } else if (direction === 'back') {
