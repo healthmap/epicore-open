@@ -46,7 +46,7 @@ app.config(function ($routeProvider) {
         when("/events", { templateUrl: "partials/events.html?cb=" + cacheBustSuffix, controller: "eventsController" }).
         when("/events2", { templateUrl: "partials/events2.html?cb=" + cacheBustSuffix, controller: "eventsController2" }).
         when("/events_public", { templateUrl: "partials/events_public.html?cb=" + cacheBustSuffix, controller: "eventsController2" }).
-        // when("/events_public/articles/:articleID", { templateUrl: "partials/publicrfi.html?cb=" + cacheBustSuffix, controller: "publicRFIController" }).
+        when("/events_public/articles/:articleID", { templateUrl: "partials/publicrfi.html?cb=" + cacheBustSuffix, controller: "publicRFIController" }).
         when("/events_public/articles/:articleID", { templateUrl: "partials/publicEventsRFI.html?cb=" + cacheBustSuffix, controller: "eventsController2" }).
         when("/map", { templateUrl: "partials/map.html?cb=" + cacheBustSuffix, controller: "mapController" }).
         when("/events/closed", { templateUrl: "partials/events.html?cb=" + cacheBustSuffix, controller: "eventsController" }).

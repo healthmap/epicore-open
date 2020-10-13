@@ -21,7 +21,13 @@ angular.module('EpicoreApp.services', [])
             if (epicoreVersion == '2') {
                 redirloc = urlarr[1] == "fetp" && typeof(urlarr[3]) != "undefined" ? '/events2/' + urlarr[3] : '/events2';
             }
-            redirloc = ($rootScope.userinfo['fetp_id'] && ($rootScope.userinfo['active'] == 'N')) ? "home" : redirloc; // go to home page if not active fetp
+
+            // redirloc = ($rootScope.userinfo['fetp_id'] && ($rootScope.userinfo['active'] == 'N')) ? "home" : redirloc; // go to home page if not active fetp
+            if($rootScope.userinfo != undefined) {
+                redirloc = ($rootScope.userinfo['fetp_id'] && ($rootScope.userinfo['active'] == 'N')) ? "home" : redirloc; // go to home page if not active fetp                
+            }
+            // console.log('redirloc-2:' + redirloc);
+            
             if(authService.isAuthenticated() && ($location.path() == "/home" || urlarr[1] == "fetp")) $location.path(redirloc);
         });
     }])
@@ -37,6 +43,7 @@ angular.module('EpicoreApp.services', [])
     .factory('eventAPIservice', function($http, $rootScope, $location, urlBase) {
         var eventAPI = {};
         eventAPI.getEvents = function(event_id) {
+
             var qs = event_id ? '&event_id='+event_id : '';
             if(typeof($rootScope.userinfo['uid']) == "undefined") {
                 qs += "&fetp_id="+$rootScope.userinfo['fetp_id'];
@@ -65,7 +72,7 @@ angular.module('EpicoreApp.services', [])
             } else {
                 qs += "&uid="+$rootScope.userinfo['uid'];
             }*/
-
+            
             if((typeof($rootScope.userinfo) == "undefined") || $rootScope.dashboardType == 'PR') {
                // get events for public view
                 qs +="&public=1"
@@ -84,10 +91,13 @@ angular.module('EpicoreApp.services', [])
             if(typeof(urlarr[2]) != "undefined") {
                 qs += "&detail="+urlarr[2]; // closed
             }
+            // console.log("qs is:", qs);
+            //scripts/EventsAPI2.php?auth=true&callback=JSON_CALLBACK&uid=135&start_date=2017-10-30&end_date=2020-10-02&from=events2
             return $http({
                 method: 'JSONP',
                 url: urlBase + 'scripts/EventsAPI2.php?auth=true&callback=JSON_CALLBACK'+qs
             });
+            
         }
         return eventAPI;
     })

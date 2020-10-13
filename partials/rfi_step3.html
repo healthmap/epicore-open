@@ -14,6 +14,7 @@
                     <span style="float: left;"><h2 class="mb0 more-space">Step 3: Request Details</h2></span>
                     <span style="float: right;"><a href ng-click="clearRequest()" class="btn btn-transparent">Clear RFI</a></span>
                 </div>
+
                 <div class="form-group more-space">
                     <label class="mb0">Is this RFI a Verification or an Update? <i data-toggle="tooltip" class="hide tooltip-icon fa fa-info-circle" title="Select Verification if this is the first report of a PHE (or officially reported) or Update to gather additional details on an ongoing verified or officially confirmed PHE"></i></label>
                     <div class="more-space form-group">
@@ -21,7 +22,7 @@
                             <label class="radio"><input type="radio" ng-model="rfiData.purpose.purpose" value="V" ng-required="!goback && !rfiData.purpose.purpose" ng-click="checkPurpose();"> Verification (First Report of an Event)</label>
                         </div>
                         <div class="radio">
-                            <label class="radio"> <input type="radio" ng-model="rfiData.purpose.purpose" value="U" ng-required="!goback !rfiData.purpose.purpose" ng-click="checkPurpose();"> Update (Request for Information About a Verified Event)</label>
+                            <label class="radio"> <input type="radio" ng-model="rfiData.purpose.purpose" value="U" ng-required="!goback && !rfiData.purpose.purpose" ng-click="checkPurpose();"> Update (Request for Information About a Verified Event)</label>
                         </div>
                     </div>
 

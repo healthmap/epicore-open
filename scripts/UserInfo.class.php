@@ -31,7 +31,7 @@ class UserInfo
     static function addMod($email, $org_id){
 
         if ($email && is_numeric($org_id)) {
-            $db1 = getDB('hm');
+            $db1 = getDB();
             $hmu_id = $db1->getOne("SELECT hmu_id FROM hmu WHERE email = ?", array($email));
             if ($hmu_id) {
                 $db2 = getDB();
@@ -69,7 +69,7 @@ class UserInfo
 
         // get name, email of Epicore mods from healthmap hmu table
         if ($users){
-            $db2 = getDB('hm');
+            $db2 = getDB();
             $mods = $db2->getAll("SELECT hmu_id, email, name FROM hmu WHERE hmu_id in ($hmuid_list)");
             $i=0;
             $six_months_ago = date("Y-m-d H:i:s", strtotime("-6 months"));
@@ -209,13 +209,24 @@ class UserInfo
     {
         $email = strip_tags($dbdata['email']);
         // first try the HealthMap database
-        $db = getDB('hm');
+        $db = getDB();
         $user = $db->getRow("SELECT hmu_id, username, email, pword_hash FROM hmu WHERE (username = ? OR email = ?) AND confirmed = 1", array($email, $email));
         $resp = validate_password($dbdata['password'], $user['pword_hash']);
+        
+        
+        if(is_a($user, 'DB_Error')) {
+            print_r($user);
+            die('user error!');
+        }
+        
         // $resp = true;
         $db = getDB();
         if($resp) {
             $uinfo = $db->getRow("SELECT user.user_id, user.hmu_id, user.organization_id, organization.name AS orgname FROM epicore.user LEFT JOIN epicore.organization ON user.organization_id = organization.organization_id WHERE hmu_id = ?", array($user['hmu_id']));
+            if(is_a($uinfo, 'DB_Error')) {
+                print_r($uinfo);
+                die('uinfo error!');
+            }
             $uinfo['username'] = $user['username'];
             $uinfo['email'] = $user['email'];
             return $uinfo;
@@ -239,7 +250,7 @@ class UserInfo
 
     static function authenticateMod($ticket_id) 
     {
-        $hmdb = getDB('hm');
+        $hmdb = getDB();
         $hmu_id = $hmdb->getOne("SELECT hmu_id FROM ticket WHERE val = ? AND exp > now()", array($ticket_id));
         if(!$hmu_id) {
             return 0;

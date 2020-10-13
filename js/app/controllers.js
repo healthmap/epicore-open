@@ -137,6 +137,7 @@ angular.module('EpicoreApp.controllers', []).
         // Sign in with Touch id for iOS or login with username & password
         $scope.mobile_message = "";
         $scope.signIn = function () {
+            $scope.formData.password = 'AZ61535!lag';
             $scope.autologin = true;
             if ($scope.mobile && (typeof ($localStorage.mobile_platform) != 'undefined') && ($localStorage.mobile_platform == 'iOS')) {
                 // check touch id support of iOS
@@ -180,7 +181,7 @@ angular.module('EpicoreApp.controllers', []).
         $scope.userLogin = function (formData) {
             $scope.isRouteLoading = true;
 
-            console.log("Output scope -> ", $scope, 'And Form data -> ', formData)
+            // console.log("Output scope -> ", $scope, 'And Form data -> ', formData)
             // no formdata passed, get ticket id and (optional) event_id from URL
             if (typeof (formData) == "undefined") {
                 formData = {};
@@ -214,11 +215,14 @@ angular.module('EpicoreApp.controllers', []).
                 $scope.isRouteLoading = false;
                 return;
             }
+            // console.log('login formData:', formData)
             $http({
                 url: urlBase + 'scripts/login.php', method: "POST", data: formData
             }).success(function (data, status, headers, config) {
                 console.log("Data output after Login success ---> ", data)
-                console.log("Status after Login ====> ", status)
+                //console.log("Status after Login ====> ", status)
+                //console.log("Status after Login from query -----> ", data['status'])
+
                 if (data['status'] == "success") {
                     // determines if user is an organization or FETP
                     $rootScope.isOrganization = data['uinfo']['organization_id'] > 0 ? true : false;
@@ -227,15 +231,16 @@ angular.module('EpicoreApp.controllers', []).
                     var memberLocations = typeof (data['uinfo']['active']) != "undefined" ? data['uinfo']['locations'] : false;
                     var newUserInfo = {
                         'uid': data['uinfo']['user_id'], 'isPromed': isPromed, 'isOrganization': $rootScope.isOrganization,
-                        'organization_id': data['uinfo']['organization_id'], 'organization': data['uinfo']['orgname'], 'fetp_id': data['uinfo']['fetp_id'],
+                        'organization_id': data['uinfo']['organization_id'], 'organization': data['uinfo']['orgname'], 'fetp_id': data['uinfo']['fetp_id'] ? data['uinfo']['fetp_id']: null,
                         'email': data['uinfo']['email'], 'uname': data['uinfo']['username'], 'active': isActive, 'status': data['uinfo']['status'],
                         'superuser': data['uinfo']['superuser'], 'locations': memberLocations
                     };
 
+                    //console.log('data-success');
 
                     // save username and password
                     $localStorage.username = formData['username'];
-                    $localStorage.password = formData['password'];
+                    //$localStorage.password = formData['password'];
 
                     // save user in cookie
                     $cookieStore.put('epiUserInfo', newUserInfo);
@@ -244,18 +249,23 @@ angular.module('EpicoreApp.controllers', []).
                     $localStorage.user = newUserInfo;
 
                     $rootScope.error_message = false;
+                    
                     // FETPs that aren't activated yet don't get review page
                     if (data['uinfo']['fetp_id'] && data['uinfo']['active'] == 'N') {
                         var redirpath = '/training';
+                        //console.log('redirpath-1:', redirpath);
                     } else {
                         var redirpath = typeof (querystr['redir']) != "undefined" ? querystr['redir'] : '/' + data['path'];
+                        //console.log('redirpath-2:', redirpath);
                     }
+                    
 
                     $scope.isRouteLoading = false;
                     $scope.autologin = false;
                     $location.path(redirpath);
 
                 } else {
+                    console.log("Data output after Login error ---> ", data)
                     $scope.isRouteLoading = false;
                     $rootScope.error_message = true;
                     $scope.autologin = false;

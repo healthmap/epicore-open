@@ -4,8 +4,9 @@
  * Sue Aman 2014-01-31
  */
 
-require_once('DB.php');
-require_once('const.inc.php');
+ require_once(dirname(__FILE__).'/DB/DB.php');
+ require_once('const.inc.php');
+ 
 
 function getDB($which = '')
 {
@@ -13,7 +14,11 @@ function getDB($which = '')
     if(!is_object($db)) {
         $opts = parse_ini_file(dirname(__FILE__) . '/conf/da.ini.php', true);
         $which = $which ? $which : 'epicore_db';
+        //echo 'db name:';
+        //echo $which;
+        //echo '-----db name:';
         $dsn = $opts[$which];
+        
         $db =& DB::connect($dsn);
         if ($which == 'epicore_db')
             $db->connection->set_charset("utf8");

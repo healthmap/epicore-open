@@ -180,7 +180,7 @@ class EventInfo
         if ($users) {
 
             // get email for user from hm database
-            $hmdb = getDB('hm');
+            $hmdb = getDB();
 
             $followers = array();
             foreach ($users as $user){
@@ -407,6 +407,9 @@ class EventInfo
         $ei = new EventInfo($this->id);
         $event_info = $ei->getInfo();
 
+        if(!$message) {
+            $messages = [];
+        }
         // add event request to messages
         $size = count($messages);
         $messages[$size]['date'] = date('j-M-Y H:i', strtotime($event_info['create_date']));
@@ -439,7 +442,7 @@ class EventInfo
         if($user_info['email']) {
             $initiator['email'] = $user_info['email'];
         } else { // get it from the healthmap db
-             $hmdb = getDB('hm');
+             $hmdb = getDB();
              $initiator['email'] = $hmdb->getOne("SELECT email FROM hmu WHERE hmu_id = ?", array($user_info['hmu_id']));
         }
         return $initiator;
@@ -459,7 +462,7 @@ class EventInfo
                 $to[$i++]['organization_id']= $moderator['organization_id'];
             }
             else{// get it from the healthmap db
-                $hmdb = getDB('hm');
+                $hmdb = getDB();
                 $to[$i]['email'] = $hmdb->getOne("SELECT email FROM hmu WHERE hmu_id = ?", array($moderator['hmu_id']));
                 $to[$i]['name'] = $hmdb->getOne("SELECT name FROM hmu WHERE hmu_id = ?", array($moderator['hmu_id']));
                 $to[$i++]['organization_id'] = 1;
@@ -680,8 +683,11 @@ class EventInfo
             return 'invalid requester id or invalid event_id';
         }
 
+
         $db = getDB();
         $eid = $db->getOne("SELECT event_id FROM event WHERE event_id = ? ", array($darr['event_id']));
+
+
         if ($eid) {
 
             // update location
@@ -702,10 +708,13 @@ class EventInfo
                 $db->commit();
             }
 
+            
             // update related event tables
             $status = 'failed event table';
             foreach ($event_table as $table_name => $table) {
+                
                 $table_id = EventInfo::replaceEventTable($table_name, $table);
+
                 if (is_numeric($table_id)) {
                     $status = $eid;     // success
                 } else {
@@ -766,21 +775,23 @@ class EventInfo
         $emailtext = str_replace("[EPICORE_URL]", EPICORE_URL, $emailtext);
 
         // custom var substitutions 
-        foreach($custom_vars as $varname => $varval) {
-            if (($varname == 'RESPONSE_TEXT') || ($varname == 'NOTES'))
-                $varval = nl2br($varval); //"<pre>$varval</pre>";
-            if ($varname == 'RESPONSE_PERMISSION'){ // add traffic light to permissions
-                if($varval == $response_permission_lu[1]){
-                    $varval = $permission_img[1] . $varval;
+        if($custom_vars) {
+            foreach($custom_vars as $varname => $varval) {
+                if (($varname == 'RESPONSE_TEXT') || ($varname == 'NOTES'))
+                    $varval = nl2br($varval); //"<pre>$varval</pre>";
+                if ($varname == 'RESPONSE_PERMISSION'){ // add traffic light to permissions
+                    if($varval == $response_permission_lu[1]){
+                        $varval = $permission_img[1] . $varval;
+                    }
+                    else if($varval == $response_permission_lu[2]){
+                        $varval = $permission_img[2] . $varval;
+                    }
+                    if($varval == $response_permission_lu[3]){
+                        $varval = $permission_img[3] . $varval;
+                    }
                 }
-                else if($varval == $response_permission_lu[2]){
-                    $varval = $permission_img[2] . $varval;
-                }
-                if($varval == $response_permission_lu[3]){
-                    $varval = $permission_img[3] . $varval;
-                }
+                $emailtext = str_replace("[$varname]", $varval, $emailtext);
             }
-            $emailtext = str_replace("[$varname]", $varval, $emailtext);
         }
 
         if(isset($this)) {
@@ -793,6 +804,9 @@ class EventInfo
             // save the email contents in the temp directory for reference- if one is passed in, overwrite it
             $filename = isset($this) ? $this->id : date('YmdHis');
             $file_preview = EMAILPREVIEWS . "$type/$filename" . ".html";
+            // echo '----filepreview:';
+            // print_r($file_preview);
+            // echo '----filepreview:';
             file_put_contents("../$file_preview", $emailtext);
             return $file_preview;
         }
@@ -876,6 +890,7 @@ class EventInfo
                           ORDER BY event.create_date DESC", array($start_date, $end_date));
 
         while($row = $q->fetchRow()) {
+
             // get the current status - open or closed
             $dbstatus = $db->getOne("SELECT status FROM event_notes WHERE event_id = ? ORDER BY action_date DESC LIMIT 1", array($row['event_id']));
             $dbstatus = $dbstatus ? $dbstatus : 'O'; // if no value for status, it's open
@@ -1022,7 +1037,6 @@ class EventInfo
                 }
             }
         }
-
         return $events;
     }
 
@@ -1352,6 +1366,7 @@ class EventInfo
     // returns table id if replaced, or an error message if there is an replace error.
     static function replaceEventTable($table_name,$table)
     {
+       
         // check valid table name
         $valid_table = ($table_name == 'population' || $table_name == 'health_condition' || $table_name == 'purpose' || $table_name == 'source' || $table_name == 'event_metrics');
         if (!$valid_table) {
@@ -1381,7 +1396,8 @@ class EventInfo
             }
         } else {
             $q2 = "REPLACE INTO {$table_name} ({$key_vals}) VALUES ({$qmarks})"; 
-            $res = $db->query($q2, $qvals);           
+            $res = $db->query($q2, $qvals);  
+
         }
         
         // check that result is not an error
@@ -1390,19 +1406,9 @@ class EventInfo
             return 'database replace error.';
         } else {
             $table_id = $db->getOne("SELECT LAST_INSERT_ID()");
+            // print_r($table_id);
             $db->commit();
-            /*  
-                **********************************************************
-                    Added by Sam, Ch157135. For new insert, table id will
-                    be the new row id. But on an update it will be 0.
-                **********************************************************
-            */
-            if($table_id == 0){
-                return $pvals['event_metrics_id'];
-            } else {
-                return $table_id;
-            }
-            
+            return $table_id;
         }
     }
 
@@ -1763,10 +1769,11 @@ class EventInfo
         }
 
         // sort messages by date
-       usort($messages, function($a, $b) {
-            return strtotime($b['date']) - strtotime($a['date']);
-        });
-
+        if($messages) {
+            usort($messages, function($a, $b) {
+                return strtotime($b['date']) - strtotime($a['date']);
+            });
+        } 
         return $messages;
     }
 
@@ -1837,7 +1844,7 @@ class EventInfo
         $hmu_id = $row['hmu_id'];
 
         // get user from hmu_id in hm database
-        $db = getDB('hm');
+        $db = getDB();
         $user = $db->getRow(" select name, username, email from hmu where hmu_id='$hmu_id'");
         $user['user_id'] = $row['user_id'];
         $user['organization_id'] = $row['organization_id'];
@@ -1857,7 +1864,7 @@ class EventInfo
         $hmu_id = $row['hmu_id'];
 
         // get user from hmu_id in hm database
-        $db = getDB('hm');
+        $db = getDB();
         $user = $db->getRow(" select name, username, email from hmu where hmu_id='$hmu_id'");
         $user['user_id'] = $row['user_id'];
         $user['organization_id'] = $row['organization_id'];
@@ -1877,7 +1884,7 @@ class EventInfo
         $hmu_id = $row['hmu_id'];
 
         // get user from hmu_id in hm database
-        $db = getDB('hm');
+        $db = getDB();
         $user = $db->getRow(" select name, username, email from hmu where hmu_id='$hmu_id'");
         $user['user_id'] = $row['user_id'];
         $user['organization_id'] = $row['organization_id'];
