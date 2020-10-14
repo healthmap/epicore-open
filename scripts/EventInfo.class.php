@@ -52,6 +52,9 @@ class EventInfo
         // phe additional info
         $event_info['phe_additional'] = $this->db->getOne("SELECT phe_additional FROM purpose WHERE event_id = ?", array($this->id));
 
+        //echo '*****eventInfo:';
+        //print_r($event_info);
+        //echo '*****eventInfo:';
         return $event_info;
     }
 
@@ -186,7 +189,7 @@ class EventInfo
             foreach ($users as $user){
                 $hmuid = $user['hmu_id'];
                 $userid = $user['user_id'];
-                $email = $hmdb->getOne("SELECT email FROM hmu WHERE hmu_id = '$hmuid'");
+                $email = $hmdb->getOne("SELECT email from hm.hmu WHERE hmu_id = '$hmuid'");
                 if ($email) {
                     $followers[] = ['email' => $email, 'user_id' =>$userid, 'hmu_id' =>$hmuid];
                 }
@@ -437,13 +440,13 @@ class EventInfo
     }
 
     function getInitiatorEmail() {
-        $user_info = $this->db->getRow("SELECT user.email, user.hmu_id, user.user_id FROM user, event WHERE event_id = ? AND event.requester_id = user.user_id", array($this->id));
+        $user_info = $this->db->getRow("SELECT user.email, user.hmu_id, user.user_id FROM epicore.user, event WHERE event_id = ? AND event.requester_id = user.user_id", array($this->id));
         $initiator['user_id'] = $user_info['user_id'];
         if($user_info['email']) {
             $initiator['email'] = $user_info['email'];
         } else { // get it from the healthmap db
              $hmdb = getDB();
-             $initiator['email'] = $hmdb->getOne("SELECT email FROM hmu WHERE hmu_id = ?", array($user_info['hmu_id']));
+             $initiator['email'] = $hmdb->getOne("SELECT email from hm.hmu WHERE hmu_id = ?", array($user_info['hmu_id']));
         }
         return $initiator;
     }
@@ -463,8 +466,8 @@ class EventInfo
             }
             else{// get it from the healthmap db
                 $hmdb = getDB();
-                $to[$i]['email'] = $hmdb->getOne("SELECT email FROM hmu WHERE hmu_id = ?", array($moderator['hmu_id']));
-                $to[$i]['name'] = $hmdb->getOne("SELECT name FROM hmu WHERE hmu_id = ?", array($moderator['hmu_id']));
+                $to[$i]['email'] = $hmdb->getOne("SELECT email from hm.hmu WHERE hmu_id = ?", array($moderator['hmu_id']));
+                $to[$i]['name'] = $hmdb->getOne("SELECT name from hm.hmu WHERE hmu_id = ?", array($moderator['hmu_id']));
                 $to[$i++]['organization_id'] = 1;
             }
         }
@@ -475,7 +478,7 @@ class EventInfo
 
     function changeStatus($status, $requester_id, $notes, $reason, $superuser = false) {
         $initiator_oid = $this->db->getOne("SELECT user.organization_id FROM event, user WHERE event_id = ? AND event.requester_id = user.user_id", array($this->id));
-        $requester_oid = $this->db->getOne("SELECT organization_id FROM user WHERE user_id = ?", array($requester_id));
+        $requester_oid = $this->db->getOne("SELECT organization_id FROM epicore.user WHERE user_id = ?", array($requester_id));
         if(($requester_oid == $initiator_oid) || $superuser) {
             $notes = strip_tags($notes);
             $this->db->query("INSERT INTO event_notes (event_id, action_date, note, reason, status, requester_id) VALUES (?,?,?,?,?,?)",
@@ -804,9 +807,9 @@ class EventInfo
             // save the email contents in the temp directory for reference- if one is passed in, overwrite it
             $filename = isset($this) ? $this->id : date('YmdHis');
             $file_preview = EMAILPREVIEWS . "$type/$filename" . ".html";
-            // echo '----filepreview:';
-            // print_r($file_preview);
-            // echo '----filepreview:';
+            // //echo '----filepreview:';
+            // //print_r($file_preview);
+            // //echo '----filepreview:';
             file_put_contents("../$file_preview", $emailtext);
             return $file_preview;
         }
@@ -883,14 +886,25 @@ class EventInfo
         $end_date = $edate ? $edate: date("Y-m-d H:i:s");
         $db = getDB();
         $oid = $db->getOne("SELECT organization_id FROM epicore.user WHERE user_id = ?", array($uid));
+        //echo '$oid:';
+        //print_r($oid);
+        //echo '-----$oid:';
         $status = $status ? $status : 'O'; // if status is not passed in, get open events
         // join on the event_fetp table b/c if there is no row in there, the request was never sent (may have been started, but didn't get sent
         $q = $db->query("SELECT DISTINCT(event.event_id), event.*, place.name AS location, place.location_details FROM epicore.place, epicore.event, epicore.event_fetp 
                           WHERE event.place_id = place.place_id AND event.event_id = event_fetp.event_id AND event.create_date >= ? AND event.create_date <= ?
                           ORDER BY event.create_date DESC", array($start_date, $end_date));
 
+        //echo '$q:';
+        //print_r($q);
+        //echo '-----$q:';
+
+
         while($row = $q->fetchRow()) {
 
+            //echo '###eventID:';
+            //print_r($row['event_id']);
+            //echo '###eventID:';
             // get the current status - open or closed
             $dbstatus = $db->getOne("SELECT status FROM event_notes WHERE event_id = ? ORDER BY action_date DESC LIMIT 1", array($row['event_id']));
             $dbstatus = $dbstatus ? $dbstatus : 'O'; // if no value for status, it's open
@@ -918,7 +932,7 @@ class EventInfo
             $row['action_date'] = date('j-M-Y', strtotime($row['action_date']));
 
             // get organization id for the event
-            $row['organization_id'] = $db->getOne("SELECT organization_id FROM user WHERE user.user_id = ?", array($row['requester_id']));
+            $row['organization_id'] = $db->getOne("SELECT organization_id FROM epicore.user WHERE user.user_id = ?", array($row['requester_id']));
 
             // get organization name
             $row['organization_name'] = $db->getOne("SELECT name FROM organization WHERE organization_id = ?", array($row['organization_id']));
@@ -946,6 +960,9 @@ class EventInfo
             $row['metric_action'] = $db->getOne("SELECT action FROM event_metrics WHERE event_id = ?", array($row['event_id']));
 
             // get population, health conditions, source and purpose
+            //echo '****eventID:';
+            //print_r($row['event_id']);
+            //echo '****eventID:';
             $ei = new EventInfo($row['event_id']);
             $event_info = $ei->getInfo();
             $row['affected_population'] = $event_info['population'];
@@ -1024,9 +1041,13 @@ class EventInfo
                 $events['yours'][] = $row;
                 $events['yourorg_you'][] = $row;
                 $events['all'][] = $row;
+                //echo '$events:';
+                //print_r($events);
+                //echo '-----$events:';
+        
             } else {
                 // get the organization of the user and that of the initiator of the request
-                $oid_of_requester = $db->getOne("SELECT organization_id FROM user WHERE user_id = ?", array($row['requester_id']));
+                $oid_of_requester = $db->getOne("SELECT organization_id FROM epicore.user WHERE user_id = ?", array($row['requester_id']));
                 if($oid && $oid == $oid_of_requester) {
                     $events['yourorg'][] = $row;
                     $events['yourorg_you'][] = $row;
@@ -1035,8 +1056,13 @@ class EventInfo
                     $events['other'][] = $row;
                     $events['all'][] = $row;
                 }
+                //echo '**$events:';
+                //print_r($events);
+                //echo '-----$events:';
             }
         }
+
+
         return $events;
     }
 
@@ -1171,7 +1197,7 @@ class EventInfo
         $inactive_mods = array();
         foreach($all_mods as $mod){
             $hmuid = $mod['hmu_id'];
-            $uid = $db->getOne("SELECT user_id FROM user WHERE hmu_id = '$hmuid'");
+            $uid = $db->getOne("SELECT user_id FROM epicore.user WHERE hmu_id = '$hmuid'");
             $events = self::getInactiveEvents($uid, $active_date);
             if ($events) {
                 $inactive_mods[] = array('email'=> $mod['email'], 'name' => $mod['name'], 'user_id' => $uid, 'events' => $events);
@@ -1191,7 +1217,7 @@ class EventInfo
         $inactive_mods = array();
         foreach($all_mods as $mod){
             $hmuid = $mod['hmu_id'];
-            $uid = $db->getOne("SELECT user_id FROM user WHERE hmu_id = '$hmuid'");
+            $uid = $db->getOne("SELECT user_id FROM epicore.user WHERE hmu_id = '$hmuid'");
             $events = self::getInactiveEvents2($uid, $active_date);
             if ($events) {
                 $inactive_mods[] = array('email'=> $mod['email'], 'name' => $mod['name'], 'user_id' => $uid, 'events' => $events);
@@ -1406,7 +1432,7 @@ class EventInfo
             return 'database replace error.';
         } else {
             $table_id = $db->getOne("SELECT LAST_INSERT_ID()");
-            // print_r($table_id);
+            // //print_r($table_id);
             $db->commit();
             return $table_id;
         }
@@ -1417,7 +1443,7 @@ class EventInfo
         $table_name = 'event_metrics';
         $table_id = EventInfo::replaceEventTable($table_name, $table_data);
         // print("*********** TABLE ID in UpdateEventMetrics Function ***********");
-        // print_r($table_id);
+        // //print_r($table_id);
         if (is_numeric($table_id)) {
             $status = $table_id;     // success
         } else {
@@ -1843,9 +1869,9 @@ class EventInfo
         $row = $db->getRow("select hmu_id, user_id, organization_id, email from event, user where requester_id=user_id and (event_id=?)", array($event_id));
         $hmu_id = $row['hmu_id'];
 
-        // get user from hmu_id in hm database
+        // get user from hm.hmu_id in hm database
         $db = getDB();
-        $user = $db->getRow(" select name, username, email from hmu where hmu_id='$hmu_id'");
+        $user = $db->getRow(" select name, username, email from hm.hmu where hmu_id='$hmu_id'");
         $user['user_id'] = $row['user_id'];
         $user['organization_id'] = $row['organization_id'];
         if ($row['email']) {
@@ -1863,9 +1889,9 @@ class EventInfo
                             and event_id=? and requester_id= ?", array($event_id, $requester_id));
         $hmu_id = $row['hmu_id'];
 
-        // get user from hmu_id in hm database
+        // get user from hm.hmu_id in hm database
         $db = getDB();
-        $user = $db->getRow(" select name, username, email from hmu where hmu_id='$hmu_id'");
+        $user = $db->getRow(" select name, username, email from hm.hmu where hmu_id='$hmu_id'");
         $user['user_id'] = $row['user_id'];
         $user['organization_id'] = $row['organization_id'];
         if ($row['email']) {
@@ -1883,9 +1909,9 @@ class EventInfo
                             and event_id=? and requester_id= ?", array($event_id, $requester_id));
         $hmu_id = $row['hmu_id'];
 
-        // get user from hmu_id in hm database
+        // get user from hm.hmu_id in hm database
         $db = getDB();
-        $user = $db->getRow(" select name, username, email from hmu where hmu_id='$hmu_id'");
+        $user = $db->getRow(" select name, username, email from hm.hmu where hmu_id='$hmu_id'");
         $user['user_id'] = $row['user_id'];
         $user['organization_id'] = $row['organization_id'];
         if ($row['email']) {
