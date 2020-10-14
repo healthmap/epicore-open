@@ -25,19 +25,19 @@ class UserInfo
 
     function getOrganizationId()
     {
-        return $this->db->getOne("SELECT organization_id FROM user WHERE user_id = ?", array($this->id));
+        return $this->db->getOne("SELECT organization_id FROM epicore.user WHERE user_id = ?", array($this->id));
     }
 
     static function addMod($email, $org_id){
 
         if ($email && is_numeric($org_id)) {
             $db1 = getDB();
-            $hmu_id = $db1->getOne("SELECT hmu_id FROM hmu WHERE email = ?", array($email));
+            $hmu_id = $db1->getOne("SELECT hmu_id from hm.hmu WHERE email = ?", array($email));
             if ($hmu_id) {
                 $db2 = getDB();
                 $max_org_id = 50;
                 if ($org_id >=1 and $org_id <= $max_org_id) {
-                    $hid = $db2->getOne("SELECT hmu_id FROM user WHERE hmu_id ='$hmu_id' ");
+                    $hid = $db2->getOne("SELECT hmu_id FROM epicore.user WHERE hmu_id ='$hmu_id' ");
                     if ($hid != $hmu_id) {
                         $db2->query("INSERT INTO user (organization_id, hmu_id) VALUES (?,'$hmu_id')", array($org_id));
                         $user_id = $db2->getOne("SELECT LAST_INSERT_ID()");
@@ -60,7 +60,7 @@ class UserInfo
 
         // get hmu id's from Epicore Moderators
         $db1 = getDB('');
-        $users = $db1->getAll("SELECT hmu_id, organization_id  FROM user");
+        $users = $db1->getAll("SELECT hmu_id, organization_id  FROM epicore.user");
         $hmuids = array();
         foreach ($users as $user){
             array_push($hmuids, $user['hmu_id']);
@@ -70,15 +70,15 @@ class UserInfo
         // get name, email of Epicore mods from healthmap hmu table
         if ($users){
             $db2 = getDB();
-            $mods = $db2->getAll("SELECT hmu_id, email, name FROM hmu WHERE hmu_id in ($hmuid_list)");
+            $mods = $db2->getAll("SELECT hmu_id, email, name from hm.hmu WHERE hmu_id in ($hmuid_list)");
             $i=0;
             $six_months_ago = date("Y-m-d H:i:s", strtotime("-6 months"));
             if ($mods) {
                 foreach ($mods as $mod){
                     $hmu_id = $mod['hmu_id'];
-                    $user_id = $db1->getOne("SELECT user_id FROM user WHERE hmu_id = $hmu_id");
+                    $user_id = $db1->getOne("SELECT user_id FROM epicore.user WHERE hmu_id = $hmu_id");
                     $mod['user_id'] = $user_id;
-                    $user_org_id = $db1->getOne("SELECT organization_id FROM user WHERE hmu_id = $hmu_id");
+                    $user_org_id = $db1->getOne("SELECT organization_id FROM epicore.user WHERE hmu_id = $hmu_id");
                     $mod['org_name'] = $db1->getOne("SELECT name FROM organization WHERE organization_id = ?", array($user_org_id));
                     $mod['rfi_total'] = (int)$db1->getOne("SELECT count(*) from event WHERE requester_id=?", array($user_id));
                     $mod['rfi_6months'] = (int)$db1->getOne("SELECT count(*) from event WHERE requester_id=?  AND create_date > ?", array($user_id, $six_months_ago));
@@ -134,7 +134,7 @@ class UserInfo
             $event_source_details = $this->db->getOne("SELECT details FROM source WHERE event_id = ?", array($row['event_id']));
 
             // get organization id for the event
-            $org_id = $this->db->getOne("SELECT organization_id FROM user WHERE user.user_id = ?", array($row['requester_id']));
+            $org_id = $this->db->getOne("SELECT organization_id FROM epicore.user WHERE user.user_id = ?", array($row['requester_id']));
             // get organization name
             $org_name = $this->db->getOne("SELECT name FROM organization WHERE organization_id = ?", array($org_id));
 
@@ -210,7 +210,7 @@ class UserInfo
         $email = strip_tags($dbdata['email']);
         // first try the HealthMap database
         $db = getDB();
-        $user = $db->getRow("SELECT hmu_id, username, email, pword_hash FROM hmu WHERE (username = ? OR email = ?) AND confirmed = 1", array($email, $email));
+        $user = $db->getRow("SELECT hmu_id, username, email, pword_hash from hm.hmu WHERE (username = ? OR email = ?) AND confirmed = 1", array($email, $email));
         $resp = validate_password($dbdata['password'], $user['pword_hash']);
         
         
@@ -232,7 +232,7 @@ class UserInfo
             return $uinfo;
         } else { 
             // first try the MOD user table.  If none, try the FETP user table.
-            $uinfo = $db->getRow("SELECT user.*, organization.name AS orgname FROM user LEFT JOIN organization ON user.organization_id = organization.organization_id WHERE email = ?", array($email));
+            $uinfo = $db->getRow("SELECT user.*, organization.name AS orgname FROM epicore.user LEFT JOIN organization ON user.organization_id = organization.organization_id WHERE email = ?", array($email));
             if(!$uinfo['user_id']) {
                 $uinfo = $db->getRow("SELECT fetp_id, pword_hash, lat, lon, countrycode, active, email, status, locations FROM fetp WHERE email = ?", array($email));
                 $uinfo['username'] = "Member ".$uinfo['fetp_id'];
@@ -251,13 +251,13 @@ class UserInfo
     static function authenticateMod($ticket_id) 
     {
         $hmdb = getDB();
-        $hmu_id = $hmdb->getOne("SELECT hmu_id FROM ticket WHERE val = ? AND exp > now()", array($ticket_id));
+        $hmu_id = $hmdb->getOne("SELECT hmu_id FROM hm.ticket WHERE val = ? AND exp > now()", array($ticket_id));
         if(!$hmu_id) {
             return 0;
         }
-        $user = $hmdb->getRow("SELECT hmu_id, username, email FROM hmu WHERE hmu_id = ?", array($hmu_id));
+        $user = $hmdb->getRow("SELECT hmu_id, username, email from hm.hmu WHERE hmu_id = ?", array($hmu_id));
         $db = getDB();
-        $epicore_info = $db->getRow("SELECT user.*, organization.name AS orgname FROM user LEFT JOIN organization ON user.organization_id = organization.organization_id WHERE user.hmu_id = ?", array($hmu_id));
+        $epicore_info = $db->getRow("SELECT user.*, organization.name AS orgname FROM epicore.user LEFT JOIN organization ON user.organization_id = organization.organization_id WHERE user.hmu_id = ?", array($hmu_id));
         $user['user_id'] = $epicore_info['user_id'];
         $user['organization_id'] = $epicore_info['organization_id'];
         $user['orgname'] = $epicore_info['orgname'];
@@ -267,7 +267,7 @@ class UserInfo
     static function authenticateFetp($ticket_id)
     {
         $db = getDB();
-        return $db->getRow("SELECT fetp_id FROM ticket WHERE val = ? AND exp > now()", array($ticket_id));
+        return $db->getRow("SELECT fetp_id FROM epicore.ticket WHERE val = ? AND exp > now()", array($ticket_id));
     }
 
     /* filtertype is countries or radius; filterval is either array of country codes or array of bounding box values */
