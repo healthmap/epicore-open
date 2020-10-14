@@ -410,7 +410,7 @@ class EventInfo
         $ei = new EventInfo($this->id);
         $event_info = $ei->getInfo();
 
-        if(!$message) {
+        if(!$messages) {
             $messages = [];
         }
         // add event request to messages
