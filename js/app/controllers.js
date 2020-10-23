@@ -1338,8 +1338,10 @@ angular.module('EpicoreApp.controllers', []).
                 $http({
                     url: urlBase + 'scripts/sendreminder.php', method: "POST", data: data
                 }).success(function (respdata, status, headers, config) {
-                    console.log("Response Information ===> ", respdata);
-                    alert("Email sent!");
+                    // console.log("Response Information ===> ", respdata);
+                    if(i==$scope.selectedItems.length-1){
+                        alert("Email(s) sent!");
+                    }
                 });
             }
         };
