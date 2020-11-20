@@ -24,7 +24,7 @@
 
                     </div>
 
-                    <span class="error">{{location_error_message}}</span>
+                    <span class="error" ng-if="!rfiData.place">{{location_error_message}}</span>
                 </form>
 
             </div><!--col-->
@@ -34,7 +34,7 @@
             <div id="form-container" class="col-xs-12 col-md-8">
                 <div class="form-group more-space">
                     <label class="mb0">Select RFI Responders</label>
-
+                   
                     <div class="radio"><label class="radio"><input type="radio" ng-model="filtertype" ng-disabled="!(rfiData.place)" name="filtertype" value="radius" ng-click="recalcUsers('radius');">Select responders near the event location</label></div>
                     <div class="radio"><label class="radio"><input type="radio" ng-model="filtertype" name="filtertype" ng-disabled="!(rfiData.place)" value="country" ng-click="recalcUsers('country');">Select responders by country</label></div>
                     
@@ -60,12 +60,13 @@
 
         <div class="row">
             <div id="form-container" class="col-xs-12 col-md-8">
+                
                 <form name="locationForm">
 
                     <div class="form-group more-space">
                         <label>Date of the Event <i class="tooltip-icon fa fa-info-circle" data-toggle="tooltip" title="<h4>Date of the Event</h4><p class='mb0'>Enter the date of onset of the first case. If no specific date is available consider the date of the source report. In case of an update of an already verified PHE consider today's date.</p>"></i></label>
-                        <input type="text" class="form-control-small form-control" ng-model="rfiData.location.event_date" name="event_date" id="datepicker" data-provide="datepicker" autocomplete="off" required>
-                    <span class="error">{{time_error_message}}</span>
+                        <input type="text" class="form-control-small form-control" ng-model="rfiData.location.event_date" name="event_date" id="datepicker" data-provide="datepicker" autocomplete="off" required />
+                    <span class="error" ng-if="!rfiData.location.event_date" >{{time_error_message}}</span>
                     </div>
 
                     <div class="hide form-group" data-toggle="tooltip" title=" Please specify if the date selected is date of symptom onset or date of confirmation of case, etc">
@@ -99,7 +100,7 @@
                             <div class="secondary-input" ng-if="rfiData.source.source=='MR'">
                                 <label class="radio">Please provide a link to the report or describe the source if a link is not avaible.</label>
                                 <input type="text" class="form-control" ng-model="rfiData.source.details" ng-required="!rfiData.source.details" name="media-link" id="media-link" value=""  placeholder="">
-                                <span class="error">{{sourceDetailsError}}</span>
+                                <span class="error" ng-if="!rfiData.source.details" >{{sourceDetailsError}}</span>
                             </div>
                             <div class="radio">
                                 <label class="radio">
@@ -108,7 +109,7 @@
                             <div class="secondary-input" ng-if="rfiData.source.source=='OR'">
                                 <label>Please provide a link to the report or describe the source if a link is not available.</label>
                                 <input type="text" class="form-control" ng-model="rfiData.source.details" ng-required="!rfiData.source.details" name="official-link" id="official-link" value=""  placeholder="">
-                                <span class="error">{{sourceDetailsError}}</span>
+                                <span class="error" ng-if="!rfiData.source.details">{{sourceDetailsError}}</span>
                             </div>
                             <div class="radio">
                                 <label class="radio"> 
@@ -117,7 +118,7 @@
 			                <div class="secondary-input" ng-if="rfiData.source.source=='OC'">
                                 <label>Please describe how you heard about this event.</label>
                                 <input type="text" class="form-control" ng-model="rfiData.source.details"  ng-required="!rfiData.source.details" name="official-link" id="official-link" value=""  placeholder="">
-                                <span class="error">{{sourceDetailsError}}</span>
+                                <span class="error" ng-if="!rfiData.source.details">{{sourceDetailsError}}</span>
                             </div>
 
                         </div>
@@ -126,7 +127,7 @@
                             <button ng-click="saveSource('back')" type="submit" class="submit btn btn-primary"><i class="fa fa-arrow-circle-left"></i> Back </button> &nbsp; &nbsp;
                             <button ng-click="saveSource('next')" type="submit" class="submit btn btn-primary"> Next <span ng-if="!rfiData.event_id">- Review & Send</span><i class="fa fa-arrow-circle-right"></i></button>
                         </div>
-                        <span class="error">{{source_error_message}}</span>
+                        <span class="error" ng-if="!rfiData.source.source">{{source_error_message}}</span>
 
 
                     </div>

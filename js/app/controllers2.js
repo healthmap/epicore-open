@@ -259,12 +259,24 @@ angular.module('EpicoreApp.controllers2', []).
         /* go next or back */
         $scope.saveStep1 = function (direction) {
             // console.log('STEP1 - clicked next:', $scope.rfiData);
-
-            if ((direction === 'back') || $scope.rfiData.location.event_date && $scope.rfiData.source.source) {
+            $scope.submitDisabled = false;
+            if (!$scope.rfiData.place) {
+                $scope.location_error_message = 'Enter an event location';
+                return;
+            } 
+            else if (!$scope.rfiData.location || !$scope.rfiData.location.event_date) {
+                $scope.time_error_message = 'Enter a valid date.';
+                return;
+            } else if (!$scope.rfiData.source.source) {
+                $scope.source_error_message = 'How did you hear about this event is a required field.';
+                return;
+            } else if (!$scope.rfiData.members || !$scope.rfiData.members.filtertype) {
+                $scope.submitDisabled = true;
+                return;
+            } else if ((direction === 'back') || $scope.rfiData.location.event_date && $scope.rfiData.source.source) {
                 // next or back
                 if (direction === 'next') {
-            
-                    
+                   
                     if($scope.rfiData.location.location !== $("#autocompleteText").val()) {
                         //editing location
                         // console.log('old location:', $scope.rfiData.location.location); //old
@@ -316,24 +328,36 @@ angular.module('EpicoreApp.controllers2', []).
 
                 }
                 $scope.time_error_message = '';
-            } else if (!$scope.rfiData.location.event_date) {
-
-                $scope.time_error_message = 'Enter a valid date.';
-            } else if (!$scope.rfiData.source.source) {
-            $scope.source_error_message = 'How did you hear about this event is a required field.';
             }
+            
+            //else 
         };
 
         $scope.populationOtherError = "";
+        $scope.affectedPopSelectionError = "";
+        $scope.healthDetailsError = "";
         $scope.saveStep2 = function (direction) {
             // console.log('STEP2 - clicked next:', $scope.rfiData);
-            
+            $scope.populationOtherError = "";
             // next or back
             if (direction === 'next') {
+
+                if(!$scope.rfiData.population) {
+                    $scope.affectedPopSelectionError = "Please select the affected population from above";
+                    console.log('in here1');
+                    return;
+                }
                 if (($scope.rfiData.population.type == 'E' || $scope.rfiData.population.type == 'U') && !($scope.rfiData.population.other)) {
+                    console.log('in here2');
                     $scope.populationOtherError = "Please fill the details above";
                     return;
                 }
+                if (!$scope.rfiData.health_condition || !$scope.rfiData.health_condition.disease_details) {
+                    console.log('in here3');
+                    $scope.healthDetailsError = "Please fill the details above";
+                    return;
+                }
+                
                 // console.log("RFI Data Step 3 --> ", $scope.rfiData)
                 $location.path('/rfi_step3');
             } else if (direction === 'back') {
@@ -1322,7 +1346,7 @@ angular.module('EpicoreApp.controllers2', []).
                 var end_date = moment().format('YYYY-MM-DD'); // now
                 var start_date = moment().subtract(2, 'months').format('YYYY-MM-DD'); // 2 months ago
                 eventAPIservice2.getEvents($scope.id, start_date, end_date).success(function (response) {
-                    console.log("Success Function output getEvents2 -> ", response)
+                    //console.log("Success Function output getEvents2 -> ", response)
                     $scope.isRouteLoading = false;
                     $scope.eventsListPublic = response.EventsList;
                     if ($scope.eventsListPublic.purpose) {
@@ -1349,7 +1373,7 @@ angular.module('EpicoreApp.controllers2', []).
             eventAPIservice2.getEvents($scope.id, start_date, end_date)
             .success(function (response) {
                 $scope.isRouteLoading = false;
-                // console.log("Response output getAllEvents -> ", response)
+                //console.log("Response output getAllEvents -> ", response)
                 if (typeof ($scope.userinfo) != "undefined") {
                     $scope.isOrganization = $scope.userInfo.fetp_id > 0 ? false : true;
                     // if RFI requester is the logged in user or of same org, they get different action items

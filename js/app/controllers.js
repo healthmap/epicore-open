@@ -219,7 +219,7 @@ angular.module('EpicoreApp.controllers', []).
             $http({
                 url: urlBase + 'scripts/login.php', method: "POST", data: formData
             }).success(function (data, status, headers, config) {
-                console.log("Data output after Login success ---> ", data)
+                // console.log("Data output after Login success ---> ", data)
                 //console.log("Status after Login ====> ", status)
                 //console.log("Status after Login from query -----> ", data['status'])
 
