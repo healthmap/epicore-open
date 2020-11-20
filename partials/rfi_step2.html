@@ -69,6 +69,7 @@
                         <input type="text" class="form-control-small form-control" maxlength = "40" ng-model="rfiData.population.other" name="other" id="other_unknown" placeholder='' value="" required>
                         <span class="error">{{populationOtherError}}</span>
                     </div>
+                    <span class="error" ng-if="!rfiData.population">{{affectedPopSelectionError}}</span>
                 </div>
 
             </div><!--col-->
@@ -172,7 +173,7 @@
                     <span class="error" >{{hc_error_message1}}</span>
                 </div>
 
-
+                
 
                 <!-- Text input questions -->
                 <div class="form-group more-space">
@@ -186,8 +187,8 @@
                         <li>Symptoms</li>
                         <li>Lab results</li>
                     </ul>
-                    <textarea class="form-control" style="height:240px" ng-model="rfiData.health_condition.disease_details" id="disease_details" name="disease_details" placeholder="" ng-required="!goback"></textarea>
-
+                    <textarea class="form-control" style="height:240px" ng-model="rfiData.health_condition.disease_details" id="disease_details" name="disease_details" placeholder="" ng-required="!rfiData.health_condition.disease_details"></textarea></textarea>
+                    <span class="error" ng-if="!$scope.rfiData.health_condition.disease_details">{{healthDetailsError}}</span>
                 </div>
 
                 <!-- next/back buttons -->
