@@ -62,6 +62,35 @@ angular.module('EpicoreApp.controllers', []).
         /* countries and codes */
         $scope.countries = epicoreCountries;
 
+        $scope.locationOptions = {
+            types: ['(regions)']
+        }
+
+        $scope.uservals = {};
+
+        $scope.userLocationChange = function (userLocation) {
+
+            const administrative_areas = [];
+
+            userLocation.address_components.forEach(function (item) {
+                if (item.types.indexOf('country') !== -1) {
+                    $scope.uservals.country = item.short_name;
+                }
+
+                item.types.filter(function (type) {
+                    if (type.indexOf('administrative_area') !== -1) {
+                        administrative_areas.push(item.short_name);
+                    }
+                });
+
+                if (item.types.indexOf('locality') !== -1) {
+                    $scope.uservals.city = item.short_name;
+                }
+            });
+
+            $scope.uservals.state = administrative_areas.toString().replace(/,/g, ', ');
+        }
+
         // pre-populate saved username and password for mobile app
         if ($scope.mobile && (typeof ($localStorage.username) != 'undefined') && (typeof ($localStorage.password) != "undefined")) {
             $scope.formData = {};
