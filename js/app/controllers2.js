@@ -1433,7 +1433,7 @@ angular.module('EpicoreApp.controllers2', []).
                                 public_events.push(event);
                             }
                         })
-                        console.log('public_events' + JSON.stringify(public_events));
+                        // console.log('public_events' + JSON.stringify(public_events));
                         $scope.eventsList.all = public_events.splice(0, num_events);
                     }
 
