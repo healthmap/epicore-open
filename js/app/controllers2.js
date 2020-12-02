@@ -267,7 +267,7 @@ angular.module('EpicoreApp.controllers2', []).
             else if (!$scope.rfiData.location || !$scope.rfiData.location.event_date) {
                 $scope.time_error_message = 'Enter a valid date.';
                 return;
-            } else if (!$scope.rfiData.source.source) {
+            } else if (!$scope.rfiData.source) {
                 $scope.source_error_message = 'How did you hear about this event is a required field.';
                 return;
             } else if (!$scope.rfiData.members || !$scope.rfiData.members.filtertype) {
@@ -336,6 +336,7 @@ angular.module('EpicoreApp.controllers2', []).
         $scope.populationOtherError = "";
         $scope.affectedPopSelectionError = "";
         $scope.healthDetailsError = "";
+        $scope.hc_error_message = '';
         $scope.saveStep2 = function (direction) {
             // console.log('STEP2 - clicked next:', $scope.rfiData);
             $scope.populationOtherError = "";
@@ -344,16 +345,17 @@ angular.module('EpicoreApp.controllers2', []).
 
                 if(!$scope.rfiData.population) {
                     $scope.affectedPopSelectionError = "Please select the affected population from above";
-                    console.log('in here1');
                     return;
                 }
                 if (($scope.rfiData.population.type == 'E' || $scope.rfiData.population.type == 'U') && !($scope.rfiData.population.other)) {
-                    console.log('in here2');
                     $scope.populationOtherError = "Please fill the details above";
                     return;
                 }
-                if (!$scope.rfiData.health_condition || !$scope.rfiData.health_condition.disease_details) {
-                    console.log('in here3');
+                if (!$scope.rfiData.health_condition) {
+                    $scope.hc_error_message1 = 'Missing parameters above.';
+                    return;
+                }
+                if (!$scope.rfiData.health_condition.disease_details) {
                     $scope.healthDetailsError = "Please fill the details above";
                     return;
                 }
@@ -1373,7 +1375,7 @@ angular.module('EpicoreApp.controllers2', []).
             eventAPIservice2.getEvents($scope.id, start_date, end_date)
             .success(function (response) {
                 $scope.isRouteLoading = false;
-                //console.log("Response output getAllEvents -> ", response)
+                // console.log("Response output getAllEvents -> ", response)
                 if (typeof ($scope.userinfo) != "undefined") {
                     $scope.isOrganization = $scope.userInfo.fetp_id > 0 ? false : true;
                     // if RFI requester is the logged in user or of same org, they get different action items
@@ -1423,9 +1425,7 @@ angular.module('EpicoreApp.controllers2', []).
                     //////// public events
                 } else if (typeof ($scope.userinfo) == "undefined") {
                     $scope.eventsList = response.EventsList;
-
                     if (num_events != 'all') {
-
                         var all_events = response.EventsList.all;
                         var public_events = [];
                         all_events.forEach(function (event) {
@@ -1433,6 +1433,7 @@ angular.module('EpicoreApp.controllers2', []).
                                 public_events.push(event);
                             }
                         })
+                        // console.log('public_events' + JSON.stringify(public_events));
                         $scope.eventsList.all = public_events.splice(0, num_events);
                     }
 

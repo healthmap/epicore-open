@@ -4,7 +4,7 @@
             <span class="text-uppercase">Epicore</span>
           </a>
 
-        <a ng-if="userInfo.active=='Y' && userInfo.fetp_id" ng-href="#/home" ng-click="userLogout()" class="logout mt24 mb24 pull-right btn btn-default text-uppercase">Log out</a>
+        <a ng-if="userInfo.active=='Y' && userInfo.fetp_id" ng-href="#/home" ng-click="userLogout()" class="logout mt24 mb24 pull-right btn btn-default text-uppercase">Log out <i class="text-lowercase">({{userInfo.uname}})</i></a>
         </div>
 
 </div>

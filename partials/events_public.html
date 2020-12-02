@@ -28,7 +28,7 @@
                             <tr>
                                 <!--<th ng-click="predicate = 'event_id_int'; reverse=!reverse">ID <i class="fa fa-sort"></i></th>-->
                                 <th ng-click="predicate = 'title'; reverse=!reverse">Title</th>
-                                <th ng-click="predicate = 'iso_create_date'; reverse=!reverse">Creation Date
+                                <th ng-click="predicate = 'iso_action_date'; reverse=!reverse">Closure Date
                                     <i class="fa fa-sort"></i>
                                 </th>
                                 <th ng-click="predicate = 'country'; reverse=!reverse">Country
@@ -50,10 +50,11 @@
                                 ng-repeat="event in eventsList['all'] | filter:publicEvents | orderBy:predicate:reverse"> -->
                             <!-- <tr ng-controller="publicRFIController" class="link" ng-click="openPortfolioURL(event.event_id_int,event.phe_description, event.phe_additional, event.title, event.source, event.source_details, event.outcome, event.action_date)"
                                 ng-repeat="event in eventsList['all'] | filter:publicEvents | orderBy:predicate:reverse"> -->
+                                
                             <tr class="link" ng-click="publicArticle(event.event_id_int)" ng-repeat="event in eventsList['all'] | filter:publicEvents | orderBy:predicate:reverse">
                                 <!-- <td>{{event.event_id_int}}</td> -->
                                 <td>{{event.title}}</td>
-                                <td>{{event.create_date}}</td>
+                                <td>{{event.action_date}}</td>
                                 <td>{{event.country}}</td>
                                 <td>
                                     <span ng-if="event.outcome == 'VP'">Verified (+)</span>

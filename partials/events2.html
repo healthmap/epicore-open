@@ -52,13 +52,13 @@
             <p><span class="search-wrapper"><i class="fa fa-search"></i> <input ng-model="query"></span></p>
 
             <!-- view for organizations -->
-            <div ng-show="isOrganization" ng-init="predicate = 'iso_event_date';" class="table-responsive">
+            <div ng-show="isOrganization" ng-init="predicate = 'iso_create_date';" class="table-responsive">
                 <table class='small table table-hover table-bordered'>
                     <tbody>
                         <tr>
                             <th width="50px" ng-click="predicate = 'event_id_int'; reverse=!reverse">ID <i class="fa fa-sort"></i></th>
                             <th ng-click="predicate = 'title'; reverse=!reverse">Title <i class="fa fa-sort"></i></th>
-                            <th width="110px" ng-click="predicate = 'iso_event_date'; reverse=!reverse" class="nowrap-mobile">RFI Date <i class="fa fa-sort"></i></th>
+                            <th width="110px" ng-click="predicate = 'iso_create_date'; reverse=!reverse" class="nowrap-mobile">RFI Date <i class="fa fa-sort"></i></th>
                             <th width="110px" ng-click="predicate = 'country'; reverse=!reverse">Location <i class="fa fa-sort"></i></th>
                             <th width="110px" ng-click="predicate = 'person'; reverse=!reverse" class="nowrap-mobile">Requester <i class="fa fa-sort"></i></th>
                             <th width="50px">Total Recipients</th>
@@ -68,10 +68,10 @@
                             <th width="50px"><span data-toggle="tooltip" title="Current verfication status of the RFI">RFI Status</span></th>
                             <th width="50px"><span data-toggle="tooltip" title="information about the final outcome of the verification process">Outcome</span></th>
                         </tr>
-                        <tr ng-show="eventType == 'MR'" ng-repeat="event in eventsList['yours'] | filter:query | orderBy:predicate:reverse" ng-class="{selected : (onOpen && (event.iso_event_date < (date | date:'yyyy-MM-dd'))) || !onOpen && (event.num_notrated_responses > 0)}">
+                        <tr ng-show="eventType == 'MR'" ng-repeat="event in eventsList['yours'] | filter:query | orderBy:predicate:reverse" ng-class="{selected : (onOpen && (event.iso_create_date < (date | date:'yyyy-MM-dd'))) || !onOpen && (event.num_notrated_responses > 0)}">
                             <td>{{event.event_id_int}}</td>
                             <td><a href="#/events2/{{event.event_id}}">{{event.title}}</a></td>
-                            <td>{{event.event_date}}</td>
+                            <td>{{event.create_date}}</td>
                             <td>{{event.country}}</td>
                             <td>{{event.person}} - {{event.organization_name}}</td>
                             <td>
@@ -104,7 +104,7 @@
                         <tr ng-show="eventType == 'MO'" ng-repeat="event in eventsList['yourorg_you'] | filter:query | orderBy:predicate:reverse">
                             <td>{{event.event_id_int}}</td>
                             <td><a href="#/events2/{{event.event_id}}">{{event.title}}</a></td>
-                            <td>{{event.event_date}}</td>
+                            <td>{{event.create_date}}</td>
                             <td>{{event.country}}</td>
                             <td>{{event.person}} - {{event.organization_name}}</td>
                             <td>
@@ -137,7 +137,7 @@
                         <tr ng-show="eventType == 'AO'" ng-repeat="event in eventsList['all'] | filter:query | orderBy:predicate:reverse" >
                             <td>{{event.event_id_int}}</td>
                             <td><a href="#/events2/{{event.event_id}}">{{event.title}}</a></td>
-                            <td>{{event.event_date}}</td>
+                            <td>{{event.create_date}}</td>
                             <td>{{event.country}}</td>
                             <td>{{event.person}} - {{event.organization_name}}</td>
                             <td>
@@ -172,13 +172,13 @@
             </div>
 
             <!-- view for FETPs -->
-            <div ng-show="!isOrganization && (dashboardType == 'MR')" ng-init="predicate = 'iso_event_date'; reverse=reverse" class="table-responsive">
+            <div ng-show="!isOrganization && (dashboardType == 'MR')" ng-init="predicate = 'iso_create_date'; reverse=reverse" class="table-responsive">
                 <table class='small table table-hover table-bordered'>
                     <tbody>
                         <tr>
                             <th width="50px" ng-click="predicate = 'event_id_int'; reverse=!reverse">ID <i class="fa fa-sort"></i></th>
                             <th ng-click="predicate = 'title'; reverse=!reverse">Title <i class="fa fa-sort"></i></th>
-                            <th width="110px" ng-click="predicate = 'iso_event_date'; reverse=!reverse" class="nowrap-mobile">RFI Date <i class="fa fa-sort"></i></th>
+                            <th width="110px" ng-click="predicate = 'iso_create_date'; reverse=!reverse" class="nowrap-mobile">RFI Date <i class="fa fa-sort"></i></th>
                             <th ng-click="predicate = 'location'; reverse=!reverse">Location <i class="fa fa-sort"></i></th>
                             <th ng-click="predicate = 'organization_name'; reverse=!reverse" class="nowrap-mobile">Requester <i class="fa fa-sort"></i></th>
                             <th ng-click="predicate = 'activity'; reverse=!reverse">Responder Activity <i class="fa fa-sort"></i></th>
@@ -188,7 +188,7 @@
                         <tr ng-repeat="event in eventsList | filter:query | orderBy:predicate:reverse">
                             <td>{{event.event_id_int}}</td>
                             <td><a href="#/events2/{{event.event_id}}">{{event.title}}</a></td>
-                            <td>{{event.event_date}}</td>
+                            <td>{{event.create_date}}</td>
                             <td>{{event.country}}</td>
                             <td>{{event.organization_name}}</td>
                             <td>
@@ -214,20 +214,20 @@
             </div>
 
             <!-- public dashboard -->
-            <div ng-show="!isOrganization && (dashboardType == 'PR')" ng-init="predicate = 'iso_event_date'; reverse=!reverse" class="table-responsive">
+            <div ng-show="!isOrganization && (dashboardType == 'PR')" ng-init="predicate = 'iso_create_date'; reverse=!reverse" class="table-responsive">
                 <table class='small table table-hover table-bordered'>
                     <tbody>
                     <tr>
                         <th width="50px" ng-click="predicate = 'event_id_int'; reverse=!reverse">ID <i class="fa fa-sort"></i></th>
                         <th ng-click="predicate = 'title'; reverse=!reverse">Title <i class="fa fa-sort"></i></th>
-                        <th width="110px" ng-click="predicate = 'iso_event_date'; reverse=!reverse" class="nowrap-mobile">RFI Date <i class="fa fa-sort"></i></th>
+                        <th width="110px" ng-click="predicate = 'iso_create_date'; reverse=!reverse" class="nowrap-mobile">RFI Date <i class="fa fa-sort"></i></th>
                         <th width="110px" ng-click="predicate = 'country'; reverse=!reverse">Location <i class="fa fa-sort"></i></th>
                         <th width="50px"><span data-toggle="tooltip" title="information about the final outcome of the verification process">Outcome</span></th>
                     </tr>
                     <tr ng-repeat="pevent in eventsListPublic['all'] | filter:publicEvents | orderBy:predicate:reverse" >
                         <td>{{pevent.event_id_int}}</td>
                         <td>{{pevent.title}}</td>
-                        <td>{{pevent.event_date}}</td>
+                        <td>{{pevent.create_date}}</td>
                         <td>{{pevent.country}}</td>
                         <td>
                             <span ng-if="pevent.outcome == 'VP'">Verified (+)</span>
