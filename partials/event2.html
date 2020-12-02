@@ -3,7 +3,7 @@
 
 <div class="jumbotron dashboard">
     <div class="container">
-        <h1><span ng-if="changeStatusText != 'Close'">Closed </span><span>RFI Details</span></h1>
+        <h1><span ng-if="changeStatusText != 'Close'">Closed </span><span>**RFI Details</span></h1>
     </div>
 </div>
 
@@ -14,6 +14,22 @@
 
         <p ng-if="changeStatusText == 'Close'" ><a href="#/events2" class="btn btn-default"><i class="fa fa-arrow-circle-left"></i> Back to EpiCore Dashboard</a></p>
         <p  ng-if="changeStatusText != 'Close'" ><a href="#/events2/closed" class="btn btn-default"><i class="fa fa-arrow-circle-left"></i> Back to EpiCore Dashboard</a></p>
+
+        <!-- REPLY FORM (for FETPS only) -->
+        <span ng-show="!isOrganization && isAuthorizedFETP">
+            <p ng-if="changeStatusText != 'Close'">This RFI is closed, but if you have anything to contribute, you can click on “Respond to this RFI” below and your response will be sent to the requesting moderator. </p>
+            <a href="#/reply2/{{id}}" class="btn btn-primary">Respond Now</a>
+            <span ng-if="changeStatusText == 'Close'" ng-show="!submitDisabled">
+                <a href ng-click="sendResponse({response_permission: '4'})" class="btn btn-primary" ng-show="!activeSearch">Active Search</a>
+                <a href ng-click="sendResponse({response_permission: '0'})" class="btn btn-primary">Nothing to Contribute</a>
+            </span>
+
+            <span ng-show="submitDisabled">
+                <i class="fa fa-spinner fa-spin"></i> Please wait...
+            </span>
+        </span>
+        <br><br> 
+        <!-- END REPLY FORM -->
 
         <!-- OWNER of event gets additional options to close event or send followup email -->
         <!-- Superusers get to edit and delete -->
@@ -35,8 +51,14 @@
             </span>
         </span>
         <!-- END CLOSE FORM (for owner of event) -->
+
+
+
+
+
     </div>
 </div><!--row-->
+
 
 <div class="row" ng-show="isAuthorizedFETP || (isOrganization && eventsList.event_id)">
     <div class="col-xs-12">
@@ -47,9 +69,9 @@
                 <div class="event-item" ng-repeat="history_item in eventsList.history">
                     <!-- Original Event Request Message in same organization (Moderator or FETP)-->
                     <!-- EPI-74 Showing the following info ONLY to superusers -->
-                    <div ng-if="(history_item.type == 'Event Request') && userInfo.superuser">
+                    <div ng-if="(history_item.type == 'Event Request') || userInfo.superuser">
                                 <strong>{{num_fetp}} responders on RFI # {{eventsList.event_id}}:</strong> <br><br>
-
+                        
                         <ul>
                             <li>Title: {{history_item.title}}</li>
                             <li>Location: {{history_item.location}}</li>
@@ -88,8 +110,8 @@
                     </div>
                 </div>
 
-                <!-- REPLY FORM (for FETPS only) -->
-                <div ng-show="!isOrganization && isAuthorizedFETP">
+                <!-- REPLY FORM (for FETPS only) moved this to the top-->
+                <!-- <div ng-show="!isOrganization && isAuthorizedFETP">
                     <p ng-if="changeStatusText != 'Close'">This RFI is closed, but if you have anything to contribute, you can click on “Respond to this RFI” below and your response will be sent to the requesting moderator. </p>
                     <a href="#/reply2/{{id}}" class="btn btn-primary">Respond Now</a>
                     <span ng-if="changeStatusText == 'Close'" ng-show="!submitDisabled">
@@ -101,7 +123,7 @@
                         <i class="fa fa-spinner fa-spin"></i> Please wait...
                     </span>
                 </div>
-                <br><br>
+                <br><br> -->
                 <!-- END REPLY FORM -->
 
                 <div ng-include="'partials/messagehistory2.html?v={{cbsuffix}}'" ng-init="closerfi=''"></div><br>
