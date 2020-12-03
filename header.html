@@ -27,10 +27,10 @@
                 <li ng-class="{ active: isActive('/events_public')}" class="text-uppercase" ng-if="userInfo.active=='Y' && userInfo.fetp_id">
                     <a href="#/events2" ng-click="getEvents2('PR');">Public RFIs</a>
                 </li>
-                <li ng-class="{ active: isActive('/request')}" class="text-uppercase" ng-show="{{userInfo.isOrganization}} && epicore_version != '2'">
+                <li ng-class="{ active: isActive('/request')}" class="text-uppercase" ng-show="userInfo.isOrganization && epicore_version != '2'">
                     <a href="#/request" ng-class="getClass('/request')">Send RFI</a>
                 </li>
-                <li ng-class="{ active: isActive('/rfi_step1')}" class="text-uppercase" ng-show="{{userInfo.isOrganization}} && epicore_version == '2'">
+                <li ng-class="{ active: isActive('/rfi_step1')}" class="text-uppercase" ng-show="userInfo.isOrganization && epicore_version == '2'">
                     <a href="#/rfi_step1" ng-class="getClass('/request')">Send RFI</a>
                 </li>
                 <li ng-class="{ active: isActive('/fetp')}" class="text-uppercase" ng-if="userInfo.active=='Y'">
