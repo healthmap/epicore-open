@@ -887,10 +887,6 @@ class EventInfo
         $db = getDB();
         $oid = $db->getOne("SELECT organization_id FROM epicore.user WHERE user_id = ?", array($uid));
         $status = $status ? $status : 'O'; // if status is not passed in, get open events
-        // join on the event_fetp table b/c if there is no row in there, the request was never sent (may have been started, but didn't get sent
-        // $q = $db->query("SELECT DISTINCT(event.event_id), event.*, place.name AS location, place.location_details FROM epicore.place, epicore.event, epicore.event_fetp 
-        //                   WHERE event.place_id = place.place_id AND event.event_id = event_fetp.event_id AND event.event_date >= ? AND event.event_date <= ?
-        //                   ORDER BY event.event_date DESC", array($start_date, $end_date));
         $q = $db->query("SELECT DISTINCT(event.event_id), event.*, place.name AS location, place.location_details 
         FROM epicore.place, epicore.event, epicore.event_fetp 
         WHERE event.place_id = place.place_id AND event.event_id = event_fetp.event_id AND

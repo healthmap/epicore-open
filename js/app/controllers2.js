@@ -1184,8 +1184,12 @@ angular.module('EpicoreApp.controllers2', []).
         $scope.userInfo = $cookieStore.get('epiUserInfo');
         $scope.id = $routeParams.id ? $routeParams.id : null;
         $scope.allFETPs = $routeParams.response_id ? false : true;
+        $scope.rfiOrderByValue = 'iso_create_date';
         // if we're on the closed requests page
         $scope.onOpen = $location.path().indexOf("/closed") > 0 ? false : true;
+        if(!$scope.onOpen) {
+            $scope.rfiOrderByValue = 'iso_action_date'
+        } 
         // check if public dashboard
         $scope.publicDashboard = $location.path().indexOf("/events_public") >= 0 ? true : false;
         $scope.anonymous_disabled = false;
@@ -1302,11 +1306,11 @@ angular.module('EpicoreApp.controllers2', []).
         }
 
         $scope.getPublicEventsByID = function () {
-            
+           
             var article_id = localStorage.getItem('articleID');
             // alert("ID ==> " + article_id);
             eventAPIservice2.getEvents(article_id).success(function (response) {
-                // console.log(response)
+
                 $scope.isRouteLoading = false;
                 $scope.eventsListPublic = response.EventsList;
                 var outcome = 'Pending';
@@ -1329,6 +1333,8 @@ angular.module('EpicoreApp.controllers2', []).
                 //$scope.closureDate = $scope.eventsListPublic.history[0].date;
                 $scope.cd = $scope.eventsListPublic.history[0].date;
                 $scope.closureDate = $scope.cd.split(' ')[0];
+                $scope.od = $scope.eventsListPublic.create_date;
+                $scope.openDate = $scope.od.split(' ')[0]; //(to remove time)
                 $scope.event_outcome = outcome;
                 //$scope.eventTitle = $scope.modifiedEventTitle
                 $scope.eventTitle = $scope.eventsListPublic.title;
@@ -1402,8 +1408,12 @@ angular.module('EpicoreApp.controllers2', []).
                             $scope.eventsList.other = response.EventsList.other;
 
                         } else {
-                            $scope.eventsList.all = response.EventsList.all.slice(0, num_events);
-                            $scope.eventsList.other = response.EventsList.other.slice(0, num_events);
+                            // console.log('num_events', num_events);
+                            // console.log('response.EventsList' + console.log(response.EventsList));
+                            if(response.EventsList.all)
+                                $scope.eventsList.all = response.EventsList.all.slice(0, num_events);
+                            if(response.EventsList.other)
+                                $scope.eventsList.other = response.EventsList.other.slice(0, num_events);
                         }
 
                         if ($scope.eventsList.purpose) {
@@ -1448,6 +1458,7 @@ angular.module('EpicoreApp.controllers2', []).
                         $scope.summary = {};
                         $scope.summary.phe_title = $scope.eventsList.title;
                     }
+                    
                 }
 
                 // today's date
@@ -1481,7 +1492,9 @@ angular.module('EpicoreApp.controllers2', []).
                     $scope.listofEventIdsToDisplay = response.numNotRatedResponses ? response.numNotRatedResponses[1][0]: [];
                     // console.log("scope --====> ", $scope)
                     $scope.num_notrated_responses = response.numNotRatedResponses ? response.numNotRatedResponses[0]: 0;
+                    $scope.rfiOrderByValue = 'iso_create_date';
                 } else if ($scope.eventsList) {
+                    $scope.rfiOrderByValue = 'iso_action_date';
                     for (var n in $scope.eventsList.yours) {
                         $scope.num_notrated_responses += parseInt($scope.eventsList.yours[n].num_notrated_responses);
                     }
@@ -1753,7 +1766,7 @@ angular.module('EpicoreApp.controllers2', []).
         $scope.modalTitle = "";
         $scope.modalBody = "";
         $scope.showSummary = function (summary, more_info, event_title, event_source, event_source_details, event_outcome, event_action_date) {
-
+            
             var source = '';
             if (event_source == 'MR') {
                 source = "Media Report";
@@ -1812,7 +1825,6 @@ angular.module('EpicoreApp.controllers2', []).
         $scope.articleTitle = "";
         $scope.articleBody = "";
         $scope.openPortfolioURL = function (eventID, summary, more_info, event_title, event_source, event_source_details, event_outcome, event_action_date) {
-
 
             var source = '';
             if (event_source == 'MR') {
