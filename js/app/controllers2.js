@@ -1408,7 +1408,7 @@ angular.module('EpicoreApp.controllers2', []).
                             $scope.eventsList.other = response.EventsList.other;
 
                         } else {
-                            console.log('num_events', num_events);
+                            // console.log('num_events', num_events);
                             // console.log('response.EventsList' + console.log(response.EventsList));
                             if(response.EventsList.all)
                                 $scope.eventsList.all = response.EventsList.all.slice(0, num_events);
