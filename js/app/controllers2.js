@@ -337,9 +337,15 @@ angular.module('EpicoreApp.controllers2', []).
         $scope.affectedPopSelectionError = "";
         $scope.healthDetailsError = "";
         $scope.hc_error_message = '';
+        $scope.hc_error_message1 = '';
         $scope.saveStep2 = function (direction) {
             // console.log('STEP2 - clicked next:', $scope.rfiData);
             $scope.populationOtherError = "";
+            $scope.affectedPopSelectionError = "";
+            $scope.healthDetailsError = "";
+            $scope.hc_error_message = '';
+            $scope.hc_error_message1 = '';
+    
             // next or back
             if (direction === 'next') {
 
@@ -356,7 +362,7 @@ angular.module('EpicoreApp.controllers2', []).
                     return;
                 }
                 if (!$scope.rfiData.health_condition.disease_details) {
-                    $scope.healthDetailsError = "Please fill the details above";
+                    $scope.healthDetailsError = "Please fill the details above.     This description is included in the email to responders, please provide as much detail as possible.";
                     return;
                 }
                 
@@ -654,9 +660,13 @@ angular.module('EpicoreApp.controllers2', []).
 
         ///////////////////////////////////////////// Source /////////////////////////////////////////
         $scope.source_error_message = '';
+        $scope.purpose_error_message1 = '';
+        $scope.purpose_error_message = '';
         // $scope.saveSource = function (direction) {
         $scope.saveStep3 = function (direction) {
             // console.log('STEP3 - clicked review and send:', $scope.rfiData);
+            $scope.purpose_error_message = "";
+            $scope.purpose_error_message1 = "";
 
             //  if ((direction === 'back') || $scope.rfiData.source.source && $scope.rfiData.source.details) {
             if (direction === 'next') {
@@ -672,12 +682,31 @@ angular.module('EpicoreApp.controllers2', []).
                 //Editing location name requires google geolocation to autocomplete                
                 $scope.saveLocation('next'); 
 
+                if(!$scope.rfiData.purpose || !$scope.rfiData.purpose.purpose) {
+                    $scope.purpose_error_message =  'Must select one of the above options.';
+                    return;
+                }
+                
+                if($scope.rfiData.purpose.causal_agent  === undefined && 
+                    $scope.rfiData.purpose.epidemiology  === undefined && 
+                    $scope.rfiData.purpose.pop_affected  === undefined && 
+                    $scope.rfiData.purpose.location  === undefined && 
+                    $scope.rfiData.purpose.size  === undefined &&
+                    $scope.rfiData.purpose.test  === undefined && 
+                    $scope.rfiData.purpose.other_category === undefined) {
+                    $scope.purpose_error_message1 = 'Must select atleast one of the above options.';
+                    return;
+                }
+
+
                 $scope.rfiData.event_location = $scope.getLocation_2();
                 $scope.rfiData.event_population = $scope.getPopulation_2();
                 $scope.rfiData.event_conditions = $scope.getConditions_2();
                 $scope.rfiData.event_title = $scope.rfiData.event_population + ' - ' + $scope.rfiData.event_conditions + ' - ' + $scope.rfiData.event_location + ' - ' + $scope.rfiData.location.event_date;
                 $scope.rfiData.event_purpose = $scope.getPurpose_2();
                 $scope.rfiData.event_source = $scope.getSource_2();
+
+             
 
                 $location.path('/sendrequest');
 
@@ -710,6 +739,7 @@ angular.module('EpicoreApp.controllers2', []).
         }
         $scope.getPopulation_2 = function () {
             var population = '';
+            
             switch ($scope.rfiData.population.type) {
                 case "H":
                     population = 'Human';
