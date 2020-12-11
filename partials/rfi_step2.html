@@ -188,6 +188,7 @@
                         <li>Lab results</li>
                     </ul>
                     <textarea class="form-control" style="height:240px" ng-model="rfiData.health_condition.disease_details" id="disease_details" name="disease_details" placeholder="" ng-required="!rfiData.health_condition.disease_details"></textarea></textarea>
+                    <span class="error">* This description is included in the email to responders, please provide as much detail as possible.</span>
                     <span class="error" ng-if="!rfiData.health_condition.disease_details">{{healthDetailsError}}</span>
                 </div>
 
