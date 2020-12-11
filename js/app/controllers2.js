@@ -362,7 +362,7 @@ angular.module('EpicoreApp.controllers2', []).
                     return;
                 }
                 if (!$scope.rfiData.health_condition.disease_details) {
-                    $scope.healthDetailsError = "Please fill the details above.     This description is included in the email to responders, please provide as much detail as possible.";
+                    $scope.healthDetailsError = "Please fill the details above.";
                     return;
                 }
                 
