@@ -2,6 +2,7 @@
 /**
  * User: jeffandre
  * Date: 10/16/15
+ * Note: Comment out this file if email services need to be disabled
  */
 
 require_once "const.inc.php";

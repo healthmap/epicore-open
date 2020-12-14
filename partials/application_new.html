@@ -46,25 +46,19 @@
                         <input type="text" class="form-control" ng-model="uservals.email" name="email" required>
                     </div>
 
-                    <div class="form-group">
-                        <label class="form-label" for="country">Country</label>
-                        <select chosen="" ng-model="uservals.country" name="country"
-                            data-placeholder="Choose a country..." class="chosen-select form-control" required>
-                            <option value=""></option>
-                            <option ng-repeat="country in countries" value="{{country.code}}">{{country.name}}</option>
-                        </select>
+                    <div class="form-group more-space">
+                        <label>Location</label>
+                        <input class="form-control"
+                            g-places-autocomplete
+                            options="locationOptions"
+                            force-selection="true"
+                            ng-click="filtertype=null"
+                            ng-model="userLocationPlace"
+                            ng-focus="userLocationPlace = null"
+                            id="userLocation"
+                            ng-change="userLocationChange(userLocationPlace)"
+                            required />
                     </div>
-
-                    <div class="form-group">
-                        <label class="form-label" for="city">City</label>
-                        <input type="text" class="form-control" ng-model="uservals.city" name="city" required>
-                    </div>
-
-                    <div class="form-group">
-                        <label class="form-label" for="state">State/Province/Region</label>
-                        <input type="text" class="form-control" ng-model="uservals.state" name="state" required>
-                    </div>
-
 
                     <div class="form-group">
                         <br>

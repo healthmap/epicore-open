@@ -12,7 +12,6 @@
 </div>
 
 
-
 <div class="publicrfi_maindiv">
     <div class="container">
         <div class="row">
@@ -37,6 +36,8 @@
                         <p class="mb16">
                             <strong>Outcome:</strong> {{event_outcome}}</p>
                         <p class="mb16">
+                            <strong>Open Date:</strong> {{openDate}}</p>
+                        <p class="mb16">
                             <strong>Closure Date:</strong> {{closureDate}}</p>
                         <p class="mb0">
                             <strong>Source:</strong> {{initialSource}}</p>
@@ -54,5 +55,5 @@
     var uri = window.location.href;
     var result = uri.substring(window.location.href.lastIndexOf('/') + 1);
     localStorage.setItem('articleID', result);
-    console.log("Result Output ==> ", result);
+    // console.log("Result Output ==> ", result);
 </script>

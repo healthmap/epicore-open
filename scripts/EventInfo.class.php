@@ -886,25 +886,17 @@ class EventInfo
         $end_date = $edate ? $edate: date("Y-m-d H:i:s");
         $db = getDB();
         $oid = $db->getOne("SELECT organization_id FROM epicore.user WHERE user_id = ?", array($uid));
-        //echo '$oid:';
-        //print_r($oid);
-        //echo '-----$oid:';
         $status = $status ? $status : 'O'; // if status is not passed in, get open events
-        // join on the event_fetp table b/c if there is no row in there, the request was never sent (may have been started, but didn't get sent
-        $q = $db->query("SELECT DISTINCT(event.event_id), event.*, place.name AS location, place.location_details FROM epicore.place, epicore.event, epicore.event_fetp 
-                          WHERE event.place_id = place.place_id AND event.event_id = event_fetp.event_id AND event.create_date >= ? AND event.create_date <= ?
-                          ORDER BY event.create_date DESC", array($start_date, $end_date));
-
-        //echo '$q:';
-        //print_r($q);
-        //echo '-----$q:';
+        $q = $db->query("SELECT DISTINCT(event.event_id), event.*, place.name AS location, place.location_details 
+        FROM epicore.place, epicore.event, epicore.event_fetp 
+        WHERE event.place_id = place.place_id AND event.event_id = event_fetp.event_id AND
+        event.create_date >= ? AND event.create_date <= ?
+        ORDER BY event.create_date DESC", array($start_date, $end_date));
+        
 
 
         while($row = $q->fetchRow()) {
 
-            //echo '###eventID:';
-            //print_r($row['event_id']);
-            //echo '###eventID:';
             // get the current status - open or closed
             $dbstatus = $db->getOne("SELECT status FROM event_notes WHERE event_id = ? ORDER BY action_date DESC LIMIT 1", array($row['event_id']));
             $dbstatus = $dbstatus ? $dbstatus : 'O'; // if no value for status, it's open
@@ -1011,6 +1003,8 @@ class EventInfo
                 $row['num_followups'][] = array('date' => $datearr[0], 'num' => count($datearr), 'text' => $text[$followupnum], 'iso_date' => $newdate);
             }
             $row['iso_create_date'] = $row['create_date'];
+            $row['iso_event_date'] = $row['event_date'];
+            $row['iso_action_date'] = $row['action_date'];
             $row['event_id_int'] = (int)$row['event_id'];
             $row['create_date'] = date('j-M-Y', strtotime($row['create_date']));
             $row['event_date'] = date('j-M-Y', strtotime($row['event_date']));
@@ -2035,6 +2029,8 @@ class EventInfo
             $event_stats['create_date'] = $event['create_date'];
             $event_stats['event_date'] = $event['event_date'];  // new
             $event_stats['iso_create_date'] = $event['iso_create_date']; // new
+            $event_stats['iso_event_date'] = $event['iso_event_date']; // new
+            $event_stats['iso_action_date'] = $event['iso_action_date']; // new
             $event_stats['action_date'] = $event['action_date']; // new
             $event_stats['location'] = $event['location'];
             $event_stats['location_details'] = $event['location_details'];  // new

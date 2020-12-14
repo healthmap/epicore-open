@@ -69,6 +69,7 @@
                         <input type="text" class="form-control-small form-control" maxlength = "40" ng-model="rfiData.population.other" name="other" id="other_unknown" placeholder='' value="" required>
                         <span class="error">{{populationOtherError}}</span>
                     </div>
+                    <span class="error" ng-if="!rfiData.population">{{affectedPopSelectionError}}</span>
                 </div>
 
             </div><!--col-->
@@ -169,10 +170,10 @@
                             <input type="checkbox" name="other_animal" ng-model="rfiData.health_condition.other_animal" ng-click="clearCondition2(); rfiData.health_condition.unknown_animal = false; clearhcError();" ng-checked="rfiData.health_condition.other_animal_description"> Other</label>
                         <input ng-if="rfiData.health_condition.other_animal" type="text" class="form-control" ng-model="rfiData.health_condition.other_animal_description" name="other_animal_description" id="other_animal_description" placeholder='Enter a description of the syndrome' value="" ng-required="rfiData.health_condition.other_animal" >
                     </div>
-                    <span class="error" >{{hc_error_message1}}</span>
+                    <span class="error" ng-if="!rfiData.health_condition">{{hc_error_message1}}</span>
                 </div>
 
-
+                
 
                 <!-- Text input questions -->
                 <div class="form-group more-space">
@@ -186,8 +187,9 @@
                         <li>Symptoms</li>
                         <li>Lab results</li>
                     </ul>
-                    <textarea class="form-control" style="height:240px" ng-model="rfiData.health_condition.disease_details" id="disease_details" name="disease_details" placeholder="" ng-required="!goback"></textarea>
-
+                    <textarea class="form-control" style="height:240px" ng-model="rfiData.health_condition.disease_details" id="disease_details" name="disease_details" placeholder="" ng-required="!rfiData.health_condition.disease_details"></textarea></textarea>
+                    <span class="error">* This description is included in the email to responders, please provide as much detail as possible.</span>
+                    <span class="error" ng-if="!rfiData.health_condition.disease_details">{{healthDetailsError}}</span>
                 </div>
 
                 <!-- next/back buttons -->

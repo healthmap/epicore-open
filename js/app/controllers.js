@@ -62,6 +62,35 @@ angular.module('EpicoreApp.controllers', []).
         /* countries and codes */
         $scope.countries = epicoreCountries;
 
+        $scope.locationOptions = {
+            types: ['(regions)']
+        }
+
+        $scope.uservals = {};
+
+        $scope.userLocationChange = function (userLocation) {
+
+            const administrative_areas = [];
+
+            userLocation.address_components.forEach(function (item) {
+                if (item.types.indexOf('country') !== -1) {
+                    $scope.uservals.country = item.short_name;
+                }
+
+                item.types.filter(function (type) {
+                    if (type.indexOf('administrative_area') !== -1) {
+                        administrative_areas.push(item.short_name);
+                    }
+                });
+
+                if (item.types.indexOf('locality') !== -1) {
+                    $scope.uservals.city = item.short_name;
+                }
+            });
+
+            $scope.uservals.state = administrative_areas.toString().replace(/,/g, ', ');
+        }
+
         // pre-populate saved username and password for mobile app
         if ($scope.mobile && (typeof ($localStorage.username) != 'undefined') && (typeof ($localStorage.password) != "undefined")) {
             $scope.formData = {};
@@ -219,7 +248,7 @@ angular.module('EpicoreApp.controllers', []).
             $http({
                 url: urlBase + 'scripts/login.php', method: "POST", data: formData
             }).success(function (data, status, headers, config) {
-                console.log("Data output after Login success ---> ", data)
+                // console.log("Data output after Login success ---> ", data)
                 //console.log("Status after Login ====> ", status)
                 //console.log("Status after Login from query -----> ", data['status'])
 
@@ -1338,8 +1367,10 @@ angular.module('EpicoreApp.controllers', []).
                 $http({
                     url: urlBase + 'scripts/sendreminder.php', method: "POST", data: data
                 }).success(function (respdata, status, headers, config) {
-                    console.log("Response Information ===> ", respdata);
-                    alert("Email sent!");
+                    // console.log("Response Information ===> ", respdata);
+                    if(i==$scope.selectedItems.length-1){
+                        alert("Email(s) sent!");
+                    }
                 });
             }
         };

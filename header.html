@@ -27,10 +27,10 @@
                 <li ng-class="{ active: isActive('/events_public')}" class="text-uppercase" ng-if="userInfo.active=='Y' && userInfo.fetp_id">
                     <a href="#/events2" ng-click="getEvents2('PR');">Public RFIs</a>
                 </li>
-                <li ng-class="{ active: isActive('/request')}" class="text-uppercase" ng-show="{{userInfo.isOrganization}} && epicore_version != '2'">
+                <li ng-class="{ active: isActive('/request')}" class="text-uppercase" ng-show="userInfo.isOrganization && epicore_version != '2'">
                     <a href="#/request" ng-class="getClass('/request')">Send RFI</a>
                 </li>
-                <li ng-class="{ active: isActive('/rfi_step1')}" class="text-uppercase" ng-show="{{userInfo.isOrganization}} && epicore_version == '2'">
+                <li ng-class="{ active: isActive('/rfi_step1')}" class="text-uppercase" ng-show="userInfo.isOrganization && epicore_version == '2'">
                     <a href="#/rfi_step1" ng-class="getClass('/request')">Send RFI</a>
                 </li>
                 <li ng-class="{ active: isActive('/fetp')}" class="text-uppercase" ng-if="userInfo.active=='Y'">
@@ -65,11 +65,12 @@
                     <li class="mb8"><a class="dropdown-item" href="#/approval">Member Portal</a></li>
                     <li class="mb8"><a class="dropdown-item" href="#/modaccess">Requester Portal</a></li>
                 </ul>
-        </div>          
-        </div>          
+        </div>      
+          
+        </div>    
                 </li>
                 <li class="text-uppercase">
-                    <a ng-href="#/home" ng-click="userLogout()">Log out</a>
+                    <a ng-href="#/home" ng-click="userLogout()">Log out <i class="text-lowercase">({{userInfo.uname}})</i></a>
                 </li>
             </ul>
         </div>

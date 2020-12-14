@@ -259,12 +259,24 @@ angular.module('EpicoreApp.controllers2', []).
         /* go next or back */
         $scope.saveStep1 = function (direction) {
             // console.log('STEP1 - clicked next:', $scope.rfiData);
-
-            if ((direction === 'back') || $scope.rfiData.location.event_date && $scope.rfiData.source.source) {
+            $scope.submitDisabled = false;
+            if (!$scope.rfiData.place) {
+                $scope.location_error_message = 'Enter an event location';
+                return;
+            } 
+            else if (!$scope.rfiData.location || !$scope.rfiData.location.event_date) {
+                $scope.time_error_message = 'Enter a valid date.';
+                return;
+            } else if (!$scope.rfiData.source) {
+                $scope.source_error_message = 'How did you hear about this event is a required field.';
+                return;
+            } else if (!$scope.rfiData.members || !$scope.rfiData.members.filtertype) {
+                $scope.submitDisabled = true;
+                return;
+            } else if ((direction === 'back') || $scope.rfiData.location.event_date && $scope.rfiData.source.source) {
                 // next or back
                 if (direction === 'next') {
-            
-                    
+                   
                     if($scope.rfiData.location.location !== $("#autocompleteText").val()) {
                         //editing location
                         // console.log('old location:', $scope.rfiData.location.location); //old
@@ -316,24 +328,44 @@ angular.module('EpicoreApp.controllers2', []).
 
                 }
                 $scope.time_error_message = '';
-            } else if (!$scope.rfiData.location.event_date) {
-
-                $scope.time_error_message = 'Enter a valid date.';
-            } else if (!$scope.rfiData.source.source) {
-            $scope.source_error_message = 'How did you hear about this event is a required field.';
             }
+            
+            //else 
         };
 
         $scope.populationOtherError = "";
+        $scope.affectedPopSelectionError = "";
+        $scope.healthDetailsError = "";
+        $scope.hc_error_message = '';
+        $scope.hc_error_message1 = '';
         $scope.saveStep2 = function (direction) {
             // console.log('STEP2 - clicked next:', $scope.rfiData);
-            
+            $scope.populationOtherError = "";
+            $scope.affectedPopSelectionError = "";
+            $scope.healthDetailsError = "";
+            $scope.hc_error_message = '';
+            $scope.hc_error_message1 = '';
+    
             // next or back
             if (direction === 'next') {
+
+                if(!$scope.rfiData.population) {
+                    $scope.affectedPopSelectionError = "Please select the affected population from above";
+                    return;
+                }
                 if (($scope.rfiData.population.type == 'E' || $scope.rfiData.population.type == 'U') && !($scope.rfiData.population.other)) {
                     $scope.populationOtherError = "Please fill the details above";
                     return;
                 }
+                if (!$scope.rfiData.health_condition) {
+                    $scope.hc_error_message1 = 'Missing parameters above.';
+                    return;
+                }
+                if (!$scope.rfiData.health_condition.disease_details) {
+                    $scope.healthDetailsError = "Please fill the details above.";
+                    return;
+                }
+                
                 // console.log("RFI Data Step 3 --> ", $scope.rfiData)
                 $location.path('/rfi_step3');
             } else if (direction === 'back') {
@@ -628,9 +660,13 @@ angular.module('EpicoreApp.controllers2', []).
 
         ///////////////////////////////////////////// Source /////////////////////////////////////////
         $scope.source_error_message = '';
+        $scope.purpose_error_message1 = '';
+        $scope.purpose_error_message = '';
         // $scope.saveSource = function (direction) {
         $scope.saveStep3 = function (direction) {
             // console.log('STEP3 - clicked review and send:', $scope.rfiData);
+            $scope.purpose_error_message = "";
+            $scope.purpose_error_message1 = "";
 
             //  if ((direction === 'back') || $scope.rfiData.source.source && $scope.rfiData.source.details) {
             if (direction === 'next') {
@@ -646,12 +682,31 @@ angular.module('EpicoreApp.controllers2', []).
                 //Editing location name requires google geolocation to autocomplete                
                 $scope.saveLocation('next'); 
 
+                if(!$scope.rfiData.purpose || !$scope.rfiData.purpose.purpose) {
+                    $scope.purpose_error_message =  'Must select one of the above options.';
+                    return;
+                }
+                
+                if($scope.rfiData.purpose.causal_agent  === undefined && 
+                    $scope.rfiData.purpose.epidemiology  === undefined && 
+                    $scope.rfiData.purpose.pop_affected  === undefined && 
+                    $scope.rfiData.purpose.location  === undefined && 
+                    $scope.rfiData.purpose.size  === undefined &&
+                    $scope.rfiData.purpose.test  === undefined && 
+                    $scope.rfiData.purpose.other_category === undefined) {
+                    $scope.purpose_error_message1 = 'Must select atleast one of the above options.';
+                    return;
+                }
+
+
                 $scope.rfiData.event_location = $scope.getLocation_2();
                 $scope.rfiData.event_population = $scope.getPopulation_2();
                 $scope.rfiData.event_conditions = $scope.getConditions_2();
                 $scope.rfiData.event_title = $scope.rfiData.event_population + ' - ' + $scope.rfiData.event_conditions + ' - ' + $scope.rfiData.event_location + ' - ' + $scope.rfiData.location.event_date;
                 $scope.rfiData.event_purpose = $scope.getPurpose_2();
                 $scope.rfiData.event_source = $scope.getSource_2();
+
+             
 
                 $location.path('/sendrequest');
 
@@ -684,6 +739,7 @@ angular.module('EpicoreApp.controllers2', []).
         }
         $scope.getPopulation_2 = function () {
             var population = '';
+            
             switch ($scope.rfiData.population.type) {
                 case "H":
                     population = 'Human';
@@ -1158,8 +1214,12 @@ angular.module('EpicoreApp.controllers2', []).
         $scope.userInfo = $cookieStore.get('epiUserInfo');
         $scope.id = $routeParams.id ? $routeParams.id : null;
         $scope.allFETPs = $routeParams.response_id ? false : true;
+        $scope.rfiOrderByValue = 'iso_create_date';
         // if we're on the closed requests page
         $scope.onOpen = $location.path().indexOf("/closed") > 0 ? false : true;
+        if(!$scope.onOpen) {
+            $scope.rfiOrderByValue = 'iso_action_date'
+        } 
         // check if public dashboard
         $scope.publicDashboard = $location.path().indexOf("/events_public") >= 0 ? true : false;
         $scope.anonymous_disabled = false;
@@ -1276,11 +1336,11 @@ angular.module('EpicoreApp.controllers2', []).
         }
 
         $scope.getPublicEventsByID = function () {
-            
+           
             var article_id = localStorage.getItem('articleID');
             // alert("ID ==> " + article_id);
             eventAPIservice2.getEvents(article_id).success(function (response) {
-                // console.log(response)
+
                 $scope.isRouteLoading = false;
                 $scope.eventsListPublic = response.EventsList;
                 var outcome = 'Pending';
@@ -1303,6 +1363,8 @@ angular.module('EpicoreApp.controllers2', []).
                 //$scope.closureDate = $scope.eventsListPublic.history[0].date;
                 $scope.cd = $scope.eventsListPublic.history[0].date;
                 $scope.closureDate = $scope.cd.split(' ')[0];
+                $scope.od = $scope.eventsListPublic.create_date;
+                $scope.openDate = $scope.od.split(' ')[0]; //(to remove time)
                 $scope.event_outcome = outcome;
                 //$scope.eventTitle = $scope.modifiedEventTitle
                 $scope.eventTitle = $scope.eventsListPublic.title;
@@ -1322,7 +1384,7 @@ angular.module('EpicoreApp.controllers2', []).
                 var end_date = moment().format('YYYY-MM-DD'); // now
                 var start_date = moment().subtract(2, 'months').format('YYYY-MM-DD'); // 2 months ago
                 eventAPIservice2.getEvents($scope.id, start_date, end_date).success(function (response) {
-                    console.log("Success Function output getEvents2 -> ", response)
+                    //console.log("Success Function output getEvents2 -> ", response)
                     $scope.isRouteLoading = false;
                     $scope.eventsListPublic = response.EventsList;
                     if ($scope.eventsListPublic.purpose) {
@@ -1376,8 +1438,12 @@ angular.module('EpicoreApp.controllers2', []).
                             $scope.eventsList.other = response.EventsList.other;
 
                         } else {
-                            $scope.eventsList.all = response.EventsList.all.slice(0, num_events);
-                            $scope.eventsList.other = response.EventsList.other.slice(0, num_events);
+                            // console.log('num_events', num_events);
+                            // console.log('response.EventsList' + console.log(response.EventsList));
+                            if(response.EventsList.all)
+                                $scope.eventsList.all = response.EventsList.all.slice(0, num_events);
+                            if(response.EventsList.other)
+                                $scope.eventsList.other = response.EventsList.other.slice(0, num_events);
                         }
 
                         if ($scope.eventsList.purpose) {
@@ -1399,9 +1465,7 @@ angular.module('EpicoreApp.controllers2', []).
                     //////// public events
                 } else if (typeof ($scope.userinfo) == "undefined") {
                     $scope.eventsList = response.EventsList;
-
                     if (num_events != 'all') {
-
                         var all_events = response.EventsList.all;
                         var public_events = [];
                         all_events.forEach(function (event) {
@@ -1409,6 +1473,7 @@ angular.module('EpicoreApp.controllers2', []).
                                 public_events.push(event);
                             }
                         })
+                        // console.log('public_events' + JSON.stringify(public_events));
                         $scope.eventsList.all = public_events.splice(0, num_events);
                     }
 
@@ -1423,6 +1488,7 @@ angular.module('EpicoreApp.controllers2', []).
                         $scope.summary = {};
                         $scope.summary.phe_title = $scope.eventsList.title;
                     }
+                    
                 }
 
                 // today's date
@@ -1456,7 +1522,9 @@ angular.module('EpicoreApp.controllers2', []).
                     $scope.listofEventIdsToDisplay = response.numNotRatedResponses ? response.numNotRatedResponses[1][0]: [];
                     // console.log("scope --====> ", $scope)
                     $scope.num_notrated_responses = response.numNotRatedResponses ? response.numNotRatedResponses[0]: 0;
+                    $scope.rfiOrderByValue = 'iso_create_date';
                 } else if ($scope.eventsList) {
+                    $scope.rfiOrderByValue = 'iso_action_date';
                     for (var n in $scope.eventsList.yours) {
                         $scope.num_notrated_responses += parseInt($scope.eventsList.yours[n].num_notrated_responses);
                     }
@@ -1728,7 +1796,7 @@ angular.module('EpicoreApp.controllers2', []).
         $scope.modalTitle = "";
         $scope.modalBody = "";
         $scope.showSummary = function (summary, more_info, event_title, event_source, event_source_details, event_outcome, event_action_date) {
-
+            
             var source = '';
             if (event_source == 'MR') {
                 source = "Media Report";
@@ -1787,7 +1855,6 @@ angular.module('EpicoreApp.controllers2', []).
         $scope.articleTitle = "";
         $scope.articleBody = "";
         $scope.openPortfolioURL = function (eventID, summary, more_info, event_title, event_source, event_source_details, event_outcome, event_action_date) {
-
 
             var source = '';
             if (event_source == 'MR') {
