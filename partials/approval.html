@@ -288,17 +288,18 @@
 
                                     </span>
                                     <span class="pull-right">
-                                        <span ng-show="!applicant.locations || applicant.locations == 0">
-                                            <button class="pull-left transparent" type="button" ng-click="setLocationStatus(applicant.maillist_id,'enable')">
-                                                <i alt="accept" class="fa fa-check-square-o"></i>
-                                            </button> More locations</span>
-                                        <span ng-show="applicant.locations">
-                                            </b>
-                                            <button type="button" class="pull-left transparent" ng-click="setLocationStatus(applicant.maillist_id,'disable')">
-                                                <i alt="accept" class="fa fa-square-o"></i>
-                                            </button> More locations</span>
-                                        <button class="ml32 btn btn-default btn-sm" type="button" ng-click="editApplicant(applicant.maillist_id,'edit')">Edit</button>
-                                    </span>
+                                            <span ng-show="!applicant.locations || applicant.locations == 0">
+                                                <button class="pull-left transparent" type="button" ng-click="setLocationStatus(applicant.maillist_id,'enable')">
+                                                    <i alt="accept" class="fa fa-square-o"></i>
+                                                </button> More locations</span>
+                                            <span ng-show="applicant.locations">
+                                                </b>
+                                                <button type="button" class="pull-left transparent" ng-click="setLocationStatus(applicant.maillist_id,'disable')">
+                                                    <i alt="accept" class="fa fa-check-square-o"></i>
+                                                </button> More locations</span>
+                                            <button class="ml32 btn btn-default btn-sm" type="button" ng-click="editApplicant(applicant.maillist_id,'edit')">Edit</button>
+                                        </span> 
+
                                     <!--<button  class="btn btn-default btn-sm stacked" type="button" ng-click="deleteApplicant(applicant.maillist_id)"><i class="fa fa-trash-o"></i></button>-->
                                 </div>
                                 <p class="mb16">{{applicant.email}} &#8226; {{applicant.city}}, {{applicant.state}}</p>
