@@ -1340,7 +1340,6 @@ angular.module('EpicoreApp.controllers2', []).
         $scope.getPublicEventsByID = function () {
            
             var article_id = localStorage.getItem('articleID');
-            console.log('ITS getPublicEventsByID');
             eventAPIservice2.getEvents(article_id).success(function (response) {
 
                 $scope.isRouteLoading = false;
@@ -1358,9 +1357,7 @@ angular.module('EpicoreApp.controllers2', []).
                 } else if ($scope.eventsListPublic.outcome == 'NU') {
                     outcome = 'Updated (negative)';
                 }
-
-
-                // console.log('eventsPublic:', JSON.stringify($scope.eventsListPublic));
+                
                 //$scope.modifiedEventTitle = $scope.eventsListPublic.title.replace(",", "&#183;");
                 //$scope.closureDate = $scope.eventsListPublic.history[0].date;
                 $scope.cd = $scope.eventsListPublic.history[0].date;
