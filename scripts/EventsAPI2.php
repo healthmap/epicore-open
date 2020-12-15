@@ -32,11 +32,36 @@ if(isset($rvars['event_id']) && is_numeric($rvars['event_id'])) {
     if($rvars['from'] == "responses") {
         $indexed_array = $ei->getResponses();
     } else {
-        $indexed_array = $ei->getInfo(); 
-        $indexed_array['filePreview'] = $ei->buildEmailForEvent($indexed_array, 'rfi', '', 'file'); 
-        $indexed_array['estatus'] = $ei->getEventStatus();
-        $indexed_array['history'] = $ei->getEventHistory();
-        $indexed_array['fetp_ids'] = $ei->getFETPRecipients();
+        // echo 'public rfi page';
+        $indexed_arrayRow = $ei->getInfo(); 
+        //filePreview: Not required for now - do not remove
+        //$indexed_arrayFile['filePreview'] = $ei->buildEmailForEvent($indexed_arrayRow, 'rfi', '', 'file'); 
+        $public_dash_row = EventInfo::fetchPublicDashboardValuesOnly($indexed_arrayRow);
+
+        if($public_dash_row['outcome'] === 'VP' || $public_dash_row['outcome'] === 'VN' || $public_dash_row['outcome'] === 'UP') {
+            $indexed_array = $public_dash_row;
+            $indexed_array['estatus'] = $ei->getEventStatus();
+            $indexed_array['history'] = $ei->getEventHistory();
+
+            //histoy contains all extra info which need to be cleaned for public rfi view
+            foreach($indexed_array['history'] as $elementKey => $element) {
+                foreach($element as $valueKey => $value) {
+                    if($valueKey && $valueKey !== 'date'){
+                        //delete this particular object from the $indexed_array
+                        unset($indexed_array['history'][$elementKey][$valueKey]);
+                    } 
+                }
+            }     
+            //fetpId filepreview: Not required for now - do not remove
+            // $indexed_array['fetp_ids'] = $ei->getFETPRecipients();
+            // $indexed_array['filePreview'] =  $indexed_arrayFile['filePreview'];
+        } else {
+            //no public RFI(s) to display
+            $indexed_array = array();
+            $indexed_array['error-message'] = 'Restricted information. Please contact your administrator';
+        }
+        
+
     }
 } else { // get all events
     $start_date = $rvars['start_date'] ? $rvars['start_date']: V2START_DATE;
