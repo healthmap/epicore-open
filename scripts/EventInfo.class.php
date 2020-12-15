@@ -1035,9 +1035,7 @@ class EventInfo
                 $events['yours'][] = $row;
                 $events['yourorg_you'][] = $row;
                 $events['all'][] = $row;
-                //echo '$events:';
-                //print_r($events);
-                //echo '-----$events:';
+                
         
             } else {
                 // get the organization of the user and that of the initiator of the request
@@ -1047,12 +1045,22 @@ class EventInfo
                     $events['yourorg_you'][] = $row;
                     $events['all'][] = $row;
                 } else {
-                    $events['other'][] = $row;
-                    $events['all'][] = $row;
+                    //public events dashboard
+                    //other not required - removing..for now
+                    // $events['other'][] = $row; 
+                    
+                    //fetch only public view fields
+                    $public_dash_row = EventInfo::fetchPublicDashboardValuesOnly($row);
+
+                    if($public_dash_row['outcome'] === 'VP' ||
+                    $public_dash_row['outcome'] === 'VN' ||
+                    $public_dash_row['outcome'] === 'UP')
+                        $events['all'][] = $public_dash_row;
+
                 }
-                //echo '**$events:';
-                //print_r($events);
-                //echo '-----$events:';
+                // echo '**$events:';
+                // print_r($events);
+                // echo '-----$events:';
             }
         }
 
@@ -1853,6 +1861,40 @@ class EventInfo
             $counter++;
         }
         return $history;
+    }
+
+    function fetchPublicDashboardValuesOnly($alldataRow) {
+
+        $temp = array();
+        foreach($alldataRow as $key=>$val)
+        {
+            if($key == 'event_id')       
+                $temp[$key] = $val;
+            else if($key == 'title')       
+                $temp[$key] = $val;
+            else if($key == 'description')       
+                $temp[$key] = $val;
+            else if($key == 'action_date')       
+                $temp[$key] = $val;
+            else if($key == 'create_date') 
+                $temp[$key] = $val;                    
+            else if($key == 'country')       
+                $temp[$key] = $val;
+            else if($key == 'phe_description')       
+                $temp[$key] = $val;
+            else if($key == 'iso_action_date')       
+                $temp[$key] = $val;
+            else if($key == 'event_id_int')       
+                $temp[$key] = $val;
+            else if($key == 'outcome') 
+                $temp[$key] = $val;
+            else if($key == 'source') 
+                $temp[$key] = $val;
+            else if($key == 'source_details') 
+                $temp[$key] = $val;    
+        }   
+        return($temp);
+
     }
 
     // get name, hmu_id, user_id, and org id of person who generated the event

@@ -1222,6 +1222,7 @@ angular.module('EpicoreApp.controllers2', []).
         } 
         // check if public dashboard
         $scope.publicDashboard = $location.path().indexOf("/events_public") >= 0 ? true : false;
+        $scope.isPublicArticleView = $location.path().indexOf("/articles") >= 0 ? true : false;
         $scope.anonymous_disabled = false;
         if (!$scope.formData) {
             $scope.formData = {};
@@ -1330,7 +1331,8 @@ angular.module('EpicoreApp.controllers2', []).
                 event.outcome === 'VN' ||
                 event.outcome === 'UP';
         };
-
+        
+        
         $scope.publicArticle = function (eventID) {
             $window.open("#/events_public/articles/" + eventID, "_self");
         }
@@ -1338,7 +1340,6 @@ angular.module('EpicoreApp.controllers2', []).
         $scope.getPublicEventsByID = function () {
            
             var article_id = localStorage.getItem('articleID');
-            // alert("ID ==> " + article_id);
             eventAPIservice2.getEvents(article_id).success(function (response) {
 
                 $scope.isRouteLoading = false;
@@ -1356,9 +1357,7 @@ angular.module('EpicoreApp.controllers2', []).
                 } else if ($scope.eventsListPublic.outcome == 'NU') {
                     outcome = 'Updated (negative)';
                 }
-
-
-                //console.log($scope.eventsListPublic);
+                
                 //$scope.modifiedEventTitle = $scope.eventsListPublic.title.replace(",", "&#183;");
                 //$scope.closureDate = $scope.eventsListPublic.history[0].date;
                 $scope.cd = $scope.eventsListPublic.history[0].date;
@@ -1572,6 +1571,12 @@ angular.module('EpicoreApp.controllers2', []).
         // get most recent events for public dashboard
         // get all events on load for open events
         // get events for current month for closed events
+        
+        //There were 2 API(s) fired for /articles/ID route. We do not need the getAllEvents here...
+        //fired for publicView of article - getPublicEventsByID() is used.
+        if($scope.publicDashboard && $scope.isPublicArticleView)
+            return;
+
         if ($scope.publicDashboard) {
             var end_date = moment().format('YYYY-MM-DD'); // now
             var start_date = moment().subtract(3, 'months').format('YYYY-MM-DD'); // 3 month ago
