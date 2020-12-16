@@ -87,6 +87,7 @@ app.config(function ($routeProvider) {
         when("/success/:id", { templateUrl: "partials/success.html?cb=" + cacheBustSuffix, controller: "successController" }).
         when("/success/:id/:eid", { templateUrl: "partials/success.html?cb=" + cacheBustSuffix, controller: "successController" }).
         when("/about", { templateUrl: "partials/about.html?cb=" + cacheBustSuffix }).
+        when("/newsletter", { templateUrl: "partials/newsletter.html?cb=" + cacheBustSuffix }).
         when("/how", { templateUrl: "partials/howitworks.html?cb=" + cacheBustSuffix }).
         when("/who", { templateUrl: "partials/whocanapply.html?cb=" + cacheBustSuffix }).
         when("/educator", { templateUrl: "partials/lpeducator.html?cb=" + cacheBustSuffix }).
