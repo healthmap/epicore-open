@@ -42,6 +42,7 @@ else { // use relative url for web app
 var cacheBustSuffix = Date.now();
 
 app.config(function ($routeProvider) {
+    
     $routeProvider.
         when("/events", { templateUrl: "partials/events.html?cb=" + cacheBustSuffix, controller: "eventsController" }).
         when("/events2", { templateUrl: "partials/events2.html?cb=" + cacheBustSuffix, controller: "eventsController2" }).
@@ -87,9 +88,12 @@ app.config(function ($routeProvider) {
         when("/success/:id", { templateUrl: "partials/success.html?cb=" + cacheBustSuffix, controller: "successController" }).
         when("/success/:id/:eid", { templateUrl: "partials/success.html?cb=" + cacheBustSuffix, controller: "successController" }).
         when("/about", { templateUrl: "partials/about.html?cb=" + cacheBustSuffix }).
-        when("/newsletter", { templateUrl: "partials/newsletter.html?cb=" + cacheBustSuffix }).
         when("/how", { templateUrl: "partials/howitworks.html?cb=" + cacheBustSuffix }).
-        when("/who", { templateUrl: "partials/whocanapply.html?cb=" + cacheBustSuffix }).
+        // when("/who", { templateUrl: "partials/whocanapply.html?cb=" + cacheBustSuffix }).
+        when("/who", { templateUrl: "partials/newsletter.html?cb=" + cacheBustSuffix }).
+        
+        when("/news", { templateUrl: "partials/newsletter.html?cb=" + cacheBustSuffix }).
+        
         when("/educator", { templateUrl: "partials/lpeducator.html?cb=" + cacheBustSuffix }).
         when("/provider", { templateUrl: "partials/lpprovider.html?cb=" + cacheBustSuffix }).
         when("/researcher", { templateUrl: "partials/lpresearcher.html?cb=" + cacheBustSuffix }).
@@ -122,12 +126,66 @@ app.config(function ($routeProvider) {
         when("/rfi_dashboard/closed", { templateUrl: "partials/events_metrics.html?cb=" + cacheBustSuffix, controller: "eventsController2" }).
         when("/requesters_dashboard", { templateUrl: "partials/requesters_dashboard.html?cb=" + cacheBustSuffix, controller: "modaccessController" }).
 
+        
+        
+
         otherwise({ redirectTo: '/home' });
 });
 
+
+// app.config(['$locationProvider', function($locationProvider) {
+//     $locationProvider.hashPrefix(''); 
+// }]); 
+
+
 /* google analytics */
 app.run(['$rootScope', '$location', '$window', function ($rootScope, $location, $window) {
-    $rootScope.$on('$routeChangeSuccess', function (event) {
+
+
+    $rootScope.$on("$routeChangeError", function () {
+        console.log("failed to change routes");
+      });
+
+
+      $rootScope.$on('$locationChangeStart', function (event, next, current, previous) {
+        console.log('##########locationChangeStart');
+        console.log('$location.path():', $location.path());
+        console.log('$window.path():', $window.location.href);
+        console.log('$current path():',current);
+        console.log('$previous path():', previous);
+        console.log('$next path():', next);
+
+      });
+
+      
+      $rootScope.$on('$locationChangeSuccess', function (event, newUrl, oldUrl) {
+        console.log('************locationChangeSuccess');
+        console.log('$location.path():', $location.path());
+        console.log('$window.path():', $window.location.href);
+        console.log('$newUrl path():',newUrl);
+        console.log('$oldUrl path():',oldUrl);
+        
+      });
+
+      $rootScope.$on('$routeChangeStart', function(event, next, current, previous) { 
+        console.log('@@@@@@@@routeChangeStart');
+        console.log('$current path():',current);
+        console.log('$previous path():', previous);
+        console.log('$next path():', next);
+        console.log('$location.path():', $location.path());
+        console.log('$window.path():', $window.location.href);
+        
+      });
+
+    $rootScope.$on('$routeChangeSuccess', function(event, next, current, previous) { 
+        console.log('&&&&&&&&&&&&&&&routeChangeSuccess');
+
+        console.log('$current path():',current);
+        console.log('$previous path():', previous);
+        console.log('$next path():', next);
+        console.log('$location.path():', $location.path());
+        console.log('$window.path():', $window.location.href);
+        // console.log('$rootScope:', $rootScope);
         $window.ga('send', 'pageview', { page: $location.path() });
     });
 }]);
