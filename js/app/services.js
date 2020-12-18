@@ -3,7 +3,7 @@ angular.module('EpicoreApp.services', [])
         $rootScope.$on("$routeChangeStart", function (event, next, current) {
             var requesturl = $location.path();
             var urlarr = requesturl.split("/");
-            var nonauthpages = new Array('fetp', 'about', 'terms', 'mod', 'application', 'application_confirm', 'login',
+            var nonauthpages = new Array('fetp', 'about', 'terms', 'mod', 'application', 'news', 'application_confirm', 'login',
                 'setpassword', 'resetpassword','who','how','educator','provider','professional','researcher', 'certificate', 'events_public','login_mobile');
 
             // if user is not authenticated, make them go to homepage if on an auth-only page
@@ -39,6 +39,13 @@ angular.module('EpicoreApp.services', [])
                 //return ($rootScope.userinfo['active'] == 'Y') ? 1: 0;
             }
         }
+    })
+    .factory('newsService', function($http, $rootScope, $location, urlBase) {
+        var newsAPI = {};
+        newsAPI.getPdfURLS = function() {
+            return $http.get('/newsletter.json')
+        }
+        return newsAPI;
     })
     .factory('eventAPIservice', function($http, $rootScope, $location, urlBase) {
         var eventAPI = {};
