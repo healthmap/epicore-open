@@ -435,7 +435,7 @@ angular.module('EpicoreApp.controllers', []).
         /* FOR ADDING ACTIVE CLASS TO NAV */
     }).controller('headerController', function ($scope, $location, $window) {
         $scope.isActive = function (viewLocation) {
-            return viewLocation === $location.path().replace();
+            return viewLocation === $location.path();
         };
         /* FETP controller */
     })
