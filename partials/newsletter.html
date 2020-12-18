@@ -11,9 +11,8 @@
     <div class="row">
         <div class="col-xs-12 col-md-8">
         <h3>
-         EpiCore is a system that aims to complement existing surveillance methods and speed up the process of finding, reporting and verifying public health events. 
+            This quarterly newsletter is an effort to keep EpiCore members informed about how EpiCore is doing, updates on the system, and any training or educational opportunities available. 
         </h3> 
-        <p>The Epicore Team is working to improve our news letters. Look for major improvements soon. </p>
         </div>
     </div>
 </div>
@@ -23,21 +22,40 @@
     <div class="row">
         <div class="col-xs-12 col-md-8">
 
-        <h2 class="">Most Recent</h2>
+        <h2 class="">Latest: {{newsLinksLatest.year}}</h2>
 
-        <h3 class="mb12">Ending Pandemics</h3>
-        <p><a href="http://endingpandemics.org/" third="true">Ending Pandemics</a> works with partners across the globe to unlock the potential to find, verify, and contain outbreaks faster no matter where they might emerge on the planet.</p>
+        <table class='outer-border small table table-hover'>
+            <tbody>
+                <tr>
+                    <th>Quarter</th>
+                    <th>Newsletter</th>
+                </tr>
+                <tr ng-repeat="qobj in newsLinksLatest.qLinks">
+                    <td>{{qobj.quarter}}</td>
+                    <td><a target="_blank" href={{qobj.weblink}}>View newsletter</a></td>
+                </tr>
+            </tbody>
+        </table>                
+       
+        <h2 class="">Previous Years</h2>
 
-        <h3 class="mb12">HealthMap</h3>
-        <p><a href="http://healthmap.org" third="true">HealthMap</a>, a freely-available website, brings together disparate online data sources to achieve a unified and comprehensive view of the current global state of infectious diseases and their effect on human and animal health.</p> 
-
-        <h2 class="">Older</h2>
-
-        <h3 class="mb12">ProMED-mail of the International Society for Infectious Diseases</h3>
-        <p>Founded in 1994, <a href="http://promedmail.org/" third="true">ProMED-mail</a> rapidly disseminates to its large global audience early warning reports on outbreaks of emerging and re-emerging diseases. Reports are selected and interpreted by a panel of specialists who provide expert commentary.</p> 
-
-        <h3 class="mb12">TEPHINET (The Training Programs in Epidemiology & Public Health Interventions Network)</h3>
-        <p>Founded in 1997, <a href="http://www.tephinet.org/" third="true">TEPHINET</a> is a member-led global network of field epidemiology training programs (FETPs) consisting of 65 field based FETPs in 90 countries and 5 regional training networks with over 17,500 trainees and graduates.</p>
+      
+        <div ng-repeat="yearObj in newsLinksJson.slice(1,newsLinksJson.length)">
+            <h3 class="">{{yearObj.year}}:</h3>
+            <table class='outer-border small table table-hover'>
+               <tbody>
+                    <tr>
+                        <th>Quarter</th>
+                        <th>Newsletter</th>
+                    </tr>
+                    <tr ng-repeat="obj in yearObj.qLinks">
+                        <td>{{obj.quarter}}</td>
+                        <td><a target="_blank" href={{obj.weblink}}>View newsletter</a></td>
+                    </tr>
+                </tbody>
+            </table>                
+        </div>
+       
         </div><!--col-->
     </div><!--row-->
 </div><!--container-->

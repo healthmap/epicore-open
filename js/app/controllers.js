@@ -434,18 +434,24 @@ angular.module('EpicoreApp.controllers', []).
 
         /* FOR ADDING ACTIVE CLASS TO NAV */
     }).controller('headerController', function ($scope, $location, $window) {
-
         $scope.isActive = function (viewLocation) {
-            console.log('isActive');
-            console.log('headerController-loc-href:', $location.path());
-            console.log('headerController-win-href:', $window.location.href);
             return viewLocation === $location.path().replace();
         };
-
         /* FETP controller */
-    }).controller('fetpController', function ($scope, $cookieStore) {
+    })
+    .controller('fetpController', function ($scope, $cookieStore) {
         $scope.userInfo = $cookieStore.get('epiUserInfo');
         /* Event(s) controller */
+    })
+    .controller('newsController', function ($scope, $location, $window, newsService) {
+        $scope.newsLinksJson = {};
+        $scope.newsLinksLatest = {};
+        newsService.getPdfURLS().success(function (response) {
+           $scope.newsLinksJson = response;
+           $scope.newsLinksLatest = response[0];
+        });
+           
+       
     }).controller('eventsController', function ($scope, $routeParams, $cookieStore, $location, $http, eventAPIservice, urlBase, epicoreMode) {
 
         $scope.mobile = (epicoreMode == 'mobile') ? true : false;
