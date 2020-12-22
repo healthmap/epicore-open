@@ -774,6 +774,10 @@ th {
 .selected {
   background-color: #dd4553;
 }
+.whitespace-summary {
+  margin-bottom: 16px;
+  white-space: pre-wrap;
+}
 @media (max-width: 1200px) {
   .nav > li > a,
   .nav .btn {
