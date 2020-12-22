@@ -919,7 +919,6 @@ class EventInfo
             $row['reason'] = $db->getOne("SELECT reason FROM event_notes WHERE event_id = ? ORDER BY action_date DESC LIMIT 1", array($row['event_id']));
             // get action date
             $row['action_date'] = $db->getOne("SELECT action_date FROM event_notes WHERE event_id = ? ORDER BY action_date DESC LIMIT 1", array($row['event_id']));
-            // $row['action_date'] = date('j-M-Y', strtotime($row['action_date']));
 
             // get organization id for the event
             $row['organization_id'] = $db->getOne("SELECT organization_id FROM epicore.user WHERE user.user_id = ?", array($row['requester_id']));
