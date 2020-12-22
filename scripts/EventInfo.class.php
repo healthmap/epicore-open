@@ -893,8 +893,6 @@ class EventInfo
         event.create_date >= ? AND event.create_date <= ?
         ORDER BY event.create_date DESC", array($start_date, $end_date));
         
-
-
         while($row = $q->fetchRow()) {
 
             // get the current status - open or closed
@@ -903,7 +901,7 @@ class EventInfo
             if($status != $dbstatus) {
                 continue;
             }
-
+            
             // get fetp (member) ids
             $q1 = $db->query("SELECT DISTINCT(fetp_id) FROM event_fetp WHERE event_id = ?", array($row['event_id']));
             $fetp_ids = array();
@@ -912,7 +910,7 @@ class EventInfo
             }
             $row['member_ids'] = implode(',', $fetp_ids);
             $row['num_members'] = count($fetp_ids);
-
+            
             // get date of first response
             $row['first_response_date'] = $db->getOne("SELECT MIN(response_date) FROM response WHERE event_id = ?", array($row['event_id']));
             // get notes
@@ -921,7 +919,7 @@ class EventInfo
             $row['reason'] = $db->getOne("SELECT reason FROM event_notes WHERE event_id = ? ORDER BY action_date DESC LIMIT 1", array($row['event_id']));
             // get action date
             $row['action_date'] = $db->getOne("SELECT action_date FROM event_notes WHERE event_id = ? ORDER BY action_date DESC LIMIT 1", array($row['event_id']));
-            $row['action_date'] = date('j-M-Y', strtotime($row['action_date']));
+            // $row['action_date'] = date('j-M-Y', strtotime($row['action_date']));
 
             // get organization id for the event
             $row['organization_id'] = $db->getOne("SELECT organization_id FROM epicore.user WHERE user.user_id = ?", array($row['requester_id']));
@@ -972,7 +970,7 @@ class EventInfo
 
             // get responses
             $row['event_responses'] = EventInfo::getResponsesforEvent($row['event_id']);
-
+            
             // get the number of requests sent for that event
             $row['num_responses'] = $db->getOne("SELECT count(*) FROM response WHERE event_id = ?", array($row['event_id']));
             $row['num_responses_content'] = $db->getOne("SELECT count(*) FROM response WHERE event_id = ? AND response_permission > 0 AND  response_permission < 4", array($row['event_id']));
@@ -1008,6 +1006,7 @@ class EventInfo
             $row['event_id_int'] = (int)$row['event_id'];
             $row['create_date'] = date('j-M-Y', strtotime($row['create_date']));
             $row['event_date'] = date('j-M-Y', strtotime($row['event_date']));
+            $row['action_date'] = date('j-M-Y', strtotime($row['action_date']));
             $first_response_date = new DateTime($row['first_response_date']);
             $event_create_date = new DateTime($row['iso_create_date']);
             $reaction_time =  $first_response_date->diff($event_create_date);
@@ -1030,13 +1029,10 @@ class EventInfo
                 $row['country'] = $place[0];
             }
 
-
             if($uid == $row['requester_id']) {
                 $events['yours'][] = $row;
                 $events['yourorg_you'][] = $row;
                 $events['all'][] = $row;
-                
-        
             } else {
                 // get the organization of the user and that of the initiator of the request
                 $oid_of_requester = $db->getOne("SELECT organization_id FROM epicore.user WHERE user_id = ?", array($row['requester_id']));
@@ -1048,7 +1044,6 @@ class EventInfo
                     //public events dashboard
                     //other not required - removing..for now
                     // $events['other'][] = $row; 
-                    
                     //fetch only public view fields
                     $public_dash_row = EventInfo::fetchPublicDashboardValuesOnly($row);
 
@@ -1063,8 +1058,6 @@ class EventInfo
                 // echo '-----$events:';
             }
         }
-
-
         return $events;
     }
 
@@ -1864,7 +1857,7 @@ class EventInfo
     }
 
     function fetchPublicDashboardValuesOnly($alldataRow) {
-
+        // echo 'fetchPublicDashboardValuesOnly';
         $temp = array();
         foreach($alldataRow as $key=>$val)
         {
