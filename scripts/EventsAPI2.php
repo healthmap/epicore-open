@@ -31,6 +31,7 @@ if(isset($rvars['event_id']) && is_numeric($rvars['event_id'])) {
     $ei = new EventInfo($rvars['event_id']);
     
     if($rvars['from'] == "responses") {
+         //echo 'from responses page';
         $indexed_array = $ei->getResponses();
     
     } else if($rvars['from'] == "events_public") { //for the articles page

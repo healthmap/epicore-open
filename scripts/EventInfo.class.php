@@ -884,15 +884,22 @@ class EventInfo
         }
         $start_date = $sdate ? $sdate: V2START_DATE;
         $end_date = $edate ? $edate: date("Y-m-d H:i:s");
+        //modify date to datetime
+        $start_time = '00:00:00';
+        $end_time = '23:59:59';
+        $edatetimeStr = $edate . ' ' . $end_time;
+        $sdatetimeStr = $sdate . ' ' . $start_time;
+
         $db = getDB();
         $oid = $db->getOne("SELECT organization_id FROM epicore.user WHERE user_id = ?", array($uid));
         $status = $status ? $status : 'O'; // if status is not passed in, get open events
+        
         $q = $db->query("SELECT DISTINCT(event.event_id), event.*, place.name AS location, place.location_details 
         FROM epicore.place, epicore.event, epicore.event_fetp 
         WHERE event.place_id = place.place_id AND event.event_id = event_fetp.event_id AND
         event.create_date >= ? AND event.create_date <= ?
-        ORDER BY event.create_date DESC", array($start_date, $end_date));
-        
+        ORDER BY event.create_date DESC", array($sdatetimeStr, $edatetimeStr));
+
         while($row = $q->fetchRow()) {
 
             // get the current status - open or closed
