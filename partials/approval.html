@@ -55,6 +55,13 @@
                 <i class="fa fa-spinner fa-spin"></i> Please wait...
             </span>
 
+            <div class="form-group pull-right">
+                <label class="form-label" >Member List Filter</label>
+                <select ng-options="month as month.name for month in event_months " ng-model="selected_month" ng-change="getApprovalMonth(selected_month)"></select>
+            </div>
+            <br/>
+            
+
             <!--
             <h4>Send Reminder Options:</h4>
             <button type="button" class="btn btn-secondary secondary-color btn-tab mb24" ng-click="sendReminder('preapprove_reminder')">Set Password (Pre-approved)</button>
@@ -66,6 +73,8 @@
             <button ng-show="allapp" type="button" ng-click="selectMembers(false)" class="btn btn-default btn-sm stacked">Show Inactive Members</button>
             {{waitmessage}}
             </p>
+
+      
 
             <div class="collapse-search-container mb32">
 
@@ -101,12 +110,14 @@
                     </li>
                 </ul>
 
+           
                 <div id="collapseSearch" class="collapse">
-                    <div class="input-group">
+                    <div class="input-group" ng-controller="approvalController">
                         <span class="input-group-addon">
                             <i class="far fa-search"></i>
                         </span>
                         <input ng-model="query_input" class="input-group" ng-keypress="searchMembers($event)">
+
                     </div>
                 </div>
             </div>

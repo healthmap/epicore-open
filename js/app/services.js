@@ -119,4 +119,45 @@ angular.module('EpicoreApp.services', [])
             }
         };
 
+    })
+    .factory("epicoreCacheService", function () {// questions form variables object (persistance)
+        var memberPortalInfo = [];
+        return{
+            clear: function () {
+                for (var tuple in memberPortalInfo) delete memberPortalInfo[tuple];
+            },
+            //Setters
+            setMemberPortalInfo: function(memInfo) {
+                return memberPortalInfo = memInfo;
+            },
+            //Getters
+            getMemberPortalInfo: function () {
+                return memberPortalInfo;
+            }
+        };
+
     });
+
+    .factory("epicoreCacheService", function () {// questions form variables object (persistance)
+        var memberPortalInfo = [];
+        return{
+            clear: function () {
+                for (var tuple in memberPortalInfo) delete memberPortalInfo[tuple];
+            },
+            //Setters
+            setMemberPortalInfo: function(memInfo) {
+                return memberPortalInfo = memInfo;
+            },
+            //Getters
+            getMemberPortalInfo: function () {
+                return memberPortalInfo;
+            }
+        };
+
+    });
+
+    // appServicesModule.service("epicorePropertiesService", function($rootScope) {
+
+    //     var sharedScopes = {};
+    //     sharedScopes.userDisplayName = '';
+    
