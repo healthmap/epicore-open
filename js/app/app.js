@@ -42,6 +42,7 @@ else { // use relative url for web app
 var cacheBustSuffix = Date.now();
 
 app.config(function ($routeProvider) {
+    
     $routeProvider.
         when("/events", { templateUrl: "partials/events.html?cb=" + cacheBustSuffix, controller: "eventsController" }).
         when("/events2", { templateUrl: "partials/events2.html?cb=" + cacheBustSuffix, controller: "eventsController2" }).
@@ -86,9 +87,10 @@ app.config(function ($routeProvider) {
         when("/request_edit/:id", { templateUrl: "partials/request_edit.html?cb=" + cacheBustSuffix, controller: "editRequestController" }).
         when("/success/:id", { templateUrl: "partials/success.html?cb=" + cacheBustSuffix, controller: "successController" }).
         when("/success/:id/:eid", { templateUrl: "partials/success.html?cb=" + cacheBustSuffix, controller: "successController" }).
-        when("/about", { templateUrl: "partials/about.html?cb=" + cacheBustSuffix }).
+        when("/about", { templateUrl: "partials/about.html?cb=" + cacheBustSuffix, }).
         when("/how", { templateUrl: "partials/howitworks.html?cb=" + cacheBustSuffix }).
         when("/who", { templateUrl: "partials/whocanapply.html?cb=" + cacheBustSuffix }).
+        when("/news", { templateUrl: "partials/newsletter.html?cb=" + cacheBustSuffix, controller: "newsController"}).
         when("/educator", { templateUrl: "partials/lpeducator.html?cb=" + cacheBustSuffix }).
         when("/provider", { templateUrl: "partials/lpprovider.html?cb=" + cacheBustSuffix }).
         when("/researcher", { templateUrl: "partials/lpresearcher.html?cb=" + cacheBustSuffix }).
@@ -121,12 +123,17 @@ app.config(function ($routeProvider) {
         when("/rfi_dashboard/closed", { templateUrl: "partials/events_metrics.html?cb=" + cacheBustSuffix, controller: "eventsController2" }).
         when("/requesters_dashboard", { templateUrl: "partials/requesters_dashboard.html?cb=" + cacheBustSuffix, controller: "modaccessController" }).
 
+        
+        
+
         otherwise({ redirectTo: '/home' });
 });
 
+
 /* google analytics */
 app.run(['$rootScope', '$location', '$window', function ($rootScope, $location, $window) {
-    $rootScope.$on('$routeChangeSuccess', function (event) {
+
+    $rootScope.$on('$routeChangeSuccess', function(event, next, current, previous) { 
         $window.ga('send', 'pageview', { page: $location.path() });
     });
 }]);

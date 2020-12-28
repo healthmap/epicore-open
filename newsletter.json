@@ -1,0 +1,52 @@
+[{
+    "year": "2020",
+    "qLinks": [{
+            "quarter": "Q3",
+            "weblink": "https://mailchi.mp/epicore/epicore-member-quarterly-newsletter-q3-2020"
+        },
+        {
+            "quarter": "Q2",
+            "weblink": "https://mailchi.mp/epicore/epicore-member-quarterly-newsletter-q2-2020"
+        },
+        {
+            "quarter": "Q1",
+            "weblink": "http://mailchi.mp/epicore/epicore-member-quarterly-newsletter-q1-2020"
+        }
+    ]
+},
+{
+    "year": "2019",
+    "qLinks": [{
+            "quarter": "Q4",
+            "weblink": "https://mailchi.mp/epicore/epicore-member-quarterly-newsletter-q4-2019"
+        },
+        {
+            "quarter": "Q3",
+            "weblink": "https://mailchi.mp/042f36e59963/epicore-member-quarterly-newsletter-q3-2019"
+        },
+        {
+            "quarter": "Q2",
+            "weblink": "http://mailchi.mp/f6284aaf83ad/epicore-member-quarterly-newsletter-q2-2019"
+        },
+        {
+            "quarter": "Q1",
+            "weblink": "http://mailchi.mp/e87ac7ea53b2/epicore-member-quarterly-newsletter-q1-2019"
+        }
+    ]
+},
+{
+    "year": "2018",
+    "qLinks": [{
+            "quarter": "Q4",
+            "weblink": "http://mailchi.mp/d09871ee806c/epicore-member-newsletter-q4-2018"
+        },
+        {
+            "quarter": "Q3",
+            "weblink": "http://mailchi.mp/3ede4d11490c/epicore-member-newsletter-q3-2018"
+        },
+        {
+            "quarter": "Q2",
+            "weblink": "http://mailchi.mp/dc66f2291cc2/epicore-member-quarterly-newsletter-q2-2018"
+        }
+    ]
+}]
