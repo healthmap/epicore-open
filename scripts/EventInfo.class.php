@@ -1053,10 +1053,19 @@ class EventInfo
                     //fetch only public view fields
                     $public_dash_row = EventInfo::fetchPublicDashboardValuesOnly($row);
 
-                    if($public_dash_row['outcome'] === 'VP' ||
-                    $public_dash_row['outcome'] === 'VN' ||
-                    $public_dash_row['outcome'] === 'UP')
+                    if(is_numeric($uid) && $uid == '0') { //no-login user...but uid hard-coded for '0' in previous step
+	                    // echo 'public events dashboard-without-uid';
+                        //public rfi open list no uid
+                        if($public_dash_row['outcome'] === 'VP' ||
+                        $public_dash_row['outcome'] === 'VN' ||
+                        $public_dash_row['outcome'] === 'UP') {
+                            // only public events
+                            $events['all'][] = $public_dash_row;
+                        }
+                    } else { //logged in user oid not eq to reqId
+                        // echo 'public events dashboard-with-uid';
                         $events['all'][] = $public_dash_row;
+                    }
 
                 }
                 // echo '**$events:';
