@@ -57,7 +57,7 @@
 
             <div class="form-group pull-right">
                 <label class="form-label" >Member List Filter</label>
-                <select ng-options="month as month.name for month in event_months " ng-model="selected_month" ng-change="getApprovalMonth(selected_month)"></select>
+                <select ng-options="month as month.name for month in event_months " ng-model="selected_month" ng-change="getApprovalMonth()"></select>
             </div>
             <br/>
             
@@ -83,19 +83,24 @@
                         <i class="far fa-search" ng-click="clearSearch($event)" ng-class="{'fa-times': searchOpen}"></i>
                     </li>
                     <li ng-class="{'active' : activeHeaderItem === 'New Applicants'}">
-                        <a href="#/approval">New Applicants ({{num_inactive}})</a>
+                        <!-- <a href="#/approval/" ng-click="loadMemberInfo()">New Applicants ({{num_inactive}})</a> -->
+                        <a href=""  ng-click="loadMemberInfo('/approval/')">New Applicants ({{num_inactive}})</a>
                     </li>
                     <li ng-class="{active : activeHeaderItem === 'Accepted'}">
-                        <a href="#/approval/accepted">Accepted ({{num_accepted}})</a>
+                        <!-- <a href="#/approval/accepted/" ng-click="loadMemberInfo()">Accepted ({{num_accepted}})</a> -->
+                        <a href="" ng-click="loadMemberInfo('/approval/accepted')">Accepted ({{num_accepted}})</a>
                     </li>
                     <li ng-class="{active : activeHeaderItem === 'Members'}">
-                        <a href="#/approval/members">Members ({{num_approved}})</a>
+                        <!-- <a href="#/approval/members" ng-click="loadMemberInfo()">Members ({{num_approved}})</a> -->
+                        <a href="" ng-click="loadMemberInfo('/approval/members')">Members ({{num_approved}})</a>
                     </li>
                     <li ng-class="{'active' : activeHeaderItem === 'Pre Approved'}">
-                        <a href="#/approval/pre_approved">Pre-approved ({{num_preapproved}})</a>
+                        <!-- <a href="#/approval/pre_approved" ng-click="loadMemberInfo()">Pre-approved ({{num_preapproved}})</a> -->
+                        <a href="" ng-click="loadMemberInfo('/approval/pre_approved')">Pre-approved ({{num_preapproved}})</a>
                     </li>
                     <li ng-class="{active : activeHeaderItem === 'Denied'}">
-                        <a href="#/approval/denied">Denied ({{num_denied}})</a>
+                        <!-- <a href="#/approval/denied" ng-click="loadMemberInfo()">Denied ({{num_denied}})</a> -->
+                        <a href="" ng-click="loadMemberInfo('/approval/denied')">Denied ({{num_denied}})</a>
                     </li>
                     <li class="pull-right" ng-if="activeHeaderItem === 'Accepted' || activeHeaderItem === 'Pre Approved'">
                         <!-- <a href="">
@@ -112,7 +117,7 @@
 
            
                 <div id="collapseSearch" class="collapse">
-                    <div class="input-group" ng-controller="approvalController">
+                    <div class="input-group">
                         <span class="input-group-addon">
                             <i class="far fa-search"></i>
                         </span>

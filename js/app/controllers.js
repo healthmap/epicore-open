@@ -1000,276 +1000,125 @@ angular.module('EpicoreApp.controllers', []).
     }).controller('approvalController', function ($scope, $http, $filter, $location, $route, $cookieStore, urlBase, epicoreCacheService,$rootScope) {
 
         console.log('In approvalController...');
-        var ap = this;
-        // console.log('epicoreCacheService get:' + JSON.stringify(epicoreCacheService.getMemberPortalInfo()));
-        $scope.cachMemInfo = epicoreCacheService.getMemberPortalInfo();
-        // console.log($scope.cachMemInfo[0]);
-        // only allow superusers for admin
-        $scope.userInfo = $cookieStore.get('epiUserInfo');
-        $scope.superuser = (typeof ($scope.userInfo) != "undefined") ? $scope.userInfo.superuser : false;
-        // $scope.superuser = true;
-        $scope.showpage = false;
-        $scope.membersavailable = false;
-        $scope.eventsavailable = false;
-        $scope.num_applicants = 0;
-        $scope.num_accepted = 0;
-        $scope.num_approved = 0;
-        $scope.num_inactive = 0;
-        $scope.num_denied = 0;
-        $scope.num_preapproved = 0;
-        $scope.num_setpassword = 0;
-        $scope.allapp = false;
-        var searchTermSubmitted = false;
-        var data = {};
-        var dateStart = moment('2017-10-30'); // starting date of EpiCore v2.0
-        var dateEnd = moment(); // now
-        var timeValues = [];
-        timeValues.push({ name: 'All', value: 'all' });
-        timeValues.push({ name: 'Past Year', value: 'past-year' });
-        timeValues.push({ name: 'Past Quarter', value: 'recent' });
-        $scope.event_months = timeValues.reverse();
-        $scope.selected_month = timeValues[0];
-
-        ///////////////////////////////common-start
-
-        var inactive_applicants = [];
-        var accepted_applicants = [];
-        var preapproved_applicants = [];
-        var denied_applicants = [];
-        var total_members = [];
-        var accepted_applicants_nopw = [];
-        var preapproved_applicants_nopw = [];
-        $scope.selectedItems = [];
         var currentLocation = $location.path();
-        $scope.IsAllCollapsed = false;
-        $scope.activeHeaderItem = "";
 
-        $scope.displayAcceptedDateColumn = false;
-        $scope.displayApprovedDateColumn = false;
-        $scope.displayCourseColumn = false;
-        $scope.displayPasswordColumn = false;
+        $scope.init = function() {
+            console.log('Initializing....');
+            $scope.sharedCacheMemInfo = epicoreCacheService.getMemberPortalInfo();
+            // only allow superusers for admin
+            $scope.userInfo = $cookieStore.get('epiUserInfo');
+            $scope.superuser = (typeof ($scope.userInfo) != "undefined") ? $scope.userInfo.superuser : false;
+            // $scope.superuser = true;
+            $scope.showpage = false;
+            $scope.membersavailable = false;
+            $scope.eventsavailable = false;
+            $scope.num_applicants = 0;
+            $scope.num_accepted = 0;
+            $scope.num_approved = 0;
+            $scope.num_inactive = 0;
+            $scope.num_denied = 0;
+            $scope.num_preapproved = 0;
+            $scope.num_setpassword = 0;
+            $scope.allapp = false;
+            var dateStart = moment('2017-10-30'); // starting date of EpiCore v2.0
+            var dateEnd = moment(); // now
+            var timeValues = [];
+            timeValues.push({ name: 'All', value: 'all' });
+            timeValues.push({ name: 'Past Year', value: 'past-year' });
+            timeValues.push({ name: 'Past Quarter', value: 'recent' });
+            $scope.event_months = timeValues.reverse();
+            $scope.selected_month = timeValues[0];
+            
+            var start_date = moment('2017-10-30').format('YYYY-MM-DD'); // starting date of EpiCore v2.0
+            var end_date = '';
+            start_date = moment().subtract(3, 'months').format('YYYY-MM-DD'); // three month ago- default for Past-Quarter
+            end_date = moment().format('YYYY-MM-DD'); // now
+            $scope.selected_start_date = start_date;
+            $scope.selected_end_date = end_date;
 
-        $scope.displayApplicantNumber = false;
-        $scope.displayMemberNumber = false;
-
-        var currentdate = new Date();
-        var currentFullYear = currentdate.getFullYear();
-        var applicants_no_password = []
-        $scope.pwcheck = false;
-        $scope.displayHeaderGreenBar = false;
-
-        switch (currentLocation) {
-            case '/approval/accepted': {
-                $scope.activeHeaderItem = "Accepted";
-                var outputList = accepted_applicants;
-                var nppassword_applicants = accepted_applicants_nopw;
-                $scope.displayAcceptedDateColumn = true;
-                $scope.displayPasswordColumn = true;
-                $scope.displayMemberNumber = true;
-                break;
-            }
-            case '/approval/pre_approved': {
-                $scope.activeHeaderItem = "Pre Approved";
-                var outputList = preapproved_applicants;
-                var nppassword_applicants = preapproved_applicants_nopw;
-                $scope.displayAcceptedDateColumn = true;
-                $scope.displayPasswordColumn = true;
-                $scope.displayCourseColumn = true;
-
-                $scope.displayMemberNumber = true;
-
-                break;
-            }
-            case '/approval/members': {
-                $scope.activeHeaderItem = "Members";
-                var outputList = total_members;
-                var nppassword_applicants = []
-                $scope.displayAcceptedDateColumn = true;
-                $scope.displayApprovedDateColumn = true;
-                $scope.displayCourseColumn = true;
-
-                $scope.displayMemberNumber = true;
-                break;
-            }
-            case '/approval/denied': {
-                $scope.activeHeaderItem = "Denied";
-                var nppassword_applicants = [];
-                var outputList = denied_applicants;
-                $scope.displayApplicantNumber = true;
-                break;
-            }
-            default: {
-                $scope.activeHeaderItem = "New Applicants";
-                var outputList = inactive_applicants;
-                var nppassword_applicants = [];
-                $scope.displayApplicantNumber = true;
-                break;
-            }
-        }
-
-
-        ///////////////////http: start
-        if(Object.keys($scope.cachMemInfo).length == 0 || !$scope.cachMemInfo) {
+            $scope.selectedItems = [];
+            
+            $scope.IsAllCollapsed = false;
+            $scope.activeHeaderItem = "";
+            $scope.searchTermSubmitted = false;
+            $scope.displayAcceptedDateColumn = false;
+            $scope.displayApprovedDateColumn = false;
+            $scope.displayCourseColumn = false;
+            $scope.displayPasswordColumn = false;
+    
+            $scope.displayApplicantNumber = false;
+            $scope.displayMemberNumber = false;
+    
+            
+            
+            $scope.pwcheck = false;
+            $scope.displayHeaderGreenBar = false;
+        };
+        $scope.init();
+       
+        
+        
+        if(Object.keys($scope.sharedCacheMemInfo).length == 0 || !$scope.sharedCacheMemInfo) {
             console.log("Fetching fresh from db");
-            //Re-fetch data
+            
+            var data = {};
+            //Default tab - Accepted
+            // $scope.activeHeaderItem = "Accepted";
+            // var outputList = accepted_applicants;
+            // var nppassword_applicants = accepted_applicants_nopw;
+            // $scope.displayAcceptedDateColumn = true;
+            // $scope.displayPasswordColumn = true;
+            // $scope.displayMemberNumber = true;
+
+            //Fetch data from db
             $http({
                 url: urlBase + 'scripts/approval.php', method: "GET", data: data
             }).success(function (respdata, status, headers, config) {
 
                 epicoreCacheService.setMemberPortalInfo(respdata);
-                var tableData = $scope.loadMemberInfo(respdata);
-
-                //Set scope variables from respData
-
-                // for (var n in respdata) {
-
-                //     respdata[n]['member_id'] = parseInt(respdata[n]['member_id']);  // use int so orberby works
-
-                //     var appl_year = $filter('date')(new Date(respdata[n]['apply_date']), 'yyyy');
-                //     var accepted_year = $filter('date')(new Date(respdata[n]['accept_date']), 'yyyy');
-                //     var approve_year = $filter('date')(new Date(respdata[n]['approve_date']), 'yyyy');
-
-                //     if (appl_year == currentFullYear) {
-                //         respdata[n]['apply_date'] = $filter('date')(new Date(respdata[n]['apply_date']), 'MMM dd');
-                //     } else {
-                //         respdata[n]['apply_date'] = $filter('date')(new Date(respdata[n]['apply_date']), 'dd MMM, yyyy');
-                //     }
-
-                //     if (accepted_year == currentFullYear) {
-                //         respdata[n]['accept_date'] = $filter('date')(new Date(respdata[n]['accept_date']), 'MMM dd');
-                //     } else {
-                //         respdata[n]['accept_date'] = $filter('date')(new Date(respdata[n]['accept_date']), 'dd MMM, yyyy');
-                //     }
-
-                //     if (approve_year == currentFullYear) {
-                //         respdata[n]['approve_date'] = $filter('date')(new Date(respdata[n]['approve_date']), 'MMM dd');
-                //     } else {
-                //         respdata[n]['approve_date'] = $filter('date')(new Date(respdata[n]['approve_date']), 'dd MMM, yyyy');
-                //     }
-
-                //     if (respdata[n]['status'] == 'Pending') {
-                //         accepted_applicants.push(respdata[n]);
-                //         if (respdata[n]['pword'] != 'Yes') {
-                //             accepted_applicants_nopw.push(respdata[n])
-                //         }
-                //         $scope.num_accepted++;
-                //     }
-                //     if (respdata[n]['status'] == 'Approved') {
-                //         total_members.push(respdata[n]);
-                //         $scope.num_approved++;
-                //     }
-                //     if (respdata[n]['status'] == 'Inactive') {
-                //         inactive_applicants.push(respdata[n]);
-                //         $scope.num_inactive++;
-                //     }
-                //     if (respdata[n]['status'] == 'Denied') {
-                //         denied_applicants.push(respdata[n]);
-                //         $scope.num_denied++;
-                //     }
-                //     if (respdata[n]['status'] == 'Pre-approved') {
-                //         preapproved_applicants.push(respdata[n]);
-                //         if (respdata[n]['pword'] != 'Yes') {
-                //             preapproved_applicants_nopw.push(respdata[n])
-                //         }
-                //         $scope.num_preapproved++;
-                //     }
-                //     if (respdata[n]['pword'] == 'Yes') {
-                //         $scope.num_setpassword++;
-                //     }
-                // }
-
-                $scope.displayAllRows = true;
-                $scope.allapp = false;
-                $scope.inactive_applicants = inactive_applicants;
-                $scope.applicants = outputList;
-                $scope.searchResetList = outputList;
-                $scope.all_applicants = tableData;
-                $scope.inactive_applicants = inactive_applicants;
-                $scope.num_applicants = $scope.applicants.length;
-                $scope.showpage = true;
+                var tableData = $scope.loadMemberInfo(currentLocation);
+                console.log('Done fetching table data - FULL RELOAD');
 
             });
 
-        } else {
+        } 
+       
+        $scope.loadMemberInfo = function(currentLocation) {
+
+            // var currentLocation = $location.path();
+            console.log('IN loadMemberInfo loc:', currentLocation);
+            console.log('IN loadMemberInfo month_sel:', $scope.selected_month);
+            console.log('IN loadMemberInfo start_date', $scope.selected_start_date);
+            console.log('IN loadMemberInfo end_date', $scope.selected_end_date);
+
+
+            //Scope vars reset
+            $scope.showpage = false;
+            $scope.membersavailable = false;
+            $scope.eventsavailable = false;
+            $scope.num_applicants = 0;
+            $scope.num_accepted = 0;
+            $scope.num_approved = 0;
+            $scope.num_inactive = 0;
+            $scope.num_denied = 0;
+            $scope.num_preapproved = 0;
+            $scope.num_setpassword = 0;
+            $scope.allapp = false;
+
+
+            var currentdate = new Date();
+            var currentFullYear = currentdate.getFullYear();
+            var memInfoData = epicoreCacheService.getMemberPortalInfo();
+            var inactive_applicants = [];
+            var accepted_applicants = [];
+            var preapproved_applicants = [];
+            var denied_applicants = [];
+            var total_members = [];
+            var accepted_applicants_nopw = [];
+            var preapproved_applicants_nopw = [];
+            //var applicants_no_password = []; //not used...may be remove later
+
             
-                //Set scope variables from respData
-                console.log("Fetching from sharedScopeServices...");
-                var tableData = $scope.loadMemberInfo($scope.cachMemInfo);
-                // for (var n in $scope.cachMemInfo) {
-
-                //     $scope.cachMemInfo[n]['member_id'] = parseInt($scope.cachMemInfo[n]['member_id']);  // use int so orberby works
-
-                //     var appl_year = $filter('date')(new Date($scope.cachMemInfo[n]['apply_date']), 'yyyy');
-                //     var accepted_year = $filter('date')(new Date($scope.cachMemInfo[n]['accept_date']), 'yyyy');
-                //     var approve_year = $filter('date')(new Date($scope.cachMemInfo[n]['approve_date']), 'yyyy');
-
-                //     if (appl_year == currentFullYear) {
-                //         $scope.cachMemInfo[n]['apply_date'] = $filter('date')(new Date($scope.cachMemInfo[n]['apply_date']), 'MMM dd');
-                //     } else {
-                //         $scope.cachMemInfo[n]['apply_date'] = $filter('date')(new Date($scope.cachMemInfo[n]['apply_date']), 'dd MMM, yyyy');
-                //     }
-
-                //     if (accepted_year == currentFullYear) {
-                //         $scope.cachMemInfo[n]['accept_date'] = $filter('date')(new Date($scope.cachMemInfo[n]['accept_date']), 'MMM dd');
-                //     } else {
-                //         $scope.cachMemInfo[n]['accept_date'] = $filter('date')(new Date($scope.cachMemInfo[n]['accept_date']), 'dd MMM, yyyy');
-                //     }
-
-                //     if (approve_year == currentFullYear) {
-                //         $scope.cachMemInfo[n]['approve_date'] = $filter('date')(new Date($scope.cachMemInfo[n]['approve_date']), 'MMM dd');
-                //     } else {
-                //         $scope.cachMemInfo[n]['approve_date'] = $filter('date')(new Date($scope.cachMemInfo[n]['approve_date']), 'dd MMM, yyyy');
-                //     }
-
-                //     if ($scope.cachMemInfo[n]['status'] == 'Pending') {
-                //         accepted_applicants.push($scope.cachMemInfo[n]);
-                //         if ($scope.cachMemInfo[n]['pword'] != 'Yes') {
-                //             accepted_applicants_nopw.push($scope.cachMemInfo[n])
-                //         }
-                //         $scope.num_accepted++;
-                //     }
-                //     if ($scope.cachMemInfo[n]['status'] == 'Approved') {
-                //         total_members.push($scope.cachMemInfo[n]);
-                //         $scope.num_approved++;
-                //     }
-                //     if ($scope.cachMemInfo[n]['status'] == 'Inactive') {
-                //         inactive_applicants.push($scope.cachMemInfo[n]);
-                //         $scope.num_inactive++;
-                //     }
-                //     if ($scope.cachMemInfo[n]['status'] == 'Denied') {
-                //         denied_applicants.push($scope.cachMemInfo[n]);
-                //         $scope.num_denied++;
-                //     }
-                //     if ($scope.cachMemInfo[n]['status'] == 'Pre-approved') {
-                //         preapproved_applicants.push($scope.cachMemInfo[n]);
-                //         if ($scope.cachMemInfo[n]['pword'] != 'Yes') {
-                //             preapproved_applicants_nopw.push($scope.cachMemInfo[n])
-                //         }
-                //         $scope.num_preapproved++;
-                //     }
-                //     if ($scope.cachMemInfo[n]['pword'] == 'Yes') {
-                //         $scope.num_setpassword++;
-                //     }
-                // }
-
-                $scope.displayAllRows = true;
-                $scope.allapp = false;
-                $scope.inactive_applicants = inactive_applicants;
-                $scope.applicants = outputList;
-                $scope.searchResetList = outputList;
-                $scope.all_applicants = tableData;
-                $scope.inactive_applicants = inactive_applicants;
-                $scope.num_applicants = $scope.applicants.length;
-                $scope.showpage = true;
-
-        }
-        ///////////////////http: end
-
-
-        $scope.loadMemberInfo = function(memInfoData) {
-
-            console.log('IN Load member info')    ;
-
             for (var n in memInfoData) {
 
                 memInfoData[n]['member_id'] = parseInt(memInfoData[n]['member_id']);  // use int so orberby works
@@ -1327,6 +1176,83 @@ angular.module('EpicoreApp.controllers', []).
                 }
             }
 
+           
+
+            switch (currentLocation) {
+                case '/approval/accepted': {
+                    $scope.activeHeaderItem = "Accepted";
+                    var outputList = accepted_applicants;
+                    var nppassword_applicants = accepted_applicants_nopw;
+                    $scope.displayAcceptedDateColumn = true;
+                    $scope.displayPasswordColumn = true;
+                    $scope.displayMemberNumber = true;
+                    break;
+                }
+                case '/approval/pre_approved': {
+                    $scope.activeHeaderItem = "Pre Approved";
+                    var outputList = preapproved_applicants;
+                    var nppassword_applicants = preapproved_applicants_nopw;
+                    $scope.displayAcceptedDateColumn = true;
+                    $scope.displayPasswordColumn = true;
+                    $scope.displayCourseColumn = true;
+    
+                    $scope.displayMemberNumber = true;
+    
+                    break;
+                }
+                case '/approval/members': {
+                    $scope.activeHeaderItem = "Members";
+                    var outputList = total_members;
+                    var nppassword_applicants = []
+                    $scope.displayAcceptedDateColumn = true;
+                    $scope.displayApprovedDateColumn = true;
+                    $scope.displayCourseColumn = true;
+    
+                    $scope.displayMemberNumber = true;
+                    break;
+                }
+                case '/approval/denied': {
+                    $scope.activeHeaderItem = "Denied";
+                    var nppassword_applicants = [];
+                    var outputList = denied_applicants;
+                    $scope.displayApplicantNumber = true;
+                    break;
+                }
+                default: {
+                    $scope.activeHeaderItem = "New Applicants";
+                    var outputList = inactive_applicants;
+                    var nppassword_applicants = [];
+                    $scope.displayApplicantNumber = true;
+                    break;
+                }
+            }
+    
+           
+
+            $scope.displayAllRows = true;
+            $scope.allapp = false;
+            $scope.inactive_applicants = inactive_applicants;
+            $scope.applicants = outputList;
+            $scope.searchResetList = outputList;
+            $scope.all_applicants = memInfoData;
+            $scope.inactive_applicants = inactive_applicants;
+            $scope.num_applicants = $scope.applicants.length;
+            $scope.showpage = true;
+
+            console.log('loc>>>>>>:', currentLocation);
+            console.log('applicants length >>>>>>:', $scope.applicants.length);
+            console.log('inactive_applicants length >>>>>>:', inactive_applicants.length);
+            console.log('all_applicants length >>>>>>:', memInfoData.length);
+            console.log('num_accepted length >>>>>>:', $scope.num_accepted);
+            
+            console.log('>>>>>>>:', JSON.stringify($scope.applicants));
+
+            if (outputList.length > 0) {
+                $scope.toggleRowExpandCollapse = true;
+            } else {
+                $scope.toggleRowExpandCollapse = false;
+            }
+
             return memInfoData;
             
         }
@@ -1339,24 +1265,36 @@ angular.module('EpicoreApp.controllers', []).
         }
 
         $scope.searchMembers = function (keyEvent) {
-            $scope.query = $scope.query_input;
-            console.log('*:', $scope.query_input);
-            console.log('**:',$scope.keyEvent);
-            console.log('***:',$scope.applicants);
+            // $scope.query = $scope.query_input;
+            $scope.sharedCacheMemInfo = epicoreCacheService.getMemberPortalInfo();
+            console.log('$scope.inactive_applicants length @@@@@@@@:', $scope.inactive_applicants.length);
+            console.log('$scope.applicants length @@@@@@@@:', $scope.applicants.length);
+            console.log('$scope.searchResetList length @@@@@@@@:', $scope.searchResetList.length);
+            console.log('$scope.num_applicants length @@@@@@@@:', $scope.num_applicants);
+            console.log('$scope.sharedCacheMemInfo length @@@@@@@@:', $scope.sharedCacheMemInfo);
+            // console.log('@@@@@@@@:', JSON.stringify($scope.applicants));
+
+
+
+
             if (keyEvent.keyCode == 13) {
                 $scope.query = $scope.query_input;
-                searchTermSubmitted = true;
+                console.log('queryinput:', $scope.query);
+                $scope.searchTermSubmitted = true;
                 if ($scope.query != '') {
-                    $scope.applicants = $scope.cachMemInfo;
+                    console.log('1');
+                    $scope.applicants = $scope.sharedCacheMemInfo;
                 } else {
-                    $scope.applicants = outputList;
+                    console.log('2');
+                    $scope.applicants = $scope.applicants;
                 }
-                console.log('*******>', $scope.applicants);
+                 console.log('**********:', JSON.stringify($scope.applicants));
+
             } else if(keyEvent == "reset"){
+                console.log('3');
                 $scope.query = "";
-                searchTermSubmitted = true;
-                $scope.applicants = outputList;
-                console.log('---->' ,$scope.applicants);
+                $scope.searchTermSubmitted = true;
+                $scope.applicants = $scope.searchResetList;
             }
         }
 
@@ -1377,11 +1315,7 @@ angular.module('EpicoreApp.controllers', []).
             $scope.displayAllRows = !$scope.displayAllRows;
         }
 
-        if (outputList.length > 0) {
-            $scope.toggleRowExpandCollapse = true;
-        } else {
-            $scope.toggleRowExpandCollapse = false;
-        }
+        
        
 
         $scope.isChecked = function(applicant) {
@@ -1433,7 +1367,10 @@ angular.module('EpicoreApp.controllers', []).
         
 
         // get member data for selected month
-        $scope.getApprovalMonth = function (month) {
+        $scope.getApprovalMonth = function () {
+            
+            console.log('getApprovalMonth:', $scope.selected_month);
+            var month = $scope.selected_month;
 
             var start_date = '';
             var end_date = '';
@@ -1452,15 +1389,17 @@ angular.module('EpicoreApp.controllers', []).
 
             }
             
+            $scope.selected_start_date = start_date;
+            $scope.selected_end_date = end_date;
+
             console.log('start_date', start_date);
             console.log('end_date', end_date);
-            $scope.cachMemInfo_arr = epicoreCacheService.getMemberPortalInfo();
-            var tableDataInfo = $scope.loadMemberInfo($scope.cachMemInfo_arr, outputList, inactive_applicants);
+            var currentLocation = $location.path();
+            var tableDataInfo = $scope.loadMemberInfo(currentLocation);
 
             //Set scope variables - 
-            
-            $scope.all_applicants = tableDataInfo;
-            $scope.num_applicants = $scope.applicants.length;
+            // $scope.all_applicants = tableDataInfo;
+            // $scope.num_applicants = $scope.applicants.length;
 
             
         };

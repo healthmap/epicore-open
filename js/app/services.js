@@ -121,37 +121,110 @@ angular.module('EpicoreApp.services', [])
 
     })
     .factory("epicoreCacheService", function () {// questions form variables object (persistance)
-        var memberPortalInfo = [];
+        var sharedScopes = {};
+        sharedScopes.memberPortalInfo = [];
+        sharedScopes.memberPortalTabPath = '';
+        sharedScopes.showpage = false;
+        sharedScopes.membersavailable = false;
+        sharedScopes.eventsavailable = false;
+        sharedScopes.num_applicants = 0;
+        sharedScopes.num_accepted = 0;
+        sharedScopes.num_approved = 0;
+        sharedScopes.num_inactive = 0;
+        sharedScopes.num_denied = 0;
+        sharedScopes.num_preapproved = 0;
+        sharedScopes.num_setpassword = 0;
+        sharedScopes.allapp = false;
+
+
+        //sharedScopes.memberPortalInfo = [];
+        
         return{
             clear: function () {
-                for (var tuple in memberPortalInfo) delete memberPortalInfo[tuple];
+                sharedScopes = {};
             },
             //Setters
             setMemberPortalInfo: function(memInfo) {
-                return memberPortalInfo = memInfo;
+                return sharedScopes.memberPortalInfo = memInfo;
             },
+            setMemberPortalTabPath: function(path) {
+                return sharedScopes.memberPortalInfo = path;
+            },
+            setShowpage: function(showval) {
+                return sharedScopes.showpage = showval;
+            },
+            setMembersavailable: function(memAvailData) {
+                return sharedScopes.membersavailable = memAvailData;
+            },
+            setEventsavailable: function(eventCount) {
+                return sharedScopes.eventsavailable = eventCount;
+            },
+            setNum_applicants: function(appliCount) {
+                return sharedScopes.num_applicants = appliCount;
+            },
+            setNum_accepted : function(accCount) {
+                return sharedScopes.num_accepted = accCount;
+            },
+            setNum_approved : function(appCount) {
+                return sharedScopes.num_approved = appCount;
+            },
+            setNum_inactive : function(inactiveCount) {
+                return sharedScopes.num_inactive = inactiveCount;
+            },
+            setNum_denied: function(deniedCount) {
+                return sharedScopes.num_denied = deniedCount;
+            },
+            setNum_preapproved: function(preAppCount) {
+                return sharedScopes.num_preapproved = preAppCount;
+            },
+            setNum_setpassword : function(pwd) {
+                return sharedScopes.num_setpassword = pwd;
+            },
+            setAllapp: function(appInfo) {
+                return sharedScopes.allapp = appInfo;
+            },
+
+
             //Getters
             getMemberPortalInfo: function () {
-                return memberPortalInfo;
-            }
-        };
-
-    });
-
-    .factory("epicoreCacheService", function () {// questions form variables object (persistance)
-        var memberPortalInfo = [];
-        return{
-            clear: function () {
-                for (var tuple in memberPortalInfo) delete memberPortalInfo[tuple];
+                return sharedScopes.memberPortalInfo;
             },
-            //Setters
-            setMemberPortalInfo: function(memInfo) {
-                return memberPortalInfo = memInfo;
+            getMemberPortalTabPath: function () {
+                return sharedScopes.memberPortalTabPath;
             },
-            //Getters
-            getMemberPortalInfo: function () {
-                return memberPortalInfo;
-            }
+            getShowpage: function () {
+                return sharedScopes.showpage;
+            },
+            getMembersavailable: function () {
+                return sharedScopes.membersavailable;
+            },
+            getEventsavailable: function() {
+                return sharedScopes.eventsavailable;
+            },
+            getNum_applicants: function() {
+                return sharedScopes.num_applicants;
+            },
+            getNum_accepted : function() {
+                return sharedScopes.num_accepted ;
+            },
+            getNum_approved : function() {
+                return sharedScopes.num_approved ;
+            },
+            getNum_inactive : function() {
+                return sharedScopes.num_inactive;
+            },
+            getNum_denied: function() {
+                return sharedScopes.num_denied;
+            },
+            getNum_preapproved: function() {
+                return sharedScopes.num_preapproved;
+            },
+            getNum_setpassword : function() {
+                return sharedScopes.num_setpassword;
+            },
+            getAllapp: function() {
+                return sharedScopes.allapp;
+            },
         };
 
     });
