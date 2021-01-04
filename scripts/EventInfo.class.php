@@ -1054,7 +1054,7 @@ class EventInfo
                     $public_dash_row = EventInfo::fetchPublicDashboardValuesOnly($row);
 
                     if(is_numeric($uid) && $uid == '0') { //no-login user...but uid hard-coded for '0' in previous step
-	                    // echo 'public events dashboard-without-uid';
+	                    // echo 'public events  dashboard-without-uid';
                         //public rfi open list no uid
                         if($public_dash_row['outcome'] === 'VP' ||
                         $public_dash_row['outcome'] === 'VN' ||
