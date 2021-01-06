@@ -1050,12 +1050,9 @@ class EventInfo
                     $events['all'][] = $row;
                 } else {
                     //public events dashboard
-                    //other not required - removing..for now
-                    // $events['other'][] = $row; 
-                    //fetch only public view fields
- 
-                    if(is_numeric($uid) && $uid == '0') { //no-login user...but uid hard-coded for '0' in previous step
-                        // echo 'public events dashboard-without-uid';
+                    if(is_numeric($uid) && $uid == '0') { //no-login user...but uid hard-coded for '0' in previous step-   
+                        //fetch only public view fields
+                         // echo 'public events dashboard-without-uid';
                         $public_dash_row = EventInfo::fetchPublicDashboardValuesOnly($row);
                         //public rfi open list no uid
                         if($public_dash_row['outcome'] === 'VP' ||
@@ -1069,8 +1066,6 @@ class EventInfo
                         $events['other'][] = $row;
                         $events['all'][] = $row;
                     }
-                   
-
                 }
                 // echo '**$events:';
                 // print_r($events);
