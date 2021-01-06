@@ -1036,6 +1036,7 @@ class EventInfo
             }
 
             if($uid == $row['requester_id']) {
+                // echo 'uid same as of requester';
                 $events['yours'][] = $row;
                 $events['yourorg_you'][] = $row;
                 $events['all'][] = $row;
@@ -1043,6 +1044,7 @@ class EventInfo
                 // get the organization of the user and that of the initiator of the request
                 $oid_of_requester = $db->getOne("SELECT organization_id FROM epicore.user WHERE user_id = ?", array($row['requester_id']));
                 if($oid && $oid == $oid_of_requester) {
+                    // echo 'oid same as of requester';
                     $events['yourorg'][] = $row;
                     $events['yourorg_you'][] = $row;
                     $events['all'][] = $row;
@@ -1051,11 +1053,10 @@ class EventInfo
                     //other not required - removing..for now
                     // $events['other'][] = $row; 
                     //fetch only public view fields
-                    $public_dash_row = EventInfo::fetchPublicDashboardValuesOnly($row);
-
+ 
                     if(is_numeric($uid) && $uid == '0') { //no-login user...but uid hard-coded for '0' in previous step
-                        
-                        echo '$$$public events dashboard-without-uid';
+                        // echo 'public events dashboard-without-uid';
+                        $public_dash_row = EventInfo::fetchPublicDashboardValuesOnly($row);
                         //public rfi open list no uid
                         if($public_dash_row['outcome'] === 'VP' ||
                         $public_dash_row['outcome'] === 'VN' ||
@@ -1064,8 +1065,9 @@ class EventInfo
                             $events['all'][] = $public_dash_row;
                         }
                     } else { //logged in user oid not eq to reqId
-                        echo '$$$public events dashboard-with-uid';
-                        $events['all'][] = $public_dash_row;
+                        // echo 'public events dashboard-with-uid';
+                        $events['other'][] = $row;
+                        $events['all'][] = $row;
                     }
                    
 

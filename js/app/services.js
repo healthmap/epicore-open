@@ -122,109 +122,37 @@ angular.module('EpicoreApp.services', [])
     })
     .factory("epicoreCacheService", function () {// questions form variables object (persistance)
         var sharedScopes = {};
-        sharedScopes.memberPortalInfo = [];
-        sharedScopes.memberPortalTabPath = '';
-        sharedScopes.showpage = false;
-        sharedScopes.membersavailable = false;
-        sharedScopes.eventsavailable = false;
-        sharedScopes.num_applicants = 0;
-        sharedScopes.num_accepted = 0;
-        sharedScopes.num_approved = 0;
-        sharedScopes.num_inactive = 0;
-        sharedScopes.num_denied = 0;
-        sharedScopes.num_preapproved = 0;
-        sharedScopes.num_setpassword = 0;
-        sharedScopes.allapp = false;
+        sharedScopes.memberPortalInfoAll = [];
+        sharedScopes.memberPortalInfoPastYear = [];
+        sharedScopes.memberPortalInfoPastQuarter = [];
 
-
-        //sharedScopes.memberPortalInfo = [];
         
         return{
             clear: function () {
                 sharedScopes = {};
             },
             //Setters
-            setMemberPortalInfo: function(memInfo) {
-                return sharedScopes.memberPortalInfo = memInfo;
+            setMemberPortalInfoAll: function(memInfo) {
+                return sharedScopes.memberPortalInfoAll = memInfo;
             },
-            setMemberPortalTabPath: function(path) {
-                return sharedScopes.memberPortalInfo = path;
+            setMemberPortalInfoPastYear: function(memInfo) {
+                return sharedScopes.memberPortalInfoPastYear = memInfo;
             },
-            setShowpage: function(showval) {
-                return sharedScopes.showpage = showval;
-            },
-            setMembersavailable: function(memAvailData) {
-                return sharedScopes.membersavailable = memAvailData;
-            },
-            setEventsavailable: function(eventCount) {
-                return sharedScopes.eventsavailable = eventCount;
-            },
-            setNum_applicants: function(appliCount) {
-                return sharedScopes.num_applicants = appliCount;
-            },
-            setNum_accepted : function(accCount) {
-                return sharedScopes.num_accepted = accCount;
-            },
-            setNum_approved : function(appCount) {
-                return sharedScopes.num_approved = appCount;
-            },
-            setNum_inactive : function(inactiveCount) {
-                return sharedScopes.num_inactive = inactiveCount;
-            },
-            setNum_denied: function(deniedCount) {
-                return sharedScopes.num_denied = deniedCount;
-            },
-            setNum_preapproved: function(preAppCount) {
-                return sharedScopes.num_preapproved = preAppCount;
-            },
-            setNum_setpassword : function(pwd) {
-                return sharedScopes.num_setpassword = pwd;
-            },
-            setAllapp: function(appInfo) {
-                return sharedScopes.allapp = appInfo;
-            },
-
+            setMemberPortalInfoPastQuarter: function(memInfo) {
+                return sharedScopes.memberPortalInfoPastQuarter = memInfo;
+            },            
 
             //Getters
-            getMemberPortalInfo: function () {
-                return sharedScopes.memberPortalInfo;
+            getMemberPortalInfoAll: function () {
+                return sharedScopes.memberPortalInfoAll;
             },
-            getMemberPortalTabPath: function () {
-                return sharedScopes.memberPortalTabPath;
+            getMemberPortalInfoPastYear: function () {
+                return sharedScopes.memberPortalInfoPastYear;
             },
-            getShowpage: function () {
-                return sharedScopes.showpage;
+            getMemberPortalInfoPastQuarter: function () {
+                return sharedScopes.memberPortalInfoPastQuarter;
             },
-            getMembersavailable: function () {
-                return sharedScopes.membersavailable;
-            },
-            getEventsavailable: function() {
-                return sharedScopes.eventsavailable;
-            },
-            getNum_applicants: function() {
-                return sharedScopes.num_applicants;
-            },
-            getNum_accepted : function() {
-                return sharedScopes.num_accepted ;
-            },
-            getNum_approved : function() {
-                return sharedScopes.num_approved ;
-            },
-            getNum_inactive : function() {
-                return sharedScopes.num_inactive;
-            },
-            getNum_denied: function() {
-                return sharedScopes.num_denied;
-            },
-            getNum_preapproved: function() {
-                return sharedScopes.num_preapproved;
-            },
-            getNum_setpassword : function() {
-                return sharedScopes.num_setpassword;
-            },
-            getAllapp: function() {
-                return sharedScopes.allapp;
-            },
+           
         };
 
     });
