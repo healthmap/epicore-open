@@ -10,6 +10,11 @@ require_once 'const.inc.php';
 // require_once 'approveaccess.php';
 require_once 'UserInfo.class.php';
 
+$formvars = json_decode(file_get_contents("php://input"));
+
+$startDt = strip_tags($formvars->startDate);
+$endDt = strip_tags($formvars->endDate);
+    
 // connect to memcache
 //$mem = new Memcache();
 //$mem->connect("127.0.0.1", 11211) or die ("Could not connect");
@@ -23,7 +28,7 @@ require_once 'UserInfo.class.php';
 //if ($members) { // from cache
 //    print json_encode($members->members);
 //} else{ // from db
-    $members = UserInfo::getMembers();
+    $members = UserInfo::getMembers($startDt, $endDt);
     $tmp_object = new stdClass;
     $tmp_object->members = $members;
     //$status = $mem->set($cachekey, $tmp_object,false, $expire); // save members in cache
