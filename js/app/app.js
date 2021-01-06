@@ -103,21 +103,10 @@ app.config(function ($routeProvider) {
         when("/application_confirm", { templateUrl: "partials/application_confirm.html?cb=" + cacheBustSuffix }).
         when("/application/:id/:action/:idtype", { templateUrl: "partials/application_new.html?cb=" + cacheBustSuffix, controller: "userController" }).
         when("/approval", { templateUrl: "partials/approval.html?cb=" + cacheBustSuffix, controller: "approvalController" }).
-
-        //orig
-        // when("/approval/accepted", { templateUrl: "partials/approval.html?cb=" + cacheBustSuffix, controller: "approvalController" }).
-        // when("/approval/pre_approved", { templateUrl: "partials/approval.html?cb=" + cacheBustSuffix, controller: "approvalController" }).
-        // when("/approval/members", { templateUrl: "partials/approval.html?cb=" + cacheBustSuffix, controller: "approvalController" }).
-        // when("/approval/denied", { templateUrl: "partials/approval.html?cb=" + cacheBustSuffix, controller: "approvalController" }).
-
-
-
         when("/approval/accepted", { templateUrl: "partials/approval.html?cb=" + cacheBustSuffix,  }).
         when("/approval/pre_approved", { templateUrl: "partials/approval.html?cb=" + cacheBustSuffix,  }).
         when("/approval/members", { templateUrl: "partials/approval.html?cb=" + cacheBustSuffix, }).
         when("/approval/denied", { templateUrl: "partials/approval.html?cb=" + cacheBustSuffix, }).
-
-
         when("/login", { templateUrl: "partials/login.html?cb=" + cacheBustSuffix }).
         when("/login_mobile", { templateUrl: "partials/login_mobile.html?cb=" + cacheBustSuffix }).
         when("/setpassword", { templateUrl: "partials/setpassword.html?cb=" + cacheBustSuffix }).
@@ -135,8 +124,6 @@ app.config(function ($routeProvider) {
         when("/requesters_dashboard", { templateUrl: "partials/requesters_dashboard.html?cb=" + cacheBustSuffix, controller: "modaccessController" }).
 
         
-        
-
         otherwise({ redirectTo: '/home' });
 });
 
