@@ -806,7 +806,7 @@ class UserInfo
         $db = getDB();
         
         // get all applicants and fetps for date range
-        $result = $db->query("SELECT maillist.*, fetp.*
+        $result = $db->query("SELECT maillist.*, fetp.fetp_id, fetp.active, fetp.status, fetp.pword_hash, fetp.locations
         FROM epicore.maillist maillist
         LEFT JOIN epicore.fetp fetp ON maillist.maillist_id = fetp.maillist_id
         WHERE maillist.apply_date >= ? AND maillist.apply_date <= ?
@@ -857,10 +857,7 @@ class UserInfo
             
             //remove FETP data extrafields
             unset($applicant_row['fetp_id']);
-            unset($applicant_row['lat']);
-            unset($applicant_row['lon']);
-            unset($applicant_row['countrycode']);
-            unset($applicant_row['tephinet_id']);
+            unset($applicant_row['locations']);
             unset($applicant_row['active']);
             unset($applicant_row['pword_hash']);
 
