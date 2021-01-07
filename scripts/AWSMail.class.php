@@ -9,7 +9,7 @@ require_once "db.function.php";
 require_once "/usr/share/php/AWSSDKforPHP/sdk.class.php";
 
 //LOCAL-SETUP ONLY-Uncomment following
- require_once 'const.inc.php';
+//  require_once 'const.inc.php';
 // if(ENVIRONMENT == 'Local'){
 // require_once "../AWSSDKforPHP/sdk.class.php";
 // } else {
