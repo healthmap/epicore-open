@@ -824,7 +824,10 @@ class UserInfo
         while($row = $result->fetchRow()) {       
            
             $applicant_row = $row;
-            
+            // echo'******ROW:';
+            // print_r($row['maillist_id']);
+            // echo'******ROW:';
+
             if ($row['approvestatus'] == 'N'){
                 $row['status'] = 'Denied';
             }
