@@ -1043,7 +1043,7 @@ angular.module('EpicoreApp.controllers', []).
             $scope.displayApprovedDateColumn = false;
             $scope.displayCourseColumn = false;
             $scope.displayPasswordColumn = false;
-    
+            $scope.predicateForSort='apply_date_iso';
             $scope.displayApplicantNumber = false;
             $scope.displayMemberNumber = false;
     
@@ -1092,13 +1092,14 @@ angular.module('EpicoreApp.controllers', []).
             var memInfoData = [];
             if (month.value == 'past-year') {
                 // console.log('Fetching from pastYear-cache');
-                memInfoData = epicoreCacheService.getMemberPortalInfoPastYear();
+                memInfoData = angular.copy(epicoreCacheService.getMemberPortalInfoPastYear());
             } else if (month.value == 'all') {
                 // console.log('Fetching from all-cache');
-                memInfoData = epicoreCacheService.getMemberPortalInfoAll();
+                memInfoData = angular.copy(epicoreCacheService.getMemberPortalInfoAll());
             } else {
                 // console.log('Fetching from pastquarter-cache');
-                memInfoData = epicoreCacheService.getMemberPortalInfoPastQuarter();
+                memInfoData = angular.copy(epicoreCacheService.getMemberPortalInfoPastQuarter());
+                // console.log('Fetching from pastquarter-cache'+ JSON.stringify(memInfoData));
             }
 
             var currentdate = new Date();
@@ -1112,7 +1113,7 @@ angular.module('EpicoreApp.controllers', []).
             var preapproved_applicants_nopw = [];
 
             for (var n in memInfoData) {
-
+                
                 memInfoData[n]['member_id'] = parseInt(memInfoData[n]['member_id']);  // use int so orberby works
 
                 var appl_year = $filter('date')(new Date(memInfoData[n]['apply_date']), 'yyyy');
@@ -1166,6 +1167,7 @@ angular.module('EpicoreApp.controllers', []).
                 if (memInfoData[n]['pword'] == 'Yes') {
                     $scope.num_setpassword++;
                 }
+                
             }
 
             switch (currentLocation) {
@@ -1257,13 +1259,16 @@ angular.module('EpicoreApp.controllers', []).
             $scope.sharedCacheMemInfo = [];
             if (month && (month.value == 'past-year')) {
                 // console.log('Fetching from past-year cache');
-                $scope.sharedCacheMemInfo = epicoreCacheService.getMemberPortalInfoPastYear();
+                //$scope.sharedCacheMemInfo = epicoreCacheService.getMemberPortalInfoPastYear();
+                $scope.sharedCacheMemInfo = angular.copy(epicoreCacheService.getMemberPortalInfoPastYear());
             } else if (month && (month.value == 'all')) {
                 // console.log('Fetching from all - cache');
-                $scope.sharedCacheMemInfo = epicoreCacheService.getMemberPortalInfoAll();
+                // $scope.sharedCacheMemInfo = epicoreCacheService.getMemberPortalInfoAll();
+                $scope.sharedCacheMemInfo = angular.copy(epicoreCacheService.getMemberPortalInfoAll());
             } else {
                 // console.log('Fetching from pastquarter - cache');
-                $scope.sharedCacheMemInfo = epicoreCacheService.getMemberPortalInfoPastQuarter();
+                // $scope.sharedCacheMemInfo = epicoreCacheService.getMemberPortalInfoPastQuarter();
+                $scope.sharedCacheMemInfo = angular.copy(epicoreCacheService.getMemberPortalInfoPastQuarter());
             }
  
             if (keyEvent.keyCode == 13) {
@@ -1354,17 +1359,17 @@ angular.module('EpicoreApp.controllers', []).
             if (month.value == 'all') {
                 start_date = moment('2017-10-30').format('YYYY-MM-DD'); // starting date of EpiCore v2.0
                 end_date = moment().format('YYYY-MM-DD'); // now
-                memInfoData = epicoreCacheService.getMemberPortalInfoAll();
+                memInfoData = angular.copy(epicoreCacheService.getMemberPortalInfoAll());
             } else if (month.value == 'recent') {
                 start_date = moment().subtract(3, 'months').format('YYYY-MM-DD'); // three month ago
                 end_date = moment().format('YYYY-MM-DD'); // now
                 num_events = 10;
-                memInfoData = epicoreCacheService.getMemberPortalInfoPastQuarter();
+                memInfoData = angular.copy(epicoreCacheService.getMemberPortalInfoPastQuarter());
             } else if (month.value == 'past-year') {
                 start_date = moment().subtract(12, 'months').format('YYYY-MM-DD'); // one year ago
                 end_date = moment().format('YYYY-MM-DD'); // now
                 num_events = 10;
-                memInfoData = epicoreCacheService.getMemberPortalInfoPastYear();
+                memInfoData = angular.copy(epicoreCacheService.getMemberPortalInfoPastYear());
 
             }
             
