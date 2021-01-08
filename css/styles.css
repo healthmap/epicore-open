@@ -333,6 +333,7 @@ h3,
   height: 96px;
   padding-top: 0px;
   padding-bottom: 0px;
+  padding-right: 0px;
   font-weight: 400;
 }
 .navbar-nav > li > a.btn.btn-huge {
