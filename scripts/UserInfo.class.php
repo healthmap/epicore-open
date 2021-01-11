@@ -789,11 +789,89 @@ class UserInfo
     }
 
     // get all members info
-    static function getMembers(){
+    static function getMembers($sdate, $edate){
+        
         global $countries;
+        
+        //Improved query performance
+        $start_date = $sdate ? $sdate: V2START_DATE; //default-all-time-data
+        $end_date = $edate ? $edate: date("Y-m-d H:i:s");
+
+        //modify date to datetime
+        $start_time = '00:00:00';
+        $end_time = '23:59:59';
+        $sdatetimeStr = $start_date . ' ' . $start_time;
+        $edatetimeStr = $end_date . ' ' . $end_time;
+
+        $db = getDB();
+        
+        // get all applicants and fetps for date range
+        $result = $db->query("SELECT maillist.*, fetp.fetp_id, fetp.active, fetp.status, fetp.pword_hash, fetp.locations
+        FROM epicore.maillist maillist
+        LEFT JOIN epicore.fetp fetp ON maillist.maillist_id = fetp.maillist_id
+        WHERE maillist.apply_date >= ? AND maillist.apply_date <= ?
+        order by maillist.apply_date DESC;", array($sdatetimeStr, $edatetimeStr));
+
+        // set all applicants status based on applicant approvestatus and fetp active/status fields
+        // approvestatus    fetp-active  fetp-status     app-status
+        // 'N'              x               x             Denied          Application denied
+        //  not N           null            null          Inactive        Applied
+        //  Y              'N'              P            Pending         Pending training and needs to set password
+        //  Y               'Y'              A            Approved        Finished training and set password
+        //  Y               'N'              A            Pre-approved    Finished training and needs to set password
+        
+        $applicants = [];
+        while($row = $result->fetchRow()) {       
+           
+            $applicant_row = $row;
+            // echo'******ROW:';
+            // print_r($row['maillist_id']);
+            // echo'******ROW:';
+
+            if ($row['approvestatus'] == 'N'){
+                $row['status'] = 'Denied';
+            }
+            else {
+                //check on fetp-flags
+                if (($row['active'] == 'N') && ($row['status'] == "A")) {
+                    $row['status'] = "Pre-approved";
+                } else if (($row['active'] == 'N') && ($row['status'] == "P")) {
+                    $row['status'] = "Pending";
+                } else if (($row['active'] == 'Y') && ($row['status'] == "A")) {
+                    $row['status'] = "Approved";
+                } else {
+                    //default
+                    $row['status'] = 'Inactive';
+                }
+            }
+            $applicant_row['status'] = $row['status'];
+
+            $applicant_row['pword'] = $row['pword_hash'] ? 'Yes' : null;
+            $applicant_row['member_id'] = $row['fetp_id'];
+            $applicant_row['locations'] = $row['locations'];
+            $applicant_row['apply_date_iso'] = $row['apply_date'];
+            $applicant_row['approve_date_iso'] = $row['approve_date'];
+            $applicant_row['accept_date_iso'] = $row['accept_date'];
+            $applicant_row['apply_date'] = date('d-M-Y', strtotime($row['apply_date']));
+            $applicant_row['approve_date'] = $row['approve_date'] ?  date('d-M-Y', strtotime($row['approve_date'])) : $row['approve_date'];
+            $applicant_row['accept_date'] = $row['accept_date'] ?  date('d-M-Y', strtotime($row['accept_date'])) : $row['accept_date'];
+            $applicant_row['country_code'] = $row['country'];
+            $applicant_row['country'] = $countries[$row['country']];
+            
+            //remove FETP data extrafields
+            unset($applicant_row['fetp_id']);
+            unset($applicant_row['locations']);
+            unset($applicant_row['active']);
+            unset($applicant_row['pword_hash']);
+
+            $applicants[] = $applicant_row;
+        }
+
+        /*********************************************orig - do not remove*
 
         // get all applicants and fetps
         $db = getDB();
+        // orig
         $applicants = $db->getAll("select * from epicore.maillist");
         $fetps = $db->getAll("select * from epicore.fetp");
 
@@ -838,6 +916,9 @@ class UserInfo
             $applicants[$n]['country'] = $countries[$applicants[$n]['country']];
             $n++;
         }
+        *********************************************orig */
+
+
 
         return $applicants;
 

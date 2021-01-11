@@ -997,31 +997,113 @@ angular.module('EpicoreApp.controllers', []).
         $scope.messageResponse = {};
         $scope.messageResponse.text = messages[$scope.id];
 
-    }).controller('approvalController', function ($scope, $http, $filter, $location, $route, $cookieStore, urlBase) {
+    }).controller('approvalController', function ($scope, $http, $filter, $location, $route, $cookieStore, urlBase, epicoreCacheService) {
 
-        // only allow superusers for admin
-        $scope.userInfo = $cookieStore.get('epiUserInfo');
-        $scope.superuser = (typeof ($scope.userInfo) != "undefined") ? $scope.userInfo.superuser : false;
-        // $scope.superuser = true;
-        $scope.showpage = false;
-        $scope.membersavailable = false;
-        $scope.eventsavailable = false;
-        $scope.num_applicants = 0;
-        $scope.num_accepted = 0;
-        $scope.num_approved = 0;
-        $scope.num_inactive = 0;
-        $scope.num_denied = 0;
-        $scope.num_preapproved = 0;
-        $scope.num_setpassword = 0;
-        $scope.allapp = false;
+        // console.log('In approvalController...');
+        var currentLocation = $location.path();
 
-        var searchTermSubmitted = false;
+        $scope.init = function() {
+            // console.log('Initializing....');
+            $scope.sharedCacheMemInfo = epicoreCacheService.getMemberPortalInfoPastQuarter();
+            // only allow superusers for admin
+            $scope.userInfo = $cookieStore.get('epiUserInfo');
+            $scope.superuser = (typeof ($scope.userInfo) != "undefined") ? $scope.userInfo.superuser : false;
+            // $scope.superuser = true;
+            $scope.showpage = false;
+            $scope.membersavailable = false;
+            $scope.eventsavailable = false;
+            $scope.num_applicants = 0;
+            $scope.num_accepted = 0;
+            $scope.num_approved = 0;
+            $scope.num_inactive = 0;
+            $scope.num_denied = 0;
+            $scope.num_preapproved = 0;
+            $scope.num_setpassword = 0;
+            $scope.allapp = false;
+            var dateStart = moment('2017-10-30'); // starting date of EpiCore v2.0
+            var dateEnd = moment(); // now
+            var timeValues = [];
+            timeValues.push({ name: 'All', value: 'all' });
+            timeValues.push({ name: 'Past Year', value: 'past-year' });
+            timeValues.push({ name: 'Past Quarter', value: 'recent' });
+            $scope.event_months = timeValues.reverse();
+            $scope.selected_month = timeValues[0]; //default past-quarter
+            $scope.urlBaseStr = urlBase;
+            var start_date = moment('2017-10-30').format('YYYY-MM-DD'); // starting date of EpiCore v2.0
+            var end_date = '';
+            start_date = moment().subtract(3, 'months').format('YYYY-MM-DD'); // three month ago- default for Past-Quarter
+            end_date = moment().format('YYYY-MM-DD'); // now
+            $scope.selected_start_date = start_date;
+            $scope.selected_end_date = end_date;
+            $scope.selectedItems = [];
+            $scope.IsAllCollapsed = false;
+            $scope.activeHeaderItem = "";
+            $scope.searchTermSubmitted = false;
+            $scope.displayAcceptedDateColumn = false;
+            $scope.displayApprovedDateColumn = false;
+            $scope.displayCourseColumn = false;
+            $scope.displayPasswordColumn = false;
+            $scope.predicateForSort='apply_date_iso';
+            $scope.displayApplicantNumber = false;
+            $scope.displayMemberNumber = false;
+    
+            
+            
+            $scope.pwcheck = false;
+            $scope.displayHeaderGreenBar = false;
+        };
+        $scope.init();
+       
+        
+        
+        if(Object.keys($scope.sharedCacheMemInfo).length == 0 || !$scope.sharedCacheMemInfo) {
+            // console.log("Fetching fresh from db");
+            var data = {};
+            data.startDate = $scope.selected_start_date;
+            data.endDate = $scope.selected_end_date;
+            //Default tab - Accepted
+            $http({
+                url: urlBase + 'scripts/approval.php', method: "POST", data: data
+            }).success(function (respdata, status, headers, config) {  //Fetch data from db
+                epicoreCacheService.setMemberPortalInfoPastQuarter(respdata); //since default is past-quarter only
+                var tableData = $scope.loadMemberInfo(currentLocation);
+            });
 
-        var data = {};
+        } 
+       
+        $scope.loadMemberInfo = function(currentLocation) {
+            // console.log('IN loadMemberInfo()');
 
-        $http({
-            url: urlBase + 'scripts/approval.php', method: "POST", data: data
-        }).success(function (respdata, status, headers, config) {
+            //Scope vars reset
+            $scope.showpage = false;
+            $scope.membersavailable = false;
+            $scope.eventsavailable = false;
+            $scope.num_applicants = 0;
+            $scope.num_accepted = 0;
+            $scope.num_approved = 0;
+            $scope.num_inactive = 0;
+            $scope.num_denied = 0;
+            $scope.num_preapproved = 0;
+            $scope.num_setpassword = 0;
+            $scope.allapp = false;
+
+            //Fetch memInfo from cache if available
+            var month = $scope.selected_month;
+            var memInfoData = [];
+            if (month.value == 'past-year') {
+                // console.log('Fetching from pastYear-cache');
+                memInfoData = angular.copy(epicoreCacheService.getMemberPortalInfoPastYear());
+            } else if (month.value == 'all') {
+                // console.log('Fetching from all-cache');
+                memInfoData = angular.copy(epicoreCacheService.getMemberPortalInfoAll());
+            } else {
+                // console.log('Fetching from pastquarter-cache');
+                memInfoData = angular.copy(epicoreCacheService.getMemberPortalInfoPastQuarter());
+                // console.log('Fetching from pastquarter-cache'+ JSON.stringify(memInfoData));
+            }
+
+            var currentdate = new Date();
+            var currentFullYear = currentdate.getFullYear();
             var inactive_applicants = [];
             var accepted_applicants = [];
             var preapproved_applicants = [];
@@ -1030,83 +1112,62 @@ angular.module('EpicoreApp.controllers', []).
             var accepted_applicants_nopw = [];
             var preapproved_applicants_nopw = [];
 
-            var currentLocation = $location.path();
+            for (var n in memInfoData) {
+                
+                memInfoData[n]['member_id'] = parseInt(memInfoData[n]['member_id']);  // use int so orberby works
 
-            $scope.IsAllCollapsed = false;
-
-            $scope.activeHeaderItem = "";
-
-            $scope.displayAcceptedDateColumn = false;
-            $scope.displayApprovedDateColumn = false;
-            $scope.displayCourseColumn = false;
-            $scope.displayPasswordColumn = false;
-
-            $scope.displayApplicantNumber = false;
-            $scope.displayMemberNumber = false;
-
-            var currentdate = new Date();
-            var currentFullYear = currentdate.getFullYear();
-
-            var applicants_no_password = []
-
-            $scope.pwcheck = false;
-            $scope.displayHeaderGreenBar = false;
-
-            for (var n in respdata) {
-
-                respdata[n]['member_id'] = parseInt(respdata[n]['member_id']);  // use int so orberby works
-
-                var appl_year = $filter('date')(new Date(respdata[n]['apply_date']), 'yyyy');
-                var accepted_year = $filter('date')(new Date(respdata[n]['accept_date']), 'yyyy');
-                var approve_year = $filter('date')(new Date(respdata[n]['approve_date']), 'yyyy');
+                var appl_year = $filter('date')(new Date(memInfoData[n]['apply_date']), 'yyyy');
+                var accepted_year = $filter('date')(new Date(memInfoData[n]['accept_date']), 'yyyy');
+                var approve_year = $filter('date')(new Date(memInfoData[n]['approve_date']), 'yyyy');
 
                 if (appl_year == currentFullYear) {
-                    respdata[n]['apply_date'] = $filter('date')(new Date(respdata[n]['apply_date']), 'MMM dd');
+                    memInfoData[n]['apply_date'] = $filter('date')(new Date(memInfoData[n]['apply_date']), 'MMM dd');
                 } else {
-                    respdata[n]['apply_date'] = $filter('date')(new Date(respdata[n]['apply_date']), 'dd MMM, yyyy');
+                    memInfoData[n]['apply_date'] = $filter('date')(new Date(memInfoData[n]['apply_date']), 'dd MMM, yyyy');
                 }
 
                 if (accepted_year == currentFullYear) {
-                    respdata[n]['accept_date'] = $filter('date')(new Date(respdata[n]['accept_date']), 'MMM dd');
+                    memInfoData[n]['accept_date'] = $filter('date')(new Date(memInfoData[n]['accept_date']), 'MMM dd');
                 } else {
-                    respdata[n]['accept_date'] = $filter('date')(new Date(respdata[n]['accept_date']), 'dd MMM, yyyy');
+                    memInfoData[n]['accept_date'] = $filter('date')(new Date(memInfoData[n]['accept_date']), 'dd MMM, yyyy');
                 }
 
                 if (approve_year == currentFullYear) {
-                    respdata[n]['approve_date'] = $filter('date')(new Date(respdata[n]['approve_date']), 'MMM dd');
+                    memInfoData[n]['approve_date'] = $filter('date')(new Date(memInfoData[n]['approve_date']), 'MMM dd');
                 } else {
-                    respdata[n]['approve_date'] = $filter('date')(new Date(respdata[n]['approve_date']), 'dd MMM, yyyy');
+                    memInfoData[n]['approve_date'] = $filter('date')(new Date(memInfoData[n]['approve_date']), 'dd MMM, yyyy');
                 }
 
-                if (respdata[n]['status'] == 'Pending') {
-                    accepted_applicants.push(respdata[n]);
-                    if (respdata[n]['pword'] != 'Yes') {
-                        accepted_applicants_nopw.push(respdata[n])
+                if (memInfoData[n]['status'] == 'Pending') {
+                    accepted_applicants.push(memInfoData[n]);
+                    if (memInfoData[n]['pword'] != 'Yes') {
+                        accepted_applicants_nopw.push(memInfoData[n])
                     }
                     $scope.num_accepted++;
                 }
-                if (respdata[n]['status'] == 'Approved') {
-                    total_members.push(respdata[n]);
+                if (memInfoData[n]['status'] == 'Approved') {
+                    total_members.push(memInfoData[n]);
                     $scope.num_approved++;
                 }
-                if (respdata[n]['status'] == 'Inactive') {
-                    inactive_applicants.push(respdata[n]);
+                if (memInfoData[n]['status'] == 'Inactive') {
+                    inactive_applicants.push(memInfoData[n]);
                     $scope.num_inactive++;
                 }
-                if (respdata[n]['status'] == 'Denied') {
-                    denied_applicants.push(respdata[n]);
+                if (memInfoData[n]['status'] == 'Denied') {
+                    denied_applicants.push(memInfoData[n]);
                     $scope.num_denied++;
                 }
-                if (respdata[n]['status'] == 'Pre-approved') {
-                    preapproved_applicants.push(respdata[n]);
-                    if (respdata[n]['pword'] != 'Yes') {
-                        preapproved_applicants_nopw.push(respdata[n])
+                if (memInfoData[n]['status'] == 'Pre-approved') {
+                    preapproved_applicants.push(memInfoData[n]);
+                    if (memInfoData[n]['pword'] != 'Yes') {
+                        preapproved_applicants_nopw.push(memInfoData[n])
                     }
                     $scope.num_preapproved++;
                 }
-                if (respdata[n]['pword'] == 'Yes') {
+                if (memInfoData[n]['pword'] == 'Yes') {
                     $scope.num_setpassword++;
                 }
+                
             }
 
             switch (currentLocation) {
@@ -1126,9 +1187,9 @@ angular.module('EpicoreApp.controllers', []).
                     $scope.displayAcceptedDateColumn = true;
                     $scope.displayPasswordColumn = true;
                     $scope.displayCourseColumn = true;
-
+    
                     $scope.displayMemberNumber = true;
-
+    
                     break;
                 }
                 case '/approval/members': {
@@ -1138,7 +1199,7 @@ angular.module('EpicoreApp.controllers', []).
                     $scope.displayAcceptedDateColumn = true;
                     $scope.displayApprovedDateColumn = true;
                     $scope.displayCourseColumn = true;
-
+    
                     $scope.displayMemberNumber = true;
                     break;
                 }
@@ -1157,57 +1218,23 @@ angular.module('EpicoreApp.controllers', []).
                     break;
                 }
             }
-
+    
             $scope.displayAllRows = true;
-
             $scope.allapp = false;
             $scope.inactive_applicants = inactive_applicants;
             $scope.applicants = outputList;
             $scope.searchResetList = outputList;
-            $scope.all_applicants = respdata;
+            $scope.all_applicants = memInfoData;
             $scope.inactive_applicants = inactive_applicants;
             $scope.num_applicants = $scope.applicants.length;
             $scope.showpage = true;
 
-            $scope.clearSearch = function(clickEvent) {
-                if(clickEvent.target.attributes[0].nodeValue == 'far fa-search fa-times'){
-                    $scope.query_input = ""; 
-                    $scope.searchMembers("reset");
-                }
-            }
-            $scope.searchMembers = function (keyEvent) {
-                // $scope.query = $scope.query_input;
-                if (keyEvent.keyCode == 13) {
-                    $scope.query = $scope.query_input;
-                    searchTermSubmitted = true;
-                    if ($scope.query != '') {
-                        $scope.applicants = respdata;
-                    } else {
-                        $scope.applicants = outputList;
-                    }
-                } else if(keyEvent == "reset"){
-                    $scope.query = "";
-                    searchTermSubmitted = true;
-                    $scope.applicants = outputList;
-                }
-            }
-
-            $scope.passwordCheck = function () {
-                $scope.pwcheck = !$scope.pwcheck
-                if ($scope.pwcheck == true) {
-                    $scope.applicants = nppassword_applicants
-                } else {
-                    $scope.applicants = outputList;
-                }
-            };
-
-            // console.log("Output -> ", outputList, " Number set Password ----> ", $scope.num_setpassword, " Number inactive --> ", $scope.num_inactive)
-            $scope.setVisible = function (visible) {
-                angular.forEach($scope.applicants, function (applicant) {
-                    applicant.visible = visible;
-                });
-                $scope.displayAllRows = !$scope.displayAllRows;
-            }
+            // console.log('loc>>>>>>:', currentLocation);
+            // console.log('applicants length >>>>>>:', $scope.applicants.length);
+            // console.log('inactive_applicants length >>>>>>:', inactive_applicants.length);
+            // console.log('all_applicants length >>>>>>:', memInfoData.length);
+            // console.log('num_accepted length >>>>>>:', $scope.num_accepted);
+            // console.log('>>>>>>>:', JSON.stringify($scope.applicants));
 
             if (outputList.length > 0) {
                 $scope.toggleRowExpandCollapse = true;
@@ -1215,49 +1242,170 @@ angular.module('EpicoreApp.controllers', []).
                 $scope.toggleRowExpandCollapse = false;
             }
 
-            $scope.selectedItems = [];
+            return memInfoData;
+            
+        }
 
-            $scope.isChecked = function(applicant) {
-                if(applicant.Selected == true){
-                    $scope.selectedItems.push(applicant.maillist_id)
-                } else {
-                    $scope.selectedItems.splice($scope.selectedItems.indexOf(applicant.maillist_id),1);
-                }
-                if($scope.selectedItems.length > 0){
-                    $scope.displayHeaderGreenBar = true;
-                } else {
-                    $scope.displayHeaderGreenBar = false;
-                    $scope.IsAllChecked = false;
-                }
+        $scope.clearSearch = function(clickEvent) {
+            if(clickEvent.target.attributes[0].nodeValue == 'far fa-search fa-times'){
+                $scope.query_input = ""; 
+                $scope.searchMembers("reset");
             }
+        }
 
-            $scope.CheckUncheckHeader = function (user) {
-                // $scope.IsAllChecked = true;
+        $scope.searchMembers = function (keyEvent) {
+            // $scope.query = $scope.query_input;
+            var month = $scope.selected_month;
+            $scope.sharedCacheMemInfo = [];
+            if (month && (month.value == 'past-year')) {
+                // console.log('Fetching from past-year cache');
+                //$scope.sharedCacheMemInfo = epicoreCacheService.getMemberPortalInfoPastYear();
+                $scope.sharedCacheMemInfo = angular.copy(epicoreCacheService.getMemberPortalInfoPastYear());
+            } else if (month && (month.value == 'all')) {
+                // console.log('Fetching from all - cache');
+                // $scope.sharedCacheMemInfo = epicoreCacheService.getMemberPortalInfoAll();
+                $scope.sharedCacheMemInfo = angular.copy(epicoreCacheService.getMemberPortalInfoAll());
+            } else {
+                // console.log('Fetching from pastquarter - cache');
+                // $scope.sharedCacheMemInfo = epicoreCacheService.getMemberPortalInfoPastQuarter();
+                $scope.sharedCacheMemInfo = angular.copy(epicoreCacheService.getMemberPortalInfoPastQuarter());
+            }
+ 
+            if (keyEvent.keyCode == 13) {
+                $scope.query = $scope.query_input;
+                $scope.searchTermSubmitted = true;
+                if ($scope.query != '') {
+                    $scope.applicants = $scope.sharedCacheMemInfo;
+                } else {
+                    $scope.applicants = $scope.applicants;
+                }
+            } else if(keyEvent == "reset"){
+                $scope.query = "";
+                $scope.searchTermSubmitted = true;
+                $scope.applicants = $scope.searchResetList;
+            }
+        }
+
+        $scope.passwordCheck = function () {
+            $scope.pwcheck = !$scope.pwcheck
+            if ($scope.pwcheck == true) {
+                $scope.applicants = nppassword_applicants
+            } else {
+                $scope.applicants = outputList;
+            }
+        };
+
+        // console.log("Output -> ", outputList, " Number set Password ----> ", $scope.num_setpassword, " Number inactive --> ", $scope.num_inactive)
+        $scope.setVisible = function (visible) {
+            angular.forEach($scope.applicants, function (applicant) {
+                applicant.visible = visible;
+            });
+            $scope.displayAllRows = !$scope.displayAllRows;
+        }
+
+        
+       
+
+        $scope.isChecked = function(applicant) {
+            if(applicant.Selected == true){
+                $scope.selectedItems.push(applicant.maillist_id)
+            } else {
+                $scope.selectedItems.splice($scope.selectedItems.indexOf(applicant.maillist_id),1);
+            }
+            if($scope.selectedItems.length > 0){
                 $scope.displayHeaderGreenBar = true;
-                var applicantItems = $scope.applicants;
+            } else {
+                $scope.displayHeaderGreenBar = false;
+                $scope.IsAllChecked = false;
+            }
+        }
 
-                for (var i = 0; i < applicantItems.length; i++) {
-                    $scope.selectedItems.push(applicantItems[i].maillist_id)
-                    if (!(user.Selected)) {
-                        $scope.IsAllChecked = false;
-                        $scope.displayHeaderGreenBar = false;
-                        break;
-                    } else {
-                        $scope.displayHeaderGreenBar = true;
-                    }
-                };
-            };
-            // $scope.CheckUncheckHeader();
+        $scope.CheckUncheckHeader = function (user) {
+            // $scope.IsAllChecked = true;
+            $scope.displayHeaderGreenBar = true;
+            var applicantItems = $scope.applicants;
 
-            $scope.CheckUncheckAll = function () {
-                $scope.displayHeaderGreenBar = !($scope.displayHeaderGreenBar)
-                var applicantItems = $scope.applicants;
-                for (var i = 0; i < applicantItems.length; i++) {
-                    $scope.selectedItems.push(applicantItems[i].maillist_id)
-                    $scope.applicants[i].Selected = $scope.IsAllChecked;
+            for (var i = 0; i < applicantItems.length; i++) {
+                $scope.selectedItems.push(applicantItems[i].maillist_id)
+                if (!(user.Selected)) {
+                    $scope.IsAllChecked = false;
+                    $scope.displayHeaderGreenBar = false;
+                    break;
+                } else {
+                    $scope.displayHeaderGreenBar = true;
                 }
             };
-        });
+        };
+        // $scope.CheckUncheckHeader();
+
+        $scope.CheckUncheckAll = function () {
+            $scope.displayHeaderGreenBar = !($scope.displayHeaderGreenBar)
+            var applicantItems = $scope.applicants;
+            for (var i = 0; i < applicantItems.length; i++) {
+                $scope.selectedItems.push(applicantItems[i].maillist_id)
+                $scope.applicants[i].Selected = $scope.IsAllChecked;
+            }
+        };
+
+        // get member data for selected month
+        $scope.getApprovalMonth = function () {
+            $scope.isRouteLoading = true;
+            // console.log('getApprovalMonth:', $scope.selected_month);
+            var month = $scope.selected_month;
+            var memInfoData = [];
+            var start_date = '';
+            var end_date = '';
+            var num_events = 'all';
+            if (month.value == 'all') {
+                start_date = moment('2017-10-30').format('YYYY-MM-DD'); // starting date of EpiCore v2.0
+                end_date = moment().format('YYYY-MM-DD'); // now
+                memInfoData = angular.copy(epicoreCacheService.getMemberPortalInfoAll());
+            } else if (month.value == 'recent') {
+                start_date = moment().subtract(3, 'months').format('YYYY-MM-DD'); // three month ago
+                end_date = moment().format('YYYY-MM-DD'); // now
+                num_events = 10;
+                memInfoData = angular.copy(epicoreCacheService.getMemberPortalInfoPastQuarter());
+            } else if (month.value == 'past-year') {
+                start_date = moment().subtract(12, 'months').format('YYYY-MM-DD'); // one year ago
+                end_date = moment().format('YYYY-MM-DD'); // now
+                num_events = 10;
+                memInfoData = angular.copy(epicoreCacheService.getMemberPortalInfoPastYear());
+
+            }
+            
+            $scope.selected_start_date = start_date;
+            $scope.selected_end_date = end_date;
+            var currentLocation = $location.path();
+
+            if(memInfoData && memInfoData.length >0) {
+                //cache already has the data. No need of new pull from db
+                var tableDataInfo = $scope.loadMemberInfo(currentLocation);
+                $scope.isRouteLoading = false;
+            } else {
+            
+                var data = {};
+                data.startDate = $scope.selected_start_date;
+                data.endDate = $scope.selected_end_date;
+                 //Fetch data from db
+                 $http({
+                    url:  $scope.urlBaseStr + 'scripts/approval.php', method: "POST", data: data
+                }).success(function (respdata, status, headers, config) {
+                    //Fresh DB pull - set cache appropriately
+                    if (month.value == 'all') {
+                        epicoreCacheService.setMemberPortalInfoAll(respdata);
+                    } else if (month.value == 'recent') {
+                        epicoreCacheService.setMemberPortalInfoPastQuarter(respdata);
+                    } else if (month.value == 'past-year') {
+                        epicoreCacheService.setMemberPortalInfoPastYear(respdata);
+                    }
+                    var tableData = $scope.loadMemberInfo(currentLocation);
+                    $scope.isRouteLoading = false;
+                });
+            
+            }
+            
+        };
+
 
         $scope.setLocationStatus = function (maillist_id, action) {
             data = { maillist_id: maillist_id, action: action };

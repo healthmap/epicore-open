@@ -10,7 +10,7 @@
 function saveMembersToCSV(){
     // get all members
     require_once 'UserInfo.class.php';
-    $members = UserInfo::getMembers();
+    $members = UserInfo::getMembers(null, null);
 
     // save all members in a csv file
     $uinfo = new UserInfo('1', null);

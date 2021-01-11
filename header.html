@@ -36,7 +36,7 @@
                 <li ng-class="{ active: isActive('/fetp')}" class="text-uppercase" ng-if="userInfo.active=='Y'">
                     <a ng-show="userInfo.fetp_id" ng-href="#/application/{{userInfo.fetp_id}}/edit/fetp">Edit Profile</a>
                 </li>
-                <li ng-class="{ active: isActive('/trainingvideos')}" class="text-uppercase" ng-if="userInfo.active=='Y' && userInfo.fetp_id">
+                <li ng-class="{ active: isActive('/trainingvideos')}" class="text-uppercase" ng-if="userInfo.active=='Y'">
                     <a ng-href="#/trainingvideos">Training</a>
                 </li>
                 <li ng-class="{ active: isActive('/resources')}" class="text-uppercase" ng-if="userInfo.active=='Y' && userInfo.fetp_id">
