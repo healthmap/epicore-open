@@ -115,15 +115,13 @@ angular.module('EpicoreApp.controllers', []).
                 && !uservals.health_org_other && !uservals.health_org_none;
 
             $scope.no_notification = !uservals.epicoreworkshop && !uservals.conference && !uservals.promoemail && !uservals.othercontact;
-
-
             // check email
             var regex = /^([a-zA-Z0-9_.+-])+\@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/;
             var isemail = regex.test(uservals.email);
 
             if (!isValid || !isemail || $scope.no_health_exp || $scope.no_category || $scope.no_notification || !uservals.training || !uservals.other_training
                 || !uservals.health_exp || !uservals.sector) {
-
+                    
                 $scope.signup_message = 'Form not complete. Please correct the errors above in red, and then submit again.';
                 return false;
             }
@@ -146,6 +144,7 @@ angular.module('EpicoreApp.controllers', []).
 
                 }
                 else {
+                    
                     $http({
                         url: urlBase + 'scripts/signup.php', method: "POST", data: uservals
                     }).success(function (data, status, headers, config) {
@@ -1086,18 +1085,26 @@ angular.module('EpicoreApp.controllers', []).
             $scope.num_preapproved = 0;
             $scope.num_setpassword = 0;
             $scope.allapp = false;
+            $scope.activeHeaderItem = "";
+            $scope.searchTermSubmitted = false;
+            $scope.displayAcceptedDateColumn = false;
+            $scope.displayApprovedDateColumn = false;
+            $scope.displayCourseColumn = false;
+            $scope.displayPasswordColumn = false;
+            $scope.displayApplicantNumber = false;
+            $scope.displayMemberNumber = false;
 
             //Fetch memInfo from cache if available
             var month = $scope.selected_month;
             var memInfoData = [];
             if (month.value == 'past-year') {
-                // console.log('Fetching from pastYear-cache');
+                //console.log('Fetching from pastYear-cache');
                 memInfoData = angular.copy(epicoreCacheService.getMemberPortalInfoPastYear());
             } else if (month.value == 'all') {
-                // console.log('Fetching from all-cache');
+                //console.log('Fetching from all-cache');
                 memInfoData = angular.copy(epicoreCacheService.getMemberPortalInfoAll());
             } else {
-                // console.log('Fetching from pastquarter-cache');
+                //console.log('Fetching from pastquarter-cache');
                 memInfoData = angular.copy(epicoreCacheService.getMemberPortalInfoPastQuarter());
                 // console.log('Fetching from pastquarter-cache'+ JSON.stringify(memInfoData));
             }
@@ -1118,7 +1125,9 @@ angular.module('EpicoreApp.controllers', []).
 
                 var appl_year = $filter('date')(new Date(memInfoData[n]['apply_date']), 'yyyy');
                 var accepted_year = $filter('date')(new Date(memInfoData[n]['accept_date']), 'yyyy');
-                var approve_year = $filter('date')(new Date(memInfoData[n]['approve_date']), 'yyyy');
+                var approve_year = $filter('date')(new Date(memInfoData[n]['maillist_id']), 'yyyy');
+
+                // console.log( 'maillist_id:' +  memInfoData[n]['maillist_id'] + ' apply_date:' +  memInfoData[n]['apply_date'] + ' accept_date:' + memInfoData[n]['accept_date'] + ' approve_date:' + memInfoData[n]['approve_date']);
 
                 if (appl_year == currentFullYear) {
                     memInfoData[n]['apply_date'] = $filter('date')(new Date(memInfoData[n]['apply_date']), 'MMM dd');
