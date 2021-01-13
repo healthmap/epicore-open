@@ -83,7 +83,10 @@ angular.module('EpicoreApp.controllers', []).
                     $scope.userLocationPlace['address_components'].push(addrCompTuple);
                 }
 
-                $scope.userLocationPlace['formatted_address'] = data['city'] + ', ' + data['state'] + ' ' + data['country'];
+                var formatAddr = data['city'] + ', ' + data['state'] + ' ' + data['country'];
+                console.log(formatAddr);
+                formatAddr = formatAddr.replace(/null/g, '');
+                $scope.userLocationPlace['formatted_address'] = formatAddr.replace(/^,/g, '');
                 // console.log('$scope.userLocationPlace:', $scope.userLocationPlace);
 
             });
