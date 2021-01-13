@@ -39,6 +39,7 @@ angular.module('EpicoreApp.controllers', []).
                 url: urlBase + 'scripts/getapplicant.php', method: "POST", data: data
             }).success(function (data, status, headers, config) {
                 $scope.uservals = data; // this pre-populates the values on the form
+                // console.log('data get:', data);
                 if ($scope.uservals.university2) {
                     $scope.more_schools1 = true;
                     $scope.uservals.school_country2 = data['school_country2'];
@@ -53,6 +54,44 @@ angular.module('EpicoreApp.controllers', []).
                 else {
                     $scope.more_schools2 = false;
                 }
+
+                var addrCompTuple = {};
+                $scope.userLocationPlace = {
+                    "address_components" :[],
+                    "formatted_address": ""
+                };
+
+                // console.log('$city:',data['city']);
+                // console.log('$state:',data['state']);
+                // console.log('$country:', data['country']);
+
+                if(data['city']) {
+                    addrCompTuple['long_name'] = data['city'];
+                    addrCompTuple['short_name'] = data['city'];
+                    $scope.userLocationPlace['address_components'].push(addrCompTuple);
+                }
+
+                if(data['state']) {
+                    addrCompTuple['long_name'] = data['state'];
+                    addrCompTuple['short_name'] = data['state'];
+                    $scope.userLocationPlace['address_components'].push(addrCompTuple);
+                }
+                
+                if(data['country']) {
+                    addrCompTuple['long_name'] = data['country'];
+                    addrCompTuple['short_name'] = data['country'];
+                    $scope.userLocationPlace['address_components'].push(addrCompTuple);
+                }
+
+                var formatAddr = data['city'] + ', ' + data['state'] + ' ' + data['country'];
+                // console.log(formatAddr);
+                if(formatAddr) {
+                    formatAddr = formatAddr.replace(/null/g, '');
+                    formatAddr = formatAddr.replace(/undefined/g, '');
+                    $scope.userLocationPlace['formatted_address'] = formatAddr.replace(/^,/g, '');
+                }
+                // console.log('$scope.userLocationPlace:', $scope.userLocationPlace);
+
             });
         }
 
@@ -71,7 +110,7 @@ angular.module('EpicoreApp.controllers', []).
         $scope.userLocationChange = function (userLocation) {
 
             const administrative_areas = [];
-
+            // console.log('userLocation', userLocation);
             userLocation.address_components.forEach(function (item) {
                 if (item.types.indexOf('country') !== -1) {
                     $scope.uservals.country = item.short_name;
@@ -115,15 +154,13 @@ angular.module('EpicoreApp.controllers', []).
                 && !uservals.health_org_other && !uservals.health_org_none;
 
             $scope.no_notification = !uservals.epicoreworkshop && !uservals.conference && !uservals.promoemail && !uservals.othercontact;
-
-
             // check email
             var regex = /^([a-zA-Z0-9_.+-])+\@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/;
             var isemail = regex.test(uservals.email);
 
             if (!isValid || !isemail || $scope.no_health_exp || $scope.no_category || $scope.no_notification || !uservals.training || !uservals.other_training
                 || !uservals.health_exp || !uservals.sector) {
-
+                    
                 $scope.signup_message = 'Form not complete. Please correct the errors above in red, and then submit again.';
                 return false;
             }
@@ -146,6 +183,7 @@ angular.module('EpicoreApp.controllers', []).
 
                 }
                 else {
+                    
                     $http({
                         url: urlBase + 'scripts/signup.php', method: "POST", data: uservals
                     }).success(function (data, status, headers, config) {
@@ -1086,18 +1124,26 @@ angular.module('EpicoreApp.controllers', []).
             $scope.num_preapproved = 0;
             $scope.num_setpassword = 0;
             $scope.allapp = false;
+            $scope.activeHeaderItem = "";
+            $scope.searchTermSubmitted = false;
+            $scope.displayAcceptedDateColumn = false;
+            $scope.displayApprovedDateColumn = false;
+            $scope.displayCourseColumn = false;
+            $scope.displayPasswordColumn = false;
+            $scope.displayApplicantNumber = false;
+            $scope.displayMemberNumber = false;
 
             //Fetch memInfo from cache if available
             var month = $scope.selected_month;
             var memInfoData = [];
             if (month.value == 'past-year') {
-                // console.log('Fetching from pastYear-cache');
+                //console.log('Fetching from pastYear-cache');
                 memInfoData = angular.copy(epicoreCacheService.getMemberPortalInfoPastYear());
             } else if (month.value == 'all') {
-                // console.log('Fetching from all-cache');
+                //console.log('Fetching from all-cache');
                 memInfoData = angular.copy(epicoreCacheService.getMemberPortalInfoAll());
             } else {
-                // console.log('Fetching from pastquarter-cache');
+                //console.log('Fetching from pastquarter-cache');
                 memInfoData = angular.copy(epicoreCacheService.getMemberPortalInfoPastQuarter());
                 // console.log('Fetching from pastquarter-cache'+ JSON.stringify(memInfoData));
             }
@@ -1118,7 +1164,9 @@ angular.module('EpicoreApp.controllers', []).
 
                 var appl_year = $filter('date')(new Date(memInfoData[n]['apply_date']), 'yyyy');
                 var accepted_year = $filter('date')(new Date(memInfoData[n]['accept_date']), 'yyyy');
-                var approve_year = $filter('date')(new Date(memInfoData[n]['approve_date']), 'yyyy');
+                var approve_year = $filter('date')(new Date(memInfoData[n]['maillist_id']), 'yyyy');
+
+                // console.log( 'maillist_id:' +  memInfoData[n]['maillist_id'] + ' apply_date:' +  memInfoData[n]['apply_date'] + ' accept_date:' + memInfoData[n]['accept_date'] + ' approve_date:' + memInfoData[n]['approve_date']);
 
                 if (appl_year == currentFullYear) {
                     memInfoData[n]['apply_date'] = $filter('date')(new Date(memInfoData[n]['apply_date']), 'MMM dd');
