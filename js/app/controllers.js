@@ -39,6 +39,7 @@ angular.module('EpicoreApp.controllers', []).
                 url: urlBase + 'scripts/getapplicant.php', method: "POST", data: data
             }).success(function (data, status, headers, config) {
                 $scope.uservals = data; // this pre-populates the values on the form
+                // console.log('data get:', data);
                 if ($scope.uservals.university2) {
                     $scope.more_schools1 = true;
                     $scope.uservals.school_country2 = data['school_country2'];
@@ -53,6 +54,38 @@ angular.module('EpicoreApp.controllers', []).
                 else {
                     $scope.more_schools2 = false;
                 }
+
+                var addrCompTuple = {};
+                $scope.userLocationPlace = {
+                    "address_components" :[],
+                    "formatted_address": ""
+                };
+
+                // console.log('$city:',data['city']);
+                // console.log('$state:',data['state']);
+                // console.log('$country:', data['country']);
+
+                if(data['city']) {
+                    addrCompTuple['long_name'] = data['city'];
+                    addrCompTuple['short_name'] = data['city'];
+                    $scope.userLocationPlace['address_components'].push(addrCompTuple);
+                }
+
+                if(data['state']) {
+                    addrCompTuple['long_name'] = data['state'];
+                    addrCompTuple['short_name'] = data['state'];
+                    $scope.userLocationPlace['address_components'].push(addrCompTuple);
+                }
+                
+                if(data['country']) {
+                    addrCompTuple['long_name'] = data['country'];
+                    addrCompTuple['short_name'] = data['country'];
+                    $scope.userLocationPlace['address_components'].push(addrCompTuple);
+                }
+
+                $scope.userLocationPlace['formatted_address'] = data['city'] + ', ' + data['state'] + ' ' + data['country'];
+                // console.log('$scope.userLocationPlace:', $scope.userLocationPlace);
+
             });
         }
 
@@ -71,7 +104,7 @@ angular.module('EpicoreApp.controllers', []).
         $scope.userLocationChange = function (userLocation) {
 
             const administrative_areas = [];
-
+            // console.log('userLocation', userLocation);
             userLocation.address_components.forEach(function (item) {
                 if (item.types.indexOf('country') !== -1) {
                     $scope.uservals.country = item.short_name;
