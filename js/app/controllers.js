@@ -84,9 +84,12 @@ angular.module('EpicoreApp.controllers', []).
                 }
 
                 var formatAddr = data['city'] + ', ' + data['state'] + ' ' + data['country'];
-                console.log(formatAddr);
-                formatAddr = formatAddr.replace(/null/g, '');
-                $scope.userLocationPlace['formatted_address'] = formatAddr.replace(/^,/g, '');
+                // console.log(formatAddr);
+                if(formatAddr) {
+                    formatAddr = formatAddr.replace(/null/g, '');
+                    formatAddr = formatAddr.replace(/undefined/g, '');
+                    $scope.userLocationPlace['formatted_address'] = formatAddr.replace(/^,/g, '');
+                }
                 // console.log('$scope.userLocationPlace:', $scope.userLocationPlace);
 
             });
