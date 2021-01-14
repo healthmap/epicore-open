@@ -887,9 +887,9 @@ class EventInfo
         //modify date to datetime
         $start_time = '00:00:00';
         $end_time = '23:59:59';
-        $edatetimeStr = $edate . ' ' . $end_time;
-        $sdatetimeStr = $sdate . ' ' . $start_time;
-
+        $edatetimeStr = $end_date . ' ' . $end_time;
+        $sdatetimeStr = $start_date . ' ' . $start_time;
+        
         $db = getDB();
         $oid = $db->getOne("SELECT organization_id FROM epicore.user WHERE user_id = ?", array($uid));
         $status = $status ? $status : 'O'; // if status is not passed in, get open events
