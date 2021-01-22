@@ -1,6 +1,10 @@
 [{
     "year": "2020",
     "qLinks": [{
+            "quarter": "Q4",
+            "weblink": "https://mailchi.mp/epicore/epicore-member-quarterly-newsletter-q4-2020"
+        },
+        {
             "quarter": "Q3",
             "weblink": "https://mailchi.mp/epicore/epicore-member-quarterly-newsletter-q3-2020"
         },
@@ -49,4 +53,5 @@
             "weblink": "http://mailchi.mp/dc66f2291cc2/epicore-member-quarterly-newsletter-q2-2018"
         }
     ]
-}]
+}
+]

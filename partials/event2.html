@@ -59,6 +59,7 @@
     </div>
 </div><!--row-->
 
+
 <div class="row" ng-show="isAuthorizedFETP || (isOrganization && eventsList.event_id)">
     <div class="col-xs-12">
         <form name="changeStatusForm">
@@ -68,7 +69,7 @@
                 <div class="event-item" ng-repeat="history_item in eventsList.history">
                     <!-- Original Event Request Message in same organization (Moderator or FETP)-->
                     <!-- EPI-74 Showing the following info ONLY to superusers -->
-                    <div ng-if="(history_item.type == 'Event Request') && userInfo.superuser">
+                    <div ng-if="(history_item.type == 'Event Request')">
                                 <strong>{{num_fetp}} responders on RFI # {{eventsList.event_id}}:</strong> <br><br>
                         
                         <ul>
