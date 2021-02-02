@@ -1889,6 +1889,8 @@ class EventInfo
                 $temp[$key] = $val;
             else if($key == 'phe_description')       
                 $temp[$key] = $val;
+            else if($key == 'phe_additional')       
+                $temp[$key] = $val;
             else if($key == 'iso_action_date')       
                 $temp[$key] = $val;
             else if($key == 'event_id_int')       
