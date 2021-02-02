@@ -146,7 +146,7 @@ angular.module('EpicoreApp.controllers', []).
         $scope.signup = function (uservals, isValid) {
 
             $scope.attempted = true;
-
+            $scope.signup_message = '';
             // validate checkboxes
             $scope.no_health_exp = !uservals.human_health && !uservals.animal_health && !uservals.env_health && !uservals.health_exp_none;
 
@@ -159,12 +159,13 @@ angular.module('EpicoreApp.controllers', []).
             var isemail = regex.test(uservals.email);
 
             if (!isValid || !isemail || $scope.no_health_exp || $scope.no_category || $scope.no_notification || !uservals.training || !uservals.other_training
-                || !uservals.health_exp || !uservals.sector) {
+                || !uservals.health_exp || !uservals.sector || !$scope.uservals.country || !$scope.uservals.state || !$scope.uservals.city) {
                     
                 $scope.signup_message = 'Form not complete. Please correct the errors above in red, and then submit again.';
                 return false;
             }
             else {
+                
                 if ($scope.action == 'edit') {
                     $http({
                         url: urlBase + 'scripts/updateuser.php', method: "POST", data: uservals
