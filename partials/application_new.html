@@ -294,7 +294,7 @@
 
                 <div class="form-group">
                     <label class="form-label" for="job_title">List any additional work experience that you would like to highlight.</label>
-                    <input type="text" class="form-control" name="current_organization" ng-model="uservals.organization" required>
+                    <input type="text" class="form-control" name="current_organization" ng-model="uservals.organization">
                 </div>
 
                     <div class="form-group">
@@ -415,8 +415,12 @@
   </li>
 </ul>
 -->
+<!-- *********{{uservals}} -->
+<!-- **************{{applyForm.$valid}}
 
+**************{{applyForm.$invalid}} -->
 
+<!-- ng-disabled="applyForm.$invalid"  -->
                         <button type="submit" ng-click="signup(uservals, applyForm.$valid)"
                             class="submit btn btn-primary text-uppercase">Submit</button>
                     </div>
