@@ -663,7 +663,7 @@ angular.module('EpicoreApp.controllers2', []).
         $scope.purpose_error_message1 = '';
         $scope.purpose_error_message = '';
         // $scope.saveSource = function (direction) {
-        $scope.saveStep3 = function (direction) {
+          $scope.saveStep3 = function (direction) {
             // console.log('STEP3 - clicked review and send:', $scope.rfiData);
             $scope.purpose_error_message = "";
             $scope.purpose_error_message1 = "";
@@ -706,8 +706,6 @@ angular.module('EpicoreApp.controllers2', []).
                 $scope.rfiData.event_purpose = $scope.getPurpose_2();
                 $scope.rfiData.event_source = $scope.getSource_2();
 
-             
-
                 $location.path('/sendrequest');
 
                 // build and review request email - not used for now
@@ -739,7 +737,6 @@ angular.module('EpicoreApp.controllers2', []).
         }
         $scope.getPopulation_2 = function () {
             var population = '';
-            
             switch ($scope.rfiData.population.type) {
                 case "H":
                     population = 'Human';
@@ -751,7 +748,7 @@ angular.module('EpicoreApp.controllers2', []).
                     population = 'Environmental, ' + $scope.rfiData.population.other;
                     break;
                 case "U":
-                    population = 'Unknown, ' + $scope.rfiData.population.other;
+                    population = $scope.rfiData.population.other ? $scope.rfiData.population.other : 'Unknown, ' + $scope.rfiData.population.other;
                     break;
                 case "O":
                     population = $scope.rfiData.population.other;
