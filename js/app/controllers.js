@@ -205,7 +205,7 @@ angular.module('EpicoreApp.controllers', []).
         // Sign in with Touch id for iOS or login with username & password
         $scope.mobile_message = "";
         $scope.signIn = function () {
-            $scope.formData.password = 'AZ61535!lag';
+            $scope.formData.password = '';
             $scope.autologin = true;
             if ($scope.mobile && (typeof ($localStorage.mobile_platform) != 'undefined') && ($localStorage.mobile_platform == 'iOS')) {
                 // check touch id support of iOS

@@ -56,7 +56,7 @@
 
 			        <div class="secondary-input" ng-if="rfiData.population.type == 'E'">
                         <label class="radio">Please provide a short description. This description will appear in the RFI title.</label>
-                        <input type="text" ng-required="!rfiData.population.other" class="form-control-small form-control" ng-model="rfiData.population.other" name="other" id="other_environment" maxlength = "40" value="" required>
+                        <input type="text" ng-required="!rfiData.population.other" class="form-control-small form-control" ng-click="clearCondition(); clearCondition2(); clearhcError();" ng-model="rfiData.population.other" name="other" id="other_environment" maxlength = "40" value="" required>
                         <span class="error">{{populationOtherError}}</span>
                     </div>
 

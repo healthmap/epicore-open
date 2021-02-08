@@ -10,9 +10,13 @@ angular.module('EpicoreApp.controllers2', []).
         // get persistant RFI form
         $scope.rfiData = rfiForm.get();
         
+        //console.log('requestController2 called:', $routeParams.id);
         // get event from database if event id is passed in and populate form
         // this is used to edit an RFI (not send a new RFI)
         if ($routeParams.id) {
+
+            // console.log('requestController2 - editing rfi form:', $scope.rfiData);
+            
             // save event id
             $scope.rfiData.event_id = $routeParams.id;
 
@@ -46,6 +50,7 @@ angular.module('EpicoreApp.controllers2', []).
 
                 $scope.isRequester = (data.event.requester_id == $scope.userInfo.uid);
 
+
             });
 
         }
@@ -64,7 +69,7 @@ angular.module('EpicoreApp.controllers2', []).
         $scope.location_error_message = '';
         $scope.saveLocation = function (direction) {
 
-            // console.log('In saveLocation dir:', direction);
+            //console.log('In saveLocation dir:', direction);
             // console.log('In saveLocation eventID:', $scope.rfiData.event_id);
             // console.log('In saveLocation location:', $scope.rfiData.location);
             // console.log('In saveLocation location-location:', $scope.rfiData.location.location);
@@ -164,18 +169,34 @@ angular.module('EpicoreApp.controllers2', []).
             }
         };
 
+
+        function resetHealthConditionForPopType() {
+
+            //Type E and U do not require health_condition values. Reset here...
+            if ($scope.rfiData.population.type == 'E' || $scope.rfiData.population.type == 'U') {
+
+                    $scope.rfiData.health_condition.unknown = false;
+                    $scope.rfiData.health_condition.other = false;
+                    $scope.rfiData.health_condition.unknown_animal = false;
+                    $scope.rfiData.health_condition.other_animal = false;
+                    $scope.rfiData.health_condition.other_description = '';
+                    $scope.rfiData.health_condition.other_animal_description = '';
+            }
+
+        }
         ////////////////////////////////////////////// Members ////////////////////////////////////////
 
         /* select members  */
         // if ($location.path() == "/members") {
         function getMembers() {
+            //console.log('getMemebers:');
             // initialize default radio buttons - radius select checked by default
             //$scope.radiussel = $scope.rfiData.members.searchType != "country";
 
             // bounding box around event location
             // show/hide the submit to next step only if there are FETPs to receive the email
             $scope.submitDisabled = $scope.rfiData.members.numFetps <= 0;
-
+            
             $scope.bbox = $scope.rfiData.members.searchBox;
             var bounds = new google.maps.LatLngBounds(new google.maps.LatLng($scope.bbox[0], $scope.bbox[2]), new google.maps.LatLng($scope.bbox[1], $scope.bbox[3]));
             $scope.rectangle = { bounds: bounds, stroke: { color: '#08B21F', weight: 2, opacity: 1 }, fill: { color: '#08B21F', opacity: 0.5 }, editable: true, visible: true };
@@ -259,7 +280,9 @@ angular.module('EpicoreApp.controllers2', []).
         /* go next or back */
         $scope.saveStep1 = function (direction) {
             // console.log('STEP1 - clicked next:', $scope.rfiData);
+            
             $scope.submitDisabled = false;
+           
             if (!$scope.rfiData.place) {
                 $scope.location_error_message = 'Enter an event location';
                 return;
@@ -270,7 +293,7 @@ angular.module('EpicoreApp.controllers2', []).
             } else if (!$scope.rfiData.source) {
                 $scope.source_error_message = 'How did you hear about this event is a required field.';
                 return;
-            } else if (!$scope.rfiData.members || !$scope.rfiData.members.filtertype) {
+            } else if (!$scope.rfiData.event_id && (!$scope.rfiData.members || !$scope.rfiData.members.filtertype) ) { //If editing RFI form - map responders are not editable. If new RFI only check for members
                 $scope.submitDisabled = true;
                 return;
             } else if ((direction === 'back') || $scope.rfiData.location.event_date && $scope.rfiData.source.source) {
@@ -366,6 +389,15 @@ angular.module('EpicoreApp.controllers2', []).
                     return;
                 }
                 
+                //Reset health_condition if type is E or U selected.
+                //This occurs when users choose type A/H and then select E
+                if ($scope.rfiData.population.type == 'E' || $scope.rfiData.population.type == 'U') {
+                    resetHealthConditionForPopType();
+                    // console.log('EU-->:', $scope.rfiData.health_condition);
+                }
+                
+
+
                 // console.log("RFI Data Step 3 --> ", $scope.rfiData)
                 $location.path('/rfi_step3');
             } else if (direction === 'back') {
@@ -491,25 +523,29 @@ angular.module('EpicoreApp.controllers2', []).
 
         // clear health conditions
         $scope.clearCondition = function () {
-            $scope.rfiData.health_condition.respiratory = false;
-            $scope.rfiData.health_condition.gastrointestinal = false;
-            $scope.rfiData.health_condition.fever_rash = false;
-            $scope.rfiData.health_condition.jaundice = false;
-            $scope.rfiData.health_condition.h_fever = false;
-            $scope.rfiData.health_condition.paralysis = false;
-            $scope.rfiData.health_condition.other_neurological = false;
-            $scope.rfiData.health_condition.fever_unknown = false;
-            $scope.rfiData.health_condition.renal = false;
+            if($scope.rfiData.health_condition) {
+                $scope.rfiData.health_condition.respiratory = false;
+                $scope.rfiData.health_condition.gastrointestinal = false;
+                $scope.rfiData.health_condition.fever_rash = false;
+                $scope.rfiData.health_condition.jaundice = false;
+                $scope.rfiData.health_condition.h_fever = false;
+                $scope.rfiData.health_condition.paralysis = false;
+                $scope.rfiData.health_condition.other_neurological = false;
+                $scope.rfiData.health_condition.fever_unknown = false;
+                $scope.rfiData.health_condition.renal = false;
+            }
 
         };
         $scope.clearCondition2 = function () {
-            $scope.rfiData.health_condition.respiratory_animal = false;
-            $scope.rfiData.health_condition.neurological_animal = false;
-            $scope.rfiData.health_condition.hemorrhagic_animal = false;
-            $scope.rfiData.health_condition.vesicular_animal = false;
-            $scope.rfiData.health_condition.reproductive_animal = false;
-            $scope.rfiData.health_condition.gastrointestinal_animal = false;
-            $scope.rfiData.health_condition.multisystemic_animal = false;
+            if($scope.rfiData.health_condition) {
+                $scope.rfiData.health_condition.respiratory_animal = false;
+                $scope.rfiData.health_condition.neurological_animal = false;
+                $scope.rfiData.health_condition.hemorrhagic_animal = false;
+                $scope.rfiData.health_condition.vesicular_animal = false;
+                $scope.rfiData.health_condition.reproductive_animal = false;
+                $scope.rfiData.health_condition.gastrointestinal_animal = false;
+                $scope.rfiData.health_condition.multisystemic_animal = false;
+            }
         };
         // clear error
         $scope.clearhcError = function () {
@@ -663,7 +699,7 @@ angular.module('EpicoreApp.controllers2', []).
         $scope.purpose_error_message1 = '';
         $scope.purpose_error_message = '';
         // $scope.saveSource = function (direction) {
-        $scope.saveStep3 = function (direction) {
+          $scope.saveStep3 = function (direction) {
             // console.log('STEP3 - clicked review and send:', $scope.rfiData);
             $scope.purpose_error_message = "";
             $scope.purpose_error_message1 = "";
@@ -698,16 +734,20 @@ angular.module('EpicoreApp.controllers2', []).
                     return;
                 }
 
-
                 $scope.rfiData.event_location = $scope.getLocation_2();
                 $scope.rfiData.event_population = $scope.getPopulation_2();
-                $scope.rfiData.event_conditions = $scope.getConditions_2();
-                $scope.rfiData.event_title = $scope.rfiData.event_population + ' - ' + $scope.rfiData.event_conditions + ' - ' + $scope.rfiData.event_location + ' - ' + $scope.rfiData.location.event_date;
+                $scope.rfiData.event_conditions = $scope.getConditions_2() ? $scope.getConditions_2().trim() + ' - ' : '';
+
+                if($scope.rfiData.event_conditions)
+                    $scope.rfiData.event_title = $scope.rfiData.event_population + ' - ' + $scope.rfiData.event_conditions + ' - ' + $scope.rfiData.event_location + ' - ' + $scope.rfiData.location.event_date;
+                else
+                    $scope.rfiData.event_title = $scope.rfiData.event_population + ' - ' + $scope.rfiData.event_location + ' - ' + $scope.rfiData.location.event_date;
+
                 $scope.rfiData.event_purpose = $scope.getPurpose_2();
                 $scope.rfiData.event_source = $scope.getSource_2();
 
-             
-
+                //console.log('event title:', $scope.rfiData.event_title);
+                
                 $location.path('/sendrequest');
 
                 // build and review request email - not used for now
@@ -739,7 +779,6 @@ angular.module('EpicoreApp.controllers2', []).
         }
         $scope.getPopulation_2 = function () {
             var population = '';
-            
             switch ($scope.rfiData.population.type) {
                 case "H":
                     population = 'Human';
@@ -770,7 +809,6 @@ angular.module('EpicoreApp.controllers2', []).
                 species = 'environment';
             else if ($scope.rfiData.population.type == "U")
                 species = 'unknown';
-
 
             var condition = [];
             if (species == 'human') {
@@ -827,10 +865,11 @@ angular.module('EpicoreApp.controllers2', []).
                 if ($scope.rfiData.health_condition.other_animal) {
                     condition.push($scope.rfiData.health_condition.other_animal_description);
                 }
-
-            } else if (species == 'environment') {
-                condition.push($scope.rfiData.health_condition.disease_details);
-            }
+            } 
+        // else if (species == 'environment') {
+        //     condition.push($scope.rfiData.health_condition.disease_details);
+        // }
+            
             return condition.toString();
         }
         $scope.getPurpose_2 = function () {
@@ -1076,9 +1115,7 @@ angular.module('EpicoreApp.controllers2', []).
                     condition.push($scope.rfiData.health_condition.other_animal_description);
                 }
 
-            } else if (species == 'environment') {
-                condition.push($scope.rfiData.health_condition.disease_details);
-            }
+            } 
             return condition.toString();
         }
 
