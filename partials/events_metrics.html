@@ -95,11 +95,11 @@
 
                                 <div class="form-group">
                                     <label>Creation</label>
-                                    <textarea ng-blur="updateRFIMetrics(event,'metric_creation')" class="form-control" ng-model="event.metric_creation" name="metric_creation" />
+                                    <textarea ng-change="updateRFIMetrics(event,'metric_creation')" class="form-control" ng-model="event.metric_creation" name="metric_creation" />
                                     </div>
                                     <div class="form-group">
                                         <label>Notes</label>
-                                        <textarea ng-blur="updateRFIMetrics(event,'metric_notes')" class="form-control" ng-model="event.metric_notes" name="metric_notes" />
+                                        <textarea ng-change="updateRFIMetrics(event,'metric_notes')" class="form-control" ng-model="event.metric_notes" name="metric_notes" />
                                         <span ng-if="displaySavingText">
                                             <br />
                                             <stron class="change-on-hover" >(Saving..)</strong>
@@ -107,7 +107,7 @@
                                     </div>
                                         <div class="form-group mr0">
                                             <label>Action</label>
-                                            <textarea ng-blur="updateRFIMetrics(event,'metric_action')" type="text" class="form-control" ng-model="event.metric_action" name="metric_action" />
+                                            <textarea ng-change="updateRFIMetrics(event,'metric_action')" type="text" class="form-control" ng-model="event.metric_action" name="metric_action" />
                                             </div>
                                             <a href="" ng-click="showSummary(event.phe_description, event.phe_additional, event.title, event.source, event.source_details, event.outcome, event.action_date)" ng-show="event.outcome && event.phe_description">Summary <i class="far fa-arrow-right"></i></a>
 
