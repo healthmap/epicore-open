@@ -790,7 +790,7 @@ angular.module('EpicoreApp.controllers2', []).
                     population = 'Environmental, ' + $scope.rfiData.population.other;
                     break;
                 case "U":
-                    population = 'Unknown, ' + $scope.rfiData.population.other;
+                    population = $scope.rfiData.population.other ? $scope.rfiData.population.other : 'Unknown';
                     break;
                 case "O":
                     population = $scope.rfiData.population.other;
