@@ -15,7 +15,19 @@
                 <li ng-class="{'active': onOpen}"><a href="#/rfi_dashboard">Open</a></li>
                 <li ng-class="{'active': !onOpen}"><a href="#/rfi_dashboard/closed">Closed</a></li>
                 <li class="mb0 pull-right form-group" ng-show="isOrganization" ng-if="!onOpen">
-                <select class="form-control mb0" ng-options="month as month.name for month in event_months " ng-model="selected_month" ng-change="getEventMonth(selected_month)"></select>
+                    <select class="form-control mb0" ng-options="month as month.name for month in event_months " ng-model="selected_month" ng-change="getEventMonth(selected_month);"></select>
+                </li>
+                <li class="mb0 pull-right">
+                    <div class="checkbox">
+                        <label>
+                            <input type="checkbox"
+                                   ng-model="isShowNotScoredEvents"
+                                   ng-checked="isShowNotScoredEvents"
+                                   ng-click="showNotScoredEvents()"
+                                   ng-disabled="!eventsList['all']"
+                            >Not Scored
+                        </label>
+                    </div>
                 </li>
             </ul>
         </div>
