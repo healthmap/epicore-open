@@ -133,3 +133,31 @@ The old codebase for epicore used 2 schemas - hm and epicore (see da.ini.php old
 Going forward we have now consolidated da.ini.php file to hold only one schema access - epicore. hm schema was used to access table 'hmu' to fetch logged in 
 
 user or insert new users only. Going forward epicore will have access to schema hm for (SELECT. INSERT ONLY QUERIES).
+
+
+### Responder Login
+To get a responder account, please “register” for an account on Epicore (www.epicore.org) / (www.dev.epicore.org) in respective environments
+
+### Requester Login
+To get a requester account, please “register” for an account on HealthMap (www.healthmap.org). Since dev healthmap no longer exists, in order to create dev-requester logins:
+Step1: Please use script ~/scripts/createRequester.php to create users.
+params:
+@auth
+@callback
+@email
+@name
+@title
+@username
+@ppassword
+@default_location
+@default_locname
+@createdate
+@superuser
+
+SampleURL:
+http://127.0.0.1:8000/scripts/createRequester.php?auth=true&callback=angular.callbacks._0&email=lakshmi.yajurvedi@chboston.org&name=Lakshmi Yajurvedi&title=Epicore User&username=lyajurvedi&password=HealthMap0002&default_location=44.276332228 ,-105.503164654&default_locname=Gillete, WY 82717, USA&createdate=2021-02-16&superuser=true
+
+Step2: Using the above users email address, add this user as a Requester into Epicore, using the member portal
+Login to epicore as a superuser
+Requester Portal
+Add Requester
