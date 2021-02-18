@@ -30,6 +30,7 @@
             </div><!--col-->
         </div><!--row-->
 
+        <!-- NOTE:  editing an RFI would not allow you to edit who it was routed to (responders) as we have no mechanism of re-sending, and also it would alter the timelines for auto-closure. Hence below sections is not editable. Only use when creating. -->
         <div class="row">
             <div id="form-container" class="col-xs-12 col-md-8">
                 <div class="form-group more-space">
@@ -52,7 +53,7 @@
 
                     <div ng-include src="'partials/rfi_members_select.html'"></div>
                     <p class="hide" ng-if="!rfiData.members.numUniqueFetps" class="highlight">Enter the event location to see nearby responders.</p>
-
+                    
                     <span class="error" ng-if="submitDisabled">Select a country with at least one member.</span>
                 </div>
             </div>
