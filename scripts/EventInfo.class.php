@@ -1419,16 +1419,16 @@ class EventInfo
         $key_vals = join(",", array_keys($pvals));
         $qmarks = join(",", array_fill(0, count($pvals), '?'));
         $qvals = array_values($pvals);
-        if($table_name == 'event_metrics'){
-            if($pvals['event_metrics_id'] == 0){
-                // INSERT -- Old school
-                $res = $db->query("INSERT INTO event_metrics (event_metrics_id, event_id, score, creation, notes, action) VALUES (?, ?, ?, ?, ?, ?)",
-                array($pvals['event_metrics_id'], $pvals['event_id'], $pvals['score'], $pvals['creation'], $pvals['notes'], $pvals['action']));
 
-            } else {
-                // UPDATE
-                $res = $db->query("UPDATE event_metrics SET event_id = ?, score = ?, creation = ?, notes = ?, action = ? WHERE event_metrics_id = ?", array($pvals['event_id'], $pvals['score'], $pvals['creation'], $pvals['notes'], $pvals['action'], $pvals['event_metrics_id']));
+        if($table_name == 'event_metrics'){
+            $exisiting_table_id = $db->getOne("SELECT event_metrics_id FROM event_metrics WHERE event_id = ?" , array($pvals['event_id']));
+
+            if (isset($exisiting_table_id)) {
+                $pvals['event_metrics_id'] = $exisiting_table_id;
             }
+
+            $res = $db->query("REPLACE INTO event_metrics (event_metrics_id, event_id, score, creation, notes, action) VALUES (?, ?, ?, ?, ?, ?)",
+            array($pvals['event_metrics_id'], $pvals['event_id'], $pvals['score'], $pvals['creation'], $pvals['notes'], $pvals['action']));
         } else {
             $q2 = "REPLACE INTO {$table_name} ({$key_vals}) VALUES ({$qmarks})"; 
             $res = $db->query($q2, $qvals);  
