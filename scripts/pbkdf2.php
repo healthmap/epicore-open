@@ -42,20 +42,7 @@ define("HASH_PBKDF2_INDEX", 3);
 function create_hash($password)
 {
     // format: algorithm:iterations:salt:hash
-    //(PHP 4, PHP 5, PHP 7 < 7.2.0, PECL mcrypt >= 1.0.0)
-    if (function_exists('mcrypt_create_iv')) {
-        /** @noinspection PhpDeprecationInspection */
-        $binaryString = mcrypt_create_iv(PBKDF2_SALT_BYTE_SIZE, MCRYPT_DEV_URANDOM);
-        if ($binaryString !== false) {
-            $salt = base64_encode($this->bytesToString($binaryString));
-            print_r($salt);
-        }
-    } else {
-       // echo 'does not exisit';
-        $salt = base64_encode(random_bytes(32));
-        print_r($salt);
-    }
-    
+    $salt = base64_encode(mcrypt_create_iv(PBKDF2_SALT_BYTE_SIZE, MCRYPT_DEV_URANDOM));
     return PBKDF2_HASH_ALGORITHM . ":" . PBKDF2_ITERATIONS . ":" .  $salt . ":" . 
         base64_encode(pbkdf2(
             PBKDF2_HASH_ALGORITHM,
