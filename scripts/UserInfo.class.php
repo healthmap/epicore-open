@@ -216,12 +216,14 @@ class UserInfo
         
         if(is_a($user, 'DB_Error')) {
             print_r($user);
+        
             die('user error!');
         }
         
         // $resp = true;
         $db = getDB();
         if($resp) {
+        
             $uinfo = $db->getRow("SELECT user.user_id, user.hmu_id, user.organization_id, organization.name AS orgname FROM epicore.user LEFT JOIN epicore.organization ON user.organization_id = organization.organization_id WHERE hmu_id = ?", array($user['hmu_id']));
             if(is_a($uinfo, 'DB_Error')) {
                 print_r($uinfo);
@@ -231,13 +233,16 @@ class UserInfo
             $uinfo['email'] = $user['email'];
             return $uinfo;
         } else { 
+        
             // first try the MOD user table.  If none, try the FETP user table.
             $uinfo = $db->getRow("SELECT user.*, organization.name AS orgname FROM epicore.user LEFT JOIN organization ON user.organization_id = organization.organization_id WHERE email = ?", array($email));
             if(!$uinfo['user_id']) {
+        
                 $uinfo = $db->getRow("SELECT fetp_id, pword_hash, lat, lon, countrycode, active, email, status, locations FROM fetp WHERE email = ?", array($email));
                 $uinfo['username'] = "Member ".$uinfo['fetp_id'];
             }
             if($uinfo['user_id'] || $uinfo['fetp_id']) {
+        
                 $resp = validate_password($dbdata['password'], $uinfo['pword_hash']);
                 if($resp) {
                     unset($uinfo['pword_hash']);
@@ -603,6 +608,60 @@ class UserInfo
         else
             return false;
     }
+
+
+    // Creating a Requester login - hm database hmu table
+    // See readMe..for postman to create users
+    static function createHmUser($email, $name, $title, $username, $password, $default_location, $default_locname,$createdate) {
+        
+        //defaults
+        $email_active = 1;
+        $affiliation = 'BCH-Requester';
+        $confirmed = 1;
+        $priv_level = 1;
+        $date_created = date('Y-m-d H:i:s');
+        $default_country = 106; 
+        $default_radius = 50;
+        $html_email = 1;
+        
+        $db = getDB('hm'); //do not remove hm here...default will go to epicore...this is a standalone script
+        $hmuUser = $db->getRow("SELECT * FROM hm.hmu WHERE email='$email'");
+        $messageResp = '';
+        if ($hmuUser) {
+          $messageResp = 'User exists.';
+        } else {
+            
+            //echo 'create one hmuUser';
+            if($password) {
+                //STEP 1: Create user in hmu table in hm database
+                $pword_hash = create_hash($password);
+                    $res = $db->query("INSERT INTO hm.hmu (email, email_active, name, title, affiliation, username, pword_hash, confirmed, priv_level, date_created, default_location, default_locname, default_country,  default_radius, html_email) 
+                                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                                array($email,$email_active,$name,$title,$affiliation,$username,$pword_hash,$confirmed,$priv_level,$date_created,$default_location,$default_locname,$default_country,$default_radius, $html_email));
+                        $db->commit();
+
+                    // check result is not an error
+                    if (PEAR::isError($res)) {
+                        die($res->getMessage());
+                        $status = 'failed to insert event';
+                        $messageResp = 'Unable to create user.';
+                    } else {
+                        
+                        $hmu_id = $db->getOne("SELECT LAST_INSERT_ID()");
+                        $db->commit();
+                        $messageResp = 'Created hmu user successfully with id:' . $hmu_id . '. Add this user through UI as a requester using email address:' .$email;
+                        
+                        return $messageResp;
+                    }
+
+            } else {
+                return 'No password. Check request';
+            }
+
+        } //end if
+
+    }
+
 
     static function getFETPid($email){
         $db = getDB();
