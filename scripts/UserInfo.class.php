@@ -1011,10 +1011,11 @@ class UserInfo
             array($pvals['fetp_id'], $pvals['city'], $pvals['state'], $pvals['countrycode']));
         if(!$location_id) { // insert if not
             //geocode location
-            $address = $pvals['city'] . ', ' . $pvals['state'] . ', ' . $pvals['country'];
-            $position = Geocode::getLocationDetail('address', $address);
-            $pvals['lat'] = $position[0];
-            $pvals['lon'] = $position[1];
+            //Not using this API anymore - as of 2021-02-22
+            // $address = $pvals['city'] . ', ' . $pvals['state'] . ', ' . $pvals['country'];
+            // $position = Geocode::getLocationDetail('address', $address);
+            // $pvals['lat'] = $position[0];
+            // $pvals['lon'] = $position[1];
 
             //insert location
             $key_vals = join(",", array_keys($pvals));
@@ -1027,6 +1028,7 @@ class UserInfo
         }
         else
             return false;
+       
     }
 
     // add/update mobile device
@@ -1116,7 +1118,7 @@ class UserInfo
                 $status = 'failed';
                 $message = 'failed to delete location';
             } else {
-                $message = 'deleted location';
+                $message = 'Deleted location';
                 $status = 'success';
                 $db->commit();
             }
