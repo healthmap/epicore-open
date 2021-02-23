@@ -1307,7 +1307,7 @@ angular.module('EpicoreApp.controllers2', []).
             }
 
             getAllEvents(start_date, end_date, num_events);
-            $scope.isShowNotScoredEvents = false; f
+            $scope.isShowNotScoredEvents = false;
         };
 
         // upload response files
