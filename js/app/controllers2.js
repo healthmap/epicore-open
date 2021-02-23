@@ -1248,6 +1248,7 @@ angular.module('EpicoreApp.controllers2', []).
         $scope.epicore_version = epicoreVersion;
         $scope.isRouteLoading = true;
         $scope.eventsList = [];
+        $scope.isShowNotScoredEvents = false;
         $scope.userInfo = $cookieStore.get('epiUserInfo');
         $scope.id = $routeParams.id ? $routeParams.id : null;
         $scope.allFETPs = $routeParams.response_id ? false : true;
@@ -1290,7 +1291,6 @@ angular.module('EpicoreApp.controllers2', []).
 
         // get events for selected month
         $scope.getEventMonth = function (month) {
-
             var start_date = '';
             var end_date = '';
             var num_events = 'all';
@@ -1307,6 +1307,7 @@ angular.module('EpicoreApp.controllers2', []).
             }
 
             getAllEvents(start_date, end_date, num_events);
+            $scope.isShowNotScoredEvents = false;
         };
 
         // upload response files
@@ -1440,7 +1441,6 @@ angular.module('EpicoreApp.controllers2', []).
         };
 
         getAllEvents = function (start_date, end_date, num_events = 'all') {
-            console.log("getAllEvents -> ", start_date, end_date);
             $scope.isRouteLoading = true;
 
             $scope.eventsList = [];
@@ -1601,8 +1601,23 @@ angular.module('EpicoreApp.controllers2', []).
                 }
                 $scope.isRouteLoading = false;
 
-            });
+                $scope.eventsListAll = angular.copy($scope.eventsList['all']);
 
+            });
+        }
+
+        $scope.showNotScoredEvents = function() {
+            if (!$scope.eventsList['all']) {
+                return;
+            }
+            $scope.isShowNotScoredEvents = !$scope.isShowNotScoredEvents;
+            if ($scope.isShowNotScoredEvents) {
+                $scope.eventsList['all'] = $scope.eventsList['all'].filter(function(event) {
+                    return !event.metric_score;
+                });
+            } else {
+                $scope.eventsList['all'] = $scope.eventsListAll;
+            }
         }
 
         // get most recent events for public dashboard
