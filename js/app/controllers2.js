@@ -1627,34 +1627,18 @@ angular.module('EpicoreApp.controllers2', []).
         }
 
         $scope.displaySavingText = false;
+        var save_metrics_debounce = 1000;
+        var save_metrics_timeout;
+        var prev_metric_data = {}
 
-        if (!($scope.newMetricsId)) {
-            $scope.newMetricsId = 0;
-        }
-
-        $scope.updateRFIMetrics = function (event, field_to_update) {
-
-            // console.log("Event incoming -> ", event);
-
+        $scope.updateRFIMetrics = function (event) {
             if (!(event.metric_score) || event.metric_score > 2) {
                 alert("Score cannot be more than 2")
                 return;
             }
 
-            if (event.event_metrics_id) {
-                $scope.newMetricsId = event.event_metrics_id;
-            }
-            // console.log("New Metrics event ID ====> ", $scope.newMetricsId);
-
-            var currentFieldValue = eval("event." + field_to_update);
-
-            //Avoid DB call if nothing is entered in the fields
-            if (!(currentFieldValue) || currentFieldValue == '' || currentFieldValue == undefined) {
-                return
-            }
-
             var metric_data = {
-                event_metrics_id: $scope.newMetricsId,
+                event_metrics_id: event.event_metrics_id,
                 score: event.metric_score,
                 creation: event.metric_creation,
                 notes: event.metric_notes,
@@ -1662,21 +1646,29 @@ angular.module('EpicoreApp.controllers2', []).
                 event_id: event.event_id
             };
 
-            if (event.metric_score != '' || event.metric_creation != '' || event.metric_notes != '' || event.metric_action != '') {
 
-                $scope.displaySavingText = true;
+            if (angular.equals(metric_data, prev_metric_data)) {
+                return;
+            }
+
+            prev_metric_data = metric_data;
+
+            $scope.displaySavingText = true;
+
+            if (save_metrics_timeout) {
+                $timeout.cancel(save_metrics_timeout);
+            }
+
+            save_metrics_timeout = $timeout(function() {
                 $http({
                     url: urlBase + 'scripts/updatemetrics.php', method: "POST", data: metric_data
                 }).success(function (data, status, headers, config) {
-                    // console.log("Success after updating Metrics Data -> ", data.tableID);
                     $scope.displaySavingText = false;
-                    $scope.newMetricsId = data.tableID;
                 }).error(function (data, status, headers, config) {
                     // console.log(status);
                     $scope.displaySavingText = false;
                 });
-            }
-
+            }, save_metrics_debounce);
         };
 
         $scope.sendFollowup = function (formData, isValid) {
