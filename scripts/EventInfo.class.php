@@ -948,12 +948,13 @@ class EventInfo
             $row['source_details'] = $db->getOne("SELECT details FROM source WHERE event_id = ?", array($row['event_id']));
 
             // get metrics
-            $row['event_metrics_id'] = $db->getOne("SELECT event_metrics_id FROM event_metrics WHERE event_id = ?", array($row['event_id']));
-            $metric_score = $db->getOne("SELECT score FROM event_metrics WHERE event_id = ?", array($row['event_id']));
-            $row['metric_score'] = is_numeric($metric_score) ? (int)$metric_score : null;
-            $row['metric_creation'] = $db->getOne("SELECT creation FROM event_metrics WHERE event_id = ?", array($row['event_id']));
-            $row['metric_notes'] = $db->getOne("SELECT notes FROM event_metrics WHERE event_id = ?", array($row['event_id']));
-            $row['metric_action'] = $db->getOne("SELECT action FROM event_metrics WHERE event_id = ?", array($row['event_id']));
+            $event_metrics = $db->getAll("SELECT * FROM event_metrics WHERE event_id = ? ORDER BY event_metrics_id DESC", array($row['event_id']));
+            $row['event_metrics_id'] = intval($event_metrics[0]['event_metrics_id']);
+            $metric_score = intval($event_metrics[0]['score']);
+            $row['metric_score'] = $metric_score > 0 ? $metric_score : null;
+            $row['metric_creation'] = $event_metrics[0]['creation'];
+            $row['metric_notes'] = $event_metrics[0]['notes'];
+            $row['metric_action'] = $event_metrics[0]['action'];
 
             // get population, health conditions, source and purpose
             //echo '****eventID:';
@@ -1420,11 +1421,11 @@ class EventInfo
         $qmarks = join(",", array_fill(0, count($pvals), '?'));
         $qvals = array_values($pvals);
 
-        if($table_name == 'event_metrics'){
-            $exisiting_table_id = $db->getOne("SELECT event_metrics_id FROM event_metrics WHERE event_id = ?" , array($pvals['event_id']));
+        if($table_name == 'event_metrics') {
+            $exisiting_table_id = $db->getAll("SELECT event_metrics_id FROM event_metrics WHERE event_id = ? ORDER BY event_metrics_id DESC" , array($pvals['event_id']));
 
-            if (isset($exisiting_table_id)) {
-                $pvals['event_metrics_id'] = $exisiting_table_id;
+            if (isset($exisiting_table_id[0]['event_metrics_id'])) {
+                $pvals['event_metrics_id'] = $exisiting_table_id[0]['event_metrics_id'];
             }
 
             $res = $db->query("REPLACE INTO event_metrics (event_metrics_id, event_id, score, creation, notes, action) VALUES (?, ?, ?, ?, ?, ?)",
@@ -1451,6 +1452,7 @@ class EventInfo
     static function updateEventMetrics($table_data){
         $table_name = 'event_metrics';
         $table_id = EventInfo::replaceEventTable($table_name, $table_data);
+
         // print("*********** TABLE ID in UpdateEventMetrics Function ***********");
         // //print_r($table_id);
         if (is_numeric($table_id)) {

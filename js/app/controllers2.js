@@ -1627,30 +1627,18 @@ angular.module('EpicoreApp.controllers2', []).
         }
 
         $scope.displaySavingText = false;
-
-        if (!($scope.newMetricsId)) {
-            $scope.newMetricsId = 0;
-        }
-
         var save_metrics_debounce = 1000;
         var save_metrics_timeout;
         var prev_metric_data = {}
 
         $scope.updateRFIMetrics = function (event) {
-
-            console.log(event);
-
             if (!(event.metric_score) || event.metric_score > 2) {
                 alert("Score cannot be more than 2")
                 return;
             }
 
-            if (event.event_metrics_id) {
-                $scope.newMetricsId = event.event_metrics_id;
-            }
-
             var metric_data = {
-                event_metrics_id: $scope.newMetricsId,
+                event_metrics_id: event.event_metrics_id,
                 score: event.metric_score,
                 creation: event.metric_creation,
                 notes: event.metric_notes,
@@ -1675,9 +1663,7 @@ angular.module('EpicoreApp.controllers2', []).
                 $http({
                     url: urlBase + 'scripts/updatemetrics.php', method: "POST", data: metric_data
                 }).success(function (data, status, headers, config) {
-                    // console.log("Success after updating Metrics Data -> ", data.tableID);
                     $scope.displaySavingText = false;
-                    $scope.newMetricsId = data.tableID;
                 }).error(function (data, status, headers, config) {
                     // console.log(status);
                     $scope.displaySavingText = false;
