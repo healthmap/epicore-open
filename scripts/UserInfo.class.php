@@ -904,7 +904,7 @@ class UserInfo
                 }
             }
             $applicant_row['status'] = $row['status'];
-
+            $applicant_row['maillist_id'] = $row['maillist_id'];
             $applicant_row['pword'] = $row['pword_hash'] ? 'Yes' : null;
             $applicant_row['member_id'] = $row['fetp_id'];
             $applicant_row['locations'] = $row['locations'];
@@ -1160,6 +1160,8 @@ class UserInfo
         // save all member info
         $user = array();
         $all_members = array();
+        // echo '----------------Member count: '.  count($members) . '---------------------'. "\n";
+        $counter =0;
         foreach($members as $applicant) {
 
             $user['Application Date'] = $applicant['apply_date'];
@@ -1317,37 +1319,53 @@ class UserInfo
             // user set password
             $user['pword'] = $applicant['pword'];
 
-            // get open and closed rfi's
-            $open_rfis = $this->getFETPRequests('O', $applicant['member_id']);
-            $closed_rfis = $this->getFETPRequests('C', $applicant['member_id']);
-
+            if($applicant['member_id']) {
+                // get open and closed rfi's
+                $open_rfis = $this->getFETPRequests('O', $applicant['member_id']);
+                $closed_rfis = $this->getFETPRequests('C', $applicant['member_id']);
+            } 
+            // else {
+            //     echo '----------------ApplicantID missing: '. $applicant['maillist_id'] . '---------------------'. "\n";
+            // }
             // count rfi stats
-            $user['# RFIs'] = count($open_rfis) + count($closed_rfis);
             $user['# Responses'] = 0;
             $user['no contribution'] = 0;
             $user['not helpful'] = 0;
             $user['helpful-no promed'] = 0;
             $user['helpful-promed'] = 0;
-            foreach ($open_rfis as $orfi) {
-                if ($orfi['response_dates']) {
-                    $user['# Responses'] += count($orfi['response_dates']);
-                    $user['no contribution'] += count(array_keys($orfi['response_use'], null));
-                    $user['not helpful'] += count(array_keys($orfi['response_use'], '0'));
-                    $user['helpful-no promed'] += count(array_keys($orfi['response_use'], '1'));
-                    $user['helpful-promed'] += count(array_keys($orfi['response_use'], '2'));
+            $user['# RFIs'] = 0;
+
+           
+            if($open_rfis && $closed_rfis) {
+                $user['# RFIs'] = count($open_rfis) + count($closed_rfis);
+            }
+
+            if($open_rfis) {
+                foreach ($open_rfis as $orfi) {
+                    if ($orfi['response_dates']) {
+                        $user['# Responses'] += count($orfi['response_dates']);
+                        $user['no contribution'] += count(array_keys($orfi['response_use'], null));
+                        $user['not helpful'] += count(array_keys($orfi['response_use'], '0'));
+                        $user['helpful-no promed'] += count(array_keys($orfi['response_use'], '1'));
+                        $user['helpful-promed'] += count(array_keys($orfi['response_use'], '2'));
+                    }
                 }
             }
-            foreach ($closed_rfis as $crfi) {
-                if ($crfi['response_dates'])
-                    $user['# Responses'] += count($crfi['response_dates']);
-                $user['no contribution'] += count(array_keys($crfi['response_use'], null));
-                $user['not helpful'] += count(array_keys($crfi['response_use'], '0'));
-                $user['helpful-no promed'] += count(array_keys($crfi['response_use'], '1'));
-                $user['helpful-promed'] += count(array_keys($crfi['response_use'], '2'));
+            if($closed_rfis) {
+                foreach ($closed_rfis as $crfi) {
+                    if ($crfi['response_dates'])
+                        $user['# Responses'] += count($crfi['response_dates']);
+                    $user['no contribution'] += count(array_keys($crfi['response_use'], null));
+                    $user['not helpful'] += count(array_keys($crfi['response_use'], '0'));
+                    $user['helpful-no promed'] += count(array_keys($crfi['response_use'], '1'));
+                    $user['helpful-promed'] += count(array_keys($crfi['response_use'], '2'));
+                }
             }
             
+            // echo '----------------Processing member '. $counter . ' completed-----------------------'. "\n";
             // save user in the array
             array_push($all_members, $user);
+            $counter++;
 
         }
 
