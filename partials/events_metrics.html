@@ -15,7 +15,19 @@
                 <li ng-class="{'active': onOpen}"><a href="#/rfi_dashboard">Open</a></li>
                 <li ng-class="{'active': !onOpen}"><a href="#/rfi_dashboard/closed">Closed</a></li>
                 <li class="mb0 pull-right form-group" ng-show="isOrganization" ng-if="!onOpen">
-                <select class="form-control mb0" ng-options="month as month.name for month in event_months " ng-model="selected_month" ng-change="getEventMonth(selected_month)"></select>
+                    <select class="form-control mb0" ng-options="month as month.name for month in event_months " ng-model="selected_month" ng-change="getEventMonth(selected_month);"></select>
+                </li>
+                <li class="mb0 pull-right">
+                    <div class="checkbox">
+                        <label>
+                            <input type="checkbox"
+                                   ng-model="isShowNotScoredEvents"
+                                   ng-checked="isShowNotScoredEvents"
+                                   ng-click="showNotScoredEvents()"
+                                   ng-disabled="!eventsList['all']"
+                            >Not Scored
+                        </label>
+                    </div>
                 </li>
             </ul>
         </div>
@@ -86,20 +98,19 @@
                                 <div class="form-group small">
                                     <form name="myForm">
                                         <label>Score 
-                                            <input type="number" min="0" max="2" ng-blur="updateRFIMetrics(event,'metric_score')" class="form-control" ng-model="event.metric_score" name="metric_score">
+                                            <input type="number" min="0" max="2" ng-change="updateRFIMetrics(event)" class="form-control" ng-model="event.metric_score" name="metric_score">
                                         </label>
                                         <span ng-show="!myForm.metric_score.$valid" style="color:red">Score cannot be greater than 2.</span>
                                     </form>
-                                    <!-- <input type="number" min="0" ng-init="0" max="2" ng-blur="updateRFIMetrics(event,'metric_score')" class="form-control" ng-model="event.metric_score" name="metric_score"> -->
                                 </div>
 
                                 <div class="form-group">
                                     <label>Creation</label>
-                                    <textarea ng-blur="updateRFIMetrics(event,'metric_creation')" class="form-control" ng-model="event.metric_creation" name="metric_creation" />
+                                    <textarea ng-change="updateRFIMetrics(event)" class="form-control" ng-model="event.metric_creation" name="metric_creation" />
                                     </div>
                                     <div class="form-group">
                                         <label>Notes</label>
-                                        <textarea ng-blur="updateRFIMetrics(event,'metric_notes')" class="form-control" ng-model="event.metric_notes" name="metric_notes" />
+                                        <textarea ng-change="updateRFIMetrics(event)" class="form-control" ng-model="event.metric_notes" name="metric_notes" />
                                         <span ng-if="displaySavingText">
                                             <br />
                                             <stron class="change-on-hover" >(Saving..)</strong>
@@ -107,7 +118,7 @@
                                     </div>
                                         <div class="form-group mr0">
                                             <label>Action</label>
-                                            <textarea ng-blur="updateRFIMetrics(event,'metric_action')" type="text" class="form-control" ng-model="event.metric_action" name="metric_action" />
+                                            <textarea ng-change="updateRFIMetrics(event)" type="text" class="form-control" ng-model="event.metric_action" name="metric_action" />
                                             </div>
                                             <a href="" ng-click="showSummary(event.phe_description, event.phe_additional, event.title, event.source, event.source_details, event.outcome, event.action_date)" ng-show="event.outcome && event.phe_description">Summary <i class="far fa-arrow-right"></i></a>
 

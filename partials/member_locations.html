@@ -18,30 +18,28 @@
             <div id="form-container" class="row">
             <form name="locationForm" role="form" id="locationForm" class="col-xs-12 col-md-8" >
                 <h4>Add Member Location</h4>
-                <div class="form-group">
-                    <label class="form-label" for="country">Country</label>
-                    <select chosen="" ng-model="member.countrycode" name="country" data-placeholder="Choose a country..." class="chosen-select form-control" >
-                        <option value=""></option>
-                        <option ng-repeat="country in countries" value="{{country.code}}">{{country.name}}</option>
-                    </select>
+                
+
+                <div class="form-group more-space">
+                    <label>Location</label>
+                    <input class="form-control"
+                        g-places-autocomplete
+                        options="memLocationOptions"
+                        force-selection="true"
+                        ng-click="filtertype=null"
+                        ng-model="memLocationPlace"
+                        ng-focus="memLocationPlace = null"
+                        id="memLocation"
+                        ng-change="memLocationChange(memLocationPlace)"
+                        />
                 </div>
 
                 <div class="form-group">
-                    <label class="form-label" for="city">City</label>
-                    <input type="text" class="form-control" ng-model="member.city" name="city" required>
-                </div>
 
-                <div class="form-group">
-                    <label class="form-label" for="state">State/Province/Region</label>
-                    <input type="text" class="form-control" ng-model="member.state" name="state" required>
-                </div>
-
-                <div class="form-group">
-
-                    <button ng-click="addLocation(member)" type="submit" class="submit btn btn-default">Add Location</button>
+                    <button ng-click="addLocation(memLocationPlace)" type="submit" class="submit btn btn-default">Add Location</button>
                     <div>
                         <br>
-                        <p>{{message}}</p>
+                        <p class="intro correct">{{message}}</p>
                         <p class="intro error" name="error_message" ><strong ng-bind-html="error_message" ></strong></p>
                     </div>
                 </div><!-- /input-group -->
