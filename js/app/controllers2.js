@@ -1661,7 +1661,6 @@ angular.module('EpicoreApp.controllers2', []).
                 event_id: event.event_id
             };
 
-
             if (angular.equals(metric_data, prev_metric_data)) {
                 return;
             }
