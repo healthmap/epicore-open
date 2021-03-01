@@ -153,9 +153,9 @@ class UserInfo
                 $requests[$row['event_id']]['event_id'] = $row['event_id'];
                 $requests[$row['event_id']]['event_id_int'] = (int)$row['event_id'];
                 $requests[$row['event_id']]['title'] = $row['title'];
-                $requests[$row['event_id']]['location'] = $row['location'];
-                $requests[$row['event_id']]['country'] = $row['country'];
-                $requests[$row['event_id']]['disease'] = $row['disease'];
+                $requests[$row['event_id']]['location'] = $row['location'] ? $row['location']: '';
+                $requests[$row['event_id']]['country'] = $row['country']? $row['country']: '';
+                $requests[$row['event_id']]['disease'] = $row['disease']? $row['disease']: '';
                 $requests[$row['event_id']]['iso_create_date'] = $row['create_date'];
                 $requests[$row['event_id']]['create_date'] = date('j-M-Y', strtotime($row['create_date']));
                 $requests[$row['event_id']]['event_date'] = date('j-M-Y', strtotime($row['event_date']));
