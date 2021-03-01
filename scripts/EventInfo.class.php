@@ -899,9 +899,10 @@ class EventInfo
         WHERE event.place_id = place.place_id AND event.event_id = event_fetp.event_id AND
         event.create_date >= ? AND event.create_date <= ?
         ORDER BY event.create_date DESC", array($sdatetimeStr, $edatetimeStr));
-
+        
+        $counter = 0;
         while($row = $q->fetchRow()) {
-
+            $counter++;
             // get the current status - open or closed
             $dbstatus = $db->getOne("SELECT status FROM event_notes WHERE event_id = ? ORDER BY action_date DESC LIMIT 1", array($row['event_id']));
             $dbstatus = $dbstatus ? $dbstatus : 'O'; // if no value for status, it's open
@@ -969,8 +970,8 @@ class EventInfo
             $row['health_condition_details'] = $event_info['hc_details'];
             $row['other_relevant_ph_details'] = $event_info['condition_details'];
             $purpose = $event_info['purpose'];
-            $row['verfication_or_update'] = $purpose[0];
-            $row['rfi_purpose'] = implode(',',$purpose);
+            $row['verfication_or_update'] = $purpose[0] ? $purpose[0]: '';
+            $row['rfi_purpose'] = $purpose ? implode(',',$purpose): '';
             $row['personalized_message'] = $event_info['personalized_text'];
             $row['rfi_source'] = $event_info['source'];
             $row['rfi_source_details'] = $event_info['source_details'];
@@ -1001,11 +1002,12 @@ class EventInfo
                 $send_date = date('j-M-Y H:i', strtotime($gfrow['send_date']));  // Day Month Year
                 $num_followups[$gfrow['followup_id']][] = $send_date;
             }
-
-            foreach($num_followups as $followupnum => $datearr) {
-                $newdate = date_create_from_format('j-M-Y H:i', $datearr[0]);
-                $newdate = date_format($newdate, 'Y-m-d');
-                $row['num_followups'][] = array('date' => $datearr[0], 'num' => count($datearr), 'text' => $text[$followupnum], 'iso_date' => $newdate);
+            if($num_followups) {
+                foreach($num_followups as $followupnum => $datearr) {
+                    $newdate = date_create_from_format('j-M-Y H:i', $datearr[0]);
+                    $newdate = date_format($newdate, 'Y-m-d');
+                    $row['num_followups'][] = array('date' => $datearr[0], 'num' => count($datearr), 'text' => $text[$followupnum], 'iso_date' => $newdate);
+                }
             }
             $row['iso_create_date'] = $row['create_date'];
             $row['iso_event_date'] = $row['event_date'];
@@ -1072,6 +1074,7 @@ class EventInfo
                 // print_r($events);
                 // echo '-----$events:';
             }
+            // echo '----------------Total #events processed:'. $counter . '-----------------------'. "\n";
         }
         return $events;
     }
@@ -1983,9 +1986,10 @@ class EventInfo
 
     // get ALL event stats for all types: yours, yourorg, and other for the csv
     static function getEventStats2($uid, $status) {
+        // echo '----------------getAllEvents()-----------------------'. "\n";
         // get event info
         $events = EventInfo::getAllEvents($uid, $status, V2START_DATE);
-
+        // echo '----------------getAllEvents count:'. count($events) .'----------------------'. "\n";
         // get stats for each type
         $yours = EventInfo::getStats2($events['yours'], $status);
         $yourorg = EventInfo::getStats2($events['yourorg'], $status);
@@ -2067,112 +2071,111 @@ class EventInfo
 
         $event_stats = array();
         $stats = array();
+        if($events) {
+            foreach ($events as $event) {
 
-        foreach ($events as $event) {
+                // basic stats
+                $event_stats['status'] = $status;
+                $event_stats['notes'] = $event['notes'];
+                $event_stats['person'] = $event['person'];
+                $event_stats['organization_id'] = $event['organization_id'];
+                $event_stats['requester_id'] = $event['requester_id'];
+                $event_stats['country'] = $event['country'];
+                $event_stats['event_id'] = $event['event_id'];
+                $event_stats['title'] = $event['title'];
+                $event_stats['create_date'] = $event['create_date'];
+                $event_stats['event_date'] = $event['event_date'];  // new
+                $event_stats['iso_create_date'] = $event['iso_create_date']; // new
+                $event_stats['iso_event_date'] = $event['iso_event_date']; // new
+                $event_stats['iso_action_date'] = $event['iso_action_date']; // new
+                $event_stats['action_date'] = $event['action_date']; // new
+                $event_stats['location'] = $event['location'];
+                $event_stats['location_details'] = $event['location_details'];  // new
+                $event_stats['affected_population'] = $event['affected_population'];  // new
+                $event_stats['affected_population_details'] = $event['affected_population_details'];  // new
+                $event_stats['human_health_condition'] = $event['human_health_condition'];  // new
+                $event_stats['animal_health_condition'] = $event['animal_health_condition'];  // new
+                $event_stats['health_condition_details'] = $event['health_condition_details'];  // new
+                $event_stats['other_relavant_public_health_details'] = $event['other_relevant_ph_details'];  // new
+                $event_stats['verification_or_update'] = $event['verfication_or_update'];  // new
+                $event_stats['rfi_purpose'] = $event['rfi_purpose'];  // new
+                $event_stats['personalized_message'] = $event['personalized_message'];  // new
+                $event_stats['rfi_source'] = $event['rfi_source'];  // new
+                $event_stats['rfi_source_details'] = $event['rfi_source_details'];  // new
 
-            // basic stats
-            $event_stats['status'] = $status;
-            $event_stats['notes'] = $event['notes'];
-            $event_stats['person'] = $event['person'];
-            $event_stats['organization_id'] = $event['organization_id'];
-            $event_stats['requester_id'] = $event['requester_id'];
-            $event_stats['country'] = $event['country'];
-            $event_stats['event_id'] = $event['event_id'];
-            $event_stats['title'] = $event['title'];
-            $event_stats['create_date'] = $event['create_date'];
-            $event_stats['event_date'] = $event['event_date'];  // new
-            $event_stats['iso_create_date'] = $event['iso_create_date']; // new
-            $event_stats['iso_event_date'] = $event['iso_event_date']; // new
-            $event_stats['iso_action_date'] = $event['iso_action_date']; // new
-            $event_stats['action_date'] = $event['action_date']; // new
-            $event_stats['location'] = $event['location'];
-            $event_stats['location_details'] = $event['location_details'];  // new
-            $event_stats['affected_population'] = $event['affected_population'];  // new
-            $event_stats['affected_population_details'] = $event['affected_population_details'];  // new
-            $event_stats['human_health_condition'] = $event['human_health_condition'];  // new
-            $event_stats['animal_health_condition'] = $event['animal_health_condition'];  // new
-            $event_stats['health_condition_details'] = $event['health_condition_details'];  // new
-            $event_stats['other_relavant_public_health_details'] = $event['other_relevant_ph_details'];  // new
-            $event_stats['verification_or_update'] = $event['verfication_or_update'];  // new
-            $event_stats['rfi_purpose'] = $event['rfi_purpose'];  // new
-            $event_stats['personalized_message'] = $event['personalized_message'];  // new
-            $event_stats['rfi_source'] = $event['rfi_source'];  // new
-            $event_stats['rfi_source_details'] = $event['rfi_source_details'];  // new
-
-
-            if ($event['outcome'] == 'VP')
-                $event_stats['outcome'] = 'Verified (+)';
-            else if ($event['outcome'] == 'VN')
-                $event_stats['outcome'] = 'Verified (-)';
-            else if ($event['outcome'] == 'UV')
-                $event_stats['outcome'] = 'Unverified';
-            else if ($event['outcome'] == 'UP')
-                $event_stats['outcome'] = 'Updated (+)';
-            else if ($event['outcome'] == 'NU')
-                $event_stats['outcome'] = 'Updated (-)';
-            else
-                $event_stats['outcome'] = 'Pending';  // new
-
-            //$event_stats['description'] = $event['description'];
-            //$event_stats['personalized_text'] = $event['personalized_text'];
-            $event_stats['num_responses'] = $event['num_responses'];
-            $event_stats['num_responses_content'] = $event['num_responses_content'];
-            $event_stats['num_responses_nocontent'] = $event['num_responses_nocontent'];
-            $event_stats['num_notuseful_responses'] = $event['num_notuseful_responses'];
-            $event_stats['num_useful_responses'] = $event['num_useful_responses'];
-            $event_stats['num_useful_promed_responses'] = $event['num_useful_promed_responses'];
-            $event_stats['member_ids'] = '"' . $event["member_ids"] . '"';
-            $event_stats['first_response_date'] = $event["first_response_date"];
-
-            // not useful responses
-            $notuseful = $event['notuseful_responses'];
-            $event_stats['notuseful_ids'] = '';
-            foreach ($notuseful as $nu) {
-                $event_stats['notuseful_ids'] .= ($event_stats['notuseful_ids'] == '') ? $nu['responder_id'] : ',' . $nu['responder_id'];
-            }
-            $event_stats['notuseful_ids'] = '"' . $event_stats['notuseful_ids'] . '"';
-
-            // useful responses
-            $useful = $event['useful_responses'];
-            $event_stats['useful_ids'] = '';
-            foreach ($useful as $u) {
-                $event_stats['useful_ids'] .= ($event_stats['useful_ids'] == '') ? $u['responder_id'] : ',' . $u['responder_id'];
-            }
-            $event_stats['useful_ids'] = '"'. $event_stats['useful_ids'] . '"';
-
-
-            $event_stats['phe_summary_description'] = $event['phe_description'];  // new
-            $event_stats['phe_summary_additional_information'] = $event['phe_additional'];  // new
-
-
-            // useful promed responses
-            $promed = $event['useful_promed_responses'];
-            $event_stats['promed_ids'] = '';
-            foreach ($promed as $p) {
-                $event_stats['promed_ids'] .= ($event_stats['promed_ids'] == '') ? $p['responder_id'] : ',' . $p['responder_id'];
-            }
-            $event_stats['promed_ids'] = '"' . $event_stats['promed_ids'] . '"';
-
-            // followups
-            $followups = $event['num_followups'];
-            $first_request = end($followups);
-            $event_stats['num_members'] = $first_request['num'];    //number of members on initial RFI
-
-            // get event responses
-            $event_responses = $event['event_responses'];
-            $max_responses = 100;
-            for ($i= 0; $i < $max_responses; $i++){
-                $response_n = 'response_'. (string)($i+1);
-                if ($event_responses && $event_responses[$i])
-                    $event_stats[$response_n] = $event_responses[$i];
+                if ($event['outcome'] == 'VP')
+                    $event_stats['outcome'] = 'Verified (+)';
+                else if ($event['outcome'] == 'VN')
+                    $event_stats['outcome'] = 'Verified (-)';
+                else if ($event['outcome'] == 'UV')
+                    $event_stats['outcome'] = 'Unverified';
+                else if ($event['outcome'] == 'UP')
+                    $event_stats['outcome'] = 'Updated (+)';
+                else if ($event['outcome'] == 'NU')
+                    $event_stats['outcome'] = 'Updated (-)';
                 else
-                    $event_stats[$response_n] = '';
+                    $event_stats['outcome'] = 'Pending';  // new
+
+                //$event_stats['description'] = $event['description'];
+                //$event_stats['personalized_text'] = $event['personalized_text'];
+                $event_stats['num_responses'] = $event['num_responses'];
+                $event_stats['num_responses_content'] = $event['num_responses_content'];
+                $event_stats['num_responses_nocontent'] = $event['num_responses_nocontent'];
+                $event_stats['num_notuseful_responses'] = $event['num_notuseful_responses'];
+                $event_stats['num_useful_responses'] = $event['num_useful_responses'];
+                $event_stats['num_useful_promed_responses'] = $event['num_useful_promed_responses'];
+                $event_stats['member_ids'] = '"' . $event["member_ids"] . '"';
+                $event_stats['first_response_date'] = $event["first_response_date"];
+
+                // not useful responses
+                $notuseful = $event['notuseful_responses'];
+                $event_stats['notuseful_ids'] = '';
+                foreach ($notuseful as $nu) {
+                    $event_stats['notuseful_ids'] .= ($event_stats['notuseful_ids'] == '') ? $nu['responder_id'] : ',' . $nu['responder_id'];
+                }
+                $event_stats['notuseful_ids'] = '"' . $event_stats['notuseful_ids'] . '"';
+
+                // useful responses
+                $useful = $event['useful_responses'];
+                $event_stats['useful_ids'] = '';
+                foreach ($useful as $u) {
+                    $event_stats['useful_ids'] .= ($event_stats['useful_ids'] == '') ? $u['responder_id'] : ',' . $u['responder_id'];
+                }
+                $event_stats['useful_ids'] = '"'. $event_stats['useful_ids'] . '"';
+
+
+                $event_stats['phe_summary_description'] = $event['phe_description'];  // new
+                $event_stats['phe_summary_additional_information'] = $event['phe_additional'];  // new
+
+
+                // useful promed responses
+                $promed = $event['useful_promed_responses'];
+                $event_stats['promed_ids'] = '';
+                foreach ($promed as $p) {
+                    $event_stats['promed_ids'] .= ($event_stats['promed_ids'] == '') ? $p['responder_id'] : ',' . $p['responder_id'];
+                }
+                $event_stats['promed_ids'] = '"' . $event_stats['promed_ids'] . '"';
+
+                // followups
+                $followups = $event['num_followups'];
+                $first_request = end($followups);
+                $event_stats['num_members'] = $first_request['num'];    //number of members on initial RFI
+
+                // get event responses
+                $event_responses = $event['event_responses'];
+                $max_responses = 100;
+                for ($i= 0; $i < $max_responses; $i++){
+                    $response_n = 'response_'. (string)($i+1);
+                    if ($event_responses && $event_responses[$i])
+                        $event_stats[$response_n] = $event_responses[$i];
+                    else
+                        $event_stats[$response_n] = '';
+                }
+
+                // push event stats
+                array_push($stats, $event_stats);
             }
-
-            // push event stats
-            array_push($stats, $event_stats);
         }
-
         return $stats;
     }
 
