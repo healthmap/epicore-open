@@ -950,13 +950,14 @@ class EventInfo
 
             // get metrics
             $event_metrics = $db->getAll("SELECT * FROM event_metrics WHERE event_id = ? ORDER BY event_metrics_id DESC", array($row['event_id']));
-            $row['event_metrics_id'] = intval($event_metrics[0]['event_metrics_id']);
-            $metric_score = intval($event_metrics[0]['score']);
-            $row['metric_score'] = $metric_score > 0 ? $metric_score : null;
-            $row['metric_creation'] = $event_metrics[0]['creation'];
-            $row['metric_notes'] = $event_metrics[0]['notes'];
-            $row['metric_action'] = $event_metrics[0]['action'];
-
+            if(isset($event_metrics)) {
+                $row['event_metrics_id'] = intval($event_metrics[0]['event_metrics_id']);
+                $metric_score = intval($event_metrics[0]['score']);
+                $row['metric_score'] = $metric_score > 0 ? $metric_score : null;
+                $row['metric_creation'] = $event_metrics[0]['creation'];
+                $row['metric_notes'] = $event_metrics[0]['notes'];
+                $row['metric_action'] = $event_metrics[0]['action'];
+            }
             // get population, health conditions, source and purpose
             //echo '****eventID:';
             //print_r($row['event_id']);
@@ -1004,9 +1005,11 @@ class EventInfo
             }
             if($num_followups) {
                 foreach($num_followups as $followupnum => $datearr) {
-                    $newdate = date_create_from_format('j-M-Y H:i', $datearr[0]);
-                    $newdate = date_format($newdate, 'Y-m-d');
-                    $row['num_followups'][] = array('date' => $datearr[0], 'num' => count($datearr), 'text' => $text[$followupnum], 'iso_date' => $newdate);
+                    if(isset($datearr)) {
+                        $newdate = date_create_from_format('j-M-Y H:i', $datearr[0]);
+                        $newdate = date_format($newdate, 'Y-m-d');
+                        $row['num_followups'][] = array('date' => $datearr[0], 'num' => count($datearr), 'text' => $text[$followupnum], 'iso_date' => $newdate);
+                    }
                 }
             }
             $row['iso_create_date'] = $row['create_date'];
