@@ -116,6 +116,7 @@ class UserInfo
                                 WHERE fetp_id = ? AND event_fetp.event_id = event.event_id AND event.place_id = place.place_id AND event.create_date > ?
                                 ORDER BY send_date DESC", array($member_id, $start_date));
         $status = $status ? $status : 'O';
+        $requests = array();
         while($row = $q->fetchRow()) {
             // responses are recorded by the FETPs user id, not FETP_id
             // get the current status of event - open or closed
@@ -1221,17 +1222,24 @@ class UserInfo
             $user['Universities'] = $applicant['universities'];
 
             // Universities 1-3
-            $user['University1'] = $applicant['university1'];
-            $user['Country1'] = $std_countries[$applicant['school_country1']];
-            $user['Major1'] = $applicant['major1'];
+
+            $applicant['other_degree1'] = $applicant['other_degree1']? $applicant['other_degree1']: '';
+            $applicant['other_degree2'] = $applicant['other_degree2']? $applicant['other_degree2']: '';
+            $applicant['other_degree3'] = $applicant['other_degree3'] ? $applicant['other_degree3']: '';
+           
+
+            
+            $user['University1'] = $applicant['university1'] ? $applicant['university1']: '';
+            $user['Country1'] = $std_countries[$applicant['school_country1']] ? $std_countries[$applicant['school_country1']]: '';
+            $user['Major1'] = $applicant['major1'] ? $applicant['major1']: '';
             $user['Degree1'] = $applicant['degree1'] ? $applicant['degree1']: $applicant['other_degree1'];
-            $user['University2'] = $applicant['university2'];
-            $user['Country2'] = $std_countries[$applicant['school_country2']];
-            $user['Major2'] = $applicant['major2'];
+            $user['University2'] = $applicant['university2'] ? $applicant['university2']: '';
+            $user['Country2'] = $applicant['school_country2']? $std_countries[$applicant['school_country2']] : '';
+            $user['Major2'] = $applicant['major2'] ? $applicant['major2']: '';
             $user['Degree2'] = $applicant['degree2'] ? $applicant['degree2']: $applicant['other_degree2'];
-            $user['University3'] = $applicant['university3'];
-            $user['Country3'] = $std_countries[$applicant['school_country3']];
-            $user['Major3'] = $applicant['major3'];
+            $user['University3'] = $applicant['university3'] ? $applicant['university3']: '';
+            $user['Country3'] = $applicant['school_country3'] ? $std_countries[$applicant['school_country3']] : '';
+            $user['Major3'] = $applicant['major3'] ? $applicant['major3']: '';
             $user['Degree3'] = $applicant['degree3'] ? $applicant['degree3']: $applicant['other_degree3'];
 
             // Health experience
