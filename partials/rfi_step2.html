@@ -18,46 +18,49 @@
                     <label class="mb0">Affected Population</label>
                     <div class="radio">
                         <!--<label > <input type="checkbox" name="human" ng-model="rfiData.population.human" ng-click="clearPopulation('human'); clearAnimal('all'); clearPopError();" > Human population</label>-->
-                        <label class="radio"> <input type="radio" name="human" ng-model="rfiData.population.type" value="H" ng-required="!rfiData.population.type && !goback"> Human population</label>
+                        <label class="radio"> <input type="radio" name="human" ng-model="rfiData.population.type" value="H"> Human population</label>
                     </div>
                     <div class="radio">
-                        <label class="radio"> <input type="radio" name="animal" ng-model="rfiData.population.type" value="A" ng-required="!rfiData.population.type && !goback" > Animal population</label>
+                        <label class="radio"> <input type="radio" name="animal" ng-model="rfiData.population.type" value="A"> Animal population</label>
                     </div>
                     <div ng-if="rfiData.population.type == 'A'" style="margin-left: 40px">
                         <div class="radio">
-                            <label class="radio"><input type="radio" name="birds" ng-model="rfiData.population.animal_type" value="B" ng-required="!rfiData.population.animal_type" > Birds/Poultry</label>
+                            <label class="radio"><input type="radio" name="birds" ng-model="rfiData.population.animal_type" value="B"> Birds/Poultry</label>
                         </div>
                         <div class="radio">
-                            <label class="radio"><input type="radio" name="pigs" ng-model="rfiData.population.animal_type" value="P" ng-required="!rfiData.population.animal_type"> Pigs/Swine</label>
+                            <label class="radio"><input type="radio" name="pigs" ng-model="rfiData.population.animal_type" value="P"> Pigs/Swine</label>
                         </div>
                         <div class="radio">
-                            <label class="radio"><input type="radio" name="cattle" ng-model="rfiData.population.animal_type" value="C" ng-required="!rfiData.population.animal_type"> Cattle</label>
+                            <label class="radio"><input type="radio" name="cattle" ng-model="rfiData.population.animal_type" value="C"> Cattle</label>
                         </div>
                         <div class="radio">
-                            <label class="radio"> <input type="radio" name="goats" ng-model="rfiData.population.animal_type" value="G" ng-required="!rfiData.population.animal_type"> Goats/Sheep</label>
+                            <label class="radio"> <input type="radio" name="goats" ng-model="rfiData.population.animal_type" value="G"> Goats/Sheep</label>
                         </div>
                         <div class="radio">
-                            <label class="radio"><input type="radio" name="dogs" ng-model="rfiData.population.animal_type" value="D" ng-required="!rfiData.population.animal_type"> Dogs/Cats</label>
+                            <label class="radio"><input type="radio" name="dogs" ng-model="rfiData.population.animal_type" value="D"> Dogs/Cats</label>
                         </div>
                         <div class="radio">
-                            <label class="radio"><input type="radio" name="horses" ng-model="rfiData.population.animal_type" value="H" ng-required="!rfiData.population.animal_type"> Horses/Equines</label>
+                            <label class="radio"><input type="radio" name="horses" ng-model="rfiData.population.animal_type" value="H"> Horses/Equines</label>
                         </div>
                         <div class="radio">
-                            <label class="radio"><input type="radio" name="other_animal" ng-model="rfiData.population.animal_type" value="O" ng-required="!rfiData.population.animal_type"> Other</label>
+                            <label class="radio"><input type="radio" name="other_animal" ng-model="rfiData.population.animal_type" value="O"> Other</label>
                         </div>
+                        <span class="error" ng-if="isStep2Invalid && !rfiData.population.animal_type">{{populationAnimalError}}</span>
+
                         <div class="form-group" ng-if="rfiData.population.animal_type == 'O'">
                             <input type="text" class="form-control" ng-model="rfiData.population.other_animal" name="other_animal" id="other_animal" placeholder='other animal description...' value="" required >
+                            <span class="error" ng-if="isStep2Invalid && !rfiData.population.other_animal">{{populationAnimalOtherError}}</span>
                         </div>
                     </div>
 
                     <div class="radio" data-toggle="tooltip" title="">
-                        <label class="radio"><input type="radio" name="environment" ng-model="rfiData.population.type" value="E" ng-required="!rfiData.population.type && !goback" > Environmental</label>
+                        <label class="radio"><input type="radio" name="environment" ng-model="rfiData.population.type" value="E" > Environmental</label>
                     </div>
 
 			        <div class="secondary-input" ng-if="rfiData.population.type == 'E'">
                         <label class="radio">Please provide a short description. This description will appear in the RFI title.</label>
-                        <input type="text" ng-required="!rfiData.population.other" class="form-control-small form-control" ng-click="clearCondition(); clearCondition2(); clearhcError();" ng-model="rfiData.population.other" name="other" id="other_environment" maxlength = "40" value="" required>
-                        <span class="error">{{populationOtherError}}</span>
+                        <input type="text" class="form-control-small form-control" ng-click="clearCondition(); clearCondition2(); clearhcError();" ng-model="rfiData.population.other" name="other" id="other_environment" maxlength = "40" value="" required>
+                        <span class="error" ng-if="isStep2Invalid && !rfiData.population.other">{{populationOtherError}}</span>
                     </div>
 
 
@@ -67,7 +70,7 @@
 			        <div class="secondary-input" ng-if="rfiData.population.type == 'U'" >
 				    <label class="radio">Please provide a short description. This description will appear in the RFI title.</label>
                         <input type="text" class="form-control-small form-control" maxlength = "40" ng-model="rfiData.population.other" name="other" id="other_unknown" placeholder='' value="" required>
-                        <span class="error">{{populationOtherError}}</span>
+                        <span class="error" ng-if="isStep2Invalid && !rfiData.population.other">{{populationOtherError}}</span>
                     </div>
                     <span class="error" ng-if="!rfiData.population">{{affectedPopSelectionError}}</span>
                 </div>
@@ -122,8 +125,9 @@
                     </div>
                     <div class="checkbox">
                         <label>
-                            <input type="checkbox" name="other" ng-model="rfiData.health_condition.other" ng-click="clearCondition(); rfiData.health_condition.unknown = false; clearhcError();" ng-checked="rfiData.health_condition.other_description"> Other</label>
+                        <input type="checkbox" name="other" ng-model="rfiData.health_condition.other" ng-click="clearCondition(); rfiData.health_condition.unknown = false; clearhcError();" ng-checked="rfiData.health_condition.other_description"> Other</label>
                         <input ng-if="rfiData.health_condition.other" type="text" class="form-control" ng-model="rfiData.health_condition.other_description" name="other_description" id="other_description" placeholder='Enter a description of the syndrome' value="" ng-required="rfiData.health_condition.other" >
+                        <span class="error" ng-if="isStep2Invalid && !rfiData.health_condition.other_description">{{healthDetailsOtherError}}</span>
                     </div>
                     <span class="error" >{{hc_error_message1}}</span>
 
@@ -167,8 +171,9 @@
                     </div>
                     <div class="checkbox">
                         <label>
-                            <input type="checkbox" name="other_animal" ng-model="rfiData.health_condition.other_animal" ng-click="clearCondition2(); rfiData.health_condition.unknown_animal = false; clearhcError();" ng-checked="rfiData.health_condition.other_animal_description"> Other</label>
+                        <input type="checkbox" name="other_animal" ng-model="rfiData.health_condition.other_animal" ng-click="clearCondition2(); rfiData.health_condition.unknown_animal = false; clearhcError();" ng-checked="rfiData.health_condition.other_animal_description"> Other</label>
                         <input ng-if="rfiData.health_condition.other_animal" type="text" class="form-control" ng-model="rfiData.health_condition.other_animal_description" name="other_animal_description" id="other_animal_description" placeholder='Enter a description of the syndrome' value="" ng-required="rfiData.health_condition.other_animal" >
+                        <span class="error" ng-if="isStep2Invalid && !rfiData.health_condition.other_animal_description">{{healthDetailsOtherError}}</span>
                     </div>
                     <span class="error" ng-if="!rfiData.health_condition">{{hc_error_message1}}</span>
                 </div>
@@ -189,7 +194,6 @@
                     </ul>
                     <textarea class="form-control" style="height:240px" ng-model="rfiData.health_condition.disease_details" id="disease_details" name="disease_details" placeholder="" ng-required="!rfiData.health_condition.disease_details"></textarea></textarea>
                     <span class="error">* This description is included in the email to responders, please provide as much detail as possible.</span>
-                    <span class="error" ng-if="!rfiData.health_condition.disease_details">{{healthDetailsError}}</span>
                 </div>
 
                 <!-- next/back buttons -->
