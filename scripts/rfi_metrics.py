@@ -10,7 +10,7 @@
 #
 #  - with args: generates report for month and year
 #    rfi_metrics.py month year
-#    where month = 1..12, year = 2018..2100
+#    where month = 1..12, year = 2015..2100
 #
 #
 import matplotlib
@@ -48,7 +48,7 @@ else:
 if (len(sys.argv) == 3 ):
     arg_month = int(sys.argv[1])
     arg_year = int(sys.argv[2])
-    if (arg_year >= 2016) and (arg_year <=2100) and (arg_month > 0) and (arg_month <=12):
+    if (arg_year >= 2015) and (arg_year <=2100) and (arg_month > 0) and (arg_month <=12):
         month = arg_month
         year = arg_year
 
