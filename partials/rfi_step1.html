@@ -53,8 +53,7 @@
 
                     <div ng-include src="'partials/rfi_members_select.html'"></div>
                     <p class="hide" ng-if="!rfiData.members.numUniqueFetps" class="highlight">Enter the event location to see nearby responders.</p>
-                    
-                    <span class="error" ng-if="submitDisabled">Select a country with at least one member.</span>
+                    <span class="error" ng-if="filtertype==='country' && !rfiData.members.countries && isStep1Invalid">Select a country with at least one member.</span>
                 </div>
             </div>
         </div>
@@ -93,44 +92,39 @@
                     <div class="form-group more-space">
                         <label class="mb0">How did you hear about this event?</label>
                         <div class="form-group">
-
                             <div class="radio">
                                 <label class="radio"> 
-                                    <input type="radio" ng-model="rfiData.source.source" value="MR" ng-required="!rfiData.source.source">Media Report<i class="tooltip-icon fa fa-info-circle" data-toggle="tooltip" title="<h4>Media Report</h4><p class='mb0'>The RFI is based on media information. If possible, include the link to the media report.</p>"></i></label>
+                                <input type="radio" ng-model="rfiData.source.source" value="MR">Media Report<i class="tooltip-icon fa fa-info-circle" data-toggle="tooltip" title="<h4>Media Report</h4><p class='mb0'>The RFI is based on media information. If possible, include the link to the media report.</p>"></i></label>
                             </div>
                             <div class="secondary-input" ng-if="rfiData.source.source=='MR'">
                                 <label class="radio">Please provide a link to the report or describe the source if a link is not avaible.</label>
-                                <input type="text" class="form-control" ng-model="rfiData.source.details" ng-required="!rfiData.source.details" name="media-link" id="media-link" value=""  placeholder="">
-                                <span class="error" ng-if="!rfiData.source.details" >{{sourceDetailsError}}</span>
+                                <input type="text" class="form-control" ng-model="rfiData.source.details" name="media-link" id="media-link" value=""  placeholder="">
+                                <span class="error" ng-if="isStep1Invalid && rfiData.source.source && !rfiData.source.details" >{{sourceDetailsError}}</span>
                             </div>
                             <div class="radio">
                                 <label class="radio">
-                                    <input type="radio" ng-model="rfiData.source.source" value="OR" ng-required="!rfiData.source.source">Official Report<i class="tooltip-icon fa fa-info-circle" data-toggle="tooltip" title="<h4>Official Report</h4><p class='mb0'>The RFI is based on an official report. In case of an official document available online, at least one link should be included; if there is no official document available online, then any other detail about the original source should be included.</p>"></i></label>
+                                    <input type="radio" ng-model="rfiData.source.source" value="OR">Official Report<i class="tooltip-icon fa fa-info-circle" data-toggle="tooltip" title="<h4>Official Report</h4><p class='mb0'>The RFI is based on an official report. In case of an official document available online, at least one link should be included; if there is no official document available online, then any other detail about the original source should be included.</p>"></i></label>
                             </div>
                             <div class="secondary-input" ng-if="rfiData.source.source=='OR'">
                                 <label>Please provide a link to the report or describe the source if a link is not available.</label>
-                                <input type="text" class="form-control" ng-model="rfiData.source.details" ng-required="!rfiData.source.details" name="official-link" id="official-link" value=""  placeholder="">
-                                <span class="error" ng-if="!rfiData.source.details">{{sourceDetailsError}}</span>
+                                <input type="text" class="form-control" ng-model="rfiData.source.details" name="official-link" id="official-link" value=""  placeholder="">
+                                <span class="error" ng-if="isStep1Invalid && rfiData.source.source && !rfiData.source.details">{{sourceDetailsError}}</span>
                             </div>
                             <div class="radio">
                                 <label class="radio"> 
-                                    <input type="radio" ng-model="rfiData.source.source" value="OC" ng-required="!rfiData.source.source">Other Communication<i class="tooltip-icon fa fa-info-circle" data-toggle="tooltip" title="<h4>Other Communication</h4><p class='mb0'>The RFI is based on direct communication from an EPICORE member or an external that has not provided any further documentation. Before choosing this option, RFI Requesters should search for any online report about the event. If information about the PHE is identified, the information source should be classified as media or official.</p>"></i></label>
+                                <input type="radio" ng-model="rfiData.source.source" value="OC">Other Communication<i class="tooltip-icon fa fa-info-circle" data-toggle="tooltip" title="<h4>Other Communication</h4><p class='mb0'>The RFI is based on direct communication from an EPICORE member or an external that has not provided any further documentation. Before choosing this option, RFI Requesters should search for any online report about the event. If information about the PHE is identified, the information source should be classified as media or official.</p>"></i></label>
                             </div>
 			                <div class="secondary-input" ng-if="rfiData.source.source=='OC'">
                                 <label>Please describe how you heard about this event.</label>
-                                <input type="text" class="form-control" ng-model="rfiData.source.details"  ng-required="!rfiData.source.details" name="official-link" id="official-link" value=""  placeholder="">
-                                <span class="error" ng-if="!rfiData.source.details">{{sourceDetailsError}}</span>
+                                <input type="text" class="form-control" ng-model="rfiData.source.details" name="official-link" id="official-link" value=""  placeholder="">
+                                <span class="error" ng-if="isStep1Invalid && rfiData.source.source && !rfiData.source.details">{{sourceDetailsError}}</span>
                             </div>
-
+                            <span class="error" ng-if="isStep1Invalid && !rfiData.source.source">{{source_error_message}}</span>
                         </div>
-
                         <div class="hide form-group">
                             <button ng-click="saveSource('back')" type="submit" class="submit btn btn-primary"><i class="fa fa-arrow-circle-left"></i> Back </button> &nbsp; &nbsp;
                             <button ng-click="saveSource('next')" type="submit" class="submit btn btn-primary"> Next <span ng-if="!rfiData.event_id">- Review & Send</span><i class="fa fa-arrow-circle-right"></i></button>
                         </div>
-                        <span class="error" ng-if="!rfiData.source.source">{{source_error_message}}</span>
-
-
                     </div>
                     <div class="form-group text-right">
                         <button ng-click="saveStep1('next')" type="submit" class="submit btn btn-primary btn-auto-width">Next</button>
