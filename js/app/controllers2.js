@@ -1677,8 +1677,8 @@ angular.module('EpicoreApp.controllers2', []).
         var save_metrics_timeout;
         var prev_metric_data = {}
 
-        $scope.updateRFIMetrics = function (event) {
-            if (!(event.metric_score) || event.metric_score > 2) {
+        $scope.updateRFIMetrics = function (field, event) {
+            if (field === 'metric_score' && !(event.metric_score|| event.metric_score > 2)) {
                 alert("Score cannot be more than 2")
                 return;
             }
@@ -1691,6 +1691,7 @@ angular.module('EpicoreApp.controllers2', []).
                 action: event.metric_action,
                 event_id: event.event_id
             };
+
 
             if (angular.equals(metric_data, prev_metric_data)) {
                 return;
