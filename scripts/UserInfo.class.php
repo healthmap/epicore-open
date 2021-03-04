@@ -854,7 +854,7 @@ class UserInfo
         global $countries;
         
         //Improved query performance
-        $start_date = $sdate ? $sdate: V2START_DATE; //default-all-time-data
+        $start_date = $sdate ? $sdate: V1START_DATE; // V2START_DATE; 
         $end_date = $edate ? $edate: date("Y-m-d H:i:s");
 
         //modify date to datetime
