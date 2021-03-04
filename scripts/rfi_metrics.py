@@ -192,9 +192,11 @@ closed_rfis_df.to_html(save_data_dir + 'closed_rfis.html', index=False)
 
 ####### RFI Response Metrics  #############
 rfi_response_df = rfistats_df[['country','event_id','create_date','iso_create_date','action_date','first_response_date','status','outcome']]
+print('------->: ' , rfi_response_df)
 
 #### RFI - month
-rfi_response_df['action_date'] = pd.to_datetime(rfi_response_df.loc[rfi_response_df.action_date])
+# print('------->: ' , rfi_response_df.action_date)
+rfi_response_df['action_date'] = pd.to_datetime(rfi_response_df.action_date)
 month_mask = (rfi_response_df['action_date'] >= pd.Timestamp(datetime.date(start_year, month, 1)) ) & (rfi_response_df['action_date'] < pd.Timestamp(datetime.date(year, next_month, 1)) )
 rfi_df = rfi_response_df.loc[month_mask]
 

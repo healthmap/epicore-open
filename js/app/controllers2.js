@@ -1242,7 +1242,7 @@ angular.module('EpicoreApp.controllers2', []).
         };
 
         /* Requester (moderator) & Responder (member) dashboard controller */
-    }).controller('eventsController2', function ($scope, $window, $rootScope, $routeParams, $cookieStore, $location, $http, eventAPIservice2, urlBase, epicoreMode, epicoreVersion, Upload, $timeout) {
+    }).controller('eventsController2', function ($scope, $window, $rootScope, $routeParams, $cookieStore, $location, $http, eventAPIservice2, urlBase, epicoreMode, epicoreVersion, Upload, $timeout,epicoreStartDate) {
         
         $scope.mobile = (epicoreMode == 'mobile') ? true : false;
         $scope.epicore_version = epicoreVersion;
@@ -1274,7 +1274,7 @@ angular.module('EpicoreApp.controllers2', []).
         $scope.cbsuffix = Date.now();
 
         // get list of months for selecting event month
-        var dateStart = moment('2017-10-30'); // starting date of EpiCore v2.0
+        var dateStart = moment(epicoreStartDate);
         var dateEnd = moment(); // now
         var timeValues = [];
         var i = 0;
@@ -1295,7 +1295,7 @@ angular.module('EpicoreApp.controllers2', []).
             var end_date = '';
             var num_events = 'all';
             if (month.value == 'all') {
-                start_date = moment('2017-10-30').format('YYYY-MM-DD'); // starting date of EpiCore v2.0
+                start_date = moment(epicoreStartDate).format('YYYY-MM-DD'); 
                 end_date = moment().format('YYYY-MM-DD'); // now
             } else if (month.value == 'recent') {
                 start_date = moment().subtract(3, 'months').format('YYYY-MM-DD'); // one month ago
@@ -1634,7 +1634,8 @@ angular.module('EpicoreApp.controllers2', []).
             var start_date = moment().subtract(3, 'months').format('YYYY-MM-DD'); // 3 month ago
             getAllEvents(start_date, end_date, 10);
         } else if ($scope.onOpen) {
-            getAllEvents('2017-10-30', moment().add(1, 'days').format('YYYY-MM-DD'));
+            getAllEvents(epicoreStartDate, moment().add(1, 'days').format('YYYY-MM-DD'));
+            
         } else {
             end_date = moment().format('YYYY-MM-DD'); // now
             start_date = moment().subtract(1, 'months').format('YYYY-MM-DD'); // one month ago

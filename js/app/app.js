@@ -15,6 +15,7 @@ var app = angular.module('EpicoreApp', [
 
 // set app version
 app.value('epicoreVersion', epicore_config.vers);
+app.value('epicoreStartDate', epicore_config.EPICORE_START_DATE);
 
 // select web or mobile app
 var app_mode = epicore_config.app_mode;
