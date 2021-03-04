@@ -1036,7 +1036,7 @@ angular.module('EpicoreApp.controllers', []).
         $scope.messageResponse = {};
         $scope.messageResponse.text = messages[$scope.id];
 
-    }).controller('approvalController', function ($scope, $http, $filter, $location, $route, $cookieStore, urlBase, epicoreCacheService) {
+    }).controller('approvalController', function ($scope, $http, $filter, $location, $route, $cookieStore, urlBase, epicoreCacheService, epicoreStartDate) {
 
         // console.log('In approvalController...');
         var currentLocation = $location.path();
@@ -1059,7 +1059,7 @@ angular.module('EpicoreApp.controllers', []).
             $scope.num_preapproved = 0;
             $scope.num_setpassword = 0;
             $scope.allapp = false;
-            var dateStart = moment('2017-10-30'); // starting date of EpiCore v2.0
+            var dateStart = moment(epicoreStartDate); // starting date of EpiCore v2.0
             var dateEnd = moment(); // now
             var timeValues = [];
             timeValues.push({ name: 'All', value: 'all' });
@@ -1068,7 +1068,7 @@ angular.module('EpicoreApp.controllers', []).
             $scope.event_months = timeValues.reverse();
             $scope.selected_month = timeValues[0]; //default past-quarter
             $scope.urlBaseStr = urlBase;
-            var start_date = moment('2017-10-30').format('YYYY-MM-DD'); // starting date of EpiCore v2.0
+            var start_date = moment(epicoreStartDate).format('YYYY-MM-DD'); 
             var end_date = '';
             start_date = moment().subtract(3, 'months').format('YYYY-MM-DD'); // three month ago- default for Past-Quarter
             end_date = moment().format('YYYY-MM-DD'); // now
@@ -1406,7 +1406,7 @@ angular.module('EpicoreApp.controllers', []).
             var end_date = '';
             var num_events = 'all';
             if (month.value == 'all') {
-                start_date = moment('2017-10-30').format('YYYY-MM-DD'); // starting date of EpiCore v2.0
+                start_date = moment(epicoreStartDate).format('YYYY-MM-DD'); 
                 end_date = moment().format('YYYY-MM-DD'); // now
                 memInfoData = angular.copy(epicoreCacheService.getMemberPortalInfoAll());
             } else if (month.value == 'recent') {
