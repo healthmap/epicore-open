@@ -1036,7 +1036,7 @@ angular.module('EpicoreApp.controllers', []).
         $scope.messageResponse = {};
         $scope.messageResponse.text = messages[$scope.id];
 
-    }).controller('approvalController', function ($scope, $http, $filter, $location, $route, $cookieStore, urlBase, epicoreCacheService, epicoreStartDate) {
+    }).controller('approvalController', function ($scope, $http, $filter, $location, $route, $cookieStore, urlBase, epicoreCacheService, epicoreStartDate, epicoreV1StartDate) {
 
         // console.log('In approvalController...');
         var currentLocation = $location.path();
@@ -1059,8 +1059,6 @@ angular.module('EpicoreApp.controllers', []).
             $scope.num_preapproved = 0;
             $scope.num_setpassword = 0;
             $scope.allapp = false;
-            var dateStart = moment(epicoreStartDate); // starting date of EpiCore v2.0
-            var dateEnd = moment(); // now
             var timeValues = [];
             timeValues.push({ name: 'All', value: 'all' });
             timeValues.push({ name: 'Past Year', value: 'past-year' });
@@ -1068,9 +1066,8 @@ angular.module('EpicoreApp.controllers', []).
             $scope.event_months = timeValues.reverse();
             $scope.selected_month = timeValues[0]; //default past-quarter
             $scope.urlBaseStr = urlBase;
-            var start_date = moment(epicoreStartDate).format('YYYY-MM-DD'); 
             var end_date = '';
-            start_date = moment().subtract(3, 'months').format('YYYY-MM-DD'); // three month ago- default for Past-Quarter
+            var start_date = moment().subtract(3, 'months').format('YYYY-MM-DD'); // three month ago- default for Past-Quarter
             end_date = moment().format('YYYY-MM-DD'); // now
             $scope.selected_start_date = start_date;
             $scope.selected_end_date = end_date;
@@ -1100,7 +1097,7 @@ angular.module('EpicoreApp.controllers', []).
             var data = {};
             data.startDate = $scope.selected_start_date;
             data.endDate = $scope.selected_end_date;
-            //Default tab - Accepted
+            // Default tab - Accepted
             $http({
                 url: urlBase + 'scripts/approval.php', method: "POST", data: data
             }).success(function (respdata, status, headers, config) {  //Fetch data from db
@@ -1406,7 +1403,7 @@ angular.module('EpicoreApp.controllers', []).
             var end_date = '';
             var num_events = 'all';
             if (month.value == 'all') {
-                start_date = moment(epicoreStartDate).format('YYYY-MM-DD'); 
+                start_date = moment(epicoreV1StartDate).format('YYYY-MM-DD'); 
                 end_date = moment().format('YYYY-MM-DD'); // now
                 memInfoData = angular.copy(epicoreCacheService.getMemberPortalInfoAll());
             } else if (month.value == 'recent') {
@@ -1435,6 +1432,7 @@ angular.module('EpicoreApp.controllers', []).
                 var data = {};
                 data.startDate = $scope.selected_start_date;
                 data.endDate = $scope.selected_end_date;
+                
                  //Fetch data from db
                  $http({
                     url:  $scope.urlBaseStr + 'scripts/approval.php', method: "POST", data: data
