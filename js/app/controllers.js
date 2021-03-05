@@ -1569,28 +1569,24 @@ angular.module('EpicoreApp.controllers', []).
             ***********************************************************************
         */
         $scope.sendReminderEmailToSelectedApplicants = function (action) {
-            var sent = 0;
-            const sendEmails = new Promise(function (resolve) {
-                for (i = 0; i < ($scope.selectedItems.length); i++) {
-                    data = { action: action, memberid: $scope.selectedItems[i] };
+            const sendEmailsPromisses = [];
+
+            for (i = 0; i < ($scope.selectedItems.length); i++) {
+                data = { action: action, memberid: $scope.selectedItems[i] };
+                sendEmailsPromisses.push(new Promise(function (resolve) {
                     $http({
                         url: urlBase + 'scripts/sendreminder.php', method: "POST", data: data
                     }).success(function (respdata, status, headers, config) {
-                        sent++;
-                        if (sent === $scope.selectedItems.length) {
-                            resolve(true);
-                        }
+                        resolve(true);
                     });
-                }
-            });
+                }));
+            }
 
-            sendEmails.then(function (res) {
-                if (res) {
-                    if ($scope.selectedItems.length > 1) {
-                        alert(`The message has been sent to ${$scope.selectedItems.length} persons.`);
-                    } else {
-                        alert("The message has been sent.");
-                    }
+            Promise.all(sendEmailsPromisses).then(function () {
+                if ($scope.selectedItems.length > 1) {
+                    alert(`The message has been sent to ${$scope.selectedItems.length} persons.`);
+                } else {
+                    alert("The message has been sent.");
                 }
             });
         };
