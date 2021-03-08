@@ -20,7 +20,7 @@
     <div class="row">
         <div class="col-xs-12">
 
-            <p class="red" ng-if="onOpen && unclosed > 0" > * You have {{unclosed}} RFI(s) highlighted below that are past due closing. </p>
+            <p class="red" ng-if="onOpen && unclosed > 0" >* You have {{unclosed}} RFI(s) highlighted below that are past due closing. </p>
             <p class="red" ng-if="num_notrated_responses > 0">
                 <span ng-if="onOpen">
                     * You have received responses after closing one or more RFIs that are still unrated.
@@ -32,7 +32,7 @@
                         </li>
                     </ul>
                 </span>
-                <span ng-if="!onOpen">* Please rate the unrated responses in the RFI(s) highlighted below.</span>
+                <span ng-show="onOpen">* Please rate the unrated responses in the RFI(s) highlighted below.</span>
             </p>
 
             <div class="form-group" ng-show="isOrganization">
