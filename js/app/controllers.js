@@ -1556,32 +1556,28 @@ angular.module('EpicoreApp.controllers', []).
             });
         };
 
-        /*  ************************************************************************
-                
-                Following "sendReminderEmailToSelectedApplicants" is added by
-                Sam(Ch157135). This function will take action as input param.
-                If applicants list was selected, we can grab it from the variable
-                $scope.selectedItems. We look through those applicants and send
-                them the reminder emails 
+        $scope.sendReminderEmailToSelectedApplicants = function (action) {
+            const sendEmailsPromisses = [];
 
-            ***********************************************************************
-        */
-        $scope.sendReminderEmailToSelectedApplicants = function(action) {
-            
-            for(i=0;i<($scope.selectedItems.length);i++){
+            for (i = 0; i < ($scope.selectedItems.length); i++) {
                 data = { action: action, memberid: $scope.selectedItems[i] };
-                $http({
-                    url: urlBase + 'scripts/sendreminder.php', method: "POST", data: data
-                }).success(function (respdata, status, headers, config) {
-                    // console.log("Response Information ===> ", respdata);
-                    if(i==$scope.selectedItems.length-1){
-                        alert("Email(s) sent!");
-                    }
-                });
+                sendEmailsPromisses.push(new Promise(function (resolve) {
+                    $http({
+                        url: urlBase + 'scripts/sendreminder.php', method: "POST", data: data
+                    }).success(function (respdata, status, headers, config) {
+                        resolve(true);
+                    });
+                }));
             }
-        };
 
-        /*  *********************** END *******************************************/
+            Promise.all(sendEmailsPromisses).then(function () {
+                if ($scope.selectedItems.length > 1) {
+                    alert(`The message has been sent to ${$scope.selectedItems.length} persons.`);
+                } else {
+                    alert("The message has been sent.");
+                }
+            });
+        };
 
         $scope.sendReminder = function (action) {
             
