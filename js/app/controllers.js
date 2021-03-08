@@ -1558,16 +1558,6 @@ angular.module('EpicoreApp.controllers', []).
             });
         };
 
-        /*  ************************************************************************
-                
-                Following "sendReminderEmailToSelectedApplicants" is added by
-                Sam(Ch157135). This function will take action as input param.
-                If applicants list was selected, we can grab it from the variable
-                $scope.selectedItems. We look through those applicants and send
-                them the reminder emails 
-
-            ***********************************************************************
-        */
         $scope.sendReminderEmailToSelectedApplicants = function (action) {
             const sendEmailsPromisses = [];
 
@@ -1590,8 +1580,6 @@ angular.module('EpicoreApp.controllers', []).
                 }
             });
         };
-
-        /*  *********************** END *******************************************/
 
         $scope.sendReminder = function (action) {
             
