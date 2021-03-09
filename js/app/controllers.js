@@ -1163,9 +1163,7 @@ angular.module('EpicoreApp.controllers', []).
                 var appl_year = $filter('date')(new Date(memInfoData[n]['apply_date']), 'yyyy');
                 var accepted_year = $filter('date')(new Date(memInfoData[n]['accept_date']), 'yyyy');
                 var approve_year = $filter('date')(new Date(memInfoData[n]['maillist_id']), 'yyyy');
-
-                // console.log( 'maillist_id:' +  memInfoData[n]['maillist_id'] + ' apply_date:' +  memInfoData[n]['apply_date'] + ' accept_date:' + memInfoData[n]['accept_date'] + ' approve_date:' + memInfoData[n]['approve_date']);
-
+        
                 if (appl_year == currentFullYear) {
                     memInfoData[n]['apply_date'] = $filter('date')(new Date(memInfoData[n]['apply_date']), 'MMM dd');
                 } else {
@@ -1183,6 +1181,10 @@ angular.module('EpicoreApp.controllers', []).
                 } else {
                     memInfoData[n]['approve_date'] = $filter('date')(new Date(memInfoData[n]['approve_date']), 'dd MMM, yyyy');
                 }
+
+                memInfoData[n]['apply_date'] = memInfoData[n]['apply_date'].replace(/-/g,'');
+                memInfoData[n]['accept_date'] = memInfoData[n]['accept_date'].replace(/-/g,'');
+                memInfoData[n]['approve_date'] = memInfoData[n]['approve_date'].replace(/-/g,'');
 
                 if (memInfoData[n]['status'] == 'Pending') {
                     accepted_applicants.push(memInfoData[n]);
