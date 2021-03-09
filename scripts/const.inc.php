@@ -38,6 +38,7 @@ define('LAT_LON_PRECISION', 2);
 define('DEFAULT_RADIUS', 400); // in km
 define('EMAILPREVIEWS', 'emailtemplates/temp/');
 define('V2START_DATE', '2017-10-30');
+define('V1START_DATE', '2015-01-01'); //Year epicore starte with V1
 
 define('RESPONSEFILE_DIR', 'responsefiles/');
 

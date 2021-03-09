@@ -10,7 +10,7 @@
 #
 #  - with args: generates report for month and year
 #    rfi_metrics.py month year
-#    where month = 1..12, year = 2018..2100
+#    where month = 1..12, year = 2015..2100
 #
 #
 import matplotlib
@@ -48,7 +48,7 @@ else:
 if (len(sys.argv) == 3 ):
     arg_month = int(sys.argv[1])
     arg_year = int(sys.argv[2])
-    if (arg_year >= 2016) and (arg_year <=2100) and (arg_month > 0) and (arg_month <=12):
+    if (arg_year >= 2015) and (arg_year <=2100) and (arg_month > 0) and (arg_month <=12):
         month = arg_month
         year = arg_year
 
@@ -192,8 +192,10 @@ closed_rfis_df.to_html(save_data_dir + 'closed_rfis.html', index=False)
 
 ####### RFI Response Metrics  #############
 rfi_response_df = rfistats_df[['country','event_id','create_date','iso_create_date','action_date','first_response_date','status','outcome']]
+print('------->: ' , rfi_response_df)
 
 #### RFI - month
+# print('------->: ' , rfi_response_df.action_date)
 rfi_response_df['action_date'] = pd.to_datetime(rfi_response_df.action_date)
 month_mask = (rfi_response_df['action_date'] >= pd.Timestamp(datetime.date(start_year, month, 1)) ) & (rfi_response_df['action_date'] < pd.Timestamp(datetime.date(year, next_month, 1)) )
 rfi_df = rfi_response_df.loc[month_mask]
@@ -204,8 +206,13 @@ rfi_closed_df = rfi_df.loc[close_mask]
 rfi_closed = len(rfi_closed_df)
 
 # Responses, time, and rate
-rfi_df['answered'] = np.where(rfi_df['first_response_date'].notnull(), 1, 0)
-rfi_df['reaction_time'] = (rfi_df['first_response_date'] - rfi_df['iso_create_date']).astype('timedelta64[m]')
+first_resp_date = rfi_df['first_response_date']
+#rfi_df['answered'] = np.where(rfi_df['first_response_date'].notnull(), 1, 0)
+rfi_df['answered'] = np.where(rfi_df.loc[first_resp_date].notnull(), 1, 0)
+
+iso_cr_date = rfi_df['iso_create_date']
+#rfi_df['reaction_time'] = (rfi_df['first_response_date'] - rfi_df['iso_create_date']).astype('timedelta64[m]')
+rfi_df['reaction_time'] = (rfi_df.loc[first_resp_date] - rfi_df.loc[iso_cr_date]).astype('timedelta64[m]')
 lt24hr_response = len(rfi_df[rfi_df.reaction_time < 1440])
 
 # Response time
@@ -217,7 +224,9 @@ responses_avg_month = len(rfi_minmax_df['reaction_time'])
 
 responses_month = rfi_df.answered.sum()
 response_rate_month = round(100*responses_month/rfi_closed)
-avg_response_rate_month = int(round(response_time_month/responses_avg_month))
+#avg_response_rate_month = int(round(response_time_month/responses_avg_month))
+avg_response_rate_month = int(round( 0 if np.isnan(response_time_month) else response_time_month/ 0 if np.isnan(responses_avg_month) else responses_avg_month) )
+
 avg_response_rate_hm_month = str(timedelta(minutes=avg_response_rate_month))[:-3]
 avg_response_rate_hm_month_h = avg_response_rate_hm_month.split(':')[0] 
 avg_response_rate_hm_month_m = avg_response_rate_hm_month.split(':')[1] 

@@ -172,6 +172,10 @@ angular.module('EpicoreApp.controllers2', []).
 
         function resetHealthConditionForPopType() {
 
+            if (!$scope.rfiData.health_condition) {
+                return;
+            }
+
             //Type E and U do not require health_condition values. Reset here...
             if ($scope.rfiData.population.type == 'E' || $scope.rfiData.population.type == 'U') {
 
@@ -275,85 +279,85 @@ angular.module('EpicoreApp.controllers2', []).
             }
         };
 
-        $scope.sourceDetailsError = "";
+        $scope.sourceDetailsError = "Please fill the details above";
+        $scope.source_error_message = 'How did you hear about this event is a required field.';
+        $scope.isStep1Invalid = false;
+
 
         /* go next or back */
         $scope.saveStep1 = function (direction) {
             // console.log('STEP1 - clicked next:', $scope.rfiData);
-            
+
             $scope.submitDisabled = false;
-           
+            $scope.isStep1Invalid = false;
+
             if (!$scope.rfiData.place) {
                 $scope.location_error_message = 'Enter an event location';
-                return;
-            } 
-            else if (!$scope.rfiData.location || !$scope.rfiData.location.event_date) {
+                $scope.isStep1Invalid = true;
+            }
+            if (!$scope.rfiData.location || !$scope.rfiData.location.event_date) {
                 $scope.time_error_message = 'Enter a valid date.';
-                return;
-            } else if (!$scope.rfiData.source) {
-                $scope.source_error_message = 'How did you hear about this event is a required field.';
-                return;
-            } else if (!$scope.rfiData.event_id && (!$scope.rfiData.members || !$scope.rfiData.members.filtertype) ) { //If editing RFI form - map responders are not editable. If new RFI only check for members
+                $scope.isStep1Invalid = true;
+            }
+            if (!$scope.rfiData.source) {
+                $scope.isStep1Invalid = true;
+            }
+            if (!$scope.rfiData.event_id && (!$scope.rfiData.members || !$scope.rfiData.members.filtertype)) { //If editing RFI form - map responders are not editable. If new RFI only check for members
                 $scope.submitDisabled = true;
-                return;
-            } else if ((direction === 'back') || $scope.rfiData.location.event_date && $scope.rfiData.source.source) {
-                // next or back
-                if (direction === 'next') {
-                   
-                    if($scope.rfiData.location.location !== $("#autocompleteText").val()) {
-                        //editing location
-                        // console.log('old location:', $scope.rfiData.location.location); //old
-                        // console.log('new place:', $scope.rfiData.place['formatted_address']); //new
-                        $scope.rfiData.location.latlon = getPlaceLatLon($scope.rfiData.place);
-                        $scope.rfiData.location.location = $("#autocompleteText").val();
-                        // console.log('--place latlon:' + $scope.rfiData.location.latlon);
-                        // console.log('--place loc:' + $scope.rfiData.location.location);
+            }
 
-                        if (!$scope.rfiData.location.latlon) {
-                            $scope.rfiData.location.location_error_message = 'Geolocation failed - please scroll down and select a location from the auto-suggester in the location field so that we have the coordinates of the event.';
-                            $scope.rfiData.location.location = '';
-                            return false;
-                        }
-                    }
-                    // get city, state, country from location string
-                    var mylocation;
-                    if($scope.rfiData.location)
-                        mylocation = $scope.rfiData.location.location.split(",");
-                    if (mylocation.length == 4) {
-                        $scope.rfiData.default_city = mylocation[1];
-                        $scope.rfiData.default_state = mylocation[2];
-                        $scope.rfiData.default_country = mylocation[3];
-                        $scope.rfiData.location.location = mylocation[1] + ',' + mylocation[2] + ',' + mylocation[3]; // set location to only city,state,country
-                    } else if (mylocation.length == 3) {
-                        $scope.rfiData.default_city = mylocation[0];
-                        $scope.rfiData.default_state = mylocation[1];
-                        $scope.rfiData.default_country = mylocation[2];
-                    } else if (mylocation.length == 2) {
-                        $scope.rfiData.default_city = '';
-                        $scope.rfiData.default_state = mylocation[0];
-                        $scope.rfiData.default_country = mylocation[1];
-                    } else if (mylocation.length == 1) {
-                        $scope.rfiData.default_city = '';
-                        $scope.rfiData.default_state = '';
-                        $scope.rfiData.default_country = mylocation[0];
-                    }
+            if ($scope.rfiData.place && $scope.rfiData.location && $scope.rfiData.location.location !== $("#autocompleteText").val()) {
+                //editing location
+                // console.log('old location:', $scope.rfiData.location.location); //old
+                // console.log('new place:', $scope.rfiData.place['formatted_address']); //new
+                $scope.rfiData.location.latlon = getPlaceLatLon($scope.rfiData.place);
+                $scope.rfiData.location.location = $("#autocompleteText").val();
+                // console.log('--place latlon:' + $scope.rfiData.location.latlon);
+                // console.log('--place loc:' + $scope.rfiData.location.location);
 
-                    // if(!$scope.rfiData.place || !$scope.rfiData.members){
-                    //     $scope.submitDisabled = true;
-                    //     return;
-                    // }
-                    if ($scope.rfiData.source && !($scope.rfiData.source.details)) {
-                        $scope.sourceDetailsError = "Please fill the details above";
-                        return;
-                    }
-                    // $scope.submitDisabled = false;
-                    $location.path('/rfi_step2');
-
+                if (!$scope.rfiData.location.latlon) {
+                    $scope.rfiData.location.location_error_message = 'Geolocation failed - please scroll down and select a location from the auto-suggester in the location field so that we have the coordinates of the event.';
+                    $scope.rfiData.location.location = '';
+                    $scope.isStep1Invalid = true;
                 }
+            }
+            // get city, state, country from location string
+            var mylocation;
+            if ($scope.rfiData.location && $scope.rfiData.location.location) {
+                mylocation = $scope.rfiData.location.location.split(",");
+
+                if (mylocation.length == 4) {
+                    $scope.rfiData.default_city = mylocation[1];
+                    $scope.rfiData.default_state = mylocation[2];
+                    $scope.rfiData.default_country = mylocation[3];
+                    $scope.rfiData.location.location = mylocation[1] + ',' + mylocation[2] + ',' + mylocation[3]; // set location to only city,state,country
+                } else if (mylocation.length == 3) {
+                    $scope.rfiData.default_city = mylocation[0];
+                    $scope.rfiData.default_state = mylocation[1];
+                    $scope.rfiData.default_country = mylocation[2];
+                } else if (mylocation.length == 2) {
+                    $scope.rfiData.default_city = '';
+                    $scope.rfiData.default_state = mylocation[0];
+                    $scope.rfiData.default_country = mylocation[1];
+                } else if (mylocation.length == 1) {
+                    $scope.rfiData.default_city = '';
+                    $scope.rfiData.default_state = '';
+                    $scope.rfiData.default_country = mylocation[0];
+                }
+            }
+
+            if ($scope.filtertype==='country' && !$scope.rfiData.members.countries) {
+                $scope.isStep1Invalid = true;
+            }
+
+            if ($scope.rfiData.source && $scope.rfiData.source.source && !($scope.rfiData.source.details)) {
+                $scope.isStep1Invalid = true;
+
+            }
+            if (!$scope.isStep1Invalid && direction === 'next') {
+                $location.path('/rfi_step2');
                 $scope.time_error_message = '';
             }
-            
-            //else 
         };
 
         $scope.populationOtherError = "";
@@ -361,45 +365,72 @@ angular.module('EpicoreApp.controllers2', []).
         $scope.healthDetailsError = "";
         $scope.hc_error_message = '';
         $scope.hc_error_message1 = '';
+        $scope.populationAnimalError='';
+        $scope.populationAnimalOtherError = '';
         $scope.saveStep2 = function (direction) {
             // console.log('STEP2 - clicked next:', $scope.rfiData);
+            $scope.isStep2Invalid = false;
             $scope.populationOtherError = "";
             $scope.affectedPopSelectionError = "";
             $scope.healthDetailsError = "";
             $scope.hc_error_message = '';
             $scope.hc_error_message1 = '';
-    
+
             // next or back
             if (direction === 'next') {
 
-                if(!$scope.rfiData.population) {
+                if (!$scope.rfiData.population) {
                     $scope.affectedPopSelectionError = "Please select the affected population from above";
-                    return;
+                    $scope.isStep2Invalid = true;
                 }
-                if (($scope.rfiData.population.type == 'E' || $scope.rfiData.population.type == 'U') && !($scope.rfiData.population.other)) {
-                    $scope.populationOtherError = "Please fill the details above";
-                    return;
+                if ($scope.rfiData.population) {
+                    if (($scope.rfiData.population.type == 'E' || $scope.rfiData.population.type == 'U') && !($scope.rfiData.population.other)) {
+                        $scope.populationOtherError = "Please fill the details above";
+                        $scope.isStep2Invalid = true;
+                    }
+
+                    if ($scope.rfiData.population.type == 'A' && !$scope.rfiData.population.animal_type) {
+                        $scope.populationAnimalError = "Please fill the details above";
+                        $scope.isStep2Invalid = true;
+                    }
+
+                    if ($scope.rfiData.population.animal_type === 'O' && !$scope.rfiData.population.other_animal) {
+                        $scope.populationAnimalOtherError = "Please fill the details above";
+                        $scope.isStep2Invalid = true;
+                    }
+
+                    //Reset health_condition if type is E or U selected.
+                    //This occurs when users choose type A/H and then select E
+
+                }
+                if (!$scope.rfiData.health_condition && $scope.rfiData.population) {
+                    if ($scope.rfiData.population.type == 'E' || $scope.rfiData.population.type == 'U') {
+                        resetHealthConditionForPopType();
+                        // console.log('EU-->:', $scope.rfiData.health_condition);
+                    }
                 }
                 if (!$scope.rfiData.health_condition) {
                     $scope.hc_error_message1 = 'Missing parameters above.';
-                    return;
+                    $scope.isStep2Invalid = true;
                 }
-                if (!$scope.rfiData.health_condition.disease_details) {
+                if ($scope.rfiData.health_condition && !$scope.rfiData.health_condition.disease_details) {
                     $scope.healthDetailsError = "Please fill the details above.";
-                    return;
+                    $scope.isStep2Invalid = true;
                 }
-                
-                //Reset health_condition if type is E or U selected.
-                //This occurs when users choose type A/H and then select E
-                if ($scope.rfiData.population.type == 'E' || $scope.rfiData.population.type == 'U') {
-                    resetHealthConditionForPopType();
-                    // console.log('EU-->:', $scope.rfiData.health_condition);
+
+                if ($scope.rfiData.health_condition && $scope.rfiData.health_condition.other_animal && !$scope.rfiData.health_condition.other_animal_description) {
+                    $scope.healthDetailsOtherError = "Please fill the details above.";
+                    $scope.isStep2Invalid = true;
                 }
-                
 
+                if ($scope.rfiData.health_condition && $scope.rfiData.health_condition.other && !$scope.rfiData.health_condition.other_description) {
+                    $scope.healthDetailsOtherError = "Please fill the details above.";
+                    $scope.isStep2Invalid = true;
+                }
 
-                // console.log("RFI Data Step 3 --> ", $scope.rfiData)
-                $location.path('/rfi_step3');
+                if (!$scope.isStep2Invalid) {
+                    $location.path('/rfi_step3');
+                }
             } else if (direction === 'back') {
                 $location.path('/rfi_step1');
             }
@@ -695,9 +726,9 @@ angular.module('EpicoreApp.controllers2', []).
         };
 
         ///////////////////////////////////////////// Source /////////////////////////////////////////
-        $scope.source_error_message = '';
         $scope.purpose_error_message1 = '';
         $scope.purpose_error_message = '';
+        
         // $scope.saveSource = function (direction) {
           $scope.saveStep3 = function (direction) {
             // console.log('STEP3 - clicked review and send:', $scope.rfiData);
@@ -1242,7 +1273,7 @@ angular.module('EpicoreApp.controllers2', []).
         };
 
         /* Requester (moderator) & Responder (member) dashboard controller */
-    }).controller('eventsController2', function ($scope, $window, $rootScope, $routeParams, $cookieStore, $location, $http, eventAPIservice2, urlBase, epicoreMode, epicoreVersion, Upload, $timeout) {
+    }).controller('eventsController2', function ($scope, $window, $rootScope, $routeParams, $cookieStore, $location, $http, eventAPIservice2, urlBase, epicoreMode, epicoreVersion, Upload, $timeout,epicoreStartDate) {
         
         $scope.mobile = (epicoreMode == 'mobile') ? true : false;
         $scope.epicore_version = epicoreVersion;
@@ -1274,7 +1305,7 @@ angular.module('EpicoreApp.controllers2', []).
         $scope.cbsuffix = Date.now();
 
         // get list of months for selecting event month
-        var dateStart = moment('2017-10-30'); // starting date of EpiCore v2.0
+        var dateStart = moment(epicoreStartDate);
         var dateEnd = moment(); // now
         var timeValues = [];
         var i = 0;
@@ -1295,7 +1326,7 @@ angular.module('EpicoreApp.controllers2', []).
             var end_date = '';
             var num_events = 'all';
             if (month.value == 'all') {
-                start_date = moment('2017-10-30').format('YYYY-MM-DD'); // starting date of EpiCore v2.0
+                start_date = moment(epicoreStartDate).format('YYYY-MM-DD'); 
                 end_date = moment().format('YYYY-MM-DD'); // now
             } else if (month.value == 'recent') {
                 start_date = moment().subtract(3, 'months').format('YYYY-MM-DD'); // one month ago
@@ -1634,7 +1665,8 @@ angular.module('EpicoreApp.controllers2', []).
             var start_date = moment().subtract(3, 'months').format('YYYY-MM-DD'); // 3 month ago
             getAllEvents(start_date, end_date, 10);
         } else if ($scope.onOpen) {
-            getAllEvents('2017-10-30', moment().add(1, 'days').format('YYYY-MM-DD'));
+            getAllEvents(epicoreStartDate, moment().add(1, 'days').format('YYYY-MM-DD'));
+            
         } else {
             end_date = moment().format('YYYY-MM-DD'); // now
             start_date = moment().subtract(1, 'months').format('YYYY-MM-DD'); // one month ago
@@ -1646,8 +1678,8 @@ angular.module('EpicoreApp.controllers2', []).
         var save_metrics_timeout;
         var prev_metric_data = {}
 
-        $scope.updateRFIMetrics = function (event) {
-            if (!(event.metric_score) || event.metric_score > 2) {
+        $scope.updateRFIMetrics = function (field, event) {
+            if (field === 'metric_score' && !(event.metric_score|| event.metric_score > 2)) {
                 alert("Score cannot be more than 2")
                 return;
             }
@@ -1660,6 +1692,7 @@ angular.module('EpicoreApp.controllers2', []).
                 action: event.metric_action,
                 event_id: event.event_id
             };
+
 
             if (angular.equals(metric_data, prev_metric_data)) {
                 return;

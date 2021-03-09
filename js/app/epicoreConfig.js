@@ -11,6 +11,12 @@ var epicore_config = {};
 // vers - 2 for version 2.0
 epicore_config.vers = '2';
 
+//As of 2021-03-02 using all data
+epicore_config.V1START_DATE = '2015-01-01'; //this is to be used only for the member portal only
+epicore_config.V2START_DATE = '2017-10-30';
+
+epicore_config.EPICORE_START_DATE = epicore_config.V2START_DATE;
+
 // app_mode settings to select web or mobile app
 // mobile_prod - for mobile app with production backend
 // mobile_dev - for mobile app with dev backend

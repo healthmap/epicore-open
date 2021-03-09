@@ -1036,7 +1036,7 @@ angular.module('EpicoreApp.controllers', []).
         $scope.messageResponse = {};
         $scope.messageResponse.text = messages[$scope.id];
 
-    }).controller('approvalController', function ($scope, $http, $filter, $location, $route, $cookieStore, urlBase, epicoreCacheService) {
+    }).controller('approvalController', function ($scope, $http, $filter, $location, $route, $cookieStore, urlBase, epicoreCacheService, epicoreStartDate, epicoreV1StartDate) {
 
         // console.log('In approvalController...');
         var currentLocation = $location.path();
@@ -1059,8 +1059,6 @@ angular.module('EpicoreApp.controllers', []).
             $scope.num_preapproved = 0;
             $scope.num_setpassword = 0;
             $scope.allapp = false;
-            var dateStart = moment('2017-10-30'); // starting date of EpiCore v2.0
-            var dateEnd = moment(); // now
             var timeValues = [];
             timeValues.push({ name: 'All', value: 'all' });
             timeValues.push({ name: 'Past Year', value: 'past-year' });
@@ -1068,9 +1066,8 @@ angular.module('EpicoreApp.controllers', []).
             $scope.event_months = timeValues.reverse();
             $scope.selected_month = timeValues[0]; //default past-quarter
             $scope.urlBaseStr = urlBase;
-            var start_date = moment('2017-10-30').format('YYYY-MM-DD'); // starting date of EpiCore v2.0
             var end_date = '';
-            start_date = moment().subtract(3, 'months').format('YYYY-MM-DD'); // three month ago- default for Past-Quarter
+            var start_date = moment().subtract(3, 'months').format('YYYY-MM-DD'); // three month ago- default for Past-Quarter
             end_date = moment().format('YYYY-MM-DD'); // now
             $scope.selected_start_date = start_date;
             $scope.selected_end_date = end_date;
@@ -1090,6 +1087,8 @@ angular.module('EpicoreApp.controllers', []).
             
             $scope.pwcheck = false;
             $scope.displayHeaderGreenBar = false;
+
+            $scope.outputList = [];
         };
         $scope.init();
        
@@ -1100,7 +1099,7 @@ angular.module('EpicoreApp.controllers', []).
             var data = {};
             data.startDate = $scope.selected_start_date;
             data.endDate = $scope.selected_end_date;
-            //Default tab - Accepted
+            // Default tab - Accepted
             $http({
                 url: urlBase + 'scripts/approval.php', method: "POST", data: data
             }).success(function (respdata, status, headers, config) {  //Fetch data from db
@@ -1166,9 +1165,7 @@ angular.module('EpicoreApp.controllers', []).
                 var appl_year = $filter('date')(new Date(memInfoData[n]['apply_date']), 'yyyy');
                 var accepted_year = $filter('date')(new Date(memInfoData[n]['accept_date']), 'yyyy');
                 var approve_year = $filter('date')(new Date(memInfoData[n]['maillist_id']), 'yyyy');
-
-                // console.log( 'maillist_id:' +  memInfoData[n]['maillist_id'] + ' apply_date:' +  memInfoData[n]['apply_date'] + ' accept_date:' + memInfoData[n]['accept_date'] + ' approve_date:' + memInfoData[n]['approve_date']);
-
+        
                 if (appl_year == currentFullYear) {
                     memInfoData[n]['apply_date'] = $filter('date')(new Date(memInfoData[n]['apply_date']), 'MMM dd');
                 } else {
@@ -1186,6 +1183,10 @@ angular.module('EpicoreApp.controllers', []).
                 } else {
                     memInfoData[n]['approve_date'] = $filter('date')(new Date(memInfoData[n]['approve_date']), 'dd MMM, yyyy');
                 }
+
+                memInfoData[n]['apply_date'] = memInfoData[n]['apply_date'].replace(/-/g,'');
+                memInfoData[n]['accept_date'] = memInfoData[n]['accept_date'].replace(/-/g,'');
+                memInfoData[n]['approve_date'] = memInfoData[n]['approve_date'].replace(/-/g,'');
 
                 if (memInfoData[n]['status'] == 'Pending') {
                     accepted_applicants.push(memInfoData[n]);
@@ -1222,8 +1223,8 @@ angular.module('EpicoreApp.controllers', []).
             switch (currentLocation) {
                 case '/approval/accepted': {
                     $scope.activeHeaderItem = "Accepted";
-                    var outputList = accepted_applicants;
-                    var nppassword_applicants = accepted_applicants_nopw;
+                    $scope.outputList = accepted_applicants;
+                    $scope.nppassword_applicants = accepted_applicants_nopw;
                     $scope.displayAcceptedDateColumn = true;
                     $scope.displayPasswordColumn = true;
                     $scope.displayMemberNumber = true;
@@ -1231,8 +1232,8 @@ angular.module('EpicoreApp.controllers', []).
                 }
                 case '/approval/pre_approved': {
                     $scope.activeHeaderItem = "Pre Approved";
-                    var outputList = preapproved_applicants;
-                    var nppassword_applicants = preapproved_applicants_nopw;
+                    $scope.outputList = preapproved_applicants;
+                    $scope.nppassword_applicants = preapproved_applicants_nopw;
                     $scope.displayAcceptedDateColumn = true;
                     $scope.displayPasswordColumn = true;
                     $scope.displayCourseColumn = true;
@@ -1243,8 +1244,8 @@ angular.module('EpicoreApp.controllers', []).
                 }
                 case '/approval/members': {
                     $scope.activeHeaderItem = "Members";
-                    var outputList = total_members;
-                    var nppassword_applicants = []
+                    $scope.outputList = total_members;
+                    $scope.nppassword_applicants = []
                     $scope.displayAcceptedDateColumn = true;
                     $scope.displayApprovedDateColumn = true;
                     $scope.displayCourseColumn = true;
@@ -1254,15 +1255,15 @@ angular.module('EpicoreApp.controllers', []).
                 }
                 case '/approval/denied': {
                     $scope.activeHeaderItem = "Denied";
-                    var nppassword_applicants = [];
-                    var outputList = denied_applicants;
+                    $scope.nppassword_applicants = [];
+                    $scope.outputList = denied_applicants;
                     $scope.displayApplicantNumber = true;
                     break;
                 }
                 default: {
                     $scope.activeHeaderItem = "New Applicants";
-                    var outputList = inactive_applicants;
-                    var nppassword_applicants = [];
+                    $scope.outputList = inactive_applicants;
+                    $scope.nppassword_applicants = [];
                     $scope.displayApplicantNumber = true;
                     break;
                 }
@@ -1271,8 +1272,8 @@ angular.module('EpicoreApp.controllers', []).
             $scope.displayAllRows = true;
             $scope.allapp = false;
             $scope.inactive_applicants = inactive_applicants;
-            $scope.applicants = outputList;
-            $scope.searchResetList = outputList;
+            $scope.applicants = $scope.outputList;
+            $scope.searchResetList = $scope.outputList;
             $scope.all_applicants = memInfoData;
             $scope.inactive_applicants = inactive_applicants;
             $scope.num_applicants = $scope.applicants.length;
@@ -1285,7 +1286,7 @@ angular.module('EpicoreApp.controllers', []).
             // console.log('num_accepted length >>>>>>:', $scope.num_accepted);
             // console.log('>>>>>>>:', JSON.stringify($scope.applicants));
 
-            if (outputList.length > 0) {
+            if ($scope.outputList.length > 0) {
                 $scope.toggleRowExpandCollapse = true;
             } else {
                 $scope.toggleRowExpandCollapse = false;
@@ -1338,13 +1339,13 @@ angular.module('EpicoreApp.controllers', []).
         $scope.passwordCheck = function () {
             $scope.pwcheck = !$scope.pwcheck
             if ($scope.pwcheck == true) {
-                $scope.applicants = nppassword_applicants
+                $scope.applicants = $scope.nppassword_applicants
             } else {
-                $scope.applicants = outputList;
+                $scope.applicants = $scope.outputList;
             }
         };
 
-        // console.log("Output -> ", outputList, " Number set Password ----> ", $scope.num_setpassword, " Number inactive --> ", $scope.num_inactive)
+        // console.log("Output -> ", $scope.outputList, " Number set Password ----> ", $scope.num_setpassword, " Number inactive --> ", $scope.num_inactive)
         $scope.setVisible = function (visible) {
             angular.forEach($scope.applicants, function (applicant) {
                 applicant.visible = visible;
@@ -1406,7 +1407,7 @@ angular.module('EpicoreApp.controllers', []).
             var end_date = '';
             var num_events = 'all';
             if (month.value == 'all') {
-                start_date = moment('2017-10-30').format('YYYY-MM-DD'); // starting date of EpiCore v2.0
+                start_date = moment(epicoreV1StartDate).format('YYYY-MM-DD'); 
                 end_date = moment().format('YYYY-MM-DD'); // now
                 memInfoData = angular.copy(epicoreCacheService.getMemberPortalInfoAll());
             } else if (month.value == 'recent') {
@@ -1435,6 +1436,7 @@ angular.module('EpicoreApp.controllers', []).
                 var data = {};
                 data.startDate = $scope.selected_start_date;
                 data.endDate = $scope.selected_end_date;
+                
                  //Fetch data from db
                  $http({
                     url:  $scope.urlBaseStr + 'scripts/approval.php', method: "POST", data: data
@@ -1558,32 +1560,28 @@ angular.module('EpicoreApp.controllers', []).
             });
         };
 
-        /*  ************************************************************************
-                
-                Following "sendReminderEmailToSelectedApplicants" is added by
-                Sam(Ch157135). This function will take action as input param.
-                If applicants list was selected, we can grab it from the variable
-                $scope.selectedItems. We look through those applicants and send
-                them the reminder emails 
+        $scope.sendReminderEmailToSelectedApplicants = function (action) {
+            const sendEmailsPromisses = [];
 
-            ***********************************************************************
-        */
-        $scope.sendReminderEmailToSelectedApplicants = function(action) {
-            
-            for(i=0;i<($scope.selectedItems.length);i++){
+            for (i = 0; i < ($scope.selectedItems.length); i++) {
                 data = { action: action, memberid: $scope.selectedItems[i] };
-                $http({
-                    url: urlBase + 'scripts/sendreminder.php', method: "POST", data: data
-                }).success(function (respdata, status, headers, config) {
-                    // console.log("Response Information ===> ", respdata);
-                    if(i==$scope.selectedItems.length-1){
-                        alert("Email(s) sent!");
-                    }
-                });
+                sendEmailsPromisses.push(new Promise(function (resolve) {
+                    $http({
+                        url: urlBase + 'scripts/sendreminder.php', method: "POST", data: data
+                    }).success(function (respdata, status, headers, config) {
+                        resolve(true);
+                    });
+                }));
             }
-        };
 
-        /*  *********************** END *******************************************/
+            Promise.all(sendEmailsPromisses).then(function () {
+                if ($scope.selectedItems.length > 1) {
+                    alert(`The message has been sent to ${$scope.selectedItems.length} persons.`);
+                } else {
+                    alert("The message has been sent.");
+                }
+            });
+        };
 
         $scope.sendReminder = function (action) {
             
