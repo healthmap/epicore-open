@@ -36,7 +36,7 @@ if ($action == 'applicant_setpassword_reminder') {
     
     $applicant_info = $db->getRow("select fetp_id, f.email,firstname from epicore.fetp as f, epicore.maillist as m  where f.maillist_id=m.maillist_id  AND m.maillist_id='$memberid'");
     
-    print_r($applicant_info);
+    // print_r($applicant_info);
     
     sendMail($applicant_info['email'], $applicant_info['firstname'], "Reminder | You're almost there!", 'setpassword_reminder', $applicant_info['fetp_id']);
     // sendMail('info@epicore.org', 'Info', "Reminder | You're almost there!", $action, '0');
