@@ -2,20 +2,22 @@
  
 require_once "db.function.php";
 require_once '/usr/share/php/vendor/autoload.php';
+
 use Aws\Ses\SesClient;
 use Aws\Exception\AwsException;
 // AWSMail::mailfunc('lyajurvedi@gmail.com','test subject','this is a test message','info@healthmap.org');
 class AWSMail
 {
     function mailfunc($to, $subject, $msg, $from, $extra_headers = array()) {
-    	// $email = new AmazonSES();
+    	
+        
+        // $email = new AmazonSES();
         // Create an SesClient. Change the value of the region parameter .
         // Change the value of the profile parameter if you want to use a profile in your credentials file
         // other than the default.
         $SesClient = new SesClient([
-            'profile' => 'epicore',
             'version' => '2010-12-01',
-            'region'  => 'us-east-1'
+            'region'  => 'us-east-1',
         ]);
 
         $to = is_array($to) ? $to : explode(",", $to);
@@ -35,10 +37,10 @@ class AWSMail
         // Specify a configuration set. If you do not want to use a configuration
         // set, comment the following variable, and the
         // 'ConfigurationSetName' => $configuration_set argument below.
-        // $configuration_set = 'ConfigSet';
+        $configuration_set = 'epicore-cs';
 
         try {
-            $result = $SesClient->sendEmail([
+            $emailResult = $SesClient->sendEmail([
                 'Destination' => [
                     'ToAddresses' => $to,
                     'CcAddresses' => $ccAdrs,
@@ -64,13 +66,13 @@ class AWSMail
                 ],
                 // If you aren't using a configuration set, comment or delete the
                 // following line
-                // 'ConfigurationSetName' => $configuration_set,
+                'ConfigurationSetName' => $configuration_set,
             ]);
-            if($result['MessageId']) {
-                $messageId = $result['MessageId'];
+            if($emailResult['MessageId']) {
+                $messageId = $emailResult['MessageId'];
                 // echo("Email sent! Message ID: $messageId"."\n"); //Email sent! Message ID: 010001783cabfadd-b1d2c851-61b5-47f6-b30c-54e1b17f7529-000000
 
-                // log the request in the email log
+                //log the request in the email log
                 $db = getDB();
                 $subject = 'Message ID:' . $messageId . ':::' . $subject;
                 foreach($extra_headers['user_ids'] as $uid) {
@@ -80,7 +82,7 @@ class AWSMail
 
             } else {
                 // echo("Email sent! Message ID: $messageId"."\n");
-                $result['ErrorMsg'] = 'Something went wrong while sending emails on' . date('Y-m-d H:i:s');
+                $emailResult['ErrorMsg'] = 'Something went wrong while sending emails on' . date('Y-m-d H:i:s');
             }
             
 
@@ -88,11 +90,11 @@ class AWSMail
             // output error message if fails
             //echo $e->getMessage();
             //echo("The email was not sent. Error message: ".$e->getAwsErrorMessage()."\n");
-            $result['Error'] = 'Something went wrong while sending email';
-            $result['ErrorMsg'] = $e->getMessage();
+            $emailResult['Error'] = 'Something went wrong while sending email';
+            $emailResult['ErrorMsg'] = $e->getMessage();
         }
 
-        return $result;
+        return $emailResult;
 
     }
 
