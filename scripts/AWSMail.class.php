@@ -13,7 +13,6 @@ class AWSMail
         // Change the value of the profile parameter if you want to use a profile in your credentials file
         // other than the default.
         $SesClient = new SesClient([
-            'profile' => 'epicore',
             'version' => '2010-12-01',
             'region'  => 'us-east-1'
         ]);
