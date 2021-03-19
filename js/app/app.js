@@ -1,7 +1,6 @@
 var app = angular.module('EpicoreApp', [
     'EpicoreApp.services',
     'EpicoreApp.controllers',
-    'EpicoreApp.controllers2',
     'ngCookies',
     'ngRoute',
     'ngSanitize',
@@ -20,21 +19,21 @@ app.value('epicoreV1StartDate', epicore_config.V1START_DATE);
 
 // select web or mobile app
 var app_mode = epicore_config.app_mode;
-var home_page = "partials/home.html?cb=";
+var home_page = "templates/home/home.html?cb=";
 if (app_mode == 'mobile_prod') {
     app.value('urlBase', 'https://epicore.org/'); // use full url for mobile api calls
     app.value('epicoreMode', 'mobile');
-    home_page = "partials/login_mobile.html?cb=";
+    home_page = "templates/login/login_mobile.html?cb=";
 }
 else if (app_mode == 'mobile_dev') { // use full url for mobile api calls
     app.value('urlBase', 'https://epicore.org/dev/');
     app.value('epicoreMode', 'mobile');
-    home_page = "partials/login_mobile.html?cb=";
+    home_page = "templates/login/login_mobile.html?cb=";
 }
 else if (app_mode == 'mobile_jandre') { // use full url for mobile api calls
     app.value('urlBase', 'https://epicore.org/~jandre/epicore/');
     app.value('epicoreMode', 'mobile');
-    home_page = "partials/login_mobile.html?cb=";
+    home_page = "templates/login/login_mobile.html?cb=";
 }
 else { // use relative url for web app
     app.value('urlBase', '');
@@ -42,93 +41,6 @@ else { // use relative url for web app
 }
 
 var cacheBustSuffix = Date.now();
-
-app.config(function ($routeProvider) {
-    
-    $routeProvider.
-        when("/events", { templateUrl: "partials/events.html?cb=" + cacheBustSuffix, controller: "eventsController" }).
-        when("/events2", { templateUrl: "partials/events2.html?cb=" + cacheBustSuffix, controller: "eventsController2" }).
-        when("/events_public", { templateUrl: "partials/events_public.html?cb=" + cacheBustSuffix, controller: "eventsController2" }).
-        when("/events_public/articles/:articleID", { templateUrl: "partials/publicrfi.html?cb=" + cacheBustSuffix, controller: "publicRFIController" }).
-        when("/events_public/articles/:articleID", { templateUrl: "partials/publicEventsRFI.html?cb=" + cacheBustSuffix, controller: "eventsController2" }).
-        when("/map", { templateUrl: "partials/map.html?cb=" + cacheBustSuffix, controller: "mapController" }).
-        when("/events/closed", { templateUrl: "partials/events.html?cb=" + cacheBustSuffix, controller: "eventsController" }).
-        when("/events2/closed", { templateUrl: "partials/events2.html?cb=" + cacheBustSuffix, controller: "eventsController2" }).
-        when("/events/:id", { templateUrl: "partials/event.html?cb=" + cacheBustSuffix, controller: "eventsController" }).
-        when("/events2/:id", { templateUrl: "partials/event2.html?cb=" + cacheBustSuffix, controller: "eventsController2" }).
-        when("/reply/:id", { templateUrl: "partials/reply.html?cb=" + cacheBustSuffix, controller: "eventsController" }).
-        when("/reply2/:id", { templateUrl: "partials/reply2.html?cb=" + cacheBustSuffix, controller: "eventsController2" }).
-        when("/close/:id", { templateUrl: "partials/close.html?cb=" + cacheBustSuffix, controller: "eventsController" }).
-        when("/close2/:id", { templateUrl: "partials/close2.html?cb=" + cacheBustSuffix, controller: "eventsController2" }).
-        when("/reopen/:id", { templateUrl: "partials/reopen.html?cb=" + cacheBustSuffix, controller: "eventsController" }).
-        when("/reopen2/:id", { templateUrl: "partials/reopen2.html?cb=" + cacheBustSuffix, controller: "eventsController2" }).
-        when("/summary/:id", { templateUrl: "partials/summary.html?cb=" + cacheBustSuffix, controller: "eventsController2" }).
-        when("/followup/:id", { templateUrl: "partials/followup.html?cb=" + cacheBustSuffix, controller: "eventsController" }).
-        when("/followup2/:id", { templateUrl: "partials/followup2.html?cb=" + cacheBustSuffix, controller: "eventsController2" }).
-        when("/followup/:id/:response_id", { templateUrl: "partials/followup.html?cb=" + cacheBustSuffix, controller: "eventsController" }).
-        when("/followup2/:id/:response_id", { templateUrl: "partials/followup2.html?cb=" + cacheBustSuffix, controller: "eventsController2" }).
-        when("/rfi_step3", { templateUrl: "partials/rfi_step3.html?cb=" + cacheBustSuffix, controller: "requestController2" }).
-        when("/rfi_step2", { templateUrl: "partials/rfi_step2.html?cb=" + cacheBustSuffix, controller: "requestController2" }).
-        when("/rfi_step1", { templateUrl: "partials/rfi_step1.html?cb=" + cacheBustSuffix, controller: "requestController2" }).
-        when("/condition", { templateUrl: "partials/rfi_condition.html?cb=" + cacheBustSuffix, controller: "requestController2" }).
-        when("/duplicate", { templateUrl: "partials/rfi_duplicate2.html?cb=" + cacheBustSuffix, controller: "requestController2" }).
-        when("/population", { templateUrl: "partials/rfi_population.html?cb=" + cacheBustSuffix, controller: "requestController2" }).
-        when("/location", { templateUrl: "partials/rfi_location.html?cb=" + cacheBustSuffix, controller: "requestController2" }).
-        when("/location/:id", { templateUrl: "partials/rfi_location.html?cb=" + cacheBustSuffix, controller: "requestController2" }).
-        when("/rfi_step1/:id", { templateUrl: "partials/rfi_step1.html?cb=" + cacheBustSuffix, controller: "requestController2" }).
-        when("/time", { templateUrl: "partials/rfi_time.html?cb=" + cacheBustSuffix, controller: "requestController2" }).
-        when("/purpose", { templateUrl: "partials/rfi_purpose.html?cb=" + cacheBustSuffix, controller: "requestController2" }).
-        when("/source", { templateUrl: "partials/rfi_source.html?cb=" + cacheBustSuffix, controller: "requestController2" }).
-        when("/members", { templateUrl: "partials/rfi_members.html?cb=" + cacheBustSuffix, controller: "requestController2" }).
-        when("/sendrequest", { templateUrl: "partials/rfi_sendrequest.html?cb=" + cacheBustSuffix, controller: "requestController2" }).
-        when("/sent", { templateUrl: "partials/rfi_sent.html?cb=" + cacheBustSuffix, controller: "requestController2" }).
-        when("/request", { templateUrl: "partials/request.html?cb=" + cacheBustSuffix, controller: "requestController" }).
-        when("/request/:alertid", { templateUrl: "partials/request.html?cb=" + cacheBustSuffix, controller: "requestController" }).
-        when("/request2", { templateUrl: "partials/request2.html?cb=" + cacheBustSuffix, controller: "requestController" }).
-        when("/request3", { templateUrl: "partials/request3.html?cb=" + cacheBustSuffix, controller: "requestController" }).
-        when("/request_edit/:id", { templateUrl: "partials/request_edit.html?cb=" + cacheBustSuffix, controller: "editRequestController" }).
-        when("/success/:id", { templateUrl: "partials/success.html?cb=" + cacheBustSuffix, controller: "successController" }).
-        when("/success/:id/:eid", { templateUrl: "partials/success.html?cb=" + cacheBustSuffix, controller: "successController" }).
-        when("/about", { templateUrl: "partials/about.html?cb=" + cacheBustSuffix, }).
-        when("/how", { templateUrl: "partials/howitworks.html?cb=" + cacheBustSuffix }).
-        when("/who", { templateUrl: "partials/whocanapply.html?cb=" + cacheBustSuffix }).
-        when("/news", { templateUrl: "partials/newsletter.html?cb=" + cacheBustSuffix, controller: "newsController"}).
-        when("/educator", { templateUrl: "partials/lpeducator.html?cb=" + cacheBustSuffix }).
-        when("/provider", { templateUrl: "partials/lpprovider.html?cb=" + cacheBustSuffix }).
-        when("/researcher", { templateUrl: "partials/lpresearcher.html?cb=" + cacheBustSuffix }).
-        when("/professional", { templateUrl: "partials/lpprofessional.html?cb=" + cacheBustSuffix }).
-        when("/terms", { templateUrl: "partials/terms.html?cb=" + cacheBustSuffix }).
-        when("/fetp", { templateUrl: "partials/fetp.html?cb=" + cacheBustSuffix }).
-        when("/fetp/:eid", { templateUrl: "partials/fetp.html?cb=" + cacheBustSuffix }).
-        when("/mod/:tid/:aid", { templateUrl: "partials/mod.html?cb=" + cacheBustSuffix }).
-        when("/application", { templateUrl: "partials/application_new.html?cb=" + cacheBustSuffix }).
-        when("/application_confirm", { templateUrl: "partials/application_confirm.html?cb=" + cacheBustSuffix }).
-        when("/application/:id/:action/:idtype", { templateUrl: "partials/application_new.html?cb=" + cacheBustSuffix, controller: "userController" }).
-        when("/approval", { templateUrl: "partials/approval.html?cb=" + cacheBustSuffix, controller: "approvalController" }).
-        when("/approval/accepted", { templateUrl: "partials/approval.html?cb=" + cacheBustSuffix,  }).
-        when("/approval/pre_approved", { templateUrl: "partials/approval.html?cb=" + cacheBustSuffix,  }).
-        when("/approval/members", { templateUrl: "partials/approval.html?cb=" + cacheBustSuffix, }).
-        when("/approval/denied", { templateUrl: "partials/approval.html?cb=" + cacheBustSuffix, }).
-        when("/login", { templateUrl: "partials/login.html?cb=" + cacheBustSuffix }).
-        when("/login_mobile", { templateUrl: "partials/login_mobile.html?cb=" + cacheBustSuffix }).
-        when("/setpassword", { templateUrl: "partials/setpassword.html?cb=" + cacheBustSuffix }).
-        when("/resetpassword", { templateUrl: "partials/resetpassword.html?cb=" + cacheBustSuffix }).
-        when("/home", { templateUrl: home_page + cacheBustSuffix }).
-        when("/trainingvideos", { templateUrl: "partials/trainingvideos.html?cb=" + cacheBustSuffix, controller: "userController" }).
-        when("/resources", { templateUrl: "partials/resources.html?cb=" + cacheBustSuffix, controller: "userController" }).
-        when("/training", { templateUrl: "partials/test.html?cb=" + cacheBustSuffix, controller: "testController" }).
-        when("/certificate", { templateUrl: "partials/certificate.html?cb=" + cacheBustSuffix, controller: "certController" }).
-        when("/modaccess", { templateUrl: "partials/modaccess.html?cb=" + cacheBustSuffix, controller: "modaccessController" }).
-        when("/member_locations", { templateUrl: "partials/member_locations.html?cb=" + cacheBustSuffix, controller: "memberLocationsController" }).
-        when("/metrics", { templateUrl: "partials/responders_metrics.html?cb=" + cacheBustSuffix, controller: "metricsController" }).
-        when("/rfi_dashboard", { templateUrl: "partials/events_metrics.html?cb=" + cacheBustSuffix, controller: "eventsController2" }).
-        when("/rfi_dashboard/closed", { templateUrl: "partials/events_metrics.html?cb=" + cacheBustSuffix, controller: "eventsController2" }).
-        when("/requesters_dashboard", { templateUrl: "partials/requesters_dashboard.html?cb=" + cacheBustSuffix, controller: "modaccessController" }).
-
-        
-        otherwise({ redirectTo: '/home' });
-});
-
 
 /* google analytics */
 app.run(['$rootScope', '$location', '$window', function ($rootScope, $location, $window) {
@@ -223,183 +135,6 @@ app.config(function (AnalyticsProvider) {
 
     // track all routes/states (or not)
     //AnalyticsProvider.trackPages(true);
-});
-
-//app.run(function(Analytics){});
-
-/* back button directive used on Event.html*/
-app.directive('siteHeader', function () {
-    return {
-        restrict: 'E',
-        template: '<button class="btn btn-default"><i class="fa fa-arrow-circle-left"></i> {{back}} to Your EpiCore Dashboard</button>',
-        scope: {
-            back: '@back',
-            icons: '@icons'
-        },
-        link: function (scope, element, attrs) {
-            $(element[0]).on('click', function () {
-                history.back();
-                scope.$apply();
-            });
-        }
-    };
-});
-
-/* youtube directive */
-app.directive('myYoutube', function ($sce) {
-    return {
-        restrict: 'EA',
-        scope: { code: '=' },
-        replace: true,
-        template: '<div style="height:550px; width: 980px;"><iframe style="overflow:hidden;height:100%;width:100%" width="100%" height="100%" src="{{url}}" frameborder="0" allowfullscreen></iframe></div>',
-        link: function (scope) {
-            scope.$watch('code', function (newVal) {
-                if (newVal) {
-                    scope.url = $sce.trustAsResourceUrl("https://www.youtube.com/embed/" + newVal + "?vq=hd720");
-                }
-            });
-        }
-    };
-});
-
-/* chosen directive */
-app.directive('chosen', function ($timeout) {
-
-    var linker = function (scope, element, attr) {
-
-        $timeout(function () {
-            element.chosen();
-        }, 0, false);
-    };
-
-    return {
-        restrict: 'A',
-        link: linker
-    };
-});
-
-app.directive('modal', function () {
-    return {
-        template: '<div class="modal fade">' +
-            '<div class="modal-dialog">' +
-            '<div class="modal-content">' +
-            '<div class="modal-header">' +
-            '<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>' +
-            '<h4 class="modal-title">{{ modalTitle }}</h4>' +
-            '</div>' +
-            '<div class="modal-body" ng-transclude>{{modalBody}}</div>' +
-            '</div>' +
-            '</div>' +
-            '</div>',
-        restrict: 'E',
-        transclude: true,
-        replace: true,
-        scope: true,
-        link: function postLink(scope, element, attrs) {
-            scope.$watch(attrs.visible, function (value) {
-                if (value == true)
-                    $(element).modal('show');
-                else
-                    $(element).modal('hide');
-            });
-
-            $(element).on('shown.bs.modal', function () {
-                scope.$apply(function () {
-                    scope.$parent[attrs.visible] = true;
-                });
-            });
-
-            $(element).on('hidden.bs.modal', function () {
-                scope.$apply(function () {
-                    scope.$parent[attrs.visible] = false;
-                });
-            });
-        }
-    };
-});
-
-/* Popup directive */
-app.directive('magnificPopup', function() {
-    return {
-        restrict: 'A',
-        scope: {},
-        link: function($scope, element, attr) {
-            
-            var isSmallDevice = $(window).width() <= 1024,
-                activeLink = attr.magnificPopup
-                isThirdPartyUrl = /(ftp|http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/.test(activeLink),
-                isTephinet = 'https://www.tephinet.org',
-                targetType = function(curTarget){ return (curTarget || isSmallDevice) ? '_system' : '_self'; };
-
-            if(isSmallDevice && /iPad|iPhone|iPod/.test(navigator.userAgent)){
-                // if(isThirdPartyUrl || attr.third){
-                //     element[0].addEventListener('click', function(e){
-                //         e.preventDefault();
-                //         window.open(activeLink, targetType(attr.target));
-                //         return false;
-                //     });
-                // }else{
-                    element.magnificPopup({
-                        fixedContentPos: true,
-                        callbacks: {
-                            beforeOpen: function() {
-
-                                if ( activeLink == isTephinet) {
-                                    $.magnificPopup.open({
-                                        fixedContentPos: true,
-                                        items:  
-                                            {
-                                                
-                                                src: '<div id="popup-preloader">You are leaving EpiCore to visit a third-party. <a href="https://www.tephinet.org">Click to proceed</a></div>',
-                                                type: 'inline'
-                                            }
-    
-                                        });
-                                
-                                } else {
-                                    $.magnificPopup.open({
-                                        fixedContentPos: true,
-                                        items:  
-                                            {
-                                                
-                                                src: '<div id="popup-preloader">Accessing an external resource, if it does not load, please close this window and try again</div>',
-                                                type: 'inline'
-                                            }
-    
-                                        });
-
-                                        setTimeout(function(){
-                                            $.magnificPopup.close();
-    
-                                            $.magnificPopup.open({
-                                                items: {
-                                                    src: activeLink,
-                                                },
-                                                type: 'iframe',
-                                                fixedContentPos: true,
-                                                removalDelay: 300,
-                                                mainClass: 'mfp-fade'
-                                              }, 0);
-    
-                                        }, 4000);
-
-                                }               
-                            },
-                        },
-                        // type: 'iframe',
-                        removalDelay: 300,
-                        mainClass: 'mfp-fade'
-                    });
-                // }
-            }else{
-                element[0].addEventListener('click', function(e){
-                    e.preventDefault();
-                    window.open(activeLink, targetType(attr.target));
-                    return false;
-                });
-            }
-        }
-    }
 });
 
 app.value('epicoreCountries', [

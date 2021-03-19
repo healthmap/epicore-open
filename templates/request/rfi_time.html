@@ -1,0 +1,49 @@
+<div ng-include src="'templates/header/header.html'"></div>
+<div class="jumbotron dashboard">
+    <div class="container">
+        <h1>RFI - Location and Date</h1>
+    </div>
+</div>
+
+<div class="wrapper dashboard">
+<div class="container">
+    <div class="row">
+        <div id="form-container" class="col-xs-12 col-md-8">
+            <form name="locationForm">
+
+                <div class="form-group">
+                    <span style="float: right;"><a href ng-click="clearRequest()" class="btn btn-default">Clear RFI</a></span><br>
+                </div>
+
+                <div class="intro">
+
+                </div>
+
+                <div class="form-group"  data-toggle="tooltip" title=" Please enter date of onset of first case/s; if no specific date is available consider the date of the source report. In case of an update of an already verified PHE consider today's date.">
+                    <h4>Date: <span class="error">*</span></h4>
+                    <input type="text" class="form-control" ng-model="rfiData.location.event_date" name="event_date" id="datepicker" data-provide="datepicker" autocomplete="off" required>
+                </div>
+
+                <div class="form-group" data-toggle="tooltip" title=" Please specify if the date selected is date of symptom onset or date of confirmation of case, etc">
+                    <h4>Date Details:</h4>
+                    <p>Please include any additional details about the date that may be informative and relevant (e.g. date refers to first confirmation)</p>
+                    <textarea class="form-control" style="height:300px" ng-model="rfiData.location.event_date_details" id="event_date_details" placeholder="Available details..." ></textarea>
+                </div>
+
+                <div class="form-group">&nbsp;
+                    <button ng-click="saveTime('back')" type="submit" class="submit btn btn-primary"><i class="fa fa-arrow-circle-left"></i> Back </button> &nbsp; &nbsp;
+                    <button ng-click="saveTime('next')" type="submit" class="submit btn btn-primary"> Next <i class="fa fa-arrow-circle-right"></i></button>
+                </div><!-- /input-group -->
+                <span class="error">{{time_error_message}}</span>
+
+            </form>
+
+        </div><!--col-->
+    </div><!--row-->
+</div><!--container-->
+</div><!--wrapper-->
+<script>
+
+    // TOOLTIP
+    $('[data-toggle="tooltip"]').tooltip( {html: true,trigger:'hover'});
+</script>
