@@ -1796,26 +1796,34 @@ angular.module('EpicoreApp.controllers2', []).
 
                 $http({
                     url: urlBase + 'scripts/changestatus2.php', method: "POST", data: formData
-                }).success(function (data, status, headers, config) {
-                    if (data['status'] == 'success') {
-                        $scope.submitDisabled = false;
-                        var pathid = 4;
-                        if (thestatus == "Update") {
-                            pathid = 8;
-                        } else if (thestatus == "Reopen") {
-                            pathid = 5;
-                        } else if (thestatus == "Summary") {
-                            pathid = 9;
-                        }
-                        else { // closed
-                            pathid = 4;
-                        }
-                        $location.path('/success/' + pathid);
-                    } else {
-                        console.log(data['reason']);
-                        alert(data['reason']);
+                })
+                .then(function success(response) {
+
+                    // this function will be called when the request is success
+                    $scope.submitDisabled = false;
+                    var pathid = 4;
+                    if (thestatus == "Update") {
+                        pathid = 8;
+                    } else if (thestatus == "Reopen") {
+                        pathid = 5;
+                    } else if (thestatus == "Summary") {
+                        pathid = 9;
                     }
+                    else { // closed
+                        pathid = 4;
+                    }
+                    $location.path('/success/' + pathid);
+                    
+                }, function error(response) {
+                    // this function will be called when the request returned error status
+                    console.log('error:', response);
+                    alert(response['status']);
                 });
+                
+
+
+
+
             }
         };
 
