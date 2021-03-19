@@ -67,10 +67,10 @@ if(is_numeric($event_id) && is_numeric($user_id)) {
         $subject = "Epicore RFI #". $event_id . " - " . $status_type . ": " . $event_info['disease'] . ", " . $event_info['location'];
 
         // set up push notification
-        $push = new ePush();
-        $pushevent['id'] = $event_id;
-        $pushevent['title'] = $event_info['title'];
-        $pushevent['type'] = $formvars->thestatus == "Reopen" ? 'REOPENED' : 'CLOSED';
+        // $push = new ePush();
+        // $pushevent['id'] = $event_id;
+        // $pushevent['title'] = $event_info['title'];
+        // $pushevent['type'] = $formvars->thestatus == "Reopen" ? 'REOPENED' : 'CLOSED';
 
 
         foreach($fetp_emails as $fetp_id => $recipient) {

@@ -69,10 +69,10 @@ $followup_id = EventInfo::insertFollowup($followup_info);
 $tokens = $ei->insertFetpsReceivingEmail($fetp_ids, $followup_id);
 
 // set up push notification
-$push = new ePush();
-$pushevent['id'] = $event_id;
-$pushevent['title'] = $event_info['title'];
-$pushevent['type'] = 'FOLLOWUP';
+// $push = new ePush();
+// $pushevent['id'] = $event_id;
+// $pushevent['title'] = $event_info['title'];
+// $pushevent['type'] = 'FOLLOWUP';
 
 // now send it to each FETP individually as they each need unique login token id
 require_once "AWSMail.class.php";

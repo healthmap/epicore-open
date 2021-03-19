@@ -38,10 +38,10 @@ $extra_headers['text_or_html'] = "html";
 $emailtext = $ei->buildEmailForEvent($event_info, 'rfi', '', 'text');
 
 // set up push notification
-$push = new ePush();
-$pushevent['id'] = $event_id;
-$pushevent['title'] = $event_info['title'];
-$pushevent['type'] = 'RFI';
+// $push = new ePush();
+// $pushevent['id'] = $event_id;
+// $pushevent['title'] = $event_info['title'];
+// $pushevent['type'] = 'RFI';
 
 foreach($fetp_emails as $fetp_id => $recipient) {
     // send email
