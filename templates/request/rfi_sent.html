@@ -1,0 +1,16 @@
+<div ng-include src="'templates/header/header.html'"></div>
+<div class="jumbotron dashboard">
+    <div class="container">
+        <h1>RFI - Sent!</h1>
+    </div>
+</div>
+
+<div class="wrapper dashboard">
+    <div class="container">
+        <p>Your RFI will be routed to {{rfiData.members.numFetps}} responders</p>
+        <p>Please refer to your REQUESTER dashboard for the most up-to-date information on the status of your RFI.</p>
+
+        <button ng-click="sentRFI()" type="submit" class="submit btn btn-primary">Go to your requester dashboard <i class="fa fa-arrow-circle-right"></i></button>
+
+    </div>
+</div>

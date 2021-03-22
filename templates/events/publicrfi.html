@@ -1,0 +1,78 @@
+<div ng-include src="'templates/header/header_new.html'">
+
+
+</div>
+
+<div class="jumbotron dashboard">
+    <div class="container">
+        <h1>
+            <span>RFI Summary</span>
+        </h1>
+    </div>
+</div>
+
+
+
+<div class="publicrfi_maindiv">
+    <div class="container">
+        <div class="row">
+            <div>
+                <!-- RFI filter -->
+                <div>
+                    <a href="#/events_public" class="backlink">
+                        <span class="chevron-double-left">&#171;</span> View all public RFIs</a>
+                    <br />
+
+                </div>
+                <!-- view for organizations -->
+                <div ng-controller="publicRFIChildController">
+                    <!-- <span ng-bind="articleOutput"></span> -->
+                    <span class="title-style" id="eventTitleID"></span>
+                    <br />
+                    <br />
+                    <p class="summary-style" id="articleOutputID"></p>
+                    <br />
+                    <p class="summary-style" id="additionalInfoID"></p>
+                    <div class="articleFooterDiv">
+                        <br />
+                        <span class="rfi-outcome-text" id="rfiOutcomeID"></span>
+                        <br />
+                        <span class="rfi-outcome-text" id="rfiClosureID"></span>
+                        <br />
+                        <span class="rfi-outcome-text" id="initialSourceID"></span>
+                        <br />
+                    </div>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    var eventTitleID = document.getElementById("eventTitleID");
+    var articleOutputID = document.getElementById("articleOutputID");
+    var rfiOutcomeID = document.getElementById("rfiOutcomeID");
+    var rfiClosureID = document.getElementById("rfiClosureID");
+    var initialSourceID = document.getElementById("initialSourceID");
+    var additionalInfoID = document.getElementById("additionalInfoID");
+
+    eventTitleID.innerHTML += "Title: " + localStorage.getItem('local_eventTitle');
+
+    articleOutputID.innerHTML += localStorage.getItem('local_articleOutput');
+
+    rfiOutcomeID.innerHTML += "RFI Outcome: " + localStorage.getItem('local_rfiOutcome');
+
+    rfiClosureID.innerHTML += "RFI Closure date: " + localStorage.getItem('local_closureDate');
+
+    initialSourceID.innerHTML += "Initial Source: " + localStorage.getItem('local_initialSource');
+
+    if (localStorage.getItem('local_additionalInfo') != "") {
+        additionalInfoID.innerHTML += "Additional info: " + localStorage.getItem('local_additionalInfo');
+    }
+
+</script>
+
+<!--wrapper-->
+<div ng-include src="'disclaimer.html'"></div>
+<div ng-include src="'templates/footer/footer.html'"></div>

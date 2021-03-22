@@ -1281,7 +1281,7 @@ button.transparent {
   color: #3fc8c8;
 }
 .nav-pills select.form-control {
-  height: 36px;
+  height: auto;
 }
 .tooltip-icon {
   color: #A5B1B6;

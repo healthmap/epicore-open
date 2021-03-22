@@ -1,0 +1,80 @@
+<nav class="navbar navbar-default" role="navigation" ng-controller="headerController">
+    <div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <i class="fa fa-bars"></i>
+            </button>
+            <a class="logo" href="#/home">
+                <img src="img/logos/epicore.png" height="60px" alt="Epicore" style="display:block;float:left;margin-top:18px;margin-bottom:18px;margin-right:6px;">
+                <span class="text-uppercase">Epicore</span>
+            </a>
+        </div>
+
+        <div class="collapse navbar-collapse" id="navbar-collapse">
+            <ul class="nav navbar-nav">
+                <!-- <li class="text-uppercase" ng-show="{{userInfo.isPromed}} && epicore_version != '2'">
+                    <a href="http://promedmail.org/dashboard" third="true" target="_blank">
+                        <img src="img/promed.png"> ProMED Dashboard
+                        <i class="fa fa-arrow-circle-right"></i>
+                    </a>&nbsp;&nbsp;</li> -->
+                <li ng-class="{ active: isActive('/events')}" class="text-uppercase" ng-if="(userInfo.active=='Y') && epicore_version !='2'">
+                    <a href="#/events" ng-class="getClass('/events')">Dashboard</a>
+                </li>
+                <li ng-class="{ active: isActive('/events')}" class="text-uppercase" ng-if="(userInfo.active=='Y') && epicore_version == '2'">
+                    <a href="#/events2" ng-class="getClass('/events')" ng-click="getEvents2('MR');">Dashboard</a>
+                </li>
+                <li ng-class="{ active: isActive('/events_public')}" class="text-uppercase" ng-if="userInfo.active=='Y' && userInfo.fetp_id">
+                    <a href="#/events2" ng-click="getEvents2('PR');">Public RFIs</a>
+                </li>
+                <li ng-class="{ active: isActive('/request')}" class="text-uppercase" ng-show="userInfo.isOrganization && epicore_version != '2'">
+                    <a href="#/request" ng-class="getClass('/request')">Send RFI</a>
+                </li>
+                <li ng-class="{ active: isActive('/rfi_step1')}" class="text-uppercase" ng-show="userInfo.isOrganization && epicore_version == '2'">
+                    <a href="#/rfi_step1" ng-class="getClass('/request')">Send RFI</a>
+                </li>
+                <li ng-class="{ active: isActive('/fetp')}" class="text-uppercase" ng-if="userInfo.active=='Y'">
+                    <a ng-show="userInfo.fetp_id" ng-href="#/application/{{userInfo.fetp_id}}/edit/fetp">Edit Profile</a>
+                </li>
+                <li ng-class="{ active: isActive('/trainingvideos')}" class="text-uppercase" ng-if="userInfo.active=='Y'">
+                    <a ng-href="#/trainingvideos">Training</a>
+                </li>
+                <li ng-class="{ active: isActive('/resources')}" class="text-uppercase" ng-if="userInfo.active=='Y' && userInfo.fetp_id">
+                    <a ng-href="#/resources">Resources</a>
+                </li>
+                <li ng-if="userInfo.isOrganization" ng-class="{ active: isActive('/map')}" class="text-uppercase">
+                    <a href="#/map">Members Map</a>
+                </li>
+                <li ng-if="userInfo.superuser" class="dropdown text-uppercase">
+                <a href="" class="dropdown-toggle" data-toggle="dropdown">Admin <i class="fa fa-chevron-down"></i></a>
+                <div class="dropdown-menu pt24 pb16" role="menu">
+                <div class="columns-3">
+                    <ul>
+                        <li class="h4 small mb8">Metrics</li>
+                        <li class="mb8"><a class="dropdown-item" href="#/metrics">Responder Metrics</a></li>
+                    <li class="mb8"><a class="dropdown-item" href="#/rfi_dashboard">RFI Metrics</a></li>
+                    <li class="mb8"><a class="dropdown-item" href="#/requesters_dashboard">Requester Metrics</a></li>
+                </ul>
+                    <ul>
+                        <li class="h4 small mb8">Downloads</li>
+                    <li class="mb8"><a class="dropdown-item" href="data/approval.csv">Member Report</a></li>
+                    <li class="mb8"><a class="dropdown-item" href="data/rfistats.csv">RFI Report</a></li>
+                </ul>
+                    <ul>
+                        <li class="h4 small mb8">Account Management</li>
+                    <li class="mb8"><a class="dropdown-item" href="#/approval">Member Portal</a></li>
+                    <li class="mb8"><a class="dropdown-item" href="#/modaccess">Requester Portal</a></li>
+                </ul>
+        </div>      
+          
+        </div>    
+                </li>
+                <li class="text-uppercase">
+                    <a ng-href="#/home" ng-click="userLogout()">Log out <i class="text-lowercase">({{userInfo.uname}})</i></a>
+                </li>
+            </ul>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
