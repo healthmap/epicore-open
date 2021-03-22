@@ -2,66 +2,36 @@
 
 ## Development Environment
 
-The development evenironment is set up in the user's sandbox on the server in /home/username/public_html.
+> Repo Url:https://github.com/healthmap/epicore
+> Requires PHP5.5.x
+> MySQL
 
-The user must be added to the sandboxes in NGINX:
-/etc/nginx/sites-available/default
+> Get files from developer:
+~/epicore/scripts/pbkdf2.php
+~/epicore/scripts/conf/da.ini.php
 
-Be sure to restart nginx.
+## Note:
+if pbkdf2.php is unavailable download from:
+https://defuse.ca/php-pbkdf2.htm
+defuse.cadefuse.ca
+PBKDF2 Password Hashing for PHP
+Standards compliant PBKDF2 implementation for PHP.
 
-### Clone Epicore repository in user's sandbox
+## Local Development without email client running
+In order to run a local set up, we will need to **comment** a few lines of code in the following files:
+File: AWSMail.class.php
+Line#: 4 require_once '/usr/share/php/vendor/autoload.php';
 
-```sh
-cd /home/username/public_html
-git clone https://github.com/healthmap/epicore.git
+File: EvenInfo.class.php
+Line#: 813 file_put_contents("../$file_preview", $emailtext);
 
-```
+> Open terminal
+cd ~epicore
+npm install
+npm start
 
-
-**Important**: You can view your changes at https://epicore.org/~username/epicore/ after completing the following steps.
-
-
-### Copy data files and set permissions
-
-```sh
-sudo cp -R /var/www/html/dev.epicore.org/data/ /home/username/public_html/epicore/.
-
-cd epicore_root/data
-
-sudo chown www-data:sudo *.csv
-```
-
-### Create temp directory in emailtemplates
-
-```sh
-cd epicore_root
-
-cd emailtemplates
-
-sudo mkdir temp
-
-cd temp
-
-sudo mkdir response
-
-sudo mkdir rfi
-
-sudo chown www-data:sudo *
-```
-
-### Create and copy config files to scripts/conf dir
-
-```sh
-cd epicore_root/scripts
-
-mkdir conf
-
-cp da.ini.php epicore_root/scripts/conf/.
-cp push-epicore.pem epicore_root/scripts/conf/.
-
-```
-*Contact Epicore admin for a copy of the config files.
-These files are in the staging and production directories on the server.
+## Local Development with email client running
+Follow set up below on how email client is setup on the server and follow the same on local
 
 
 ### Install library for Mobile Push Notifications (optional)
@@ -161,3 +131,86 @@ Step2: Using the above users email address, add this user as a Requester into Ep
 Login to epicore as a superuser
 Requester Portal
 Add Requester
+
+## Upgrading AWS SES Client (Mail client)
+Epicore as of 2021-03-17 and before was using AWS SesClient version V1 for PHP
+Steps for Upgrade:
+Login to DEV EC2:
+> cd /usr/share/php$ composer --version
+> composer require aws/aws-sdk-ph
+> cd /usr/share/php/vendor (should have aws folder and other things installed here)
+> add aws config to root folder
+    create dir .aws/
+    create file .aws/config
+    create file .aws/credentials
+* Add appropriate sercrete keys in the above files
+
+Now open file AWSMail.class.php and edit line #4 for the path to the vendor folder (this is where the autoload.php is)
+
+To test locally use: testMail.php
+
+<!-- 
+OLD EPICORE VERSION-1-2 Reference docs
+
+The development evenironment is set up in the user's sandbox on the server in /home/username/public_html.
+
+The user must be added to the sandboxes in NGINX:
+/etc/nginx/sites-available/default
+
+Be sure to restart nginx.
+
+### Clone Epicore repository in user's sandbox
+
+```sh
+cd /home/username/public_html
+git clone https://github.com/healthmap/epicore.git
+
+```
+
+
+**Important**: You can view your changes at https://epicore.org/~username/epicore/ after completing the following steps.
+
+
+### Copy data files and set permissions
+
+```sh
+sudo cp -R /var/www/html/dev.epicore.org/data/ /home/username/public_html/epicore/.
+
+cd epicore_root/data
+
+sudo chown www-data:sudo *.csv
+```
+
+### Create temp directory in emailtemplates
+
+```sh
+cd epicore_root
+
+cd emailtemplates
+
+sudo mkdir temp
+
+cd temp
+
+sudo mkdir response
+
+sudo mkdir rfi
+
+sudo chown www-data:sudo *
+```
+
+### Create and copy config files to scripts/conf dir
+
+```sh
+cd epicore_root/scripts
+
+mkdir conf
+
+cp da.ini.php epicore_root/scripts/conf/.
+cp push-epicore.pem epicore_root/scripts/conf/.
+
+```
+*Contact Epicore admin for a copy of the config files.
+These files are in the staging and production directories on the server. -->
+
+
