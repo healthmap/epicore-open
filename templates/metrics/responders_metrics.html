@@ -1,0 +1,144 @@
+<div ng-include src="'templates/header/header.html?c'"></div>
+<div class="jumbotron dashboard">
+  <div class="container">
+    <h1>Responder Metrics for {{ month }}, {{ year }}</h1>
+  </div>
+</div>
+
+<div class="wrapper dashboard metrics-tables gray">
+  <div class="container">
+    <div class="row">
+      <div class="column col-xs-12">
+        <h2 class="mb0">RFI Metrics</h2>
+      </div>
+    </div>
+    <div class="row flex">
+      <div class="flex col card">
+        <h4 class="mb12">Opened RFIs</h4>
+        <div ng-include="'data/opened_rfis.html'"></div>
+      </div>
+      <div class="flex col card">
+        <h4 class="mb12">Closed RFIs</h4>
+        <div ng-include="'data/closed_rfis.html'"></div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-xs-12">
+        <h2 class="mt48 mb0">Responder Metrics</h2>
+      </div>
+    </div>
+    <div class="row flex">
+      <div class="flex col card">
+        <h4 class="mb12">RFI Response Metrics</h4>
+        <div ng-include="'data/rfi_response_metrics.html'"></div>
+        <p class="small mt6">
+          Response time is the average time excluding higher and lower values.
+        </p>
+      </div>
+      <div class="flex col card">
+        <h4 class="mb12">Unverified RFIs Last Month</h4>
+        <div ng-include="'data/rfi_country_unverified.html'"></div>
+      </div>
+    </div>
+    <div class="row flex">
+      <div class="flex col card">
+        <h4 class="mb12">2019 Lowest Verification Rates</h4>
+        <div ng-include="'data/rfi_ver_country.html'"></div>
+        <p class="small mt6">
+          Cutoff of at least five RFIs in that country in the last month used for lowest verification rate
+        </p>
+      </div>
+      <div class="flex col card">
+        <h4 class="mb12">2020 Lowest Verification Rates</h4>
+        <div ng-include="'data/rfi_ver_country_ytd.html'"></div>
+      </div>
+    </div>
+
+    <div class="row flex">
+      <!--
+                <div class="col-xs-12 col-sm-3">
+                    <h4>Members by Region</h4>
+                    <div ng-include="'data/region_table.html'" ></div>
+                </div>
+-->
+      <div class="flex col card">
+        <h4 class="mb12">Professional Background</h4>
+        <div ng-include="'data/experience_table.html'"></div>
+      </div>
+      <div class="flex col card">
+        <h4>Health Expertise</h4>
+        <img src="img/metrics/health_expertise.svg" width="100%" alt="Health Expertise" />
+      </div>
+    </div>
+
+    <div class="flex row">
+      <div class="flex col card">
+        <h4 class="mb12">New Responders by Country</h4>
+        <div ng-include="'data/new_applicants_table.html'"></div>
+      </div>
+      <div class="flex col card">
+        <h4 class="mb12">Members by Region</h4>
+        <div ng-include="'data/no_members_region_table.html'"></div>
+        <div ng-include="'data/members_regions.html'"></div>
+        <p class="small mt6">
+          Numbers may vary based on definitions of countries. See
+          <a href="https://unstats.un.org/unsd/tradekb/knowledgebase/country-code" third="true">UN 3-letter codes</a>.
+        </p>
+      </div>
+    </div>
+
+    <div class="row flex">
+      <div class="flex col card">
+        <h4 class="mb12">Responder Summary</h4>
+        <div ng-include="'data/membership.html'"></div>
+      </div>
+      <div class="flex col card">
+        <h4 class="mb12">Recent Applicants</h4>
+        <img src="img/metrics/applicants_month.svg" width="100%" alt="Recent Applicants" />
+      </div>
+    </div>
+    <div class="row flex">
+      <div class="flex col card">
+        <h4 class="mb12">How Applicants Heard About EpiCore</h4>
+        <div ng-include="'data/heard_about_table.html'"></div>
+      </div>
+
+      <div class="flex col card">
+        <h4 class="mb12">Accepted with Incomplete Training</h4>
+        <div ng-include="'data/app_no_training_table.html'"></div>
+      </div>
+    </div>
+
+    <div class="flex row">
+      <div class="flex col card">
+        <h4>Applicants by Year/Month</h4>
+        <img src="img/metrics/applicants_year.svg" alt="Applicants by year" />
+      </div>
+    </div>
+
+    <div class="flex row">
+      <div class="flex col card">
+        <h4 class="mb12">Members per Country</h4>
+        <p class="small">
+          Members per 1,000,000 population, latest UN figures. Members density under 0.5/1,000,000 population is considered not ideal
+        </p>
+        <div ng-include="'data/country_table.html'"></div>
+      </div>
+      <div class="flex col card">
+        <h4 class="mb12">Countries with No Members</h4>
+        <div ng-include="'data/no_applicants_countries_table.html'"></div>
+      </div>
+    </div>
+  </div>
+  <!--container-->
+</div>
+<!--wrapper-->
+
+<style>
+  th,
+  td {
+    padding: 5px;
+    text-align: left;
+  }
+</style>
