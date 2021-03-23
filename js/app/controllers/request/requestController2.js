@@ -74,6 +74,14 @@ controllers.controller(
 
     $scope.location_error_message = "";
     $scope.saveLocation = function (direction) {
+<<<<<<< HEAD
+=======
+      //console.log('In saveLocation dir:', direction);
+      // console.log('In saveLocation eventID:', $scope.rfiData.event_id);
+      // console.log('In saveLocation location:', $scope.rfiData.location);
+      // console.log('In saveLocation location-location:', $scope.rfiData.location.location);
+      // console.log('In saveLocation autoText:', $("#autocompleteText").val());
+>>>>>>> 40e4e4f4695f3564a9198dbecdaa614b1bde162e
       // jquery hack to get the latlon hidden value and autocomplete for location (angular bug)
       //$scope.rfiData.location.latlon = $("#default_location").val();
       //$scope.rfiData.location.location = $("#searchTextField").val(); // format: "country" or "state, country" or "city, state, country"
@@ -118,6 +126,14 @@ controllers.controller(
         }
       }
 
+<<<<<<< HEAD
+=======
+      // console.log('--:' + $scope.rfiData.default_city);
+      // console.log('--:' + $scope.rfiData.default_state);
+      // console.log('--:' + $scope.rfiData.default_country);
+      // console.log('--:' + $scope.rfiData.location.location);
+
+>>>>>>> 40e4e4f4695f3564a9198dbecdaa614b1bde162e
       // validate and go to next or back path
       if ($scope.rfiData.location.latlon && $scope.rfiData.location.location) {
         // next or back
@@ -141,6 +157,10 @@ controllers.controller(
             $scope.rfiData.members.display_location =
               "(" + $("#autocompleteText").val() + ")";
             $scope.rfiData.members.latlon = $scope.rfiData.location.latlon;
+<<<<<<< HEAD
+=======
+            // console.log('In saveLocation-rfiData:', $scope.rfiData);
+>>>>>>> 40e4e4f4695f3564a9198dbecdaa614b1bde162e
             // get filtered members at chosen location with default radius
             fdata = {};
             fdata.location = $scope.rfiData.members.location;
@@ -151,6 +171,10 @@ controllers.controller(
               data: fdata,
             })
               .success(function (data, status, headers, config) {
+<<<<<<< HEAD
+=======
+                // console.log('In saveLocation-filterData:', data);
+>>>>>>> 40e4e4f4695f3564a9198dbecdaa614b1bde162e
                 $scope.rfiData.members.userIds = data["userIds"];
                 $scope.rfiData.members.numFetps = data["userList"]["sending"];
                 $scope.rfiData.members.numUniqueFetps =
@@ -160,6 +184,10 @@ controllers.controller(
                 getMembers();
               })
               .error(function (data, status, headers, config) {
+<<<<<<< HEAD
+=======
+                console.log(status);
+>>>>>>> 40e4e4f4695f3564a9198dbecdaa614b1bde162e
               });
           } else {
             //$location.path('/members');
@@ -195,6 +223,10 @@ controllers.controller(
     /* select members  */
     // if ($location.path() == "/members") {
     function getMembers() {
+<<<<<<< HEAD
+=======
+      //console.log('getMemebers:');
+>>>>>>> 40e4e4f4695f3564a9198dbecdaa614b1bde162e
       // initialize default radio buttons - radius select checked by default
       //$scope.radiussel = $scope.rfiData.members.searchType != "country";
 
@@ -270,6 +302,10 @@ controllers.controller(
 
     /* get members based on selection type */
     $scope.recalcUsers = function (whichclicked) {
+<<<<<<< HEAD
+=======
+      // console.log("Clicked !!!!", $scope.rfiData, " Which Click -> ", whichclicked)
+>>>>>>> 40e4e4f4695f3564a9198dbecdaa614b1bde162e
       $scope.saveLocation("next");
 
       $scope.rfiData.members.searchType = whichclicked;
@@ -282,6 +318,10 @@ controllers.controller(
         method: "POST",
         data: $scope.rfiData.members, //filterData
       }).success(function (filtereddata, status, headers, config) {
+<<<<<<< HEAD
+=======
+        // console.log("Filtered Data ====> ", filtereddata);
+>>>>>>> 40e4e4f4695f3564a9198dbecdaa614b1bde162e
         $scope.rfiData.members.userIds = filtereddata["userIds"];
         $scope.rfiData.members.numFetps = filtereddata["userList"]["sending"];
         $scope.rfiData.members.numUniqueFetps =
@@ -310,6 +350,11 @@ controllers.controller(
 
     /* go next or back */
     $scope.saveStep1 = function (direction) {
+<<<<<<< HEAD
+=======
+      // console.log('STEP1 - clicked next:', $scope.rfiData);
+
+>>>>>>> 40e4e4f4695f3564a9198dbecdaa614b1bde162e
       $scope.submitDisabled = false;
       $scope.isStep1Invalid = false;
 
@@ -338,8 +383,17 @@ controllers.controller(
         $scope.rfiData.location.location !== $("#autocompleteText").val()
       ) {
         //editing location
+<<<<<<< HEAD
         $scope.rfiData.location.latlon = getPlaceLatLon($scope.rfiData.place);
         $scope.rfiData.location.location = $("#autocompleteText").val();
+=======
+        // console.log('old location:', $scope.rfiData.location.location); //old
+        // console.log('new place:', $scope.rfiData.place['formatted_address']); //new
+        $scope.rfiData.location.latlon = getPlaceLatLon($scope.rfiData.place);
+        $scope.rfiData.location.location = $("#autocompleteText").val();
+        // console.log('--place latlon:' + $scope.rfiData.location.latlon);
+        // console.log('--place loc:' + $scope.rfiData.location.location);
+>>>>>>> 40e4e4f4695f3564a9198dbecdaa614b1bde162e
 
         if (!$scope.rfiData.location.latlon) {
           $scope.rfiData.location.location_error_message =
@@ -402,6 +456,10 @@ controllers.controller(
     $scope.populationAnimalError = "";
     $scope.populationAnimalOtherError = "";
     $scope.saveStep2 = function (direction) {
+<<<<<<< HEAD
+=======
+      // console.log('STEP2 - clicked next:', $scope.rfiData);
+>>>>>>> 40e4e4f4695f3564a9198dbecdaa614b1bde162e
       $scope.isStep2Invalid = false;
       $scope.populationOtherError = "";
       $scope.affectedPopSelectionError = "";
@@ -451,6 +509,10 @@ controllers.controller(
             $scope.rfiData.population.type == "U"
           ) {
             resetHealthConditionForPopType();
+<<<<<<< HEAD
+=======
+            // console.log('EU-->:', $scope.rfiData.health_condition);
+>>>>>>> 40e4e4f4695f3564a9198dbecdaa614b1bde162e
           }
         }
         if (!$scope.rfiData.health_condition) {
@@ -691,6 +753,10 @@ controllers.controller(
           method: "POST",
           data: rfi_data,
         }).success(function (respdata, status, headers, config) {
+<<<<<<< HEAD
+=======
+          //console.log(respdata);
+>>>>>>> 40e4e4f4695f3564a9198dbecdaa614b1bde162e
 
           var dup_events = respdata["events"];
 
@@ -758,6 +824,10 @@ controllers.controller(
               rfiForm.clear();
               $location.path("/events2");
             } else {
+<<<<<<< HEAD
+=======
+              console.log(respdata["message"]);
+>>>>>>> 40e4e4f4695f3564a9198dbecdaa614b1bde162e
             }
           });
         }
@@ -767,6 +837,10 @@ controllers.controller(
         // go to condition
         $location.path("/condition");
       } else {
+<<<<<<< HEAD
+=======
+        console.log("error");
+>>>>>>> 40e4e4f4695f3564a9198dbecdaa614b1bde162e
       }
     };
 
@@ -828,6 +902,10 @@ controllers.controller(
 
     // $scope.saveSource = function (direction) {
     $scope.saveStep3 = function (direction) {
+<<<<<<< HEAD
+=======
+      // console.log('STEP3 - clicked review and send:', $scope.rfiData);
+>>>>>>> 40e4e4f4695f3564a9198dbecdaa614b1bde162e
       $scope.purpose_error_message = "";
       $scope.purpose_error_message1 = "";
 
@@ -890,6 +968,11 @@ controllers.controller(
         $scope.rfiData.event_purpose = $scope.getPurpose_2();
         $scope.rfiData.event_source = $scope.getSource_2();
 
+<<<<<<< HEAD
+=======
+        //console.log('event title:', $scope.rfiData.event_title);
+
+>>>>>>> 40e4e4f4695f3564a9198dbecdaa614b1bde162e
         $location.path("/sendrequest");
 
         // build and review request email - not used for now
@@ -1295,11 +1378,20 @@ controllers.controller(
         }
 
         //formData['duplicate_rfi_id'] = ($scope.rfiData.duplicate_rfi && $scope.rfiData.duplicate_rfi.rfi_id) ? $scope.rfiData.duplicate_rfi.rfi_id : 0;
+<<<<<<< HEAD
+=======
+        console.log("Form data before posting to SendReq2 ---> ", formData);
+>>>>>>> 40e4e4f4695f3564a9198dbecdaa614b1bde162e
         $http({
           url: urlBase + "scripts/sendrequest2.php",
           method: "POST",
           data: formData,
         }).success(function (respdata, status, headers, config) {
+<<<<<<< HEAD
+=======
+          console.log("Resp Data after Send Req ===> ", respdata);
+          console.log("Status ===> ", status);
+>>>>>>> 40e4e4f4695f3564a9198dbecdaa614b1bde162e
           // go to success page
           $location.path("/sent");
           $scope.submitDisabled = false;
@@ -1333,12 +1425,20 @@ controllers.controller(
           function (response) {
             if (response.data) {
               var respdata = response.data;
+<<<<<<< HEAD
+=======
+              // console.log('respData**:', respdata)
+>>>>>>> 40e4e4f4695f3564a9198dbecdaa614b1bde162e
               if (respdata["status"] == "success") {
                 // empty out the form values so they aren't pre-filled next time
                 $window.sessionStorage.clear();
                 rfiForm.clear();
                 $location.path("/success/6");
               } else {
+<<<<<<< HEAD
+=======
+                console.log(respdata["reason"]);
+>>>>>>> 40e4e4f4695f3564a9198dbecdaa614b1bde162e
               }
             }
             $scope.submitDisabled = false;

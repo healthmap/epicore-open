@@ -499,7 +499,6 @@ controllers.controller(
     };
 
     $scope.approveApplicantHeader = function (maillist_id, action) {
-
     };
     /*
        --------------- Added by Sam ---------------------

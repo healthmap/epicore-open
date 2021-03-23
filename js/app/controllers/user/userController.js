@@ -93,7 +93,6 @@ controllers.controller(
 
         var formatAddr =
           data["city"] + ", " + data["state"] + " " + data["country"];
-
         if (formatAddr) {
           formatAddr = formatAddr.replace(/null/g, "");
           formatAddr = formatAddr.replace(/undefined/g, "");
