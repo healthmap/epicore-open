@@ -212,7 +212,6 @@ controllers.controller(
 
     // get events for public dashboard for Responders view
     $scope.getEvents2 = function (dbtype) {
-      console.log("Scope inside GetEvents2 ----> ", $scope);
       $scope.isRouteLoading = false;
       $rootScope.dashboardType = dbtype;
       if (dbtype == "PR" && !$scope.eventsListPublic) {
@@ -222,7 +221,6 @@ controllers.controller(
         eventAPIservice2
           .getEvents($scope.id, start_date, end_date)
           .success(function (response) {
-            //console.log("Success Function output getEvents2 -> ", response)
             $scope.isRouteLoading = false;
             $scope.eventsListPublic = response.EventsList;
             if ($scope.eventsListPublic.purpose) {
@@ -252,7 +250,6 @@ controllers.controller(
         .getEvents($scope.id, start_date, end_date)
         .success(function (response) {
           $scope.isRouteLoading = false;
-          // console.log("Response output getAllEvents -> ", response)
           if (typeof $scope.userinfo != "undefined") {
             $scope.isOrganization = $scope.userInfo.fetp_id > 0 ? false : true;
             // if RFI requester is the logged in user or of same org, they get different action items
@@ -293,8 +290,6 @@ controllers.controller(
                 $scope.eventsList.all = response.EventsList.all;
                 $scope.eventsList.other = response.EventsList.other;
               } else {
-                // console.log('num_events', num_events);
-                // console.log('response.EventsList' + console.log(response.EventsList));
                 if (response.EventsList.all)
                   $scope.eventsList.all = response.EventsList.all.slice(
                     0,
@@ -335,7 +330,6 @@ controllers.controller(
                   public_events.push(event);
                 }
               });
-              // console.log('public_events' + JSON.stringify(public_events));
               $scope.eventsList.all = public_events.splice(0, num_events);
             }
 
@@ -394,11 +388,9 @@ controllers.controller(
 
           // count unrated responses in closed events
           if ($scope.onOpen) {
-            // console.log("Response output ====> ", response)
             $scope.listofEventIdsToDisplay = response.numNotRatedResponses
               ? response.numNotRatedResponses[1][0]
               : [];
-            // console.log("scope --====> ", $scope)
             $scope.num_notrated_responses = response.numNotRatedResponses
               ? response.numNotRatedResponses[0]
               : 0;
@@ -547,7 +539,6 @@ controllers.controller(
             $scope.displaySavingText = false;
           })
           .error(function (data, status, headers, config) {
-            // console.log(status);
             $scope.displaySavingText = false;
           });
       }, save_metrics_debounce);
@@ -661,7 +652,6 @@ controllers.controller(
             }
             $location.path("/success/" + pathid);
           } else {
-            console.log(data["reason"]);
             alert(data["reason"]);
           }
         });
@@ -696,7 +686,6 @@ controllers.controller(
             $location.path("/success/2/" + eid);
           } else {
             alert("response failed!");
-            console.log("invalid event id.");
           }
           $scope.submitDisabled = false;
         });
@@ -720,11 +709,9 @@ controllers.controller(
               $location.path("/success/7");
             } else {
               alert(data["reason"]);
-              console.log(data["reason"]);
             }
           })
           .error(function (data, status, headers, config) {
-            console.log(status);
           });
       }
     };

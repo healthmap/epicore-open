@@ -31,7 +31,6 @@ services.factory(
       if (typeof urlarr[2] != "undefined") {
         qs += "&detail=" + urlarr[2]; // closed
       }
-      // console.log("qs is:", qs);
       //scripts/EventsAPI2.php?auth=true&callback=JSON_CALLBACK&uid=135&start_date=2017-10-30&end_date=2020-10-02&from=events2
       return $http({
         method: "JSONP",

@@ -54,7 +54,6 @@ controllers.controller(
         data: data,
       }).success(function (data, status, headers, config) {
         $scope.uservals = data; // this pre-populates the values on the form
-        // console.log('data get:', data);
         if ($scope.uservals.university2) {
           $scope.more_schools1 = true;
           $scope.uservals.school_country2 = data["school_country2"];
@@ -73,10 +72,6 @@ controllers.controller(
           address_components: [],
           formatted_address: "",
         };
-
-        // console.log('$city:',data['city']);
-        // console.log('$state:',data['state']);
-        // console.log('$country:', data['country']);
 
         if (data["city"]) {
           addrCompTuple["long_name"] = data["city"];
@@ -98,7 +93,6 @@ controllers.controller(
 
         var formatAddr =
           data["city"] + ", " + data["state"] + " " + data["country"];
-        // console.log(formatAddr);
         if (formatAddr) {
           formatAddr = formatAddr.replace(/null/g, "");
           formatAddr = formatAddr.replace(/undefined/g, "");
@@ -107,7 +101,6 @@ controllers.controller(
             ""
           );
         }
-        // console.log('$scope.userLocationPlace:', $scope.userLocationPlace);
       });
     }
 
@@ -125,7 +118,6 @@ controllers.controller(
 
     $scope.userLocationChange = function (userLocation) {
       const administrative_areas = [];
-      // console.log('userLocation', userLocation);
       userLocation.address_components.forEach(function (item) {
         if (item.types.indexOf("country") !== -1) {
           $scope.uservals.country = item.short_name;
@@ -312,7 +304,6 @@ controllers.controller(
     $scope.userLogin = function (formData) {
       $scope.isRouteLoading = true;
 
-      // console.log("Output scope -> ", $scope, 'And Form data -> ', formData)
       // no formdata passed, get ticket id and (optional) event_id from URL
       if (typeof formData == "undefined") {
         formData = {};
@@ -352,17 +343,12 @@ controllers.controller(
         $scope.isRouteLoading = false;
         return;
       }
-      // console.log('login formData:', formData)
       $http({
         url: urlBase + "scripts/login.php",
         method: "POST",
         data: formData,
       })
         .success(function (data, status, headers, config) {
-          // console.log("Data output after Login success ---> ", data)
-          //console.log("Status after Login ====> ", status)
-          //console.log("Status after Login from query -----> ", data['status'])
-
           if (data["status"] == "success") {
             // determines if user is an organization or FETP
             $rootScope.isOrganization =
@@ -393,8 +379,6 @@ controllers.controller(
               locations: memberLocations,
             };
 
-            //console.log('data-success');
-
             // save username and password
             $localStorage.username = formData["username"];
             //$localStorage.password = formData['password'];
@@ -410,20 +394,17 @@ controllers.controller(
             // FETPs that aren't activated yet don't get review page
             if (data["uinfo"]["fetp_id"] && data["uinfo"]["active"] == "N") {
               var redirpath = "/training";
-              //console.log('redirpath-1:', redirpath);
             } else {
               var redirpath =
                 typeof querystr["redir"] != "undefined"
                   ? querystr["redir"]
                   : "/" + data["path"];
-              //console.log('redirpath-2:', redirpath);
             }
 
             $scope.isRouteLoading = false;
             $scope.autologin = false;
             $location.path(redirpath);
           } else {
-            console.log("Data output after Login error ---> ", data);
             $scope.isRouteLoading = false;
             $rootScope.error_message = true;
             $scope.autologin = false;
@@ -495,7 +476,6 @@ controllers.controller(
           })
           .error(function (data, status, headers, config) {
             $scope.isRouteLoading = false;
-            console.log(status);
           });
       }
     };
@@ -527,7 +507,6 @@ controllers.controller(
           .error(function (data, status, headers, config) {
             $rootScope.error_message_pw = "Invalid email address";
             $scope.isRouteLoading = false;
-            console.log(status);
           });
       }
     };

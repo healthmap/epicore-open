@@ -63,8 +63,6 @@ services.run([
             ? "home"
             : redirloc; // go to home page if not active fetp
       }
-      // console.log('redirloc-2:' + redirloc);
-
       if (
         authService.isAuthenticated() &&
         ($location.path() == "/home" || urlarr[1] == "fetp")

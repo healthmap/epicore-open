@@ -27,6 +27,9 @@ controllers.controller(
         "November",
         "December"
       );
+      if (!data.approve_date) {
+        return;
+      }
       var d = data.approve_date.split(" ");
       d = d[0].split("-");
       var dayof = "th Day of ";

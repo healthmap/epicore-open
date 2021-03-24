@@ -84,8 +84,6 @@
                             <td ng-if="!onOpen">{{event.action_date}}</td>
                             <td><span ng-if="event.first_response_date" > Yes </span><span ng-if="!event.first_response_date" > No </span></td>
                             <td><span ng-if="event.first_response_date" >{{event.reaction_time}} min</span></td>
-                            <!-- <td><button class="btn btn-default btn-sm stacked" type="button" ng-click="updateRFIMetrics(event)">Update</button></td> -->
-
                             <td>
                                 <span class="expand-row" ng-click="isCollapsed1 = !isCollapsed1"><i class="fa fa-arrow-circle-o-down" ng-show="!isCollapsed1"></i><i class="fa fa-arrow-circle-o-up" ng-show="isCollapsed1"></i></span>
 
@@ -98,7 +96,7 @@
                                 <div class="form-group small">
                                     <form name="myForm">
                                         <label>Score 
-                                            <input type="number" min="0" max="2" ng-change="updateRFIMetrics('metric_score', event)" class="form-control" ng-model="event.metric_score" name="metric_score">
+                                            <input type="number" min="0" max="2" ng-click="updateRFIMetrics('metric_score', event)" class="form-control" ng-model="event.metric_score" name="metric_score">
                                         </label>
                                         <span ng-show="!myForm.metric_score.$valid" style="color:red">Score cannot be greater than 2.</span>
                                     </form>

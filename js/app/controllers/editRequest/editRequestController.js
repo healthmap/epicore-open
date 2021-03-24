@@ -51,11 +51,9 @@ controllers.controller(
             if (data["status"] == "success") {
               $location.path("/success/6");
             } else {
-              console.log(data["reason"]);
             }
           })
           .error(function (data, status, headers, config) {
-            console.log(status);
           });
       }
     };

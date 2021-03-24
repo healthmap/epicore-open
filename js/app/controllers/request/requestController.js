@@ -107,7 +107,6 @@ controllers.controller(
               $location.path("/request2");
             })
             .error(function (data, status, headers, config) {
-              console.log(status);
             });
         } else {
           $location.path("/request2");

@@ -53,7 +53,7 @@
 
             
             <!-- view for organizations -->
-            <div ng-show="isOrganization" ng-init="predicate = rfiOrderByValue;" class="table-responsive">
+            <div ng-if="isOrganization" ng-init="predicate = rfiOrderByValue;" class="table-responsive">
                 <table class='small table table-hover table-bordered'>
                     <tbody>
                         <tr>
@@ -180,7 +180,7 @@
             </div>
 
             <!-- view for FETPs -->
-            <div ng-show="!isOrganization && (dashboardType == 'MR')" ng-init="predicate = rfiOrderByValue; reverse=reverse" class="table-responsive">
+            <div ng-if="!isOrganization && (dashboardType == 'MR')" ng-init="predicate = rfiOrderByValue; reverse=reverse" class="table-responsive">
                 <table class='small table table-hover table-bordered'>
                     <tbody>
                         <tr>
@@ -225,7 +225,7 @@
             </div>
 
             <!-- public dashboard -->
-            <div ng-show="!isOrganization && (dashboardType == 'PR')" ng-init="predicate = rfiOrderByValue; reverse=!reverse" class="table-responsive">
+            <div ng-if="!isOrganization && (dashboardType == 'PR')" ng-init="predicate = rfiOrderByValue; reverse=!reverse" class="table-responsive">
                 <table class='small table table-hover table-bordered'>
                     <tbody>
                     <tr>

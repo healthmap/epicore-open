@@ -81,7 +81,6 @@ controllers.controller(
 
       // count unrated responses in closed events
       $scope.num_notrated_responses = 0;
-      console.log("response ----> ", response);
       if ($scope.onOpen) {
         $scope.num_notrated_responses = response.numNotRatedResponses;
       } else if ($scope.eventsList) {
@@ -214,7 +213,6 @@ controllers.controller(
             }
             $location.path("/success/" + pathid);
           } else {
-            console.log(data["reason"]);
             alert(data["reason"]);
           }
         });
@@ -240,7 +238,6 @@ controllers.controller(
             $location.path("/success/2/" + eid);
           } else {
             alert("response failed!");
-            console.log("invalid event id.");
           }
           $scope.submitDisabled = false;
         });
@@ -260,11 +257,9 @@ controllers.controller(
               $location.path("/success/7");
             } else {
               alert(data["reason"]);
-              console.log(data["reason"]);
             }
           })
           .error(function (data, status, headers, config) {
-            console.log(status);
           });
       }
     };

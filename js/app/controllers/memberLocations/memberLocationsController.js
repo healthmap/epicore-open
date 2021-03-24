@@ -30,9 +30,7 @@ controllers.controller(
     };
 
     $scope.memLocationChange = function (memLocation) {
-      // console.log('memLocation:', memLocation);
       const administrative_areas = [];
-      // console.log('memLocation', memLocation);
       memLocation.address_components.forEach(function (item) {
         if (item.types.indexOf("country") !== -1) {
           $scope.member.countrycode = item.short_name;
@@ -58,9 +56,6 @@ controllers.controller(
     };
 
     $scope.addLocation = function (memLocation) {
-      // console.log('addLocation:', memLocation);
-      // console.log('addLocation $scope.fetp_id:', $scope.fetp_id);
-
       if (typeof $scope.member.countrycode == "undefined") {
         $scope.error_message = "Please select a country.";
         return false;

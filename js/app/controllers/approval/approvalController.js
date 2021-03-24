@@ -12,11 +12,9 @@ controllers.controller(
     epicoreStartDate,
     epicoreV1StartDate
   ) {
-    // console.log('In approvalController...');
     var currentLocation = $location.path();
 
     $scope.init = function () {
-      // console.log('Initializing....');
       $scope.sharedCacheMemInfo = epicoreCacheService.getMemberPortalInfoPastQuarter();
       // only allow superusers for admin
       $scope.userInfo = $cookieStore.get("epiUserInfo");
@@ -71,7 +69,6 @@ controllers.controller(
       Object.keys($scope.sharedCacheMemInfo).length == 0 ||
       !$scope.sharedCacheMemInfo
     ) {
-      // console.log("Fetching fresh from db");
       var data = {};
       data.startDate = $scope.selected_start_date;
       data.endDate = $scope.selected_end_date;
@@ -88,7 +85,6 @@ controllers.controller(
     }
 
     $scope.loadMemberInfo = function (currentLocation) {
-      // console.log('IN loadMemberInfo()');
 
       //Scope vars reset
       $scope.showpage = false;
@@ -115,21 +111,17 @@ controllers.controller(
       var month = $scope.selected_month;
       var memInfoData = [];
       if (month.value == "past-year") {
-        //console.log('Fetching from pastYear-cache');
         memInfoData = angular.copy(
           epicoreCacheService.getMemberPortalInfoPastYear()
         );
       } else if (month.value == "all") {
-        //console.log('Fetching from all-cache');
         memInfoData = angular.copy(
           epicoreCacheService.getMemberPortalInfoAll()
         );
       } else {
-        //console.log('Fetching from pastquarter-cache');
         memInfoData = angular.copy(
           epicoreCacheService.getMemberPortalInfoPastQuarter()
         );
-        // console.log('Fetching from pastquarter-cache'+ JSON.stringify(memInfoData));
       }
 
       var currentdate = new Date();
@@ -297,13 +289,6 @@ controllers.controller(
       $scope.num_applicants = $scope.applicants.length;
       $scope.showpage = true;
 
-      // console.log('loc>>>>>>:', currentLocation);
-      // console.log('applicants length >>>>>>:', $scope.applicants.length);
-      // console.log('inactive_applicants length >>>>>>:', inactive_applicants.length);
-      // console.log('all_applicants length >>>>>>:', memInfoData.length);
-      // console.log('num_accepted length >>>>>>:', $scope.num_accepted);
-      // console.log('>>>>>>>:', JSON.stringify($scope.applicants));
-
       if ($scope.outputList.length > 0) {
         $scope.toggleRowExpandCollapse = true;
       } else {
@@ -327,19 +312,16 @@ controllers.controller(
       var month = $scope.selected_month;
       $scope.sharedCacheMemInfo = [];
       if (month && month.value == "past-year") {
-        // console.log('Fetching from past-year cache');
         //$scope.sharedCacheMemInfo = epicoreCacheService.getMemberPortalInfoPastYear();
         $scope.sharedCacheMemInfo = angular.copy(
           epicoreCacheService.getMemberPortalInfoPastYear()
         );
       } else if (month && month.value == "all") {
-        // console.log('Fetching from all - cache');
         // $scope.sharedCacheMemInfo = epicoreCacheService.getMemberPortalInfoAll();
         $scope.sharedCacheMemInfo = angular.copy(
           epicoreCacheService.getMemberPortalInfoAll()
         );
       } else {
-        // console.log('Fetching from pastquarter - cache');
         // $scope.sharedCacheMemInfo = epicoreCacheService.getMemberPortalInfoPastQuarter();
         $scope.sharedCacheMemInfo = angular.copy(
           epicoreCacheService.getMemberPortalInfoPastQuarter()
@@ -370,7 +352,6 @@ controllers.controller(
       }
     };
 
-    // console.log("Output -> ", $scope.outputList, " Number set Password ----> ", $scope.num_setpassword, " Number inactive --> ", $scope.num_inactive)
     $scope.setVisible = function (visible) {
       angular.forEach($scope.applicants, function (applicant) {
         applicant.visible = visible;
@@ -425,7 +406,6 @@ controllers.controller(
     // get member data for selected month
     $scope.getApprovalMonth = function () {
       $scope.isRouteLoading = true;
-      // console.log('getApprovalMonth:', $scope.selected_month);
       var month = $scope.selected_month;
       var memInfoData = [];
       var start_date = "";
@@ -519,7 +499,6 @@ controllers.controller(
     };
 
     $scope.approveApplicantHeader = function (maillist_id, action) {
-      console.log("-------- Function Incoming -----", $scope.selectedItems);
     };
     /*
        --------------- Added by Sam ---------------------
@@ -546,13 +525,11 @@ controllers.controller(
     };
 
     $scope.updateMemberStatus = function (incomingData) {
-      console.log("incoming data - > ", incomingData);
       $http({
         url: urlBase + "scripts/setMemberStatus.php",
         method: "POST",
         data: incomingData,
       }).success(function (respdata, status, headers, config) {
-        console.log("Resp data after Member status change - > ", respdata);
         if (respdata["status"] == "success") {
           for (var n in $scope.applicants) {
             if ($scope.applicants[n].maillist_id == incomingData.maillist_id) {
@@ -652,7 +629,6 @@ controllers.controller(
             }
           })
           .error(function (data, status, headers, config) {
-            console.log(status);
           });
       } else {
       }

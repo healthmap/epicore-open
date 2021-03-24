@@ -24,7 +24,6 @@ controllers.controller(
 
     $scope.addMod = function (mod_email, mod_org_id) {
       var mod_data = { mod_email: mod_email, mod_org_id: mod_org_id };
-      console.log(mod_data);
       $http({
         url: urlBase + "scripts/addmod.php",
         method: "POST",

@@ -44,7 +44,6 @@ controllers.controller(
               $scope.userInfo.status = "A";
               $cookieStore.put("epiUserInfo", $scope.userInfo);
             } else {
-              console.log(respdata["message"]);
             }
           });
         } else {
