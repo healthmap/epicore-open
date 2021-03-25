@@ -33,8 +33,8 @@ controllers.controller(
         url: urlBase + "scripts/getrequest2.php",
         method: "POST",
         data: eventData,
-      }).success(function (data, status, headers, config) {
-        // populate form
+      }).then(function successCallback(res) {
+        var data = res.data;
         $scope.rfiData.location = {};
         $scope.rfiData.health_condition = {};
         $scope.rfiData.population = {};
@@ -74,11 +74,6 @@ controllers.controller(
 
     $scope.location_error_message = "";
     $scope.saveLocation = function (direction) {
-      //console.log('In saveLocation dir:', direction);
-      // console.log('In saveLocation eventID:', $scope.rfiData.event_id);
-      // console.log('In saveLocation location:', $scope.rfiData.location);
-      // console.log('In saveLocation location-location:', $scope.rfiData.location.location);
-      // console.log('In saveLocation autoText:', $("#autocompleteText").val());
       // jquery hack to get the latlon hidden value and autocomplete for location (angular bug)
       //$scope.rfiData.location.latlon = $("#default_location").val();
       //$scope.rfiData.location.location = $("#searchTextField").val(); // format: "country" or "state, country" or "city, state, country"
@@ -123,11 +118,6 @@ controllers.controller(
         }
       }
 
-      // console.log('--:' + $scope.rfiData.default_city);
-      // console.log('--:' + $scope.rfiData.default_state);
-      // console.log('--:' + $scope.rfiData.default_country);
-      // console.log('--:' + $scope.rfiData.location.location);
-
       // validate and go to next or back path
       if ($scope.rfiData.location.latlon && $scope.rfiData.location.location) {
         // next or back
@@ -151,7 +141,6 @@ controllers.controller(
             $scope.rfiData.members.display_location =
               "(" + $("#autocompleteText").val() + ")";
             $scope.rfiData.members.latlon = $scope.rfiData.location.latlon;
-            // console.log('In saveLocation-rfiData:', $scope.rfiData);
             // get filtered members at chosen location with default radius
             fdata = {};
             fdata.location = $scope.rfiData.members.location;
@@ -161,8 +150,8 @@ controllers.controller(
               method: "POST",
               data: fdata,
             })
-              .success(function (data, status, headers, config) {
-                // console.log('In saveLocation-filterData:', data);
+              .then(function successCallback(res) {
+                var data = res.data;
                 $scope.rfiData.members.userIds = data["userIds"];
                 $scope.rfiData.members.numFetps = data["userList"]["sending"];
                 $scope.rfiData.members.numUniqueFetps =
@@ -170,9 +159,6 @@ controllers.controller(
                 $scope.rfiData.members.searchBox = data["bbox"];
                 $scope.rfiData.members.searchType = "radius";
                 getMembers();
-              })
-              .error(function (data, status, headers, config) {
-                console.log(status);
               });
           } else {
             //$location.path('/members');
@@ -208,7 +194,6 @@ controllers.controller(
     /* select members  */
     // if ($location.path() == "/members") {
     function getMembers() {
-      //console.log('getMemebers:');
       // initialize default radio buttons - radius select checked by default
       //$scope.radiussel = $scope.rfiData.members.searchType != "country";
 
@@ -245,8 +230,9 @@ controllers.controller(
         url: urlBase + "scripts/getmarkers.php",
         method: "POST",
         data: query,
-      }).success(function (data, status, headers, config) {
-        if (data["status"] == "success") {
+      }).then(function successCallback(res) {
+        var data = res.data;
+        if (data["status"] === "success") {
           $scope.markers = data["markers"];
         }
       });
@@ -269,7 +255,8 @@ controllers.controller(
             url: urlBase + "scripts/filter.php",
             method: "POST",
             data: filterData,
-          }).success(function (filtereddata, status, headers, config) {
+          }).then(function successCallback(res) {
+            var filtereddata = res.data;
             $scope.rfiData.members.searchBox = filtereddata["bbox"];
             $scope.rfiData.members.userIds = filtereddata["userIds"];
             $scope.rfiData.members.numFetps = $scope.numFetps =
@@ -284,7 +271,6 @@ controllers.controller(
 
     /* get members based on selection type */
     $scope.recalcUsers = function (whichclicked) {
-      // console.log("Clicked !!!!", $scope.rfiData, " Which Click -> ", whichclicked)
       $scope.saveLocation("next");
 
       $scope.rfiData.members.searchType = whichclicked;
@@ -296,8 +282,8 @@ controllers.controller(
         url: urlBase + "scripts/filter.php",
         method: "POST",
         data: $scope.rfiData.members, //filterData
-      }).success(function (filtereddata, status, headers, config) {
-        // console.log("Filtered Data ====> ", filtereddata);
+      }).then(function successCallback(res) {
+        var filtereddata = res.data
         $scope.rfiData.members.userIds = filtereddata["userIds"];
         $scope.rfiData.members.numFetps = filtereddata["userList"]["sending"];
         $scope.rfiData.members.numUniqueFetps =
@@ -326,8 +312,6 @@ controllers.controller(
 
     /* go next or back */
     $scope.saveStep1 = function (direction) {
-      // console.log('STEP1 - clicked next:', $scope.rfiData);
-
       $scope.submitDisabled = false;
       $scope.isStep1Invalid = false;
 
@@ -356,12 +340,8 @@ controllers.controller(
         $scope.rfiData.location.location !== $("#autocompleteText").val()
       ) {
         //editing location
-        // console.log('old location:', $scope.rfiData.location.location); //old
-        // console.log('new place:', $scope.rfiData.place['formatted_address']); //new
         $scope.rfiData.location.latlon = getPlaceLatLon($scope.rfiData.place);
         $scope.rfiData.location.location = $("#autocompleteText").val();
-        // console.log('--place latlon:' + $scope.rfiData.location.latlon);
-        // console.log('--place loc:' + $scope.rfiData.location.location);
 
         if (!$scope.rfiData.location.latlon) {
           $scope.rfiData.location.location_error_message =
@@ -424,7 +404,6 @@ controllers.controller(
     $scope.populationAnimalError = "";
     $scope.populationAnimalOtherError = "";
     $scope.saveStep2 = function (direction) {
-      // console.log('STEP2 - clicked next:', $scope.rfiData);
       $scope.isStep2Invalid = false;
       $scope.populationOtherError = "";
       $scope.affectedPopSelectionError = "";
@@ -474,7 +453,6 @@ controllers.controller(
             $scope.rfiData.population.type == "U"
           ) {
             resetHealthConditionForPopType();
-            // console.log('EU-->:', $scope.rfiData.health_condition);
           }
         }
         if (!$scope.rfiData.health_condition) {
@@ -714,12 +692,12 @@ controllers.controller(
           url: urlBase + "scripts/checkDuplicateRFI2.php",
           method: "POST",
           data: rfi_data,
-        }).success(function (respdata, status, headers, config) {
-          //console.log(respdata);
+        }).then(function successCallback(res) {
+          var respdata = res.data;
 
           var dup_events = respdata["events"];
 
-          if (respdata["status"] == "success" && dup_events) {
+          if (respdata["status"] === "success" && dup_events) {
             // got to duplicate page
             //var dup_event_id = respdata['event_id'];
             //var dup_event_status = respdata['event_status'];
@@ -776,14 +754,13 @@ controllers.controller(
             url: urlBase + "scripts/trackDuplicateRFI2.php",
             method: "POST",
             data: { event_ids: event_ids, user_id: user_id },
-          }).success(function (respdata, status, headers, config) {
-            if (respdata["status"] == "success") {
+          }).then(function successCallback(res) {
+            var respdata = res.data;
+            if (respdata["status"] === "success") {
               // clear RFI and go to dashbaord
               $window.sessionStorage.clear();
               rfiForm.clear();
               $location.path("/events2");
-            } else {
-              console.log(respdata["message"]);
             }
           });
         }
@@ -793,7 +770,6 @@ controllers.controller(
         // go to condition
         $location.path("/condition");
       } else {
-        console.log("error");
       }
     };
 
@@ -855,7 +831,6 @@ controllers.controller(
 
     // $scope.saveSource = function (direction) {
     $scope.saveStep3 = function (direction) {
-      // console.log('STEP3 - clicked review and send:', $scope.rfiData);
       $scope.purpose_error_message = "";
       $scope.purpose_error_message1 = "";
 
@@ -917,8 +892,6 @@ controllers.controller(
 
         $scope.rfiData.event_purpose = $scope.getPurpose_2();
         $scope.rfiData.event_source = $scope.getSource_2();
-
-        //console.log('event title:', $scope.rfiData.event_title);
 
         $location.path("/sendrequest");
 
@@ -1099,7 +1072,8 @@ controllers.controller(
         url: urlBase + "scripts/buildrequest2.php",
         method: "POST",
         data: formData,
-      }).success(function (respdata, status, headers, config) {
+      }).then(function successCallback(res) {
+        var respdata = res.data;
         $window.sessionStorage.filePreview = respdata["file_preview"];
         $location.path("/sendrequest");
       });
@@ -1325,14 +1299,11 @@ controllers.controller(
         }
 
         //formData['duplicate_rfi_id'] = ($scope.rfiData.duplicate_rfi && $scope.rfiData.duplicate_rfi.rfi_id) ? $scope.rfiData.duplicate_rfi.rfi_id : 0;
-        console.log("Form data before posting to SendReq2 ---> ", formData);
         $http({
           url: urlBase + "scripts/sendrequest2.php",
           method: "POST",
           data: formData,
-        }).success(function (respdata, status, headers, config) {
-          console.log("Resp Data after Send Req ===> ", respdata);
-          console.log("Status ===> ", status);
+        }).then(function successCallback() {
           // go to success page
           $location.path("/sent");
           $scope.submitDisabled = false;
@@ -1366,14 +1337,12 @@ controllers.controller(
           function (response) {
             if (response.data) {
               var respdata = response.data;
-              // console.log('respData**:', respdata)
-              if (respdata["status"] == "success") {
+              if (respdata["status"] === "success") {
                 // empty out the form values so they aren't pre-filled next time
                 $window.sessionStorage.clear();
                 rfiForm.clear();
                 $location.path("/success/6");
               } else {
-                console.log(respdata["reason"]);
               }
             }
             $scope.submitDisabled = false;
