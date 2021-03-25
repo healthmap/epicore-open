@@ -21,7 +21,8 @@ controllers.controller(
         url: urlBase + "scripts/getrequest.php",
         method: "POST",
         data: eventData,
-      }).success(function (data, status, headers, config) {
+      }).then(function successCallback(res) {
+        var data = res.data;
         $scope.formData = data; // this pre-populates the values on the form
         $scope.formData.additionalText = data["personalized_text"];
       });
@@ -47,13 +48,11 @@ controllers.controller(
           method: "POST",
           data: formData,
         })
-          .success(function (data, status, headers, config) {
-            if (data["status"] == "success") {
+          .then(function successCallback(res) {
+            var data = res.data;
+            if (data["status"] === "success") {
               $location.path("/success/6");
-            } else {
             }
-          })
-          .error(function (data, status, headers, config) {
           });
       }
     };

@@ -156,7 +156,7 @@ controllers.controller(
         url: urlBase + "scripts/removefile.php",
         method: "POST",
         data: { filename: file },
-      }).success(function (respdata, status) {
+      }).then(function successCallback() {
         removeItem(file);
       });
     };
@@ -175,39 +175,42 @@ controllers.controller(
 
     $scope.getPublicEventsByID = function () {
       var article_id = localStorage.getItem("articleID");
-      eventAPIservice2.getEvents(article_id).success(function (response) {
-        $scope.isRouteLoading = false;
-        $scope.eventsListPublic = response.EventsList;
-        var outcome = "Pending";
+      eventAPIservice2
+        .getEvents(article_id)
+        .then(function successCallback(res) {
+          var response = res.data;
+          $scope.isRouteLoading = false;
+          $scope.eventsListPublic = response.EventsList;
+          var outcome = "Pending";
 
-        if ($scope.eventsListPublic.outcome == "VP") {
-          outcome = "Verified (positive)";
-        } else if ($scope.eventsListPublic.outcome == "VN") {
-          outcome = "Verified (negative)";
-        } else if ($scope.eventsListPublic.outcome == "UV") {
-          outcome = "Unverified";
-        } else if ($scope.eventsListPublic.outcome == "UP") {
-          outcome = "Updated (positive)";
-        } else if ($scope.eventsListPublic.outcome == "NU") {
-          outcome = "Updated (negative)";
-        }
+          if ($scope.eventsListPublic.outcome == "VP") {
+            outcome = "Verified (positive)";
+          } else if ($scope.eventsListPublic.outcome == "VN") {
+            outcome = "Verified (negative)";
+          } else if ($scope.eventsListPublic.outcome == "UV") {
+            outcome = "Unverified";
+          } else if ($scope.eventsListPublic.outcome == "UP") {
+            outcome = "Updated (positive)";
+          } else if ($scope.eventsListPublic.outcome == "NU") {
+            outcome = "Updated (negative)";
+          }
 
-        //$scope.modifiedEventTitle = $scope.eventsListPublic.title.replace(",", "&#183;");
-        //$scope.closureDate = $scope.eventsListPublic.history[0].date;
-        $scope.cd = $scope.eventsListPublic.history[0].date;
-        $scope.closureDate = $scope.cd.split(" ")[0];
-        $scope.od = $scope.eventsListPublic.create_date;
-        $scope.openDate = $scope.od.split(" ")[0]; //(to remove time)
-        $scope.event_outcome = outcome;
-        //$scope.eventTitle = $scope.modifiedEventTitle
-        $scope.eventTitle = $scope.eventsListPublic.title;
-        $scope.phe_description = $scope.eventsListPublic.phe_description;
-        $scope.phe_additional = $scope.eventsListPublic.phe_additional;
-        $scope.initialSource =
-          $scope.eventsListPublic.source +
-          " : " +
-          $scope.eventsListPublic.source_details;
-      });
+          //$scope.modifiedEventTitle = $scope.eventsListPublic.title.replace(",", "&#183;");
+          //$scope.closureDate = $scope.eventsListPublic.history[0].date;
+          $scope.cd = $scope.eventsListPublic.history[0].date;
+          $scope.closureDate = $scope.cd.split(" ")[0];
+          $scope.od = $scope.eventsListPublic.create_date;
+          $scope.openDate = $scope.od.split(" ")[0]; //(to remove time)
+          $scope.event_outcome = outcome;
+          //$scope.eventTitle = $scope.modifiedEventTitle
+          $scope.eventTitle = $scope.eventsListPublic.title;
+          $scope.phe_description = $scope.eventsListPublic.phe_description;
+          $scope.phe_additional = $scope.eventsListPublic.phe_additional;
+          $scope.initialSource =
+            $scope.eventsListPublic.source +
+            " : " +
+            $scope.eventsListPublic.source_details;
+        });
     };
 
     // get events for public dashboard for Responders view
@@ -220,7 +223,8 @@ controllers.controller(
         var start_date = moment().subtract(2, "months").format("YYYY-MM-DD"); // 2 months ago
         eventAPIservice2
           .getEvents($scope.id, start_date, end_date)
-          .success(function (response) {
+          .then(function successCallback(res) {
+            var response = res.data;
             $scope.isRouteLoading = false;
             $scope.eventsListPublic = response.EventsList;
             if ($scope.eventsListPublic.purpose) {
@@ -248,7 +252,8 @@ controllers.controller(
       $scope.eventsList = [];
       eventAPIservice2
         .getEvents($scope.id, start_date, end_date)
-        .success(function (response) {
+        .then(function successCallback(res) {
+          var response = res.data;
           $scope.isRouteLoading = false;
           if (typeof $scope.userinfo != "undefined") {
             $scope.isOrganization = $scope.userInfo.fetp_id > 0 ? false : true;
@@ -379,7 +384,8 @@ controllers.controller(
               url: urlBase + "scripts/getresponse.php",
               method: "POST",
               data: formData,
-            }).success(function (respdata, status, headers, config) {
+            }).then(function successCallback(res) {
+              var respdata = res.data;
               $scope.response_text = respdata["response"];
               $scope.responder_id = respdata["responder_id"];
               $scope.permission_id = respdata["response_permission_id"];
@@ -534,13 +540,14 @@ controllers.controller(
           url: urlBase + "scripts/updatemetrics.php",
           method: "POST",
           data: metric_data,
-        })
-          .success(function (data, status, headers, config) {
+        }).then(
+          function successCallback() {
             $scope.displaySavingText = false;
-          })
-          .error(function (data, status, headers, config) {
+          },
+          function errorCallback() {
             $scope.displaySavingText = false;
-          });
+          }
+        );
       }, save_metrics_debounce);
     };
 
@@ -560,7 +567,7 @@ controllers.controller(
           url: urlBase + "scripts/sendfollowup2.php",
           method: "POST",
           data: formData,
-        }).success(function (data, status, headers, config) {
+        }).then(function successCallback() {
           $scope.submitDisabled = false;
           $location.path("/success/3/" + eid);
         });
@@ -636,8 +643,9 @@ controllers.controller(
           url: urlBase + "scripts/changestatus2.php",
           method: "POST",
           data: formData,
-        }).success(function (data, status, headers, config) {
-          if (data["status"] == "success") {
+        }).then(function successCallback(res) {
+          var data = res.data;
+          if (data["status"] === "success") {
             $scope.submitDisabled = false;
             var pathid = 4;
             if (thestatus == "Update") {
@@ -681,8 +689,9 @@ controllers.controller(
           url: urlBase + "scripts/sendresponse2.php",
           method: "POST",
           data: formData,
-        }).success(function (data, status, headers, config) {
-          if (data["status"] == "success") {
+        }).then(function successCallback(res) {
+          var data = res.data;
+          if (data["status"] === "success") {
             $location.path("/success/2/" + eid);
           } else {
             alert("response failed!");
@@ -703,16 +712,14 @@ controllers.controller(
           url: urlBase + "scripts/deleteEvent2.php",
           method: "POST",
           data: data,
-        })
-          .success(function (data, status, headers, config) {
-            if (data["status"] == "success") {
-              $location.path("/success/7");
-            } else {
-              alert(data["reason"]);
-            }
-          })
-          .error(function (data, status, headers, config) {
-          });
+        }).then(function successCallback(res) {
+          var data = res.data;
+          if (data["status"] === "success") {
+            $location.path("/success/7");
+          } else {
+            alert(data["reason"]);
+          }
+        });
       }
     };
 

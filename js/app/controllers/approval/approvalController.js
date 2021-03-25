@@ -77,7 +77,8 @@ controllers.controller(
         url: urlBase + "scripts/approval.php",
         method: "POST",
         data: data,
-      }).success(function (respdata, status, headers, config) {
+      }).then(function successCallback(res) {
+        var respdata = res.data;
         //Fetch data from db
         epicoreCacheService.setMemberPortalInfoPastQuarter(respdata); //since default is past-quarter only
         var tableData = $scope.loadMemberInfo(currentLocation);
@@ -451,7 +452,8 @@ controllers.controller(
           url: $scope.urlBaseStr + "scripts/approval.php",
           method: "POST",
           data: data,
-        }).success(function (respdata, status, headers, config) {
+        }).then(function successCallback(res) {
+          var respdata = res.data;
           //Fresh DB pull - set cache appropriately
           if (month.value == "all") {
             epicoreCacheService.setMemberPortalInfoAll(respdata);
@@ -472,8 +474,9 @@ controllers.controller(
         url: urlBase + "scripts/setLocationStatus.php",
         method: "POST",
         data: data,
-      }).success(function (respdata, status, headers, config) {
-        if (respdata["status"] == "success") {
+      }).then(function successCallback(res) {
+        var respdata = res.data;
+        if (respdata["status"] === "success") {
           for (var n in $scope.applicants) {
             if ($scope.applicants[n].maillist_id == maillist_id) {
               $scope.applicants[n].locations = action == "enable" ? "1" : "0";
@@ -499,6 +502,7 @@ controllers.controller(
     };
 
     $scope.approveApplicantHeader = function (maillist_id, action) {
+
     };
     /*
        --------------- Added by Sam ---------------------
@@ -529,8 +533,9 @@ controllers.controller(
         url: urlBase + "scripts/setMemberStatus.php",
         method: "POST",
         data: incomingData,
-      }).success(function (respdata, status, headers, config) {
-        if (respdata["status"] == "success") {
+      }).then(function successCallback(res) {
+        var respdata = res.data;
+        if (respdata["status"] === "success") {
           for (var n in $scope.applicants) {
             if ($scope.applicants[n].maillist_id == incomingData.maillist_id) {
               $scope.applicants[n].status = respdata["member_status"];
@@ -550,7 +555,7 @@ controllers.controller(
       $http({
         url: urlBase + "scripts/downloadMembers.php",
         method: "POST",
-      }).success(function (respdata, status, headers, config) {
+      }).then(function successCallback() {
         $scope.membersavailable = true;
         $scope.isRouteLoading = false;
       });
@@ -561,7 +566,7 @@ controllers.controller(
       $http({
         url: urlBase + "scripts/downloadEventStats.php",
         method: "POST",
-      }).success(function (respdata, status, headers, config) {
+      }).then(function successCallback() {
         $scope.eventsavailable = true;
         $scope.isRouteLoading = false;
       });
@@ -578,7 +583,7 @@ controllers.controller(
               url: urlBase + "scripts/sendreminder.php",
               method: "POST",
               data: data,
-            }).success(function (respdata, status, headers, config) {
+            }).then(function successCallback() {
               resolve(true);
             });
           })
@@ -603,7 +608,8 @@ controllers.controller(
           url: urlBase + "scripts/sendreminder.php",
           method: "POST",
           data: data,
-        }).success(function (respdata, status, headers, config) {
+        }).then(function successCallback(res) {
+          var respdata = res.data;
           alert(respdata.length + " emails sent.");
         });
       } else {
@@ -622,15 +628,13 @@ controllers.controller(
           method: "POST",
           data: data,
         })
-          .success(function (data, status, headers, config) {
-            if (data["status"] == "success") $route.reload();
+          .then(function successCallback(res) {
+            var data = res.data;
+            if (data["status"] === "success") $route.reload();
             else {
               alert(data["message"]);
             }
-          })
-          .error(function (data, status, headers, config) {
           });
-      } else {
       }
     };
   }
