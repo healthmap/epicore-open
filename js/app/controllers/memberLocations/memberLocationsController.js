@@ -80,7 +80,8 @@ controllers.controller(
         url: urlBase + "scripts/addlocation.php",
         method: "POST",
         data: location,
-      }).success(function (respdata, status, headers, config) {
+      }).then(function successCallback(res) {
+        var respdata = res.data;
         var message_debounce = 2000;
         if (respdata["status"] === "success") {
           $scope.message = "Successfully added new location";
@@ -107,8 +108,9 @@ controllers.controller(
         url: urlBase + "scripts/getlocations.php",
         method: "POST",
         data: member,
-      }).success(function (respdata, status, headers, config) {
-        if (respdata["status"] == "success") {
+      }).then(function successCallback(res) {
+        var respdata = res.data;
+        if (respdata["status"] === "success") {
           $scope.locations = respdata["locations"];
         } else {
           $scope.message = "";
@@ -126,9 +128,10 @@ controllers.controller(
         url: urlBase + "scripts/deletelocation.php",
         method: "POST",
         data: location,
-      }).success(function (respdata, status, headers, config) {
+      }).then(function successCallback(res) {
+        var respdata = res.data;
         var message_debounce = 2000;
-        if (respdata["status"] == "success") {
+        if (respdata["status"] === "success") {
           $scope.message = respdata["message"];
           $scope.locations = getLocations($scope.fetp_id);
           $timeout(function () {

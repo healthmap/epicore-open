@@ -15,7 +15,7 @@ controllers.controller(
         url: urlBase + "scripts/approveaccess.php",
         method: "POST",
         data: data,
-      }).success(function (respdata, status, headers, config) {
+      }).then(function successCallback() {
         $scope.showpage = true;
       });
     } else {
@@ -28,8 +28,9 @@ controllers.controller(
         url: urlBase + "scripts/addmod.php",
         method: "POST",
         data: mod_data,
-      }).success(function (respdata, status, headers, config) {
-        if (respdata["status"] == "success") {
+      }).then(function successCallback(res) {
+        var respdata = res.data;
+        if (respdata["status"] === "success") {
           $scope.message = "Successfully added new moderator";
         } else {
           $scope.message = respdata["message"];
@@ -41,10 +42,10 @@ controllers.controller(
     $http({
       url: urlBase + "scripts/getmods.php",
       method: "POST",
-    }).success(function (respdata, status, headers, config) {
-      if (respdata["status"] == "success") {
+    }).then(function successCallback(res) {
+      var respdata = res.data;
+      if (respdata["status"] === "success") {
         $scope.mods = respdata["mods"];
-      } else {
       }
     });
   }

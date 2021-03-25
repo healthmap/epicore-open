@@ -10,7 +10,8 @@ controllers.controller(
       url: urlBase + "scripts/getapplicant.php",
       method: "POST",
       data: data,
-    }).success(function (data, status, headers, config) {
+    }).then(function successCallback(res) {
+      var data = res.data;
       $scope.member_name = data.firstname + " " + data.lastname;
       $scope.approve_date = data.approve_date;
       var month = new Array(

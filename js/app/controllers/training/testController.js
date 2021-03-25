@@ -35,8 +35,9 @@ controllers.controller(
             url: urlBase + "scripts/approveUser.php",
             method: "POST",
             data: data,
-          }).success(function (respdata, status, headers, config) {
-            if (respdata["status"] == "success") {
+          }).then(function successCallback(res) {
+            var respdata = res.data;
+            if (respdata["status"] === "success") {
               $scope.test_message =
                 "You passed the test! <br><br> You can now login to the Epicore platform using your email and password.  Your certificate of recognition is available on the training page after you login.";
               $scope.passed = true;

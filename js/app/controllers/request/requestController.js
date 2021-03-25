@@ -33,7 +33,8 @@ controllers.controller(
         url: urlBase + "scripts/getalert.php",
         method: "POST",
         data: alertData,
-      }).success(function (data, status, headers, config) {
+      }).then(function successCallback(res) {
+        var data = res.data;
         $scope.formData = data; // this pre-populates the values on the form
         $scope.formData.additionalText = "";
         $window.sessionStorage.title = data["title"];
@@ -97,7 +98,8 @@ controllers.controller(
             method: "POST",
             data: formData,
           })
-            .success(function (data, status, headers, config) {
+            .then(function successCallback(res) {
+              var data = res.data;
               $window.sessionStorage.userIds = data["userIds"];
               $window.sessionStorage.numFetps = data["userList"]["sending"];
               $window.sessionStorage.numUniqueFetps =
@@ -105,8 +107,6 @@ controllers.controller(
               $window.sessionStorage.searchBox = data["bbox"];
               $window.sessionStorage.searchType = "radius";
               $location.path("/request2");
-            })
-            .error(function (data, status, headers, config) {
             });
         } else {
           $location.path("/request2");
@@ -161,8 +161,9 @@ controllers.controller(
         url: urlBase + "scripts/getmarkers.php",
         method: "POST",
         data: query,
-      }).success(function (data, status, headers, config) {
-        if (data["status"] == "success") {
+      }).then(function successCallback(res) {
+        var data = res.data;
+        if (data["status"] === "success") {
           $scope.markers = data["markers"];
         }
       });
@@ -185,7 +186,8 @@ controllers.controller(
             url: urlBase + "scripts/filter.php",
             method: "POST",
             data: filterData,
-          }).success(function (filtereddata, status, headers, config) {
+          }).then(function successCallback(res) {
+            var filtereddata = res.data;
             $window.sessionStorage.searchBox = filtereddata["bbox"];
             $window.sessionStorage.userIds = filtereddata["userIds"];
             $window.sessionStorage.numFetps = $scope.numFetps =
@@ -215,7 +217,8 @@ controllers.controller(
         url: urlBase + "scripts/filter.php",
         method: "POST",
         data: filterData,
-      }).success(function (filtereddata, status, headers, config) {
+      }).then(function successCallback(res) {
+        var filtereddata = res.data;
         $window.sessionStorage.userIds = filtereddata["userIds"];
         $window.sessionStorage.numFetps = $scope.numFetps =
           filtereddata["userList"]["sending"];
@@ -243,7 +246,8 @@ controllers.controller(
         url: urlBase + "scripts/buildrequest.php",
         method: "POST",
         data: formData,
-      }).success(function (respdata, status, headers, config) {
+      }).then(function successCallback(res) {
+        var respdata = res.data;
         $window.sessionStorage.filePreview = respdata["file_preview"];
         $location.path("/request3");
       });
@@ -271,7 +275,7 @@ controllers.controller(
         url: urlBase + "scripts/sendrequest.php",
         method: "POST",
         data: formData,
-      }).success(function (respdata, status, headers, config) {
+      }).then(function successCallback() {
         // empty out the form values since you've submitted so they aren't prefilled next time
         $window.sessionStorage.clear();
         $location.path("/success/3");

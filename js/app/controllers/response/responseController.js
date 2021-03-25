@@ -11,7 +11,8 @@ controllers.controller(
       url: urlBase + "scripts/getresponse.php",
       method: "POST",
       data: formData,
-    }).success(function (respdata, status, headers, config) {
+    }).then(function successCallback(res) {
+      var respdata = res.data;
       $scope.isAuthorizedToSee = respdata["status"] == "failed" ? false : true;
       $scope.isAuthorizedToFollowup = respdata["authorized_to_followup"]
         ? true

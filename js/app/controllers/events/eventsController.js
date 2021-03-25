@@ -24,7 +24,8 @@ controllers.controller(
     }
     $scope.validResponses = 0;
 
-    eventAPIservice.getEvents($scope.id).success(function (response) {
+    eventAPIservice.getEvents($scope.id).then(function successCallback(res) {
+      var response = res.data;
       $scope.isOrganization = $scope.userInfo.fetp_id > 0 ? false : true;
       // if RFI requester is the logged in user or of same org, they get different action items
       if (response.EventsList != null) {
@@ -72,7 +73,8 @@ controllers.controller(
           url: urlBase + "scripts/getresponse.php",
           method: "POST",
           data: formData,
-        }).success(function (respdata, status, headers, config) {
+        }).then(function successCallback(res) {
+          var respdata = res.data;
           $scope.response_text = respdata["response"];
           $scope.responder_id = respdata["responder_id"];
           $scope.permission_id = respdata["response_permission_id"];
@@ -142,7 +144,7 @@ controllers.controller(
           url: urlBase + "scripts/sendfollowup.php",
           method: "POST",
           data: formData,
-        }).success(function (data, status, headers, config) {
+        }).then(function successCallback() {
           $scope.submitDisabled = false;
           $location.path("/success/3/" + eid);
         });
@@ -199,8 +201,9 @@ controllers.controller(
           url: urlBase + "scripts/changestatus.php",
           method: "POST",
           data: formData,
-        }).success(function (data, status, headers, config) {
-          if (data["status"] == "success") {
+        }).then(function successCallback(res) {
+          var data = res.data;
+          if (data["status"] === "success") {
             $scope.submitDisabled = false;
             var pathid = 4;
             if (thestatus == "Update") {
@@ -233,8 +236,9 @@ controllers.controller(
           url: urlBase + "scripts/sendresponse.php",
           method: "POST",
           data: formData,
-        }).success(function (data, status, headers, config) {
-          if (data["status"] == "success") {
+        }).then(function successCallback(res) {
+          var data = res.data;
+          if (data["status"] === "success") {
             $location.path("/success/2/" + eid);
           } else {
             alert("response failed!");
@@ -251,16 +255,14 @@ controllers.controller(
           url: urlBase + "scripts/deleteEvent.php",
           method: "POST",
           data: data,
-        })
-          .success(function (data, status, headers, config) {
-            if (data["status"] == "success") {
-              $location.path("/success/7");
-            } else {
-              alert(data["reason"]);
-            }
-          })
-          .error(function (data, status, headers, config) {
-          });
+        }).then(function successCallback(res) {
+          var data = res.data;
+          if (data["status"] === "success") {
+            $location.path("/success/7");
+          } else {
+            alert(data["reason"]);
+          }
+        });
       }
     };
 

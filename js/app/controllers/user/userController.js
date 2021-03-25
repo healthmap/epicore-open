@@ -52,7 +52,8 @@ controllers.controller(
         url: urlBase + "scripts/getapplicant.php",
         method: "POST",
         data: data,
-      }).success(function (data, status, headers, config) {
+      }).then(function successCallback(res) {
+        var data = res.data;
         $scope.uservals = data; // this pre-populates the values on the form
         if ($scope.uservals.university2) {
           $scope.more_schools1 = true;
@@ -93,6 +94,7 @@ controllers.controller(
 
         var formatAddr =
           data["city"] + ", " + data["state"] + " " + data["country"];
+
         if (formatAddr) {
           formatAddr = formatAddr.replace(/null/g, "");
           formatAddr = formatAddr.replace(/undefined/g, "");
@@ -150,12 +152,6 @@ controllers.controller(
       $scope.formData.password = $localStorage.password;
     }
 
-    /* set some global variables for Tephinet integration */
-    /*$http({ url: urlBase + 'scripts/getvars.php', method: "POST"
-   }).success(function (data, status, headers, config) {
-   $rootScope.tephinetBase = data['tephinet_base'];
-   });*/
-
     $scope.signup = function (uservals, isValid) {
       $scope.attempted = true;
       $scope.signup_message = "";
@@ -205,8 +201,9 @@ controllers.controller(
             url: urlBase + "scripts/updateuser.php",
             method: "POST",
             data: uservals,
-          }).success(function (data, status, headers, config) {
-            if (data["status"] == "success") {
+          }).then(function successCallback(res) {
+            var data = res.data;
+            if (data["status"] === "success") {
               if ($scope.idtype == "fetp") {
                 $location.path("/application/" + $scope.uid + "/edit/fetp");
                 $scope.signup_message = "Successfully Updated profile";
@@ -220,8 +217,9 @@ controllers.controller(
             url: urlBase + "scripts/signup.php",
             method: "POST",
             data: uservals,
-          }).success(function (data, status, headers, config) {
-            if (data["status"] == "success") {
+          }).then(function successCallback(res) {
+            var data = res.data;
+            if (data["status"] === "success") {
               if (data["exists"] == 1) {
                 $scope.signup_message =
                   "Your email address is already in the applicant system.";
@@ -347,9 +345,10 @@ controllers.controller(
         url: urlBase + "scripts/login.php",
         method: "POST",
         data: formData,
-      })
-        .success(function (data, status, headers, config) {
-          if (data["status"] == "success") {
+      }).then(
+        function successCallback(res) {
+          var data = res.data;
+          if (data["status"] === "success") {
             // determines if user is an organization or FETP
             $rootScope.isOrganization =
               data["uinfo"]["organization_id"] > 0 ? true : false;
@@ -410,11 +409,12 @@ controllers.controller(
             $scope.autologin = false;
             $route.reload();
           }
-        })
-        .error(function (data, status, headers, config) {
+        },
+        function errorCallback() {
           $scope.isRouteLoading = false;
           $scope.autologin = false;
-        });
+        }
+      );
     };
 
     /* log out */
@@ -438,9 +438,10 @@ controllers.controller(
           url: urlBase + "scripts/setpassword.php",
           method: "POST",
           data: formData,
-        })
-          .success(function (data, status, headers, config) {
-            if (data["status"] == "success") {
+        }).then(
+          function successCallback(res) {
+            var data = res.data;
+            if (data["status"] === "success") {
               var isActive =
                 typeof data["uinfo"]["active"] != "undefined"
                   ? data["uinfo"]["active"]
@@ -473,10 +474,11 @@ controllers.controller(
               $rootScope.error_message = "Invalid email address";
               $route.reload();
             }
-          })
-          .error(function (data, status, headers, config) {
+          },
+          function errorCallback() {
             $scope.isRouteLoading = false;
-          });
+          }
+        );
       }
     };
 
@@ -492,8 +494,9 @@ controllers.controller(
           method: "POST",
           data: formData,
         })
-          .success(function (data, status, headers, config) {
-            if (data["status"] == "success") {
+          .then(function successCallback(res) {
+            var data = res.data;
+            if (data["status"] === "success") {
               $scope.isRouteLoading = false;
               $rootScope.error_message_pw =
                 "Please check your email for instructions to reset your password.";
@@ -503,8 +506,8 @@ controllers.controller(
               $rootScope.error_message_pw = "Invalid email address";
               $route.reload();
             }
-          })
-          .error(function (data, status, headers, config) {
+          },
+          function errorCallback() {
             $rootScope.error_message_pw = "Invalid email address";
             $scope.isRouteLoading = false;
           });

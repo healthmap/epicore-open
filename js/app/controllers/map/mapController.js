@@ -22,8 +22,9 @@ controllers.controller(
     $http({
       url: urlBase + "scripts/getallmarkers.php",
       method: "POST",
-    }).success(function (data, status, headers, config) {
-      if (data["status"] == "success") {
+    }).then(function successCallback(res) {
+      var data = res.data;
+      if (data["status"] === "success") {
         $scope.markers = data["markers"];
         $scope.showpage = true;
         $scope.numMembers = $scope.markers.length;
