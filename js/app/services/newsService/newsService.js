@@ -1,10 +1,11 @@
-services.factory(
-  "newsService",
-  function ($http, $rootScope, $location, urlBase) {
-    var newsAPI = {};
-    newsAPI.getPdfURLS = function () {
-      return $http.get("/newsletter.json");
-    };
-    return newsAPI;
-  }
-);
+const NewsService = ($http) => {
+  const newsAPI = {};
+  newsAPI.getPdfURLS = function() {
+    return $http.get('/newsletter.json');
+  };
+  return newsAPI;
+};
+
+NewsService.$inject = ['$http'];
+
+export default NewsService;

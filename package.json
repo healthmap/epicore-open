@@ -1,12 +1,30 @@
 {
-  "name": "epicore-php",
+  "name": "epicore",
   "version": "1.0.0",
-  "description": "Epicore Php Server",
-  "author": "",
-  "dependencies": {
-    "php-server": "^0.2.1"
-  },
+  "description": "Epiore App",
   "scripts": {
-    "start": "node server.js"
+    "start": "webpack watch --mode=development",
+    "build": "webpack --mode=production",
+    "lint": "eslint js/app",
+    "lint:fix": "eslint js/app --fix"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/healthmap/epicore.git"
+  },
+  "author": "BCH",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/healthmap/epicore/issues"
+  },
+  "homepage": "https://github.com/healthmap/epicore#readme",
+  "devDependencies": {
+    "@babel/core": "^7.13.13",
+    "@babel/preset-env": "^7.13.12",
+    "babel-loader": "^8.2.2",
+    "babel-plugin-angularjs-annotate": "^0.10.0",
+    "eslint": "^7.23.0",
+    "webpack": "^5.28.0",
+    "webpack-cli": "^4.5.0"
   }
 }

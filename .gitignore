@@ -12,3 +12,8 @@ composer.*
 /img/metrics/
 /node_modules
 
+
+nginx-site.conf
+package-lock.json
+
+*.DS_Store

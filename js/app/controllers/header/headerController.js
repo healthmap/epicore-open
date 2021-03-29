@@ -1,6 +1,10 @@
-controllers.controller("headerController", function ($scope, $location, $window) {
-  $scope.isActive = function (viewLocation) {
+const HeaderController = ($scope, $location) => {
+  $scope.isActive = function(viewLocation) {
     return viewLocation === $location.path();
   };
   /* FETP controller */
-});
+};
+
+HeaderController.$inject = ['$scope', '$location'];
+
+export default HeaderController;
