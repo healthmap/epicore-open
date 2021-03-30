@@ -2,13 +2,16 @@
 
 ## Development Environment
 
-> Repo Url:https://github.com/healthmap/epicore
-> Requires PHP5.5.x
-> MySQL
+> Repo Url:https://github.com/healthmap/epicore.git
+> Requires PHP5.5.x or greater
+> MySQL 
 
-> Get files from developer:
-~/epicore/scripts/pbkdf2.php
-~/epicore/scripts/conf/da.ini.php
+## Development package managers
+ - npm (for dev only used for php-server)
+ - composer (php modules - check composer.json)
+
+## Using vlucas/phpdotenv
+ - configure your .env as per .env.example (see 1P for hooks) 
 
 ## Note:
 if pbkdf2.php is unavailable download from:
@@ -17,21 +20,85 @@ defuse.cadefuse.ca
 PBKDF2 Password Hashing for PHP
 Standards compliant PBKDF2 implementation for PHP.
 
-## Local Development without email client running
-In order to run a local set up, we will need to **comment** a few lines of code in the following files:
-File: AWSMail.class.php
-Line#: 4 require_once '/usr/share/php/vendor/autoload.php';
 
-File: EvenInfo.class.php
-Line#: 813 file_put_contents("../$file_preview", $emailtext);
+## Local Development without docker
+    You'll need the following software installed to get started.
 
+    - [Node.js](http://nodejs.org): Use the installer for your OS.
+    - [Git](http://git-scm.com/downloads): Use the installer for your OS.
+    - Windows users can also try [Git for Windows](http://git-for-windows.github.io/).
+
+    ## Getting Started
+
+    Clone this repository.
+
+    Open Terminal
+    git clone https://github.com/healthmap/epicore.git
+    cd epicore
+    npm install (for npm dependencies)
+
+    # Install Composer
+    sudo curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+
+    # AWS cli - please refer to the software development handbook for recommendations on installation and configuration
+
+    # Installing composer modules (For mail and .env usage)
+        copy composer.json from repo to a dir of choice. For ex: ~/usr/share/php/
+        cd ~/usr/share/php/
+        composer install this will install all php modules referenced(awssdk and the phpdotenv)
+        Note that this will create a vendor folder with modules.
+        Copy the path of the autoload.php. Ex: /usr/share/php/vendor/autoload.php
+        This autoload path is replaced in two files:
+
+        File: AWSMail.class.php
+        Line#: 4 require_once '/usr/share/php/vendor/autoload.php'; (replace path if different)
+
+        File: db.function.php
+        Line#: 14 require_once '/usr/share/php/vendor/autoload.php'; (replace path if different)
+
+     # Without composer modules (No mail and .env - Just application with direct .ini file)
+
+        Note: If both composer modules are not used,  db/conf/da.ini file can be used instead and following lines will need to be commented: 
+
+        In order to run a local set up, we will need to **comment** a few lines of code in the following files:
+        File: AWSMail.class.php
+        Line#: 4 require_once '/usr/share/php/vendor/autoload.php';
+
+        File: EvenInfo.class.php
+        Line#: 813 file_put_contents("../$file_preview", $emailtext);
+
+        File: db.function.php
+        Replace Line#: 15 - 29 with:
+        $opts = parse_ini_file(dirname(__FILE__) . '/conf/da.ini.php', true);
+        $which = $which ? $which : 'epicore_db';
+        //echo 'db name:';
+        //echo $which;
+        //echo '-----db name:';
+        $dsn = $opts[$which];
+
+
+## To run locally
 > Open terminal
 cd ~epicore
-npm install
 npm start
 
-## Local Development with email client running
-Follow set up below on how email client is setup on the server and follow the same on local
+ Browser points to: http://127.0.0.1:8000/#/
+
+> Get files from developer if running as ini.php:
+~/epicore/scripts/conf/da.ini.php
+
+## Local Development as docker
+    Install Docker (download page, homebrew formulae)
+
+    *** change vendor./autoload.php path *** 
+    docker entrypoint would install all composer under /usr/share/php/ If this is incorrect change path accordingly in
+     File: AWSMail.class.php
+     File: db.function.php
+
+    cd ~/epicore
+    docker-compose build
+    docker-compose up -d
+
 
 
 ### Install library for Mobile Push Notifications (optional)

@@ -6,14 +6,17 @@
 /scripts/conf/
 .idea
 /vendor
-composer.*
 /cache
 /responsefiles
 /img/metrics/
 /node_modules
 
 
+# dotenv environment variable files
+.env
+
+# dotenv environment variable files
 nginx-site.conf
-package-lock.json
 
 *.DS_Store
+
