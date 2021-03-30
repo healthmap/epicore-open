@@ -25,4 +25,4 @@ epicore_config.EPICORE_START_DATE = epicore_config.V2START_DATE;
 epicore_config.app_mode = 'web';
 
 // Push notifications Sender Id for Android devices
-epicore_config.android_senderId = "67299923213";
+epicore_config.android_senderId = '67299923213';
