@@ -1,26 +1,26 @@
-controllers.controller("metricsController", function ($scope) {
+const MetricsController = ($scope) => {
   $scope.date_now = Date.now();
-  var today = new Date();
+  const today = new Date();
   $scope.year = today.getFullYear();
-  var last_month_num = today.getMonth() - 1;
+  let last_month_num = today.getMonth() - 1;
   if (today.getMonth() == 0) {
     last_month_num = 11;
     $scope.year = $scope.year - 1;
   }
 
-  var months = [
-    "January",
-    "February",
-    "March",
-    "April",
-    "May",
-    "June",
-    "July",
-    "August",
-    "September",
-    "October",
-    "November",
-    "December",
+  const months = [
+    'January',
+    'February',
+    'March',
+    'April',
+    'May',
+    'June',
+    'July',
+    'August',
+    'September',
+    'October',
+    'November',
+    'December',
   ];
   $scope.month = months[last_month_num];
   /*
@@ -28,4 +28,8 @@ controllers.controller("metricsController", function ($scope) {
      Usage: A call for openPortfolioURL is placed in events_public.html which brings in the data requried to display in the summary page
      Once the data is available, we pass in the datato the next page (publicrfi.html) with publicRFIChildController as child controller
    */
-});
+};
+
+MetricsController.$inject = ['$scope'];
+
+export default MetricsController;

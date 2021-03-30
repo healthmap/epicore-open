@@ -1,12 +1,14 @@
-services.factory("rfiForm", function () {
+const RfiForm = () => {
   // questions form variables object (persistance)
-  var questions = {};
+  const questions = {};
   return {
-    clear: function () {
-      for (var member in questions) delete questions[member];
+    clear: function() {
+      for (const member in questions) delete questions[member];
     },
-    get: function () {
+    get: function() {
       return questions;
     },
   };
-});
+};
+
+export default RfiForm;
