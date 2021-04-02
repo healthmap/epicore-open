@@ -3,7 +3,9 @@
   "version": "1.0.0",
   "description": "Epiore App",
   "scripts": {
-    "start": "webpack watch --mode=development",
+    "start-1": "webpack watch --mode=development",
+    "start-2": "node server.js",
+    "start": "npm run start-1 & npm run start-2",
     "build": "webpack --mode=production",
     "lint": "eslint js/app",
     "lint:fix": "eslint js/app --fix"
@@ -18,6 +20,9 @@
     "url": "https://github.com/healthmap/epicore/issues"
   },
   "homepage": "https://github.com/healthmap/epicore#readme",
+  "dependencies": {
+    "php-server": "^0.2.1"
+  },
   "devDependencies": {
     "@babel/core": "^7.13.13",
     "@babel/preset-env": "^7.13.12",
