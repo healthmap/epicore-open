@@ -7,6 +7,7 @@ require_once "UserInfo.class.php";
 $status = "incorrect password";
 $path = "home";
 
+$env = ENVIRONMENT;
 
 if(isset($formvars->ticket_id) && $formvars->usertype == "fetp") { // ticket system is for FETPs
     
@@ -78,5 +79,5 @@ if(is_numeric($user_id) && $user_id > 0) {
     $uinfo['superuser'] = (isset($uinfo['user_id']) && in_array($uinfo['user_id'], $super_users)) ? true: false;
 }
 
-print json_encode(array('status' => $status, 'path' => $path, 'uinfo' => $uinfo));
+print json_encode(array('status' => $status, 'path' => $path, 'uinfo' => $uinfo , 'environment' => $env));
 ?>

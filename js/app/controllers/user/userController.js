@@ -1,3 +1,4 @@
+
 const UserController = (
   $rootScope,
   $routeParams,
@@ -345,6 +346,7 @@ const UserController = (
       function successCallback(res) {
         const data = res.data;
         if (data['status'] === 'success') {
+          
           // determines if user is an organization or FETP
           $rootScope.isOrganization =
             data['uinfo']['organization_id'] > 0 ? true : false;
@@ -370,12 +372,13 @@ const UserController = (
             status: data['uinfo']['status'],
             superuser: data['uinfo']['superuser'],
             locations: memberLocations,
+            environment: data['environment']
           };
 
+          
           // save username and password
           $localStorage.username = formData['username'];
           // $localStorage.password = formData['password'];
-
           // save user in cookie
           $cookieStore.put('epiUserInfo', newUserInfo);
 
