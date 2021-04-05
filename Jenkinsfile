@@ -104,7 +104,7 @@ pipeline {
 
               script {
                
-                      withAWS(region: env.REGION ,role: env.JENKINS_IAM_ROLE, roleAccount: env.AWS_ACCOUNT_ID) {
+                      withAWS(region: env.AWS_REGION ,role: env.JENKINS_IAM_ROLE, roleAccount: env.AWS_ACCOUNT_ID) {
                               
                           docker.withRegistry( env.DOCKER_REGISTRY_URL, env.DOCKER_REGISTRY_CRED_ID) {
               
@@ -124,7 +124,7 @@ pipeline {
 
               script {
                
-                      withAWS(region: env.REGION ,role: env.JENKINS_IAM_ROLE, roleAccount: env.AWS_ACCOUNT_ID) {
+                      withAWS(region: env.AWS_REGION ,role: env.JENKINS_IAM_ROLE, roleAccount: env.AWS_ACCOUNT_ID) {
                               
                           docker.withRegistry( env.DOCKER_REGISTRY_URL, env.DOCKER_REGISTRY_CRED_ID) {
               
@@ -144,9 +144,9 @@ pipeline {
 
               script {
                    
-                        withAWS(region: env.REGION ,role: env.JENKINS_IAM_ROLE, roleAccount: env.AWS_ACCOUNT_ID) {
+                        withAWS(region: env.AWS_REGION ,role: env.JENKINS_IAM_ROLE, roleAccount: env.AWS_ACCOUNT_ID) {
                               
-                         sh(script: "aws eks update-kubeconfig --name ${K8S_CLUSTER_NAME}  --alias ${EKS_CONTEXT}",returnStdout: true)
+                         sh(script: "aws eks update-kubeconfig --region ${AWS_REGION} --name ${K8S_CLUSTER_NAME}  --alias ${EKS_CONTEXT}",returnStdout: true)
                          sh(script: "cp ./deploy/helm-chart/values-${ENV_NAME} ./deploy/helm-chart/values.yaml",returnStdout: false)
       
                              helm.upgrade(
