@@ -11,6 +11,8 @@
 /img/metrics/
 /node_modules
 
+#webpack dist folder
+/js/dist/
 
 # dotenv environment variable files
 .env
