@@ -1,39 +1,66 @@
 <?php
-// get config file
-$conf = parse_ini_file(dirname(__FILE__) . '/conf/da.ini.php', true);
 
-// Environment (Local, Test and Prod)
-// Change this variable based on the corresponding environment you're on.
-// There are few variables that will have to be changed when on local and this
-// ENV var will dictate the change.
-define('ENVIRONMENT', 'Local');
+require_once '/usr/share/php/vendor/autoload.php';
+$dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '../../');
+
+$dotenv->load();
+$environment = $_ENV['environment'];
+$approval_username = $_ENV['approval_username'];
+$$approval_username = $_ENV['approval_password'];
+$key = $_ENV['key'];
+$clientid =  $_ENV['clientid'];
+$fcm_server_key = $_ENV['fcm_server_key'];
+$fcm_send_url = $_ENV['fcm_send_url'];
+
+$tephinet_baseurl = $_ENV['tephinet_baseurl'];
+$consumerkey = $_ENV['consumerkey'];
+$consumersecret = $_ENV['consumersecret'];
+
+$userids = $_ENV['superusers_userids'];
+
+#$epicore_info_baseurl = $_ENV['epicore_info_baseurl'];
+$emailnoreply = $_ENV['emailnoreply'];
+$emailinfo = $_ENV['emailinfo'];
+$emailadmin = $_ENV['emailadmin'];
+#$promed_info = $_ENV['promed_info'];
+$emailproin = $_ENV['emailproin'];
+
+
+// echo '>>>>';
+// echo $environment;
+// echo '<<<<:';
+
+define('ENVIRONMENT', $environment);
 
 // approval username and password
-define('APPROVAL_USERNAME', $conf['approval']['username']);
-define('APPROVAL_PASSWORD', $conf['approval']['password']);
+define('APPROVAL_USERNAME', $approval_username);
+define('APPROVAL_PASSWORD', $approval_username);
 
 // google api
-define('CRYPTOKEY', $conf['googleapi']['key']);
-define('CLIENTID', $conf['googleapi']['clientid']);
-define('FCM_SERVER_KEY', $conf['googleapi']['fcm_server_key']);
-define('FCM_SEND_URL', $conf['googleapi']['fcm_send_url']);
+define('CRYPTOKEY', $key );
+define('CLIENTID', $clientid);
+define('FCM_SERVER_KEY', $fcm_server_key);
+define('FCM_SEND_URL', $fcm_send_url);
 
 // Epicore
-define('EPICORE_URL', $conf['epicore_info']['baseurl']);
-define('EMAIL_NOREPLY', $conf['epicore_info']['emailnoreply']);
-define('EMAIL_INFO_EPICORE', $conf['epicore_info']['emailinfo']);
-define('EPICORE_ID', 0);
-define('EMAIL_EPICORE_ADMIN', $conf['epicore_info']['emailadmin']);
+define('EPICORE_URL', $epicore_info_baseurl);
+define('EMAIL_NOREPLY', $emailnoreply);
+define('EMAIL_INFO_EPICORE', $emailinfo);
+define('EMAIL_EPICORE_ADMIN', $emailadmin);
 
 // Tephinet
-define('TEPHINET_BASE', $conf['tephinet']['baseurl']);
-define('TEPHINET_CONSUMER_KEY', $conf['tephinet']['consumerkey']);
-define('TEPHINET_CONSUMER_SECRET', $conf['tephinet']['consumersecret']);
+define('TEPHINET_BASE', $tephinet_baseurl);
+define('TEPHINET_CONSUMER_KEY', $consumerkey);
+define('TEPHINET_CONSUMER_SECRET', $consumersecret);
 
 // ProMed
-define('EMAIL_PROIN', $conf['promed_info']['emailproin']);
-define('PROMED_ID', 4);
+define('EMAIL_PROIN', $emailproin);
 
+//su
+$super_users = explode(',', $userids);
+
+define('EPICORE_ID', 0);
+define('PROMED_ID', 4);
 define('LAT_LON_PRECISION', 2);
 define('DEFAULT_RADIUS', 400); // in km
 define('EMAILPREVIEWS', 'emailtemplates/temp/');
@@ -44,7 +71,9 @@ define('RESPONSEFILE_DIR', 'responsefiles/');
 
 $status_lu = array('O' => 're-opened', 'C' => 'closed');
 
-$super_users = explode(',', $conf['superusers']['userids']);
+
+
+
 
 // old permission text
 /*$response_permission_lu = array(
@@ -582,4 +611,5 @@ $check_conditions = array("respiratory","gastrointestinal","other_neurological",
                         "fever_unknown", "renal", "respiratory_animal", "neurological_animal", "hemorrhagic_animal", "vesicular_animal",
                         "reproductive_animal", "gastrointestinal_animal", "multisystemic_animal");
 define('CHECK_CONDITIONS', serialize($check_conditions));
+
 ?>

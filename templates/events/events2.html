@@ -1,0 +1,282 @@
+<div ng-if="!mobile || !userInfo.fetp_id" ng-include src="'templates/header/header.html'"></div>
+<div ng-if="mobile && userInfo.active=='Y' && userInfo.fetp_id" ng-include src="'templates/header/header_mobile.html'"></div>
+
+<div class="jumbotron dashboard">
+    <div class="container">
+        <h1><span ng-show="!isOrganization && (dashboardType == 'PR')" >Public </span><span>RFI List</span></h1>
+    </div>
+</div>
+
+<div class="wrapper secondary-nav" ng-show="(dashboardType != 'PR')">
+    <div class="container">
+        <span ng-show="onOpen" class="text-uppercase"><span class="border-bottom tab">Open events</span><span class="tab"><a href="#/events2/closed" class="inherit">Closed events</a></span></span>
+        <span ng-show="!onOpen" class="text-uppercase"><span class="tab"><a href="#/events2" class="inherit">Open events</a></span><span class="border-bottom tab">Closed events</span></span>
+        <!--<span ng-show="isOrganization" class="text-uppercase"><a href="#/map" ><i class="fa fa-arrow-circle-right"></i> Members Map</a></span>-->
+    </div>
+</div>
+
+<div class="wrapper dashboard">
+<div class="container">
+    <div class="row">
+        <div class="col-xs-12">
+
+            <p class="red" ng-if="onOpen && unclosed > 0" >* You have {{unclosed}} RFI(s) highlighted below that are past due closing. </p>
+            <p class="red" ng-if="num_notrated_responses > 0">
+                <span ng-if="onOpen">
+                    * You have received responses after closing one or more RFIs that are still unrated.
+                    Please click the link(s) below to access the RFI directly
+                    
+                    <ul>
+                        <li ng-repeat="item in listofEventIdsToDisplay">
+                            <a href="#/events2/{{item}}">{{item}}</a> 
+                        </li>
+                    </ul>
+                </span>
+                <span ng-show="onOpen">* Please rate the unrated responses in the RFI(s) highlighted below.</span>
+            </p>
+
+            <div class="form-group" ng-show="isOrganization">
+                <label class="radio-inline"> <input type="radio" ng-model="eventType" value="MR" ng-click="getEvents();"> My RFIs</label>
+                <label class="radio-inline"> <input type="radio" ng-model="eventType" value="MO" ng-click="getEvents();"> My Organization</label>
+                <label class="radio-inline"> <input type="radio" ng-model="eventType" value="AO" ng-click="getEvents();"> All Organizations</label>
+            </div>
+            <div class="form-group" ng-show="isOrganization" ng-if="!onOpen">
+                <label class="form-label" >RFI List Filter</label>
+                <select ng-options="month as month.name for month in event_months " ng-model="selected_month" ng-change="getEventMonth(selected_month)"></select>
+            </div>
+
+           <!-- <div class="form-group" ng-show="!isOrganization">
+                <label class="radio-inline"> <input type="radio" ng-model="dashboardType" value="MR" ng-click="getEvents2('MR');"> My RFIs</label>
+                <label class="radio-inline"> <input type="radio" ng-model="dashboardType" value="PR" ng-click="getEvents2('PR');"> Public Dashboard RFIs</label>
+            </div>-->
+            <p><span class="search-wrapper"><i class="fa fa-search"></i> <input ng-model="query"></span></p>
+
+            
+            <!-- view for organizations -->
+            <div ng-if="isOrganization" ng-init="predicate = rfiOrderByValue;" class="table-responsive">
+                <table class='small table table-hover table-bordered'>
+                    <tbody>
+                        <tr>
+                            <th width="50px" ng-click="predicate = 'event_id_int'; reverse=!reverse">ID <i class="fa fa-sort"></i></th>
+                            <th ng-click="predicate = 'title'; reverse=!reverse">Title <i class="fa fa-sort"></i></th>
+                            <th width="110px" ng-show="onOpen" ng-click="predicate = 'iso_create_date'; reverse=!reverse" class="nowrap-mobile">RFI Date <i class="fa fa-sort"></i></th>
+                            <th width="110px" ng-show="!onOpen" ng-click="predicate = 'iso_action_date'; reverse=!reverse" class="nowrap-mobile">Closure Date <i class="fa fa-sort"></i></th>
+                            <th width="110px" ng-click="predicate = 'country'; reverse=!reverse">Location <i class="fa fa-sort"></i></th>
+                            <th width="110px" ng-click="predicate = 'person'; reverse=!reverse" class="nowrap-mobile">Requester <i class="fa fa-sort"></i></th>
+                            <th width="50px">Total Recipients</th>
+                            <th width="50px"> <span data-toggle="tooltip" title="(number of) Responders that have already provided information about the RFI" >Contribution </span></th>
+                            <th width="50px"><span data-toggle="tooltip" title="(number of) Responders that have stated having no details to provide about the RFI but currently actively gathering information" >Active Search</span></th>
+                            <th width="50px"><span data-toggle="tooltip" title="(number of) Responders that have declared having no details to provide about the RFI and cannot conduct further verification activities">No Contribution</span></th>
+                            <th width="50px"><span data-toggle="tooltip" title="Current verfication status of the RFI">RFI Status</span></th>
+                            <th width="50px"><span data-toggle="tooltip" title="information about the final outcome of the verification process">Outcome</span></th>
+                        </tr>
+                        <tr ng-show="eventType == 'MR'" ng-repeat="event in eventsList['yours'] | filter:query | orderBy:predicate:reverse" ng-class="{selected : (onOpen && (event.iso_create_date < (date | date:'yyyy-MM-dd'))) || !onOpen && (event.num_notrated_responses > 0)}">
+                            <td>{{event.event_id_int}}</td>
+                            <td><a href="#/events2/{{event.event_id}}">{{event.title}}</a></td>
+                            <td ng-show="onOpen">{{event.create_date}}</td>
+                            <td ng-show="!onOpen">{{event.action_date}}</td>
+
+                            <td>{{event.country}}</td>
+                            <td>{{event.person}} - {{event.organization_name}}</td>
+                            <td>
+                                <span>{{event.num_members}}</span>
+                            </td>
+                            <td>
+                                <span>{{event.num_responses_content}}</span>
+                            </td>
+                            <td>
+                                <span>{{event.num_responses_active}}</span>
+                            </td>
+                            <td>
+                                <span>{{event.num_responses_nocontent}}</span>
+                            </td>
+                            <td>
+                                <span ng-if="onOpen && (event.num_responses_active == 0)">New</span>
+                                <span ng-if="onOpen && (event.num_responses_active > 0)">Ongoing</span>
+                                <span ng-if="!onOpen">Closed</span>
+                            </td>
+                            <td>
+                                <span ng-if="event.outcome == 'VP'" >Verified (+)</span>
+                                <span ng-if="event.outcome == 'VN'" >Verified (-)</span>
+                                <span ng-if="event.outcome == 'UV'">Unverified</span>
+                                <span ng-if="event.outcome == 'UP'">Updated (+)</span>
+                                <span ng-if="event.outcome == 'NU'">Updated (-)</span>
+                                <a href="" ng-click="showSummary(event.phe_description, event.phe_additional, event.title, event.source, event.source_details, event.outcome, event.action_date)" ng-show="event.outcome != 'UV' && event.phe_description">Summary</a>
+                                <span ng-if="!event.outcome">Pending</span>
+                            </td>
+                        </tr>
+                        <tr ng-show="eventType == 'MO'" ng-repeat="event in eventsList['yourorg_you'] | filter:query | orderBy:predicate:reverse">
+                            <td>{{event.event_id_int}}</td>
+                            <td><a href="#/events2/{{event.event_id}}">{{event.title}}</a></td>
+                            <td ng-show="onOpen">{{event.create_date}}</td>
+                            <td ng-show="!onOpen">{{event.action_date}}</td>
+
+                            <td>{{event.country}}</td>
+                            <td>{{event.person}} - {{event.organization_name}}</td>
+                            <td>
+                                <span>{{event.num_members}}</span>
+                            </td>
+                            <td>
+                                <span>{{event.num_responses_content}}</span>
+                            </td>
+                            <td>
+                                <span>{{event.num_responses_active}}</span>
+                            </td>
+                            <td>
+                                <span>{{event.num_responses_nocontent}}</span>
+                            </td>
+                            <td>
+                                <span ng-if="onOpen && (event.num_responses_active == 0)">New</span>
+                                <span ng-if="onOpen && (event.num_responses_active > 0)">Ongoing</span>
+                                <span ng-if="!onOpen">Closed</span>
+                            </td>
+                            <td>
+                                <span ng-if="event.outcome == 'VP'">Verified (+)</span>
+                                <span ng-if="event.outcome == 'VN'">Verified (-)</span>
+                                <span ng-if="event.outcome == 'UV'">Unverified</span>
+                                <span ng-if="event.outcome == 'UP'">Updated (+)</span>
+                                <span ng-if="event.outcome == 'NU'">Updated (-)</span>
+                                <a href="" ng-click="showSummary(event.phe_description, event.phe_additional, event.title, event.source, event.source_details, event.outcome, event.action_date)" ng-show="event.outcome != 'UV' && event.phe_description">Summary</a>
+                                <span ng-if="!event.outcome">Pending</span>
+                            </td>
+                        </tr>
+                        <tr ng-show="eventType == 'AO'" ng-repeat="event in eventsList['all'] | filter:query | orderBy:predicate:reverse" >
+                            <td>{{event.event_id_int}}</td>
+                            <td><a href="#/events2/{{event.event_id}}">{{event.title}}</a></td>
+                            <td ng-show="onOpen">{{event.create_date}}</td>
+                            <td ng-show="!onOpen">{{event.action_date}}</td>
+
+                            <td>{{event.country}}</td>
+                            <td>{{event.person}} - {{event.organization_name}}</td>
+                            <td>
+                                <span>{{event.num_members}}</span>
+                            </td>
+                            <td>
+                                <span>{{event.num_responses_content}}</span>
+                            </td>
+                            <td>
+                                <span>{{event.num_responses_active}}</span>
+                            </td>
+                            <td>
+                                <span>{{event.num_responses_nocontent}}</span>
+                            </td>
+                            <td>
+                                <span ng-if="onOpen && (event.num_responses_active == 0)">New</span>
+                                <span ng-if="onOpen && (event.num_responses_active > 0)">Ongoing</span>
+                                <span ng-if="!onOpen">Closed</span>
+                            </td>
+                            <td>
+                                <span ng-if="event.outcome == 'VP'">Verified (+)</span>
+                                <span ng-if="event.outcome == 'VN'">Verified (-)</span>
+                                <span ng-if="event.outcome == 'UV'">Unverified</span>
+                                <span ng-if="event.outcome == 'UP'">Updated (+)</span>
+                                <span ng-if="event.outcome == 'NU'">Updated (-)</span>
+                                <a href="" ng-click="showSummary(event.phe_description, event.phe_additional, event.title, event.source, event.source_details, event.outcome, event.action_date)" ng-show="event.outcome != 'UV' && event.phe_description">Summary</a>
+                                <span ng-if="!event.outcome">Pending</span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- view for FETPs -->
+            <div ng-if="!isOrganization && (dashboardType == 'MR')" ng-init="predicate = rfiOrderByValue; reverse=reverse" class="table-responsive">
+                <table class='small table table-hover table-bordered'>
+                    <tbody>
+                        <tr>
+                            <th width="50px" ng-click="predicate = 'event_id_int'; reverse=!reverse">ID <i class="fa fa-sort"></i></th>
+                            <th ng-click="predicate = 'title'; reverse=!reverse">Title <i class="fa fa-sort"></i></th>
+                            <th width="110px" ng-show="onOpen" ng-click="predicate = 'iso_create_date'; reverse=!reverse" class="nowrap-mobile">RFI Date <i class="fa fa-sort"></i></th>
+                            <th width="110px" ng-show="!onOpen" ng-click="predicate = 'iso_action_date'; reverse=!reverse" class="nowrap-mobile">Closure Date <i class="fa fa-sort"></i></th>
+                            <th ng-click="predicate = 'location'; reverse=!reverse">Location <i class="fa fa-sort"></i></th>
+                            <th ng-click="predicate = 'organization_name'; reverse=!reverse" class="nowrap-mobile">Requester <i class="fa fa-sort"></i></th>
+                            <th ng-click="predicate = 'activity'; reverse=!reverse">Responder Activity <i class="fa fa-sort"></i></th>
+                            <th ng-click="predicate = 'deadline'; reverse=!reverse">Deadline <i class="fa fa-sort"></i></th>
+                            <th ng-click="predicate = 'outcome'; reverse=!reverse">RFI Outcome <i class="fa fa-sort"></i></th>
+                        </tr>
+                        <tr ng-repeat="event in eventsList | filter:query | orderBy:predicate:reverse">
+                            <td>{{event.event_id_int}}</td>
+                            <td><a href="#/events2/{{event.event_id}}">{{event.title}}</a></td>
+                            <td ng-show="onOpen">{{event.create_date}}</td>
+                            <td ng-show="!onOpen">{{event.action_date}}</td>
+
+                            <td>{{event.country}}</td>
+                            <td>{{event.organization_name}}</td>
+                            <td>
+                                <span ng-if="event.activity == '1'">No Answer</span>
+                                <span ng-if="event.activity == '2'">Active Search</span>
+                                <span ng-if="event.activity == '3'">Contribution</span>
+                            </td>
+                            <td>
+                                {{event.due_date}}
+                            </td>
+                            <td>
+                                <span ng-if="event.outcome == 'VP'">Verified (+)</span>
+                                <span ng-if="event.outcome == 'VN'">Verified (-)</span>
+                                <span ng-if="event.outcome == 'UV'">Unverified</span>
+                                <span ng-if="event.outcome == 'UP'">Updated (+)</span>
+                                <span ng-if="event.outcome == 'NU'">Updated (-)</span>
+                                <a href="" ng-click="showSummary(event.phe_description, event.phe_additional, event.title, event.source, event.source_details, event.outcome, event.action_date)" ng-show="event.outcome != 'UV' && event.phe_description">Summary</a>
+                                <span ng-if="!event.outcome">Pending</span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- public dashboard -->
+            <div ng-if="!isOrganization && (dashboardType == 'PR')" ng-init="predicate = rfiOrderByValue; reverse=!reverse" class="table-responsive">
+                <table class='small table table-hover table-bordered'>
+                    <tbody>
+                    <tr>
+                        <th width="50px" ng-click="predicate = 'event_id_int'; reverse=!reverse">ID <i class="fa fa-sort"></i></th>
+                        <th ng-click="predicate = 'title'; reverse=!reverse">Title <i class="fa fa-sort"></i></th>
+                        <th width="110px" ng-show="onOpen" ng-click="predicate = 'iso_create_date'; reverse=!reverse" class="nowrap-mobile">RFI Date <i class="fa fa-sort"></i></th>
+                        <th width="110px" ng-show="!onOpen" ng-click="predicate = 'iso_action_date'; reverse=!reverse" class="nowrap-mobile">Closure Date <i class="fa fa-sort"></i></th>
+                        <th width="110px" ng-click="predicate = 'country'; reverse=!reverse">Location <i class="fa fa-sort"></i></th>
+                        <th width="50px"><span data-toggle="tooltip" title="information about the final outcome of the verification process">Outcome</span></th>
+                    </tr>
+                    <tr ng-repeat="pevent in eventsListPublic['all'] | filter:publicEvents | orderBy:predicate:reverse" >
+                        <td>{{pevent.event_id_int}}</td>
+                        <td>{{pevent.title}}</td>
+                        <td ng-show="onOpen">{{event.create_date}}</td>
+                        <td ng-show="!onOpen">{{event.action_date}}</td>
+
+                        <td>{{pevent.country}}</td>
+                        <td>
+                            <span ng-if="pevent.outcome == 'VP'">Verified (+)</span>
+                            <span ng-if="pevent.outcome == 'VN'">Verified (-)</span>
+                            <span ng-if="pevent.outcome == 'UP'">Updated (+)</span>
+                            <a href="" ng-click="showSummary(pevent.phe_description, pevent.phe_additional, pevent.title, pevent.source, pevent.source_details, pevent.outcome, pevent.action_date)" ng-show="pevent.outcome != 'UV' && pevent.phe_description">Summary</a>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+
+
+            <span ng-show="isRouteLoading">
+                <i class="fa fa-spinner fa-spin"></i> Please wait...
+            </span>
+    </div>
+</div>
+</div>
+</div><!--wrapper-->
+<div ng-include src="'disclaimer.html'"></div>
+<div ng-include src="'templates/footer/footer.html'"></div>
+
+<!-- Modal for summary -->
+<div>
+    <modal visible="showModal">
+        <pre style="white-space: pre-wrap; word-wrap: break-word">{{modalBody}}</pre>
+        <p>The information included has been verified by EPICORE, a network with a world-wide distribution of public health professionals ensuring a large spectrum of verification activities in proximity to where events are reported.
+            EPICORE members give highest priority to reliable sources of information including direct/indirect documentation about events, official statements and complementary reliable reports obtained at local level. Despite this,
+            EPICORE does not aim to replace any official reporting system and is meant to be a complementary surveillance tool supporting public health actors in their activities.
+            For all these reasons please consider that this information does not represent an official report and contents included should not be qualified as “officially verified”.
+        </p>
+    </modal>
+</div>
+<script>
+    // TOOLTIP
+    $('[data-toggle="tooltip"]').tooltip( {html: true,trigger:'hover'});
+</script>

@@ -1,7 +1,10 @@
 <?php
  
 require_once "db.function.php";
-require_once '/usr/share/php/vendor/autoload.php';
+if (file_exists("/usr/share/php/vendor/autoload.php")) {
+    require_once '/usr/share/php/vendor/autoload.php';
+}
+
 use Aws\Ses\SesClient;
 use Aws\Exception\AwsException;
 // AWSMail::mailfunc('lyajurvedi@gmail.com','test subject','this is a test message','info@healthmap.org');
