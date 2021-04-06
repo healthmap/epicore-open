@@ -13,9 +13,8 @@ else
     composer update
 fi
 
-
 # start PHP
 php-fpm -D
 
 # start the nginx in the foreground
-nginx -g 'daemon off;'
+nginx -g "daemon off;"
