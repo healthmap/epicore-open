@@ -160,7 +160,7 @@ pipeline {
                               install:   true,
                               name:      HELM_CHART_NAME,
                               namespace: env.K8S_NAMESPACE,
-                              values:    ['./deploy/helm-chart/values.yaml']
+                              values:    ['./deploy/helm-chart/values.yaml'],
                               set:       ['image.tag':DOCKER_IMAGE_VERSION]
                             )
 
