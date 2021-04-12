@@ -29,19 +29,30 @@ let home_page = 'templates/home/home.html?cb=';
 if (app_mode == 'mobile_prod') {
   app.value('urlBase', 'https://epicore.org/'); // use full url for mobile api calls
   app.value('epicoreMode', 'mobile');
+  epicore_config.urlBase = 'https://epicore.org/';
+  epicore_config.epicoreMode = 'mobile';
   home_page = 'templates/login/login_mobile.html?cb=';
+
 } else if (app_mode == 'mobile_dev') {
   // use full url for mobile api calls
   app.value('urlBase', 'https://epicore.org/dev/');
   app.value('epicoreMode', 'mobile');
+  epicore_config.urlBase = 'https://epicore.org/dev/';
+  epicore_config.epicoreMode = 'mobile';
   home_page = 'templates/login/login_mobile.html?cb=';
+
 } else if (app_mode == 'mobile_jandre') {
   // use full url for mobile api calls
   app.value('urlBase', 'https://epicore.org/~jandre/epicore/');
   app.value('epicoreMode', 'mobile');
+  epicore_config.urlBase = 'https://epicore.org/~jandre/epicore/';
+  epicore_config.epicoreMode = 'mobile';
   home_page = 'templates/login/login_mobile.html?cb=';
+
 } else {
   // use relative url for web app
+  epicore_config.urlBase = '';
+  epicore_config.epicoreMode = 'mobile';
   app.value('urlBase', '');
   app.value('epicoreMode', 'web');
 }
@@ -55,16 +66,15 @@ app.config(function($routeProvider) {
       controller: 'eventsController',
     })
     .when('/events2', {
-      templateUrl: 'templates/events/events2.html?cb=' + cacheBustSuffix,
-      controller: 'eventsController2',
+      templateUrl: 'templates/events/events3.html?cb=' + cacheBustSuffix,
+      controller: 'eventsController3',
     })
     .when('/events_public', {
       templateUrl: 'templates/events/events_public.html?cb=' + cacheBustSuffix,
-      controller: 'eventsController2',
+      controller: 'eventsPublicController3',
     })
     .when('/events_public/articles/:articleID', {
-      templateUrl:
-        'templates/events/publicEventsRFI.html?cb=' + cacheBustSuffix,
+      templateUrl: 'templates/events/publicEventsRFI.html?cb=' + cacheBustSuffix,
       controller: 'eventsController2',
     })
     .when('/events/closed', {
@@ -72,8 +82,8 @@ app.config(function($routeProvider) {
       controller: 'eventsController',
     })
     .when('/events2/closed', {
-      templateUrl: 'templates/events/events2.html?cb=' + cacheBustSuffix,
-      controller: 'eventsController2',
+      templateUrl: 'templates/events/events3.html?cb=' + cacheBustSuffix,
+      controller: 'eventsController3',
     })
     .when('/events/:id', {
       templateUrl: 'templates/events/event.html?cb=' + cacheBustSuffix,
@@ -134,10 +144,6 @@ app.config(function($routeProvider) {
     .when('/rfi_dashboard/closed', {
       templateUrl: 'templates/events/events_metrics.html?cb=' + cacheBustSuffix,
       controller: 'eventsController2',
-    })
-    .when('/events_public/articles/:articleID', {
-      templateUrl: 'templates/events/publicrfi.html?cb=' + cacheBustSuffix,
-      controller: 'publicRFIController',
     })
     .when('/map', {
       templateUrl: 'templates/map/map.html?cb=' + cacheBustSuffix,

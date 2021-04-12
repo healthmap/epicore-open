@@ -1,0 +1,298 @@
+<?php
+
+require_once "db.function.php";
+
+class EventsController
+{
+    public static function resolveRequest()
+    {
+        $requestMethod = $_SERVER["REQUEST_METHOD"];
+        switch ($requestMethod) {
+            case "GET":
+                return self::resolveAction($_GET);
+            default:
+                return null;
+        }
+    }
+    
+    public static function getErrorMessage($error)
+    {
+        $action = null;
+        if (isset($_REQUEST['action'])) {
+            $action = $_REQUEST['action'];
+        }
+
+        $error_response = Array(
+            'error' => true
+        );
+
+        switch ($action) {
+            case "get_events":
+                $error_response["error_message"] = "An error occurred during getting events data.";
+            case "get_event_summary":
+                $error_response["error_message"] = "An error occurred during getting the event summary data.";
+            default:
+                $error_response["error_message"] = "An error occurred during getting data.";
+        }
+
+        $error_response["error_details"] = $error->getMessage();
+        return $error_response;
+    }
+
+    private static function resolveAction($params)
+    {
+        if (!isset($params["action"])) {
+            return null;
+        }
+        $action = $params["action"];
+        switch ($action) {
+            case "get_events":
+                return  self::getEvents($params);
+            case "get_public_events":
+                return  self::getPublicEvents($params);
+            case "get_event_summary":
+                return self::getEventSummary($params);
+            default:
+                return null;
+        }
+    }
+
+    private static function getEvents($params)
+    {
+        $requester_id = null;
+        $start_date = null;
+        $end_date = null;
+        $is_open = null;
+        $organization_id = null;
+        $optionalFields = [];
+        $conditions = [];
+
+        if (isset($params["uid"])) {
+            $requester_id = $params["uid"];
+        }
+
+        if (isset($params["start_date"])) {
+            $start_date = $params["start_date"];
+        }
+
+        if (isset($params["end_date"])) {
+            $end_date = $params["end_date"];
+        }
+
+        if (isset($params["is_open"])) {
+            $is_open = filter_var($params["is_open"], FILTER_VALIDATE_BOOLEAN);
+        }
+
+        if (isset($params["organization_id"])) {
+            $organization_id = $params["organization_id"];
+        }
+
+        if ($requester_id) {
+            array_push($conditions, "event.requester_id = '$requester_id'");
+        }
+
+        if ($organization_id) {
+            array_push($conditions, "user.organization_id = '$organization_id'");
+        }
+
+        if ($start_date) {
+            array_push($conditions, "event.create_date > '$start_date'");
+        }
+
+        if ($end_date) {
+            array_push($conditions, "event.create_date < '$end_date'");
+        }
+
+        if ($is_open) {
+            array_push($conditions, "event_notes.status != 'C'");
+
+        } else {
+            array_push($optionalFields, "purpose.phe_description");
+            array_push($conditions, "event_notes.status = 'C'");
+        }
+
+        $query = "SELECT
+            event.event_id,
+            event.title,
+            DATE_FORMAT(event.create_date, '%d-%M-%Y') AS create_date,
+            DATE_FORMAT(event.create_date, '%d-%m-%Y %h:%m:%s') AS iso_create_date,
+            DATE_FORMAT(event_notes.action_date, '%d-%M-%Y') AS action_date,
+            DATE_FORMAT(event_notes.action_date, '%d-%m-%Y %h:%m:%s') AS iso_action_date,
+            event.requester_id,
+            hm_hmu.name AS person,
+            organization.name AS organization_name,
+            purpose.outcome AS outcome,
+            event_notes.status,
+
+            (SELECT 
+                COUNT(event_fetp.event_fetp_id)
+                FROM event_fetp
+                WHERE event_fetp.event_id = event.event_id)
+            AS num_members,
+
+            (SELECT
+                COUNT(*)
+                FROM response
+                WHERE event_id = event.event_id) 
+            AS num_responses,
+
+            (SELECT
+                COUNT(response.response_id)
+                FROM response
+                WHERE response.event_id = event.event_id
+                AND response.response_permission > 0
+                AND response.response_permission < 4)
+            AS num_responses_content,
+
+            (SELECT
+                COUNT(response.response_id)
+                FROM response
+                WHERE event_id = event.event_id
+                AND response_permission = '4')
+            AS num_responses_active,
+            
+            (SELECT
+                COUNT(*)
+                FROM response
+                WHERE useful IS NULL
+                AND response_permission <>0
+                AND response_permission <>4
+                AND event_id = event.event_id)
+            AS num_notrated_responses,
+
+            (SELECT 
+                COUNT(*)
+                FROM event_fetp
+                WHERE event_fetp.event_id = event.event_id
+                AND event_fetp.send_date <= (CURDATE() - INTERVAL 14 DAY))
+            AS no_active_14_days";
+
+        $query = self::addQueryOptionalFields($query, $optionalFields);
+
+        $query .= "
+            FROM event
+
+            INNER JOIN event_notes
+            ON event.event_id = event_notes.event_notes_id
+
+            INNER JOIN user
+            ON event.requester_id = user.user_id
+
+            INNER JOIN hm_hmu
+            ON user.hmu_id = hm_hmu.hmu_id
+
+            INNER JOIN organization
+            ON user.organization_id = organization.organization_id
+
+            INNER JOIN purpose
+            ON event.event_id = purpose.event_id
+            ";
+
+        $query = self::addQueryWhereConditions($query, $conditions);
+
+        $db = getDB();
+        $response = $db->getAll($query);
+        return $response;
+    }
+
+    private static function getPublicEvents($params)
+    {
+        $start_date = null;
+        $end_date = null;
+        $conditions = [];
+
+        if (isset($params["start_date"])) {
+            $start_date = $params["start_date"];
+        }
+
+        if (isset($params["end_date"])) {
+            $end_date = $params["end_date"];
+        }
+
+        if ($start_date) {
+            array_push($conditions, "event.create_date > '$start_date'");
+        }
+
+        if ($end_date) {
+            array_push($conditions, "event.create_date < '$end_date'");
+        }
+
+        array_push($conditions,"(purpose.outcome = 'VP' OR purpose.outcome = 'VN' OR purpose.outcome = 'UP')");
+
+        $query = "SELECT
+        event.event_id,
+        event.title,
+        DATE_FORMAT(event.create_date, '%d-%M-%Y') AS create_date,
+        DATE_FORMAT(event.create_date, '%d-%m-%Y %h:%m:%s') AS iso_create_date,
+        DATE_FORMAT(event_notes.action_date, '%d-%M-%Y') AS action_date,
+        DATE_FORMAT(event_notes.action_date, '%d-%m-%Y %h:%m:%s') AS iso_action_date,
+        purpose.outcome AS outcome,
+        place.name AS country
+        
+        FROM event
+
+        INNER JOIN event_notes
+        ON event.event_id = event_notes.event_notes_id
+        
+        INNER JOIN purpose
+        ON event.event_id = purpose.event_id
+        
+        INNER JOIN place
+        ON event.place_id = place.place_id
+        ";
+
+        $query = self::addQueryWhereConditions($query, $conditions);
+
+        $db = getDB();
+        $response = $db->getAll($query);
+        return $response;
+    }
+
+    private static function getEventSummary($params)
+    {
+        if (!isset($params['event_id'])) {
+            return null;
+        }
+
+        $event_id = $params['event_id'];
+
+        $query = "SELECT
+        source.source, source.details, purpose.phe_additional
+        FROM source
+        INNER JOIN purpose
+        ON source.event_id = purpose.event_id
+        WHERE source.event_id = '$event_id'";
+        
+        $db = getDB();
+        $response = $db->getRow($query);
+        return $response;
+    }
+
+    private static function addQueryOptionalFields($query, $optionalFields)
+    {
+        foreach ($optionalFields as $key => $value) {
+            if ($key === 0) {
+                $query .= ", ";
+            }
+            $query .= $value;
+            if ($key < sizeof($optionalFields) - 1) {
+                $query .= ", ";
+            }
+        }
+        return $query;
+    }
+
+    private static function addQueryWhereConditions($query, $conditions)
+    {
+        foreach ($conditions as $key => $value) {
+            if ($key === 0) {
+                $query .= "WHERE ";
+            }
+            $query .= $value;
+            if ($key < sizeof($conditions) - 1) {
+                $query .= " AND ";
+            }
+        }
+        return $query;
+    }
+}

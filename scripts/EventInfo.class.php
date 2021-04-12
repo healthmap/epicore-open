@@ -806,12 +806,14 @@ class EventInfo
         } else {
             // save the email contents in the temp directory for reference- if one is passed in, overwrite it
             $filename = isset($this) ? $this->id : date('YmdHis');
-            $file_preview = EMAILPREVIEWS . "$type/$filename" . ".html";
+            $file_preview = "../" .EMAILPREVIEWS . "$type/$filename" . ".html";
             // //echo '----filepreview:';
             // //print_r($file_preview);
             // //echo '----filepreview:';
-            file_put_contents("../$file_preview", $emailtext);
-            return $file_preview;
+            if (file_exists($file_preview)) {
+                file_put_contents("$file_preview", $emailtext);
+                return $file_preview;
+            }
         }
     }
     function nl2p($text){
@@ -1089,12 +1091,13 @@ class EventInfo
         // generate cache file name
         $cachekey = md5('events'. $user_id . $status);
         $events_file = "../cache/epicore" . $cachekey. ".json";
-
-        if (file_exists($events_file) && ($source == 'cache')) { // from cache
-            $events = json_decode(file_get_contents($events_file));
-        } else { // from database
-            $events = EventInfo::getAllEvents($user_id, $status, $start_date);
-            file_put_contents("$events_file", json_encode($events));
+        if (file_exists($events_file)) {
+            if ($source == 'cache') { // from cache
+                $events = json_decode(file_get_contents($events_file));
+            } else { // from database
+                $events = EventInfo::getAllEvents($user_id, $status, $start_date);
+                file_put_contents("$events_file", json_encode($events));
+            }
         }
         return $events;
     }
