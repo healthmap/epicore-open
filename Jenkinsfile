@@ -109,6 +109,9 @@ pipeline {
                          sh """
                          npm install 
                          npm run-script build
+                         aws ssm get-parameters-by-path --path "/" > ssm_parameters.txt                                                              
+                         cat ssm_parameters.txt | jq -r '.[] |  map("\(.Name)=\(.Value|tostring)")'  |  sed 's/"//g' | sed 's/.$//' > .env   
+                         rm -rf ssm_parameters.txt
                          """
                           docker.withRegistry( env.DOCKER_REGISTRY_URL, env.DOCKER_REGISTRY_CRED_ID) {
               

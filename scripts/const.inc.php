@@ -7,8 +7,8 @@ $dotenv->load();
 $environment = $_ENV['environment'];
 $approval_username = $_ENV['approval_username'];
 $$approval_username = $_ENV['approval_password'];
-$key = $_ENV['googleapi-key'];
-$clientid =  $_ENV['googleapi-clientid'];
+$key = $_ENV['googleapi_key'];
+$clientid =  $_ENV['googleapi_clientid'];
 $fcm_server_key = $_ENV['fcm_server_key'];
 $fcm_send_url = $_ENV['fcm_send_url'];
 
