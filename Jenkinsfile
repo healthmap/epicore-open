@@ -106,10 +106,14 @@ pipeline {
                
                       withAWS(region: env.AWS_REGION ,role: env.JENKINS_IAM_ROLE, roleAccount: env.AWS_ACCOUNT_ID) {
 
-                         sh """
+                         sh '''
+                         
+                         aws ssm get-parameters-by-path --path "/" > ssm_parameters.txt                                                              
+                         cat ssm_parameters.txt | jq -r '.[] |  map("\\(.Name)=\\(.Value|tostring)")'  |  sed 's/"//g' | sed 's/.$//' > .env    
+                         rm -rf ssm_parameters.txt
                          npm install 
                          npm run-script build
-                         """
+                         '''
                           docker.withRegistry( env.DOCKER_REGISTRY_URL, env.DOCKER_REGISTRY_CRED_ID) {
               
                                  
