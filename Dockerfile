@@ -11,9 +11,6 @@ RUN apt-get update -y  \
 
 RUN sudo apt-get install -y nginx  
 
-# PHP_CPPFLAGS are used by the docker-php-ext-* scripts
-#ENV PHP_CPPFLAGS="$PHP_CPPFLAGS -std=c++11"
-
 RUN docker-php-ext-install pdo_mysql \
     && docker-php-ext-install opcache \
     && apt-get install libicu-dev -y \
@@ -39,6 +36,7 @@ RUN sudo curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "aws
     && unzip awscliv2.zip \
     && aws/install
 
+
 #Move composer.json file so we can run the install cmd
 COPY composer.json /usr/share/php/composer.json
 
@@ -49,6 +47,10 @@ COPY entrypoint.sh /etc/entrypoint.sh
 COPY --chown=www-data:www-data . /var/www/html/test.epicore.org
 
 COPY . /var/www/html/test.epicore.org
+
+#As part of the Jenkins build - npm run-script build is executed
+#Copy webpack distfolder
+COPY ./js/dist/* /var/wwww/html/test.epicore.org 
 
 WORKDIR /var/www/html/test.epicore.org
 

@@ -105,7 +105,11 @@ pipeline {
               script {
                
                       withAWS(region: env.AWS_REGION ,role: env.JENKINS_IAM_ROLE, roleAccount: env.AWS_ACCOUNT_ID) {
-                              
+
+                         sh """
+                         npm install 
+                         npm run-script build
+                         """
                           docker.withRegistry( env.DOCKER_REGISTRY_URL, env.DOCKER_REGISTRY_CRED_ID) {
               
                                  
@@ -156,7 +160,8 @@ pipeline {
                               install:   true,
                               name:      HELM_CHART_NAME,
                               namespace: env.K8S_NAMESPACE,
-                              values:    ['./deploy/helm-chart/values.yaml']
+                              values:    ['./deploy/helm-chart/values.yaml'],
+                              set:       ['image.tag':DOCKER_IMAGE_VERSION]
                             )
 
 
