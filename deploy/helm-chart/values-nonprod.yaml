@@ -9,6 +9,7 @@ image:
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
   tag: "18918f7"
+  containerPort: 80
 
 imagePullSecrets: []
 nameOverride: ""
@@ -39,6 +40,8 @@ securityContext: {}
 service:
   type: LoadBalancer
   port: 80
+  sslport: 443
+  acmcert: "arn:aws:acm:us-east-1:503172036736:certificate/78962057-ccf8-404d-b9ac-24c946342ae2s"
 
 ingress:
   enabled: false
