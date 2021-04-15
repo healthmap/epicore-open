@@ -1,5 +1,4 @@
 import AuthService from './authService/authService.js';
-import EpicoreCacheService from './epicoreCacheService/epicoreCacheService.js';
 import EventAPIservice from './eventAPIservice/eventAPIservice.js';
 import EventAPIservice2 from './eventAPIservice/eventAPIservice2.js';
 import NewsService from './newsService/newsService.js';
@@ -8,7 +7,6 @@ import RfiForm from './rfiForm/rfiForm.js';
 const Services = angular
   .module('EpicoreApp.services', [])
   .factory('authService', AuthService)
-  .factory('epicoreCacheService', EpicoreCacheService)
   .factory('eventAPIservice', EventAPIservice)
   .factory('eventAPIservice2', EventAPIservice2)
   .factory('newsService', NewsService)

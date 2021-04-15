@@ -12,16 +12,16 @@
 </div>
 
 
-<div class="publicrfi_maindiv">
+<div class="publicrfi_maindiv" data-ng-init="getPublicEventsByID()">
     <div class="container">
-        <div class="row">
+        <div class="row" ng-if="!isRouteLoading">
             <div class="col-xs-12 col-sm-8">
                 <!-- RFI filter -->
                 <div class="mt16 mb24">
                     <a href="#/events_public" class="backlink">
                         <i class="fa fa-angle-double-left"></i> View all public RFIs</a>
                 </div>
-                <div data-ng-init="getPublicEventsByID()">
+                <div>
                     <h3 class="mb16">
                         {{eventTitle}}
                     </h3>
@@ -46,6 +46,11 @@
                     </div>
                 </div>
             </div>
+        </div>
+        <div class="row mt16 mb24" ng-if="isRouteLoading">
+            <span>
+                <i class="fa fa-spinner fa-spin"></i> Please wait...
+            </span>
         </div>
     </div>
 </div>

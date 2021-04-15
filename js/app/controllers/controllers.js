@@ -19,13 +19,15 @@ import SuccessController from './success/successController.js';
 import TestController from './training/testController.js';
 import UserController from './user/userController.js';
 
+import EventsController3 from './events/eventsController3.js';
+import EventsPublicController3 from './events/eventsPublicController3.js';
+
 const Controllers = angular
   .module('EpicoreApp.controllers', [])
   .controller('approvalController', ApprovalController)
   .controller('certController', CertController)
   .controller('editRequestController', EditRequestController)
   .controller('eventsController', EventsController)
-  .controller('eventsController2', EventsController2)
   .controller('fetpController', FetpController)
   .controller('headerController', HeaderController)
   .controller('mapController', MapController)
@@ -41,6 +43,10 @@ const Controllers = angular
   .controller('successController', SuccessController)
   .controller('testController', TestController)
   .controller('userController', UserController)
+  .controller('eventsController2', EventsController2)
+  
+  .controller('eventsController3', EventsController3)
+  .controller('eventsPublicController3', EventsPublicController3)
 
   .filter('to_trusted', [
     '$sce',

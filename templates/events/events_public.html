@@ -1,5 +1,5 @@
 <div ng-include src="'templates/header/header_new.html'"></div>
-<!-- <div ng-if="mobile"ng-include src="'templates/header/header_mobile.html'"></div> -->
+<div ng-if="mobile"ng-include src="'templates/header/header_mobile.html'"></div>
 
 <div class="jumbotron dashboard">
     <div class="container">
@@ -9,7 +9,6 @@
     </div>
 </div>
 
-
 <div class="wrapper dashboard">
     <div class="container">
         <div class="row">
@@ -18,20 +17,22 @@
                 <!-- RFI filter -->
                 <div class="form-group">
                     <label class="mr1 form-label">Time frame</label>
-                    <select ng-options="month as month.name for month in event_months " ng-model="selected_month" ng-change="getEventMonth(selected_month)"></select>
+                    <select ng-options="month as month.name for month in timeFilterValues"
+                            ng-model="timeFilterSelectedValue"
+                            ng-change="selectEventsMonth(timeFilterSelectedValue)">
+                    </select>
                 </div>
 
                 <!-- view for organizations -->
-                <div ng-init="predicate = 'iso_create_date'; reverse=!reverse">
-                    <table class='outer-border small table table-hover public-rfi'>
+                <div ng-init="eventsOrderBy = 'iso_create_date'; reverse=!reverse">
+                    <table ng-if="!isRouteLoading" class='outer-border small table table-hover public-rfi'>
                         <tbody>
                             <tr>
-                                <!--<th ng-click="predicate = 'event_id_int'; reverse=!reverse">ID <i class="fa fa-sort"></i></th>-->
-                                <th ng-click="predicate = 'title'; reverse=!reverse">Title</th>
-                                <th ng-click="predicate = 'iso_action_date'; reverse=!reverse">Closure Date
+                                <th ng-click="eventsOrderBy = 'title'; reverse=!reverse">Title</th>
+                                <th ng-click="eventsOrderBy = 'iso_action_date'; reverse=!reverse">Closure Date
                                     <i class="fa fa-sort"></i>
                                 </th>
-                                <th ng-click="predicate = 'country'; reverse=!reverse">Country
+                                <th ng-click="eventsOrderBy = 'country'; reverse=!reverse">Country
                                     <i class="fa fa-sort"></i>
                                 </th>
                                 <th>
@@ -39,28 +40,14 @@
                                 </th>
                                 <th></th>
                             </tr>
-
-                            <!-- <div class="link" ng-click="publicArticle(1233)">
-                                <a>Open Public RFI
-                                    <i class="more-link fa fa-long-arrow-right"></i>
-                                </a>
-                            </div> -->
-
-                            <!-- <tr class="link" ng-click="showSummary(event.phe_description, event.phe_additional, event.title, event.source, event.source_details, event.outcome, event.action_date)"
-                                ng-repeat="event in eventsList['all'] | filter:publicEvents | orderBy:predicate:reverse"> -->
-                            <!-- <tr ng-controller="publicRFIController" class="link" ng-click="openPortfolioURL(event.event_id_int,event.phe_description, event.phe_additional, event.title, event.source, event.source_details, event.outcome, event.action_date)"
-                                ng-repeat="event in eventsList['all'] | filter:publicEvents | orderBy:predicate:reverse"> -->
-                                
-                            <tr class="link" ng-click="publicArticle(event.event_id_int)" ng-repeat="event in eventsList['all'] | filter:publicEvents | orderBy:predicate:reverse">
-                                <!-- <td>{{event.event_id_int}}</td> -->
+                            <tr class="link" ng-click="openPublicArticle(event.event_id)" ng-repeat="event in events | orderBy:eventsOrderBy:reverse">
                                 <td>{{event.title}}</td>
                                 <td>{{event.action_date}}</td>
                                 <td>{{event.country}}</td>
                                 <td>
-                                    <span ng-if="event.outcome == 'VP'">Verified (+)</span>
-                                    <span ng-if="event.outcome == 'VN'">Verified (-)</span>
-                                    <span ng-if="event.outcome == 'UP'">Updated (+)</span>
-                                    <!--<a href="" ng-click="showSummary(event.phe_description, event.phe_additional, event.title, event.source, event.source_details, event.outcome, event.action_date)" ng-show="event.outcome && event.phe_description">Summary</a>-->
+                                    <span ng-if="event.outcome === EVENT_OUTCOME.VERIFIED_POSITIVE.CODE">{{EVENT_OUTCOME.VERIFIED_POSITIVE.TEXT_SHORT}}</span>
+                                    <span ng-if="event.outcome === EVENT_OUTCOME.VERIFIED_NEGATIVE.CODE">{{EVENT_OUTCOME.VERIFIED_NEGATIVE.TEXT_SHORT}}</span>
+                                    <span ng-if="event.outcome === EVENT_OUTCOME.UPDATED_POSITIVE.CODE">{{EVENT_OUTCOME.UPDATED_POSITIVE.TEXT_SHORT}}</span>
                                 </td>
                                 <td>
                                     <a>Summary
@@ -74,7 +61,7 @@
                 </div>
 
 
-                <span ng-show="isRouteLoading">
+                <span ng-if="isRouteLoading">
                     <i class="fa fa-spinner fa-spin"></i> Please wait...
                 </span>
             </div>
