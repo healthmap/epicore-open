@@ -8,6 +8,8 @@ services:
       context: .
       dockerfile: Dockerfile
     container_name: epicore_nginx
+    environment:
+      AWS_PROFILE: "EPICORE-NONPROD"
     ports:
       - "8088:80"
     volumes:
