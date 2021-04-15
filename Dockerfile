@@ -51,7 +51,7 @@ COPY . /var/www/html/test.epicore.org
 
 #As part of the Jenkins build - npm run-script build is executed
 #Copy webpack distfolder
-COPY ./js/dist/* /var/wwww/html/test.epicore.org 
+COPY ./js/dist/* /var/wwww/html/test.epicore.org/
 
 WORKDIR /var/www/html/test.epicore.org
 
