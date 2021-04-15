@@ -106,10 +106,10 @@ pipeline {
                
                       withAWS(region: env.AWS_REGION ,role: env.JENKINS_IAM_ROLE, roleAccount: env.AWS_ACCOUNT_ID) {
 
-                         sh """
+                         sh '''
                          npm install 
                          npm run-script build
-                         """
+                         '''
                           docker.withRegistry( env.DOCKER_REGISTRY_URL, env.DOCKER_REGISTRY_CRED_ID) {
               
                                  

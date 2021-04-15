@@ -6,7 +6,8 @@ RUN apt-get update -y  \
     && apt-get -y install vim \
     && apt-get install -y git \
     && apt-get install -y zip \
-    && apt-get install -y unzip 
+    && apt-get install -y unzip \
+    && apt-get install -y jq
    # && apt-get install php-zip
 
 RUN sudo apt-get install -y nginx  
