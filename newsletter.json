@@ -1,4 +1,12 @@
 [{
+    "year": "2021",
+    "qLinks": [{
+            "quarter": "Q1",
+            "weblink": "https://mailchi.mp/epicore/epicore-quarterly-newsletter-q1-2021"
+        }
+    ]
+},
+{
     "year": "2020",
     "qLinks": [{
             "quarter": "Q4",
