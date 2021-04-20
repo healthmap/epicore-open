@@ -41,7 +41,7 @@ service:
   type: LoadBalancer
   port: 80
   sslport: 443
-  acmcert: "arn:aws:acm:us-east-1:503172036736:certificate/78962057-ccf8-404d-b9ac-24c946342ae2s"
+  acmcert: "arn:aws:acm:us-east-1:503172036736:certificate/78962057-ccf8-404d-b9ac-24c946342ae2"
 
 ingress:
   enabled: false
