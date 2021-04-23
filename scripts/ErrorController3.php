@@ -21,8 +21,7 @@ class ErrorController
         } else {
             $error_response["error_message"] = $error_messages['default'];
         }
-
-        $error_response["error_details"] = '<i>"'. $error->getMessage() . '"</i>' . ' in file <i>' . $error->getFile() .' </i>, line ' . $error->getLine() . '.';
+        $error_response["error_details"] = 'Error code: ' . $error->getCode() . ', <i>"'. $error->getMessage() . '"</i>' . ' in file <i>' . $error->getFile() .' </i>, line ' . $error->getLine() . '.';
         return $error_response;
     }
 
