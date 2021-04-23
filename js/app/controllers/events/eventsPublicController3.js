@@ -7,7 +7,7 @@ const EventsPublicController3 = ($scope, $window, epicoreMode, epicoreStartDate)
   $scope.mobile = epicoreMode == 'mobile' ? true : false;
   $scope.events = [];
   $scope.eventsOrderBy = 'iso_create_date';
-  $scope.eventsOrderReverse = false;
+  $scope.eventsOrderReverse = true;
   $scope.isRouteLoading = true;
   $scope.EVENT_OUTCOME = EVENT_OUTCOME;
 
