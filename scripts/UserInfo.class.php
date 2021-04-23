@@ -29,7 +29,6 @@ class UserInfo
     }
 
     static function addMod($email, $org_id, $mod_name){
-        print_r($mod_name);
         if ($email && is_numeric($org_id)) {
             $db1 = getDB();
             $hmu_id = $db1->getOne("SELECT hmu_id from hm_hmu WHERE email = ?", array($email));
