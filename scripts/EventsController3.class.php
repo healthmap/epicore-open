@@ -187,8 +187,6 @@ class EventsController
 
         $query = self::addQueryWhereConditions($query, $conditions);
 
-        // print_r($query);
-
         $db = getDB();
         $response = $db->getAll($query);
         return $response;
