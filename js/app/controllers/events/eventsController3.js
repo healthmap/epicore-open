@@ -69,7 +69,7 @@ const EventsController3 = ($scope, $location, epicoreMode, epicoreStartDate) => 
   };
 
   $scope.eventsOrderByFunction = (event) => {
-    if ($scope.eventsOrderBy === 'create_date' || $scope.eventsOrderBy === 'action_date') {
+    if ($scope.eventsOrderBy === 'iso_create_date' || $scope.eventsOrderBy === 'iso_action_date') {
       var date = new Date(event[$scope.eventsOrderBy]);
       return date;
     }

@@ -42,7 +42,7 @@ const EventsPublicController3 = ($scope, $window, epicoreMode, epicoreStartDate)
   };
 
   $scope.eventsOrderByFunction = (event) => {
-    if ($scope.eventsOrderBy === 'create_date') {
+    if ($scope.eventsOrderBy === 'iso_create_date') {
       var date = new Date(event[$scope.eventsOrderBy]);
       return date;
     }

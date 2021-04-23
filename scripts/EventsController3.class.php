@@ -107,9 +107,9 @@ class EventsController
             event.event_id,
             event.title,
             DATE_FORMAT(event.create_date, '%d-%M-%Y') AS create_date,
-            DATE_FORMAT(event.create_date, '%d-%m-%Y %h:%m:%s') AS iso_create_date,
+            DATE_FORMAT(event.create_date, '%Y-%m-%dT%h:%i:%s') AS iso_create_date,
             DATE_FORMAT(event_notes.action_date, '%d-%M-%Y') AS action_date,
-            DATE_FORMAT(event_notes.action_date, '%d-%m-%Y %h:%m:%s') AS iso_action_date,
+            DATE_FORMAT(event_notes.action_date, '%Y-%m-%dT%h:%i:%s') AS iso_action_date,
             event.requester_id,
             hm_hmu.name AS person,
             organization.name AS organization_name,
@@ -222,9 +222,9 @@ class EventsController
         event.event_id,
         event.title,
         DATE_FORMAT(event.create_date, '%d-%M-%Y') AS create_date,
-        DATE_FORMAT(event.create_date, '%d-%m-%Y %h:%m:%s') AS iso_create_date,
+        DATE_FORMAT(event.create_date, '%Y-%m-%dT%h:%i:%s') AS iso_create_date,
         DATE_FORMAT(event_notes.action_date, '%d-%M-%Y') AS action_date,
-        DATE_FORMAT(event_notes.action_date, '%d-%m-%Y %h:%m:%s') AS iso_action_date,
+        DATE_FORMAT(event_notes.action_date, '%Y-%m-%dT%h:%i:%s') AS iso_action_date,
         purpose.outcome AS outcome,
         place.name AS country
         
