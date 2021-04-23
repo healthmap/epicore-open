@@ -1,7 +1,9 @@
 <?php
 
 require_once "db.function.php";
+require_once  "UserContoller3.class.php";
 
+use UserController as userController;
 class EventsController
 {
     public static function resolveRequest()
@@ -15,29 +17,6 @@ class EventsController
         }
     }
     
-    public static function getErrorMessage($error)
-    {
-        $action = null;
-        if (isset($_REQUEST['action'])) {
-            $action = $_REQUEST['action'];
-        }
-
-        $error_response = Array(
-            'error' => true
-        );
-
-        switch ($action) {
-            case "get_events":
-                $error_response["error_message"] = "An error occurred during getting events data.";
-            case "get_event_summary":
-                $error_response["error_message"] = "An error occurred during getting the event summary data.";
-            default:
-                $error_response["error_message"] = "An error occurred during getting data.";
-        }
-
-        $error_response["error_details"] = $error->getMessage();
-        return $error_response;
-    }
 
     private static function resolveAction($params)
     {
@@ -68,7 +47,7 @@ class EventsController
         $conditions = [];
 
         if (isset($params["uid"])) {
-            $requester_id = $params["uid"];
+            $requester_id = userController::getUserData()["uid"];
         }
 
         if (isset($params["start_date"])) {

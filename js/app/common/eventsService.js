@@ -31,9 +31,8 @@ const eventsService = () => {
       params.is_open = is_open;
     }
 
-    const urlParams = new URLSearchParams(params);
-    const url = `${epicore_config.urlBase + epicore_config.API.EVENTS_v3}?${urlParams}`;
-    const response = await fetchGet(url);
+    const url = epicore_config.urlBase + epicore_config.API.EVENTS_v3;
+    const response = await fetchGet({ url, params });
     return response;
   };
 
@@ -52,9 +51,8 @@ const eventsService = () => {
       params.end_date = end_date;
     }
 
-    const urlParams = new URLSearchParams(params);
-    const url = `${epicore_config.urlBase + epicore_config.API.EVENTS_v3}?${urlParams}`;
-    const response = await fetchGet(url);
+    const url = epicore_config.urlBase + epicore_config.API.EVENTS_v3;
+    const response = await fetchGet({ url, params });
     return response;
   };
 
@@ -64,9 +62,8 @@ const eventsService = () => {
       event_id: event_id
     };
 
-    const urlParams = new URLSearchParams(params);
-    const url = `${epicore_config.urlBase + epicore_config.API.EVENTS_v3}?${urlParams}`;
-    const response = await fetchGet(url);
+    const url = epicore_config.urlBase + epicore_config.API.EVENTS_v3;
+    const response = await fetchGet({ url, params });
     return response;
   };
 

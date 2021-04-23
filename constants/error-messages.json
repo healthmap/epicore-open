@@ -1,0 +1,6 @@
+{
+  "header": "Something went wrong",
+  "get_events": "An error occurred during getting events data.",
+  "get_event_summary": "An error occurred during getting the event summary data.",
+  "default": "An error occurred during getting data."
+}
