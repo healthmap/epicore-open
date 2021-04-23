@@ -1,6 +1,10 @@
+import { fetchService } from '@/common/fetchService';
+
+const { fetchGet } = fetchService();
+
 const eventAPIservice2 = ($http, $rootScope, $location, urlBase) => {
   const eventAPI = {};
-  eventAPI.getEvents = function(event_id, start_date, end_date) {
+  eventAPI.getEvents = async (event_id, start_date, end_date) => {
     let qs = event_id ? '&event_id=' + event_id : '';
     /* if(typeof($rootScope.userinfo['uid']) == "undefined") {
           qs += "&fetp_id="+$rootScope.userinfo['fetp_id'];
@@ -29,15 +33,18 @@ const eventAPIservice2 = ($http, $rootScope, $location, urlBase) => {
     if (typeof urlarr[2] != 'undefined') {
       qs += '&detail=' + urlarr[2]; // closed
     }
-    // scripts/EventsAPI2.php?auth=true&callback=JSON_CALLBACK&uid=135&start_date=2017-10-30&end_date=2020-10-02&from=events2
-    return $http({
-      method: 'JSONP',
-      url:
-        urlBase +
-        'scripts/EventsAPI2.php?auth=true&callback=JSON_CALLBACK' +
-        qs,
+
+    const url = urlBase + 'scripts/EventsAPI2.php?auth=true' + qs;
+
+    return new Promise(async (resolve) => {
+      const data = await fetchGet(url);
+      const res = {
+        data: data
+      };
+      resolve(res);
     });
   };
+
   return eventAPI;
 };
 

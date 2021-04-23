@@ -167,11 +167,20 @@ const EventsController2 = (
   };
 
   $scope.getPublicEventsByID = function() {
+    $scope.isRouteLoading = true;
     const article_id = localStorage.getItem('articleID');
     eventAPIservice2.getEvents(article_id).then(function successCallback(res) {
       const response = res.data;
       $scope.isRouteLoading = false;
       $scope.eventsListPublic = response.EventsList;
+
+      if ($scope.eventsListPublic['error-message']) {
+        $timeout(() => {
+          alert($scope.eventsListPublic['error-message']);
+          return;
+        });
+      }
+
       let outcome = 'Pending';
 
       if ($scope.eventsListPublic.outcome == 'VP') {
@@ -186,8 +195,6 @@ const EventsController2 = (
         outcome = 'Updated (negative)';
       }
 
-      // $scope.modifiedEventTitle = $scope.eventsListPublic.title.replace(",", "&#183;");
-      // $scope.closureDate = $scope.eventsListPublic.history[0].date;
       $scope.cd = $scope.eventsListPublic.history[0].date;
       $scope.closureDate = $scope.cd.split(' ')[0];
       $scope.od = $scope.eventsListPublic.create_date;
@@ -201,6 +208,8 @@ const EventsController2 = (
         $scope.eventsListPublic.source +
         ' : ' +
         $scope.eventsListPublic.source_details;
+
+      $scope.$digest();
     });
   };
 
@@ -446,6 +455,8 @@ const EventsController2 = (
         $scope.isRouteLoading = false;
 
         $scope.eventsListAll = angular.copy($scope.eventsList['all']);
+
+        $scope.$digest();
       });
   };
 

@@ -4,7 +4,7 @@
  * Epicore App Config
  */
 
-var epicore_config = {};
+const epicore_config = {};
 
 // app version
 // vers - 1 for version 1.0
@@ -26,3 +26,8 @@ epicore_config.app_mode = 'web';
 
 // Push notifications Sender Id for Android devices
 epicore_config.android_senderId = '67299923213';
+
+epicore_config.API = {
+  EVENTS_v3: 'scripts/EventsAPI3.php',
+  EVENTS_v2: 'scripts/EventsAPI2.php'
+};

@@ -13,6 +13,14 @@ module.exports = {
   },
   output: {
     path: path.resolve(__dirname, 'js/dist'),
-    filename: 'app.bundle.js',
+    filename: '[name].bundle.js',
+    clean: true
   },
+  devtool: 'source-map',
+  resolve: {
+    extensions: ['.js'],
+    alias: {
+      '@': path.resolve(__dirname, 'js/app')
+    }
+  }
 };

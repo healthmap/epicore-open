@@ -1,3 +1,14 @@
+import { cacheService } from '@/common/cacheService';
+
+const { 
+  setMemberPortalInfoAll,
+  setMemberPortalInfoPastYear,
+  setMemberPortalInfoPastQuarter,
+  getMemberPortalInfoAll,
+  getMemberPortalInfoPastYear,
+  getMemberPortalInfoPastQuarter
+} = cacheService();
+
 const ApprovalController = (
   $scope,
   $http,
@@ -6,13 +17,12 @@ const ApprovalController = (
   $route,
   $cookieStore,
   urlBase,
-  epicoreCacheService,
   epicoreV1StartDate,
 ) => {
   const currentLocation = $location.path();
 
   $scope.init = function() {
-    $scope.sharedCacheMemInfo = epicoreCacheService.getMemberPortalInfoPastQuarter();
+    $scope.sharedCacheMemInfo = getMemberPortalInfoPastQuarter();
     // only allow superusers for admin
     $scope.userInfo = $cookieStore.get('epiUserInfo');
     $scope.superuser =
@@ -75,7 +85,7 @@ const ApprovalController = (
     }).then(function successCallback(res) {
       const respdata = res.data;
       // Fetch data from db
-      epicoreCacheService.setMemberPortalInfoPastQuarter(respdata); // since default is past-quarter only
+      setMemberPortalInfoPastQuarter(respdata); // since default is past-quarter only
       const tableData = $scope.loadMemberInfo(currentLocation);
     });
   }
@@ -107,13 +117,13 @@ const ApprovalController = (
     let memInfoData = [];
     if (month.value == 'past-year') {
       memInfoData = angular.copy(
-        epicoreCacheService.getMemberPortalInfoPastYear(),
+        getMemberPortalInfoPastYear(),
       );
     } else if (month.value == 'all') {
-      memInfoData = angular.copy(epicoreCacheService.getMemberPortalInfoAll());
+      memInfoData = angular.copy(getMemberPortalInfoAll());
     } else {
       memInfoData = angular.copy(
-        epicoreCacheService.getMemberPortalInfoPastQuarter(),
+        getMemberPortalInfoPastQuarter(),
       );
     }
 
@@ -303,19 +313,19 @@ const ApprovalController = (
     const month = $scope.selected_month;
     $scope.sharedCacheMemInfo = [];
     if (month && month.value == 'past-year') {
-      // $scope.sharedCacheMemInfo = epicoreCacheService.getMemberPortalInfoPastYear();
+      // $scope.sharedCacheMemInfo = getMemberPortalInfoPastYear();
       $scope.sharedCacheMemInfo = angular.copy(
-        epicoreCacheService.getMemberPortalInfoPastYear(),
+        getMemberPortalInfoPastYear(),
       );
     } else if (month && month.value == 'all') {
-      // $scope.sharedCacheMemInfo = epicoreCacheService.getMemberPortalInfoAll();
+      // $scope.sharedCacheMemInfo = getMemberPortalInfoAll();
       $scope.sharedCacheMemInfo = angular.copy(
-        epicoreCacheService.getMemberPortalInfoAll(),
+        getMemberPortalInfoAll(),
       );
     } else {
-      // $scope.sharedCacheMemInfo = epicoreCacheService.getMemberPortalInfoPastQuarter();
+      // $scope.sharedCacheMemInfo = getMemberPortalInfoPastQuarter();
       $scope.sharedCacheMemInfo = angular.copy(
-        epicoreCacheService.getMemberPortalInfoPastQuarter(),
+        getMemberPortalInfoPastQuarter(),
       );
     }
 
@@ -405,20 +415,20 @@ const ApprovalController = (
     if (month.value == 'all') {
       start_date = moment(epicoreV1StartDate).format('YYYY-MM-DD');
       end_date = moment().format('YYYY-MM-DD'); // now
-      memInfoData = angular.copy(epicoreCacheService.getMemberPortalInfoAll());
+      memInfoData = angular.copy(getMemberPortalInfoAll());
     } else if (month.value == 'recent') {
       start_date = moment().subtract(3, 'months').format('YYYY-MM-DD'); // three month ago
       end_date = moment().format('YYYY-MM-DD'); // now
       num_events = 10;
       memInfoData = angular.copy(
-        epicoreCacheService.getMemberPortalInfoPastQuarter(),
+        getMemberPortalInfoPastQuarter(),
       );
     } else if (month.value == 'past-year') {
       start_date = moment().subtract(12, 'months').format('YYYY-MM-DD'); // one year ago
       end_date = moment().format('YYYY-MM-DD'); // now
       num_events = 10;
       memInfoData = angular.copy(
-        epicoreCacheService.getMemberPortalInfoPastYear(),
+        getMemberPortalInfoPastYear(),
       );
     }
 
@@ -444,11 +454,11 @@ const ApprovalController = (
         const respdata = res.data;
         // Fresh DB pull - set cache appropriately
         if (month.value == 'all') {
-          epicoreCacheService.setMemberPortalInfoAll(respdata);
+          setMemberPortalInfoAll(respdata);
         } else if (month.value == 'recent') {
-          epicoreCacheService.setMemberPortalInfoPastQuarter(respdata);
+          setMemberPortalInfoPastQuarter(respdata);
         } else if (month.value == 'past-year') {
-          epicoreCacheService.setMemberPortalInfoPastYear(respdata);
+          setMemberPortalInfoPastYear(respdata);
         }
         const tableData = $scope.loadMemberInfo(currentLocation);
         $scope.isRouteLoading = false;
@@ -632,7 +642,6 @@ ApprovalController.$inject = [
   '$route',
   '$cookieStore',
   'urlBase',
-  'epicoreCacheService',
   'epicoreV1StartDate',
 ];
 
