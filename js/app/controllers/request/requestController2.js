@@ -1313,6 +1313,12 @@ const RequestController2 = (
         formData['duplicate_events'] = dup_events;
       }
 
+      formData['event_notes'] = {
+        'status': 'O'
+      };
+
+      console.log(formData);
+
       // formData['duplicate_rfi_id'] = ($scope.rfiData.duplicate_rfi && $scope.rfiData.duplicate_rfi.rfi_id) ? $scope.rfiData.duplicate_rfi.rfi_id : 0;
       $http({
         url: urlBase + 'scripts/sendrequest2.php',

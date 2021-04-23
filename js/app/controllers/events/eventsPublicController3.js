@@ -7,6 +7,7 @@ const EventsPublicController3 = ($scope, $window, epicoreMode, epicoreStartDate)
   $scope.mobile = epicoreMode == 'mobile' ? true : false;
   $scope.events = [];
   $scope.eventsOrderBy = 'iso_create_date';
+  $scope.eventsOrderReverse = false;
   $scope.isRouteLoading = true;
   $scope.EVENT_OUTCOME = EVENT_OUTCOME;
 
@@ -38,6 +39,14 @@ const EventsPublicController3 = ($scope, $window, epicoreMode, epicoreStartDate)
 
     $scope.isRouteLoading = false;
     $scope.$digest();
+  };
+
+  $scope.eventsOrderByFunction = (event) => {
+    if ($scope.eventsOrderBy === 'create_date') {
+      var date = new Date(event[$scope.eventsOrderBy]);
+      return date;
+    }
+    return event[$scope.eventsOrderBy];
   };
 
   const setTimeFilter = () => {

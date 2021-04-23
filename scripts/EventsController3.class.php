@@ -16,6 +16,17 @@ class EventsController
                 return null;
         }
     }
+
+    public static function getLastEventsUpdateTime()
+    {
+        $query = "SELECT TABLE_NAME,CREATE_TIME,UPDATE_TIME
+        FROM information_schema.tables
+        WHERE table_schema = 'epicore' AND TABLE_NAME LIKE 'event%'";
+
+        $db = getDB();
+        $response = $db->getAll($query);
+        return $response;
+    }
     
 
     private static function resolveAction($params)
@@ -31,6 +42,8 @@ class EventsController
                 return  self::getPublicEvents($params);
             case "get_event_summary":
                 return self::getEventSummary($params);
+            case "get_last_events_update_time":
+                return self::getLastEventsUpdateTime();
             default:
                 return null;
         }
@@ -100,8 +113,10 @@ class EventsController
             event.requester_id,
             hm_hmu.name AS person,
             organization.name AS organization_name,
+            place.name AS country,
             purpose.outcome AS outcome,
-            event_notes.status,
+            event_notes.status
+            ,
 
             (SELECT 
                 COUNT(event_fetp.event_fetp_id)
@@ -152,7 +167,7 @@ class EventsController
             FROM event
 
             INNER JOIN event_notes
-            ON event.event_id = event_notes.event_notes_id
+            ON event.event_id = event_notes.event_id
 
             INNER JOIN user
             ON event.requester_id = user.user_id
@@ -163,11 +178,16 @@ class EventsController
             INNER JOIN organization
             ON user.organization_id = organization.organization_id
 
+            INNER JOIN place
+            ON event.place_id = place.place_id
+
             INNER JOIN purpose
             ON event.event_id = purpose.event_id
             ";
 
         $query = self::addQueryWhereConditions($query, $conditions);
+
+        // print_r($query);
 
         $db = getDB();
         $response = $db->getAll($query);
@@ -211,7 +231,7 @@ class EventsController
         FROM event
 
         INNER JOIN event_notes
-        ON event.event_id = event_notes.event_notes_id
+        ON event.event_id = event_notes.event_id
         
         INNER JOIN purpose
         ON event.event_id = purpose.event_id

@@ -39,6 +39,7 @@ if ($formvars->uid && $formvars->fetp_ids && $formvars->population && $formvars-
     $event_table['population'] = $formvars->population;
     $event_table['purpose'] = $formvars->purpose;
     $event_table['source'] = $formvars->source;
+    $event_table['event_notes'] = $formvars->event_notes;
 
     // insert event into database
     $event_result = EventInfo::insertEvent2($event_info, $event_table);
