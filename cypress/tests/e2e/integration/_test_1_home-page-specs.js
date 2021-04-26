@@ -5,16 +5,16 @@ describe('Home Page-Specs', () => {
   
       cy.window()
       .then(win => {
-        console.log('got app window object', win)
-        return win
+        console.log('got app window object', win);
+        return win;
       })
       .its('angular')
       .then(ng => {
-        console.log('got angular object', ng.version)
+        console.log('got angular object', ng.version);
       })
 
       cy.get('body')
-      .should('have.attr', 'ng-app' , 'EpicoreApp')
+      .should('have.attr', 'ng-app' , 'EpicoreApp');
 
     });
    
