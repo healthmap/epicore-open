@@ -3,7 +3,6 @@ describe('Login page test suite', () => {
     const baseUrl = Cypress.config().baseUrl;
     before(() => {
         cy.visit(baseUrl); // go to the home page
-        // cy.visit('/login')
     });
     
     it('should load login form fields', () => {
@@ -23,7 +22,7 @@ describe('Login page test suite', () => {
 
         const username = Cypress.env('username')
         const password = Cypress.env('passwordIncorrect')
-        cy.visit('/login')
+        
         cy.get('[id="username"]').type(username)
         cy.get('[id="password"]').type(password)
         cy.get('[type=submit]').click()
