@@ -31,7 +31,7 @@ const EventsController3 = ($scope, $location, epicoreMode, epicoreStartDate) => 
     $scope.isRouteLoading = true;
 
     $scope.events = await getEvents({
-      uid: $scope.eventType === EVENT_TYPES.MY_RFIS.CODE ? $scope.userInfo .uid : null,
+      uid: $scope.eventType === EVENT_TYPES.MY_RFIS.CODE ? true : false,
       organization_id: $scope.eventType === EVENT_TYPES.MY_ORGANIZATION.CODE ? $scope.userInfo .organization_id : null,
       start_date: start_date || epicoreStartDate,
       end_date: end_date || moment().add(1, 'days').format('YYYY-MM-DD'),
