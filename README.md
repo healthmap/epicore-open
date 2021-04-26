@@ -105,7 +105,7 @@ To run cypress tests:
 > Edit the cypress.json file accordingly before running any test
 > Make sure to run a local instance of epicore
 > On another terminal start cypress
-    $epicore: npx cypress open
+> npx cypress open
 
 This will bring open the test suite. You can run each file under ~/epicore/cypress/tests/e2e/integration individually or all.
 
