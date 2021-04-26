@@ -99,7 +99,17 @@ npm start
     docker-compose build
     docker-compose up -d
 
+## Cypress Tests
+Cypress is included as a dev dependency and is part of our package.json
+To run cypress tests:
+> Edit the cypress.json file accordingly before running any test
+> Make sure to run a local instance of epicore
+> On another terminal start cypress
+    $epicore: npx cypress open
 
+This will bring open the test suite. You can run each file under ~/epicore/cypress/tests/e2e/integration individually or all.
+
+Add additional tests to ~epicore/cypress/tests/e2e/integration
 
 ### Install library for Mobile Push Notifications (optional)
 
