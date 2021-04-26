@@ -1314,10 +1314,11 @@ const RequestController2 = (
       }
 
       formData['event_notes'] = {
-        'status': 'O'
+        'status': 'O',
+        'requester_id': $scope.userInfo.uid,
+        'notes': 'New',
+        'reason': ''
       };
-
-      console.log(formData);
 
       // formData['duplicate_rfi_id'] = ($scope.rfiData.duplicate_rfi && $scope.rfiData.duplicate_rfi.rfi_id) ? $scope.rfiData.duplicate_rfi.rfi_id : 0;
       $http({
