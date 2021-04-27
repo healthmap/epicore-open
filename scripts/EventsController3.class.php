@@ -96,7 +96,7 @@ class EventsController
         }
 
         if ($is_open) {
-            array_push($conditions, "event_notes.status != 'C'");
+            array_push($conditions, "event_notes.status IS NULL OR event_notes.status != 'C'");
 
         } else {
             array_push($optionalFields, "purpose.phe_description");
@@ -166,7 +166,7 @@ class EventsController
         $query .= "
             FROM event
 
-            INNER JOIN event_notes
+            LEFT JOIN event_notes
             ON event.event_id = event_notes.event_id
 
             INNER JOIN user
@@ -228,7 +228,7 @@ class EventsController
         
         FROM event
 
-        INNER JOIN event_notes
+        LEFT JOIN event_notes
         ON event.event_id = event_notes.event_id
         
         INNER JOIN purpose
