@@ -88,19 +88,15 @@ class EventsController
         }
 
         if ($start_date) {
-            array_push($conditions, "event.create_date > '$start_date'");
+            array_push($conditions, "event.create_date >= '$start_date'");
         }
 
         if ($end_date) {
-            array_push($conditions, "event.create_date < '$end_date'");
+            array_push($conditions, "event.create_date <= '$end_date'");
         }
 
-        if ($is_open) {
-            array_push($conditions, "event_notes.status IS NULL OR event_notes.status != 'C'");
-
-        } else {
+        if (!$is_open) {
             array_push($optionalFields, "purpose.phe_description");
-            array_push($conditions, "event_notes.status = 'C'");
         }
 
         $query = "SELECT
@@ -115,8 +111,7 @@ class EventsController
             organization.name AS organization_name,
             place.name AS country,
             purpose.outcome AS outcome,
-            event_notes.status
-            ,
+            event_notes.status,
 
             (SELECT 
                 COUNT(event_fetp.event_fetp_id)
@@ -125,7 +120,7 @@ class EventsController
             AS num_members,
 
             (SELECT
-                COUNT(*)
+                DISTINCT COUNT(*)
                 FROM response
                 WHERE event_id = event.event_id) 
             AS num_responses,
@@ -166,9 +161,6 @@ class EventsController
         $query .= "
             FROM event
 
-            LEFT JOIN event_notes
-            ON event.event_id = event_notes.event_id
-
             INNER JOIN user
             ON event.requester_id = user.user_id
 
@@ -184,6 +176,12 @@ class EventsController
             INNER JOIN purpose
             ON event.event_id = purpose.event_id
             ";
+
+        if ($is_open) {
+            $query .= "LEFT OUTER JOIN event_notes ON event.event_id = event_notes.event_id AND event_notes.status = 'O'";
+        } else {
+            $query .= "INNER JOIN event_notes ON event.event_id = event_notes.event_id AND event_notes.status = 'C'";
+        }
 
         $query = self::addQueryWhereConditions($query, $conditions);
 
@@ -207,11 +205,11 @@ class EventsController
         }
 
         if ($start_date) {
-            array_push($conditions, "event.create_date > '$start_date'");
+            array_push($conditions, "event.create_date >= '$start_date'");
         }
 
         if ($end_date) {
-            array_push($conditions, "event.create_date < '$end_date'");
+            array_push($conditions, "event.create_date <= '$end_date'");
         }
 
         array_push($conditions,"(purpose.outcome = 'VP' OR purpose.outcome = 'VN' OR purpose.outcome = 'UP')");
