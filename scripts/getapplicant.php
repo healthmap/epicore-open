@@ -3,9 +3,22 @@
 * Jeff Andre, Feb 21 2016
 * gets applicant info
 */
+
 require_once "const.inc.php";
+require_once  "UserContoller3.class.php";
+
+use UserController as userController;
+
+$userData = userController::getUserData();
+
 $formvars = json_decode(file_get_contents("php://input"));
-$uid = strip_tags($formvars->uid);
+if (isset($formvars->uid)) {
+    $uid = $userData["uid"];
+}
+if (isset($formvars->fetp_id)) {
+    $uid = $userData["fetp_id"];
+}
+
 $idtype = strip_tags($formvars->idtype);
 
 // get info about specific event

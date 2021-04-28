@@ -5,9 +5,10 @@ const RequestController = (
   $routeParams,
   $cookieStore,
   $location,
-  $http,
+  httpServiceInterceptor,
   urlBase,
 ) => {
+  const http = httpServiceInterceptor.http;
   $scope.userInfo = $rootScope.userInfo = $cookieStore.get('epiUserInfo');
 
   // this will pre-fill the event form with session values if back button is used
@@ -27,7 +28,7 @@ const RequestController = (
     $window.sessionStorage.alertid = $scope.alertid;
     const alertData = {};
     alertData['alert_id'] = $scope.alertid;
-    $http({
+    http({
       url: urlBase + 'scripts/getalert.php',
       method: 'POST',
       data: alertData,
@@ -91,7 +92,7 @@ const RequestController = (
         $window.sessionStorage.location = formData['location'];
         $window.sessionStorage.latlon = formData['latlon'];
 
-        $http({
+        http({
           url: urlBase + 'scripts/filter.php',
           method: 'POST',
           data: formData,
@@ -150,10 +151,9 @@ const RequestController = (
     $scope.options = {scrollwheel: false};
     /* only show FETPs on a map to super-users */
     const query = {};
-    query['uid'] = $scope.userInfo.uid;
     query['centerlat'] = latlonarr[0];
     query['centerlon'] = latlonarr[1];
-    $http({
+    http({
       url: urlBase + 'scripts/getmarkers.php',
       method: 'POST',
       data: query,
@@ -178,7 +178,7 @@ const RequestController = (
           southwest.lng(),
           northeast.lng(),
         );
-        $http({
+        http({
           url: urlBase + 'scripts/filter.php',
           method: 'POST',
           data: filterData,
@@ -207,7 +207,7 @@ const RequestController = (
       filterData['bbox'] = $window.sessionStorage.searchBox.split(',');
       $scope.radiussel = true;
     }
-    $http({
+    http({
       url: urlBase + 'scripts/filter.php',
       method: 'POST',
       data: filterData,
@@ -236,7 +236,7 @@ const RequestController = (
     if (typeof $window.sessionStorage.filePreview != 'undefined') {
       formData['file_preview'] = $window.sessionStorage.filePreview;
     }
-    $http({
+    http({
       url: urlBase + 'scripts/buildrequest.php',
       method: 'POST',
       data: formData,
@@ -256,7 +256,6 @@ const RequestController = (
     } else {
       formData['search_countries'] = $window.sessionStorage.countries;
     }
-    formData['uid'] = $scope.userInfo.uid; // requester of RFI
     formData['fetp_ids'] = $window.sessionStorage.userIds;
     formData['latlon'] = $window.sessionStorage.latlon;
     formData['location'] = $window.sessionStorage.location;
@@ -265,7 +264,7 @@ const RequestController = (
     formData['additionalText'] = $window.sessionStorage.additionalText;
     formData['disease'] = $window.sessionStorage.disease;
     formData['alert_id'] = $window.sessionStorage.alertid;
-    $http({
+    http({
       url: urlBase + 'scripts/sendrequest.php',
       method: 'POST',
       data: formData,
@@ -301,7 +300,7 @@ RequestController.$inject = [
   '$routeParams',
   '$cookieStore',
   '$location',
-  '$http',
+  'httpServiceInterceptor',
   'urlBase',
 ];
 

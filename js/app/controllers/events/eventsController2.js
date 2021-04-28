@@ -5,7 +5,7 @@ const EventsController2 = (
   $routeParams,
   $cookieStore,
   $location,
-  $http,
+  httpServiceInterceptor,
   eventAPIservice2,
   urlBase,
   epicoreMode,
@@ -14,6 +14,7 @@ const EventsController2 = (
   $timeout,
   epicoreStartDate,
 ) => {
+  const http = httpServiceInterceptor.http;
   $scope.mobile = epicoreMode == 'mobile' ? true : false;
   $scope.epicore_version = epicoreVersion;
   $scope.isRouteLoading = true;
@@ -147,7 +148,7 @@ const EventsController2 = (
   };
 
   $scope.removeFile = function(file) {
-    $http({
+    http({
       url: urlBase + 'scripts/removefile.php',
       method: 'POST',
       data: {filename: file},
@@ -373,11 +374,8 @@ const EventsController2 = (
         $scope.response_text = '';
         if ($routeParams.response_id) {
           const formData = {};
-          formData['uid'] = $scope.userInfo.uid;
-          formData['org_id'] = $scope.userInfo.organization_id;
-          formData['fetp_id'] = $scope.userInfo.fetp_id;
           formData['response_id'] = $routeParams.response_id;
-          $http({
+          http({
             url: urlBase + 'scripts/getresponse.php',
             method: 'POST',
             data: formData,
@@ -535,7 +533,7 @@ const EventsController2 = (
     }
 
     save_metrics_timeout = $timeout(function() {
-      $http({
+      http({
         url: urlBase + 'scripts/updatemetrics.php',
         method: 'POST',
         data: metric_data,
@@ -553,16 +551,14 @@ const EventsController2 = (
   $scope.sendFollowup = function(formData, isValid) {
     if (isValid) {
       $scope.submitDisabled = true;
-      formData['uid'] = $scope.userInfo.uid;
-      formData['event_id'] = $routeParams.id;
-      formData['superuser'] = $scope.userInfo.superuser ? 1 : 0;
+      formData['event_id'] = true;
       if ($routeParams.id) {
         var eid = $routeParams.id;
       }
       if ($routeParams.response_id) {
         formData['response_id'] = $routeParams.response_id;
       }
-      $http({
+      http({
         url: urlBase + 'scripts/sendfollowup2.php',
         method: 'POST',
         data: formData,
@@ -617,8 +613,6 @@ const EventsController2 = (
     if (isValid) {
       $scope.submitDisabled = true;
       formData['event_id'] = $routeParams.id;
-      formData['uid'] = $scope.userInfo.uid;
-      formData['superuser'] = $scope.userInfo.superuser;
       formData['thestatus'] = thestatus;
       formData['useful_rids'] = useful_rids.toString();
       formData['usefulpromed_rids'] = usefulpromed_rids.toString();
@@ -638,7 +632,7 @@ const EventsController2 = (
 
       formData['condition_details'] = $scope.eventsList.condition_details;
 
-      $http({
+      http({
         url: urlBase + 'scripts/changestatus2.php',
         method: 'POST',
         data: formData,
@@ -684,7 +678,7 @@ const EventsController2 = (
         var eid = $routeParams.id;
       }
       formData['files'] = $scope.ufiles;
-      $http({
+      http({
         url: urlBase + 'scripts/sendresponse2.php',
         method: 'POST',
         data: formData,
@@ -706,8 +700,8 @@ const EventsController2 = (
 
   $scope.deleteEvent = function(eid) {
     if (confirm('Are you sure you want to delete this event?')) {
-      data = {eid: eid, superuser: $scope.userInfo.superuser};
-      $http({
+      const data = {eid: eid};
+      http({
         url: urlBase + 'scripts/deleteEvent2.php',
         method: 'POST',
         data: data,
@@ -804,7 +798,7 @@ EventsController2.$inject = [
   '$routeParams',
   '$cookieStore',
   '$location',
-  '$http',
+  'httpServiceInterceptor',
   'eventAPIservice2',
   'urlBase',
   'epicoreMode',

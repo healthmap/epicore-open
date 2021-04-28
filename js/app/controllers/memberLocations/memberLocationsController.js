@@ -1,18 +1,15 @@
 const MemberLocationsController = (
   $scope,
   $cookieStore,
-  $http,
+  httpServiceInterceptor,
   urlBase,
   $timeout,
 ) => {
+  const http = httpServiceInterceptor.http;
   $scope.userInfo = $cookieStore.get('epiUserInfo');
   $scope.locationaccess =
     typeof $scope.userInfo.locations != 'undefined' ?
       $scope.userInfo.locations :
-      false;
-  $scope.fetp_id =
-    typeof $scope.userInfo.fetp_id != 'undefined' ?
-      $scope.userInfo.fetp_id :
       false;
   $scope.showpage = true;
   $scope.message = '';
@@ -75,12 +72,11 @@ const MemberLocationsController = (
       city: $scope.member.city,
       state: $scope.member.state,
       countrycode: $scope.member.countrycode,
-      fetp_id: $scope.fetp_id,
       latitude: $scope.member.lat,
       longitude: $scope.member.long,
     };
 
-    $http({
+    http({
       url: urlBase + 'scripts/addlocation.php',
       method: 'POST',
       data: location,
@@ -93,7 +89,7 @@ const MemberLocationsController = (
         $timeout(function() {
           $scope.message = '';
         }, message_debounce);
-        $scope.locations = getLocations($scope.fetp_id);
+        $scope.locations = getLocations();
       } else {
         $scope.message = '';
         $scope.error_message = respdata['message'];
@@ -104,14 +100,12 @@ const MemberLocationsController = (
     });
   };
 
-  $scope.locations = getLocations($scope.fetp_id);
+  $scope.locations = getLocations();
 
-  function getLocations(fetp_id) {
-    const member = {fetp_id: fetp_id};
-    $http({
+  function getLocations() {
+    http({
       url: urlBase + 'scripts/getlocations.php',
-      method: 'POST',
-      data: member,
+      method: 'GET'
     }).then(function successCallback(res) {
       const respdata = res.data;
       if (respdata['status'] === 'success') {
@@ -128,7 +122,7 @@ const MemberLocationsController = (
   }
   $scope.deleteLocation = function(location_id) {
     const location = {location_id: location_id};
-    $http({
+    http({
       url: urlBase + 'scripts/deletelocation.php',
       method: 'POST',
       data: location,
@@ -137,7 +131,7 @@ const MemberLocationsController = (
       const message_debounce = 2000;
       if (respdata['status'] === 'success') {
         $scope.message = respdata['message'];
-        $scope.locations = getLocations($scope.fetp_id);
+        $scope.locations = getLocations();
         $timeout(function() {
           $scope.message = '';
         }, message_debounce);
@@ -155,7 +149,7 @@ const MemberLocationsController = (
 MemberLocationsController.$inject = [
   '$scope',
   '$cookieStore',
-  '$http',
+  'httpServiceInterceptor',
   'urlBase',
   '$timeout',
 ];

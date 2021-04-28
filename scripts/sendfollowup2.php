@@ -8,10 +8,15 @@ require_once "const.inc.php";
 require_once "EventInfo.class.php";
 require_once "UserInfo.class.php";
 require_once 'ePush.class.php';
+require_once "UserContoller3.class.php";
+
+use UserController as userController;
+
+$userData = userController::getUserData();
 
 $event_id = $formvars->event_id;
-$requester_id = $formvars->uid;
-$superuser = (int)$formvars->superuser;
+$requester_id = $userData["uid"];
+$superuser = (int)$userData["superuser"];
 
 if(!is_numeric($event_id) || !is_numeric($requester_id)) {
     print json_encode(array('status' => 'failed', 'reason' => 'invalid event id or requester id'));

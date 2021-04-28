@@ -1,4 +1,5 @@
-const EventAPIservice = ($http, $rootScope, $location, urlBase) => {
+const EventAPIservice = (httpServiceInterceptor, $rootScope, $location, urlBase) => {
+  const http = httpServiceInterceptor.http;
   const eventAPI = {};
   eventAPI.getEvents = function(event_id) {
     let qs = event_id ? '&event_id=' + event_id : '';
@@ -13,7 +14,7 @@ const EventAPIservice = ($http, $rootScope, $location, urlBase) => {
     if (typeof urlarr[2] != 'undefined') {
       qs += '&detail=' + urlarr[2]; // closed
     }
-    return $http({
+    return http({
       method: 'JSONP',
       url:
         urlBase + 'scripts/EventsAPI.php?auth=true&callback=JSON_CALLBACK' + qs,
@@ -22,6 +23,6 @@ const EventAPIservice = ($http, $rootScope, $location, urlBase) => {
   return eventAPI;
 };
 
-EventAPIservice.$inject = ['$http', '$rootScope', '$location', 'urlBase'];
+EventAPIservice.$inject = ['httpServiceInterceptor', '$rootScope', '$location', 'urlBase'];
 
 export default EventAPIservice;

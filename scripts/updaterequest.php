@@ -8,12 +8,17 @@ require_once "const.inc.php";
 require_once "EventInfo.class.php";
 require_once "UserInfo.class.php";
 require_once "AWSMail.class.php";
+require_once "UserContoller3.class.php";
+
+use UserController as userController;
+
+$userData = userController::getUserData();
 
 $formvars = json_decode(file_get_contents("php://input"));
 
 // update the event info
 $event_info['event_id'] = (int)$formvars->event_id;
-$event_info['requester_id'] = (int)$formvars->uid;
+$event_info['requester_id'] = (int)$userData["uid"];
 $event_info['latlon'] = (string)$formvars->latlon;
 $event_info['location'] = (string)$formvars->location;
 $event_info['title'] = (string)$formvars->title;

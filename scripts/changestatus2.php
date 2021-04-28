@@ -5,10 +5,15 @@ require_once "EventInfo.class.php";
 require_once "UserInfo.class.php";
 require_once "const.inc.php";
 require_once 'ePush.class.php';
+require_once "UserContoller3.class.php";
+
+use UserController as userController;
+
+$userData = userController::getUserData();
 
 $event_id = $formvars->event_id;
-$user_id = $formvars->uid;
-$superuser = $formvars->superuser;
+$user_id = $userData["uid"];
+$superuser = $userData["superuser"];
 $useful_rids = $formvars->useful_rids;
 $usefulpromed_rids = $formvars->usefulpromed_rids;
 $notuseful_rids = $formvars->notuseful_rids;

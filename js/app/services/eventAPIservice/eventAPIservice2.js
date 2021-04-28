@@ -1,9 +1,6 @@
-import { fetchService } from '@/common/fetchService';
-
-const { fetchGet } = fetchService();
-
-const eventAPIservice2 = ($http, $rootScope, $location, urlBase) => {
+const eventAPIservice2 = ($rootScope, $location, urlBase, httpServiceInterceptor) => {
   const eventAPI = {};
+  const http = httpServiceInterceptor.http;
   eventAPI.getEvents = async (event_id, start_date, end_date) => {
     let qs = event_id ? '&event_id=' + event_id : '';
     /* if(typeof($rootScope.userinfo['uid']) == "undefined") {
@@ -35,19 +32,16 @@ const eventAPIservice2 = ($http, $rootScope, $location, urlBase) => {
     }
 
     const url = urlBase + 'scripts/EventsAPI2.php?auth=true' + qs;
-
-    return new Promise(async (resolve) => {
-      const data = await fetchGet({ url });
-      const res = {
-        data: data
-      };
-      resolve(res);
+    
+    return http({
+      url: url,
+      method: 'GET'
     });
   };
 
   return eventAPI;
 };
 
-eventAPIservice2.$inject = ['$http', '$rootScope', '$location', 'urlBase'];
+eventAPIservice2.$inject = ['$rootScope', '$location', 'urlBase', 'httpServiceInterceptor'];
 
 export default eventAPIservice2;

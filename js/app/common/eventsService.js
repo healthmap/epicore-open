@@ -1,6 +1,6 @@
 import { fetchService } from '@/common/fetchService';
 
-const { fetchGet } = fetchService();
+const { fetchUrl } = fetchService();
 
 const eventsService = () => {
 
@@ -32,7 +32,11 @@ const eventsService = () => {
     }
 
     const url = epicore_config.urlBase + epicore_config.API.EVENTS_v3;
-    const response = await fetchGet({ url, params });
+    const options = {
+      method: 'GET',
+      cache: false
+    };
+    const response = await fetchUrl({ url, params, options });
     return response;
   };
 
@@ -52,7 +56,11 @@ const eventsService = () => {
     }
 
     const url = epicore_config.urlBase + epicore_config.API.EVENTS_v3;
-    const response = await fetchGet({ url, params });
+    const options = {
+      method: 'GET',
+      cache: false
+    };
+    const response = await fetchUrl({ url, params, options });
     return response;
   };
 
@@ -63,7 +71,11 @@ const eventsService = () => {
     };
 
     const url = epicore_config.urlBase + epicore_config.API.EVENTS_v3;
-    const response = await fetchGet({ url, params });
+    const options = {
+      method: 'GET',
+      cache: false
+    };
+    const response = await fetchUrl({ url, params, options });
     return response;
   };
 

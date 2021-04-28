@@ -10,7 +10,6 @@ const UserController = (
   $cookies,
   $cookieStore,
   $location,
-  $http,
   $window,
   urlBase,
   epicoreMode,
@@ -18,7 +17,9 @@ const UserController = (
   epicoreCountries,
   epicoreVersion,
   $cordovaTouchID,
+  httpServiceInterceptor
 ) => {
+  const http = httpServiceInterceptor.http;
   $scope.mobile = epicoreMode == 'mobile' ? true : false;
   $scope.epicore_version = epicoreVersion;
 
@@ -50,7 +51,7 @@ const UserController = (
     data['uid'] = $scope.uid;
     data['action'] = $scope.action;
     data['idtype'] = $scope.idtype;
-    $http({
+    http({
       url: urlBase + 'scripts/getapplicant.php',
       method: 'POST',
       data: data,
@@ -197,7 +198,7 @@ const UserController = (
       return false;
     } else {
       if ($scope.action == 'edit') {
-        $http({
+        http({
           url: urlBase + 'scripts/updateuser.php',
           method: 'POST',
           data: uservals,
@@ -213,7 +214,7 @@ const UserController = (
           }
         });
       } else {
-        $http({
+        http({
           url: urlBase + 'scripts/signup.php',
           method: 'POST',
           data: uservals,
@@ -341,7 +342,7 @@ const UserController = (
       $scope.isRouteLoading = false;
       return;
     }
-    $http({
+    http({
       url: urlBase + 'scripts/login.php',
       method: 'POST',
       data: formData,
@@ -435,7 +436,7 @@ const UserController = (
       $rootScope.error_message = 'Invalid email or password';
       return false;
     } else {
-      $http({
+      http({
         url: urlBase + 'scripts/setpassword.php',
         method: 'POST',
         data: formData,
@@ -490,7 +491,7 @@ const UserController = (
       $rootScope.error_message_pw = 'Invalid email address';
       return false;
     } else {
-      $http({
+      http({
         url: urlBase + 'scripts/resetpassword.php',
         method: 'POST',
         data: formData,
@@ -539,7 +540,6 @@ UserController.$inject = [
   '$cookies',
   '$cookieStore',
   '$location',
-  '$http',
   '$window',
   'urlBase',
   'epicoreMode',
@@ -547,6 +547,7 @@ UserController.$inject = [
   'epicoreCountries',
   'epicoreVersion',
   '$cordovaTouchID',
+  'httpServiceInterceptor'
 ];
 
 export default UserController;
