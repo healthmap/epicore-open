@@ -230,7 +230,7 @@ class EventsController
         FROM event
 
         INNER JOIN event_notes
-        ON event.event_id = event_notes.event_id
+        ON event.event_id = event_notes.event_id AND event_notes.status = 'C'
         
         INNER JOIN purpose
         ON event.event_id = purpose.event_id
