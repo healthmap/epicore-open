@@ -229,7 +229,7 @@ class EventsController
         
         FROM event
 
-        LEFT JOIN event_notes
+        INNER JOIN event_notes
         ON event.event_id = event_notes.event_id
         
         INNER JOIN purpose
