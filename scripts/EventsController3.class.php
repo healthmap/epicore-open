@@ -159,8 +159,17 @@ class EventsController
         $query = self::addQueryOptionalFields($query, $optionalFields);
 
         $query .= "
-            FROM event
+        FROM event";
 
+        if ($is_open) {
+            $query .= "
+            LEFT OUTER JOIN event_notes ON event.event_id = event_notes.event_id AND event_notes.status = 'O'";
+        } else {
+            $query .= "
+            INNER JOIN event_notes ON event.event_id = event_notes.event_id AND event_notes.status = 'C'";
+        }
+
+        $query .= "
             INNER JOIN user
             ON event.requester_id = user.user_id
 
@@ -176,12 +185,6 @@ class EventsController
             INNER JOIN purpose
             ON event.event_id = purpose.event_id
             ";
-
-        if ($is_open) {
-            $query .= "LEFT OUTER JOIN event_notes ON event.event_id = event_notes.event_id AND event_notes.status = 'O'";
-        } else {
-            $query .= "INNER JOIN event_notes ON event.event_id = event_notes.event_id AND event_notes.status = 'C'";
-        }
 
         $query = self::addQueryWhereConditions($query, $conditions);
 
