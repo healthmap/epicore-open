@@ -20,7 +20,8 @@
                     <strong>Do not write in all capital letters.</strong><br>
                     <i class="fa fa-times-circle"></i> <span class="" style="text-decoration:line-through;">JOHN SMITH,
                         John SMITH</span><br>
-                    <i class="fa fa-check-circle"></i> <span class="">John Smith</span></div>
+                    <i class="fa fa-check-circle"></i> <span class="">John Smith</span>
+                </div>
 
                 <form name="applyForm" role="form" id="applyForm">
 
@@ -48,16 +49,12 @@
 
                     <div class="form-group more-space">
                         <label>Location</label>
-                        <input class="form-control"
-                            g-places-autocomplete
-                            options="locationOptions"
-                            force-selection="true"
-                            ng-click="filtertype=null"
-                            ng-model="userLocationPlace"
-                            ng-focus="userLocationPlace = null"
-                            id="userLocation"
-                            ng-change="userLocationChange(userLocationPlace)"
-                            required />
+                        <input class="form-control" g-places-autocomplete options="locationOptions"
+                            force-selection="true" ng-click="filtertype=null" ng-model="userLocationPlace"
+                            ng-focus="userLocationPlace = null" id="userLocation"
+                            ng-change="userLocationChange(userLocationPlace)" required />
+                        <span ng-show="(!uservals.country || !uservals.city || !uservals.state) && attempted"
+                            class="error">Location must have country, state and city</span>
                     </div>
 
                     <div class="form-group">
@@ -203,8 +200,8 @@
                         <label class="radio-inline"> <input type="radio" ng-model="uservals.training" value="0">
                             No</label>
                         <input type="text" class="form-control" name="training" ng-model="uservals.fetp_training"
-                            ng-if="uservals.training" placeholder="What program and where?"
-                            ng-required="uservals.training">
+                            ng-if="uservals.training === '1'" placeholder="What program and where?"
+                            ng-required="uservals.training === '1'">
                     </div>
 
                     <div class="form-group">
@@ -217,8 +214,8 @@
                         <label class="radio-inline"> <input type="radio" ng-model="uservals.other_training" value="0">
                             No</label>
                         <input type="text" class="form-control" name="other_training"
-                            ng-model="uservals.other_fetp_training" ng-if="uservals.other_training"
-                            placeholder="What program and where?" ng-required="uservals.other_training">
+                            ng-model="uservals.other_fetp_training" ng-if="uservals.other_training === '1'"
+                            placeholder="What program and where?" ng-required="uservals.other_training === '1">
                     </div>
 
                     <div class="form-group">
@@ -285,17 +282,20 @@
 
                     </div>
 
-                <div class="form-group">
-                    <br>
-                    <h3>Current Work</h3>
-                    <label class="form-label" for="job_title">What is your current job title and the name of the organization you work for?</label>
-                    <input type="text" class="form-control" name="job_title" ng-model="uservals.job_title" required>
-                </div>
+                    <div class="form-group">
+                        <br>
+                        <h3>Current Work</h3>
+                        <label class="form-label" for="job_title">What is your current job title and the name of the
+                            organization you work for?</label>
+                        <input type="text" class="form-control" name="job_title" ng-model="uservals.job_title" required>
+                    </div>
 
-                <div class="form-group">
-                    <label class="form-label" for="job_title">List any additional work experience that you would like to highlight.</label>
-                    <input type="text" class="form-control" name="current_organization" ng-model="uservals.organization">
-                </div>
+                    <div class="form-group">
+                        <label class="form-label" for="job_title">List any additional work experience that you would
+                            like to highlight.</label>
+                        <input type="text" class="form-control" name="current_organization"
+                            ng-model="uservals.organization">
+                    </div>
 
                     <div class="form-group">
                         <h5 class="form-label">Which sector does your organization best fall under</h5>
