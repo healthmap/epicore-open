@@ -16,6 +16,17 @@ class EventsController
                 return null;
         }
     }
+
+    public static function getLastEventsUpdateTime()
+    {
+        $query = "SELECT TABLE_NAME,CREATE_TIME,UPDATE_TIME
+        FROM information_schema.tables
+        WHERE table_schema = 'epicore' AND TABLE_NAME LIKE 'event%'";
+
+        $db = getDB();
+        $response = $db->getAll($query);
+        return $response;
+    }
     
 
     private static function resolveAction($params)
@@ -31,6 +42,8 @@ class EventsController
                 return  self::getPublicEvents($params);
             case "get_event_summary":
                 return self::getEventSummary($params);
+            case "get_last_events_update_time":
+                return self::getLastEventsUpdateTime();
             default:
                 return null;
         }
@@ -75,31 +88,28 @@ class EventsController
         }
 
         if ($start_date) {
-            array_push($conditions, "event.create_date > '$start_date'");
+            array_push($conditions, "event.create_date >= '$start_date'");
         }
 
         if ($end_date) {
-            array_push($conditions, "event.create_date < '$end_date'");
+            array_push($conditions, "event.create_date <= '$end_date'");
         }
 
-        if ($is_open) {
-            array_push($conditions, "event_notes.status != 'C'");
-
-        } else {
+        if (!$is_open) {
             array_push($optionalFields, "purpose.phe_description");
-            array_push($conditions, "event_notes.status = 'C'");
         }
 
         $query = "SELECT
             event.event_id,
             event.title,
             DATE_FORMAT(event.create_date, '%d-%M-%Y') AS create_date,
-            DATE_FORMAT(event.create_date, '%d-%m-%Y %h:%m:%s') AS iso_create_date,
+            DATE_FORMAT(event.create_date, '%Y-%m-%dT%h:%i:%s') AS iso_create_date,
             DATE_FORMAT(event_notes.action_date, '%d-%M-%Y') AS action_date,
-            DATE_FORMAT(event_notes.action_date, '%d-%m-%Y %h:%m:%s') AS iso_action_date,
+            DATE_FORMAT(event_notes.action_date, '%Y-%m-%dT%h:%i:%s') AS iso_action_date,
             event.requester_id,
             hm_hmu.name AS person,
             organization.name AS organization_name,
+            place.name AS country,
             purpose.outcome AS outcome,
             event_notes.status,
 
@@ -110,7 +120,7 @@ class EventsController
             AS num_members,
 
             (SELECT
-                COUNT(*)
+                DISTINCT COUNT(*)
                 FROM response
                 WHERE event_id = event.event_id) 
             AS num_responses,
@@ -149,11 +159,17 @@ class EventsController
         $query = self::addQueryOptionalFields($query, $optionalFields);
 
         $query .= "
-            FROM event
+        FROM event";
 
-            INNER JOIN event_notes
-            ON event.event_id = event_notes.event_notes_id
+        if ($is_open) {
+            $query .= "
+            LEFT OUTER JOIN event_notes ON event.event_id = event_notes.event_id AND event_notes.status = 'O'";
+        } else {
+            $query .= "
+            INNER JOIN event_notes ON event.event_id = event_notes.event_id AND event_notes.status = 'C'";
+        }
 
+        $query .= "
             INNER JOIN user
             ON event.requester_id = user.user_id
 
@@ -162,6 +178,9 @@ class EventsController
 
             INNER JOIN organization
             ON user.organization_id = organization.organization_id
+
+            INNER JOIN place
+            ON event.place_id = place.place_id
 
             INNER JOIN purpose
             ON event.event_id = purpose.event_id
@@ -189,11 +208,11 @@ class EventsController
         }
 
         if ($start_date) {
-            array_push($conditions, "event.create_date > '$start_date'");
+            array_push($conditions, "event.create_date >= '$start_date'");
         }
 
         if ($end_date) {
-            array_push($conditions, "event.create_date < '$end_date'");
+            array_push($conditions, "event.create_date <= '$end_date'");
         }
 
         array_push($conditions,"(purpose.outcome = 'VP' OR purpose.outcome = 'VN' OR purpose.outcome = 'UP')");
@@ -202,16 +221,16 @@ class EventsController
         event.event_id,
         event.title,
         DATE_FORMAT(event.create_date, '%d-%M-%Y') AS create_date,
-        DATE_FORMAT(event.create_date, '%d-%m-%Y %h:%m:%s') AS iso_create_date,
+        DATE_FORMAT(event.create_date, '%Y-%m-%dT%h:%i:%s') AS iso_create_date,
         DATE_FORMAT(event_notes.action_date, '%d-%M-%Y') AS action_date,
-        DATE_FORMAT(event_notes.action_date, '%d-%m-%Y %h:%m:%s') AS iso_action_date,
+        DATE_FORMAT(event_notes.action_date, '%Y-%m-%dT%h:%i:%s') AS iso_action_date,
         purpose.outcome AS outcome,
         place.name AS country
         
         FROM event
 
         INNER JOIN event_notes
-        ON event.event_id = event_notes.event_notes_id
+        ON event.event_id = event_notes.event_id AND event_notes.status = 'C'
         
         INNER JOIN purpose
         ON event.event_id = purpose.event_id

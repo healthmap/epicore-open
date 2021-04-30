@@ -21,12 +21,14 @@ const fetchService = () => {
       url = `${url}?${urlParams}`;
     }
 
-    const cachedRequest = getRequestCache({
-      url: url
-    });
-
-    if (cachedRequest) {
-      return cachedRequest;
+    if (params.cache) {
+      const cachedRequest = getRequestCache({
+        url: url
+      });
+  
+      if (cachedRequest) {
+        return cachedRequest;
+      }
     }
 
     try {

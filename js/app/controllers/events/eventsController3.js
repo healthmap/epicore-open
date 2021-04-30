@@ -17,7 +17,8 @@ const EventsController3 = ($scope, $location, epicoreMode, epicoreStartDate) => 
   $scope.EVENT_TYPES = EVENT_TYPES;
   $scope.EVENT_OUTCOME = EVENT_OUTCOME;
   $scope.eventType = EVENT_TYPES.ALL_ORGANIZATIONS.CODE;
-  $scope.eventsOrderBy = 'iso_create_date';
+  $scope.eventsOrderBy = $scope.onOpen ? 'iso_create_date' : 'iso_action_date';
+  $scope.eventsOrderReverse = true;
   $scope.isRouteLoading = true;
   $scope.summaryLoading = null;
 
@@ -66,6 +67,15 @@ const EventsController3 = ($scope, $location, epicoreMode, epicoreStartDate) => 
       end_date: end_date
     });
   };
+
+  $scope.eventsOrderByFunction = (event) => {
+    if ($scope.eventsOrderBy === 'iso_create_date' || $scope.eventsOrderBy === 'iso_action_date') {
+      var date = new Date(event[$scope.eventsOrderBy]);
+      return date;
+    }
+    return event[$scope.eventsOrderBy];
+  };
+
 
   const checkEventsWithNoActivity = async () => {
     $scope.unclosed = $scope.events.filter(event => {
