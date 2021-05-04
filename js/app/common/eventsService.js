@@ -12,7 +12,8 @@ const eventsService = () => {
     is_open
   }) => { 
     const params = {
-      action: 'get_events'
+      action: 'get_events',
+      cache: false
     };
 
     if (uid){
@@ -45,7 +46,8 @@ const eventsService = () => {
     end_date
   }) => {
     const params = {
-      action: 'get_public_events'
+      action: 'get_public_events',
+      cache: false
     };
 
     if (start_date){
@@ -67,7 +69,8 @@ const eventsService = () => {
   const getEventSummary = async ({event_id}) => {
     const params = {
       action: 'get_event_summary',
-      event_id: event_id
+      event_id: event_id,
+      cache: false
     };
 
     const url = epicore_config.urlBase + epicore_config.API.EVENTS_v3;
