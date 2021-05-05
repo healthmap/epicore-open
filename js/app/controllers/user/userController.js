@@ -51,6 +51,8 @@ const UserController = (
     data['uid'] = $scope.uid;
     data['action'] = $scope.action;
     data['idtype'] = $scope.idtype;
+
+    console.log(data);
     http({
       url: urlBase + 'scripts/getapplicant.php',
       method: 'POST',

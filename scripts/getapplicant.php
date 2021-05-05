@@ -36,16 +36,15 @@ if($uid && $idtype) {
     }
 
     if (!$applicant){
-        print json_encode(array('status' => 'failed', 'reason' => 'invalid member id'));
+        echo json_encode(array('status' => 'failed', 'reason' => 'invalid member id'));
         exit;
     }
 } else {
-    print json_encode(array('status' => 'failed', 'reason' => 'missing required parameters'));
+    echo json_encode(array('status' => 'failed', 'reason' => 'missing required parameters'));
     exit;
 }
 
-header('content-type: application/json; charset=utf-8');
-print json_encode($applicant);
+echo json_encode($applicant);
 exit;
 
 ?>

@@ -26,6 +26,9 @@ const EventsController2 = (
   $scope.rfiOrderByValue = 'iso_create_date';
   // if we're on the closed requests page
   $scope.onOpen = $location.path().indexOf('/closed') > 0 ? false : true;
+  $scope.changeStatusText = !$scope.onOpen ? 'Re open' : 'Close';
+  $scope.changeStatusType = !$scope.onOpen ? 'reopen' : 'close';
+
   if (!$scope.onOpen) {
     $scope.rfiOrderByValue = 'iso_action_date';
   }

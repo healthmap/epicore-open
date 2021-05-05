@@ -100,17 +100,17 @@ if(isset($rvars['event_id']) && is_numeric($rvars['event_id'])) {
         //echo 'with login-dashboard-list-page';
         // status can be "closed" or "open"
         require_once "UserInfo.class.php";
-        $ui = new UserInfo($rvars['uid'], $rvars['fetp_id']);
+        $ui = new UserInfo($userData['uid'], $userData['fetp_id']);
         $status = isset($rvars['detail']) && $rvars['detail'] == "closed" ? 'C' : 'O';
         $num_notrated_repsonses = 0;
-        if ($rvars['fetp_id']) {
+        if ($userData['fetp_id']) {
             // array values will lop off the array key b/c angular reorders the object
             // $indexed_array = array_values($ui->getFETPRequests($status, '', V2START_DATE));
             $indexed_array = is_array($ui->getFETPRequests($status, '', V2START_DATE))? array_values($ui->getFETPRequests($status, '', V2START_DATE)): array(); 
         } else {
-            $indexed_array = EventInfo::getAllEvents($rvars['uid'], $status, $start_date, $end_date);
+            $indexed_array = EventInfo::getAllEvents($userData['uid'], $status, $start_date, $end_date);
             if ($status == 'O') {  // check for unrated respsonses
-                $num_notrated_repsonses = EventInfo::getNumNotRatedResponses($rvars['uid'], V2START_DATE);
+                $num_notrated_repsonses = EventInfo::getNumNotRatedResponses($userData['uid'], V2START_DATE);
             }
         }
     }

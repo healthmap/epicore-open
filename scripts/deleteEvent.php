@@ -10,7 +10,7 @@ $userData = userController::getUserData();
 // clean variables
 $formvars = json_decode(file_get_contents("php://input"));
 $eid = strip_tags($formvars->eid);
-$superuser = $userData["superuser"];
+$superuser = (int)$userData["superuser"];
 
 // exit if no event id or user id
 if(!$eid || !$superuser) {

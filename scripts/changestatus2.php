@@ -13,7 +13,7 @@ $userData = userController::getUserData();
 
 $event_id = $formvars->event_id;
 $user_id = $userData["uid"];
-$superuser = $userData["superuser"];
+$superuser = (int)$userData["superuser"];
 $useful_rids = $formvars->useful_rids;
 $usefulpromed_rids = $formvars->usefulpromed_rids;
 $notuseful_rids = $formvars->notuseful_rids;
