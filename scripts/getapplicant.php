@@ -12,14 +12,14 @@ use UserController as userController;
 $userData = userController::getUserData();
 
 $formvars = json_decode(file_get_contents("php://input"));
-if (isset($formvars->uid)) {
-    $uid = $userData["uid"];
-}
-if (isset($formvars->fetp_id)) {
-    $uid = $userData["fetp_id"];
-}
 
 $idtype = strip_tags($formvars->idtype);
+
+if ($idtype === "fetp" ) {
+    $uid = $userData["fetp_id"];
+} else {
+    $uid = $userData["uid"];
+}
 
 // get info about specific event
 if($uid && $idtype) {

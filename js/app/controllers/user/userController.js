@@ -48,11 +48,9 @@ const UserController = (
     $scope.more_schools1 = true;
     $scope.more_schools2 = true;
     const data = {};
-    data['uid'] = $scope.uid;
     data['action'] = $scope.action;
     data['idtype'] = $scope.idtype;
 
-    console.log(data);
     http({
       url: urlBase + 'scripts/getapplicant.php',
       method: 'POST',
