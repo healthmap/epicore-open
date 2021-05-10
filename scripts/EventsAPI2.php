@@ -9,9 +9,11 @@ require_once "UserContoller3.class.php";
 
 use UserController as userController;
 
-if (!userController::isUserValid()) {
-    echo json_encode(false);
-    return false;
+if($rvars['from'] !== "events_public") {
+    if (!userController::isUserValid()) {
+        echo json_encode(false);
+        return false;
+    }
 }
   
 $userData = userController::getUserData();
