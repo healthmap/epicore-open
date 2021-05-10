@@ -15,10 +15,6 @@ const eventAPIservice2 = ($rootScope, $location, urlBase, httpServiceInterceptor
     ) {
       // get events for public view
       qs += '&public=1';
-    } else if (typeof $rootScope.userinfo['uid'] == 'undefined') {
-      qs += '&fetp_id=' + $rootScope.userinfo['fetp_id'];
-    } else {
-      qs += '&uid=' + $rootScope.userinfo['uid'];
     }
 
     qs += '&start_date=' + start_date;

@@ -76,7 +76,7 @@ class EventsController
         }
 
         if (isset($params["organization_id"])) {
-            $organization_id = $params["organization_id"];
+            $organization_id = userController::getUserData()["organization_id"];
         }
 
         if ($requester_id) {

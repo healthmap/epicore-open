@@ -9,6 +9,11 @@ require_once "UserContoller3.class.php";
 
 use UserController as userController;
 
+if (!userController::isUserValid()) {
+    echo json_encode(false);
+    return false;
+}
+  
 $userData = userController::getUserData();
 
 // check for authoriziation token in query string
