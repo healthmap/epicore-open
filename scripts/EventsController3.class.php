@@ -51,6 +51,11 @@ class EventsController
 
     private static function getEvents($params)
     {
+        if (!userController::isUserValid()) {
+            echo json_encode(false);
+            return false;
+        }
+
         $requester_id = null;
         $start_date = null;
         $end_date = null;
@@ -248,6 +253,11 @@ class EventsController
 
     private static function getEventSummary($params)
     {
+        if (!userController::isUserValid()) {
+            echo json_encode(false);
+            return false;
+        }
+        
         if (!isset($params['event_id'])) {
             return null;
         }
