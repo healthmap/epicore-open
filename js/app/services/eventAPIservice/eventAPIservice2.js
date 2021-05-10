@@ -37,7 +37,7 @@ const eventAPIservice2 = ($http, $rootScope, $location, urlBase) => {
     const url = urlBase + 'scripts/EventsAPI2.php?auth=true' + qs;
 
     return new Promise(async (resolve) => {
-      const data = await fetchGet(url);
+      const data = await fetchGet({ url });
       const res = {
         data: data
       };

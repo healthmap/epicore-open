@@ -1,3 +1,6 @@
+import { cacheService } from '@/common/cacheService';
+
+const { clear } = cacheService();
 
 const UserController = (
   $rootScope,
@@ -418,6 +421,7 @@ const UserController = (
   $scope.userLogout = function() {
     $cookieStore.remove('epiUserInfo');
     $window.sessionStorage.clear();
+    clear();
   };
 
   /* set password */

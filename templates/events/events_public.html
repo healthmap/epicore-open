@@ -24,15 +24,15 @@
                 </div>
 
                 <!-- view for organizations -->
-                <div ng-init="eventsOrderBy = 'iso_create_date'; reverse=!reverse">
+                <div>
                     <table ng-if="!isRouteLoading" class='outer-border small table table-hover public-rfi'>
                         <tbody>
                             <tr>
-                                <th ng-click="eventsOrderBy = 'title'; reverse=!reverse">Title</th>
-                                <th ng-click="eventsOrderBy = 'iso_action_date'; reverse=!reverse">Closure Date
+                                <th ng-click="eventsOrderBy = 'title'; eventsOrderReverse=!eventsOrderReverse">Title</th>
+                                <th ng-click="eventsOrderBy = 'iso_action_date'; eventsOrderReverse=!eventsOrderReverse">Closure Date
                                     <i class="fa fa-sort"></i>
                                 </th>
-                                <th ng-click="eventsOrderBy = 'country'; reverse=!reverse">Country
+                                <th ng-click="eventsOrderBy = 'country'; eventsOrderReverse=!eventsOrderReverse">Country
                                     <i class="fa fa-sort"></i>
                                 </th>
                                 <th>
@@ -40,7 +40,7 @@
                                 </th>
                                 <th></th>
                             </tr>
-                            <tr class="link" ng-click="openPublicArticle(event.event_id)" ng-repeat="event in events | orderBy:eventsOrderBy:reverse">
+                            <tr class="link" ng-click="openPublicArticle(event.event_id)" ng-repeat="event in events | orderBy : eventsOrderByFunction : eventsOrderReverse">
                                 <td>{{event.title}}</td>
                                 <td>{{event.action_date}}</td>
                                 <td>{{event.country}}</td>

@@ -12,7 +12,8 @@ const eventsService = () => {
     is_open
   }) => { 
     const params = {
-      action: 'get_events'
+      action: 'get_events',
+      cache: false
     };
 
     if (uid){
@@ -31,9 +32,8 @@ const eventsService = () => {
       params.is_open = is_open;
     }
 
-    const urlParams = new URLSearchParams(params);
-    const url = `${epicore_config.urlBase + epicore_config.API.EVENTS_v3}?${urlParams}`;
-    const response = await fetchGet(url);
+    const url = epicore_config.urlBase + epicore_config.API.EVENTS_v3;
+    const response = await fetchGet({ url, params });
     return response;
   };
 
@@ -42,7 +42,8 @@ const eventsService = () => {
     end_date
   }) => {
     const params = {
-      action: 'get_public_events'
+      action: 'get_public_events',
+      cache: false
     };
 
     if (start_date){
@@ -52,21 +53,20 @@ const eventsService = () => {
       params.end_date = end_date;
     }
 
-    const urlParams = new URLSearchParams(params);
-    const url = `${epicore_config.urlBase + epicore_config.API.EVENTS_v3}?${urlParams}`;
-    const response = await fetchGet(url);
+    const url = epicore_config.urlBase + epicore_config.API.EVENTS_v3;
+    const response = await fetchGet({ url, params });
     return response;
   };
 
   const getEventSummary = async ({event_id}) => {
     const params = {
       action: 'get_event_summary',
-      event_id: event_id
+      event_id: event_id,
+      cache: false
     };
 
-    const urlParams = new URLSearchParams(params);
-    const url = `${epicore_config.urlBase + epicore_config.API.EVENTS_v3}?${urlParams}`;
-    const response = await fetchGet(url);
+    const url = epicore_config.urlBase + epicore_config.API.EVENTS_v3;
+    const response = await fetchGet({ url, params });
     return response;
   };
 

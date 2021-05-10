@@ -67,24 +67,24 @@
                     <table class="small table table-hover table-bordered">
                         <tbody>
                             <tr>
-                                <th width="50px" ng-click="eventsOrderBy = 'event_id_int'; reverse=!reverse">
+                                <th width="50px" ng-click="eventsOrderBy = 'event_id'; eventsOrderReverse=!eventsOrderReverse">
                                     ID <i class="fa fa-sort"></i>
                                 </th>
-                                <th ng-click="eventsOrderBy = 'title'; reverse=!reverse">
+                                <th ng-click="eventsOrderBy = 'title'; eventsOrderReverse=!eventsOrderReverse">
                                     Title <i class="fa fa-sort"></i>
                                 </th>
                                 <th width="110px" ng-show="onOpen"
-                                    ng-click="eventsOrderBy = 'iso_create_date'; reverse=!reverse" class="nowrap-mobile">
+                                    ng-click="eventsOrderBy = 'create_date'; eventsOrderReverse=!eventsOrderReverse" class="nowrap-mobile">
                                     RFI Date <i class="fa fa-sort"></i>
                                 </th>
                                 <th width="110px" ng-show="!onOpen"
-                                    ng-click="eventsOrderBy = 'iso_action_date'; reverse=!reverse" class="nowrap-mobile">
+                                    ng-click="eventsOrderBy = 'action_date'; eventsOrderReverse=!eventsOrderReverse" class="nowrap-mobile">
                                     Closure Date <i class="fa fa-sort"></i>
                                 </th>
-                                <th width="110px" ng-click="eventsOrderBy = 'country'; reverse=!reverse">
+                                <th width="110px" ng-click="eventsOrderBy = 'country'; eventsOrderReverse=!eventsOrderReverse">
                                     Location <i class="fa fa-sort"></i>
                                 </th>
-                                <th width="110px" ng-click="eventsOrderBy = 'person'; reverse=!reverse"
+                                <th width="110px" ng-click="eventsOrderBy = 'person'; eventsOrderReverse=!eventsOrderReverse"
                                     class="nowrap-mobile">
                                     Requester <i class="fa fa-sort"></i>
                                 </th>
@@ -113,7 +113,7 @@
                                         title="information about the final outcome of the verification process">Outcome</span>
                                 </th>
                             </tr>
-                            <tr ng-repeat="event in events | filter:query | orderBy:eventsOrderBy:reverse"
+                            <tr ng-repeat="event in events | filter : query | orderBy : eventsOrderByFunction : eventsOrderReverse"
                                 ng-class="{selected : (onOpen && eventType === EVENT_TYPES.MY_RFIS.CODE && (event.iso_create_date < (date | date:'yyyy-MM-dd'))) || !onOpen && (event.num_notrated_responses > 0)}">
                                 <td>{{event.event_id}}</td>
                                 <td>

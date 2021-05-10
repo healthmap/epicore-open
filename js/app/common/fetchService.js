@@ -1,28 +1,56 @@
 import { cacheService } from '@/common/cacheService';
+import { Modal } from '@/common/modal';
 
 const { setRequestCache, getRequestCache } = cacheService();
+const { showModal } = Modal();
 
 const fetchService = () => {
 
-  const fetchGet = async (url) => {
-    const cachedRequest = getRequestCache({
-      url: url
-    });
+  const getErrorMesages = async () => {
+    if (!epicore_config.errorMessages) {
+      const errorMessages = await fetch('constants/error-messages.json');
+      epicore_config.errorMessages = await errorMessages.json();
+    } 
+  };
 
-    if (cachedRequest) {
-      return cachedRequest;
+  const fetchGet = async ({ url, params }) => {
+    await getErrorMesages();
+    
+    if (params) {
+      const urlParams = new URLSearchParams(params);
+      url = `${url}?${urlParams}`;
     }
 
-    const response =  await fetch(url, {
-      method: 'GET'
-    }).catch(err => console.log(err));
+    if (params.cache) {
+      const cachedRequest = getRequestCache({
+        url: url
+      });
+  
+      if (cachedRequest) {
+        return cachedRequest;
+      }
+    }
 
     try {
+      const response =  await fetch(url, {
+        method: 'GET'
+      });
+
+      const status = response.status;
+
+      if (status !== 200) {
+        throw new Error(`${response.status} ${response.statusText}`);
+      }
+
       const data = await response.json();
 
       if (data.error) {
-        const errorMessage = `${data.error_message} Details: ${data.error_details}`;
-        alert(errorMessage);
+        showModal({
+          id: 'error_message',
+          header: epicore_config.errorMessages.header,
+          message: data.error_message,
+          details: data.error_details
+        });
         return [];
       }
 
@@ -34,9 +62,14 @@ const fetchService = () => {
       return data;
 
     } catch (error) {
-      alert('error', error);
+      showModal({
+        id: 'error_message',
+        header: epicore_config.errorMessages.header,
+        message: params && params.action ? epicore_config.errorMessages[params.action] : epicore_config.errorMessages['default'],
+        details: error
+      });
       return [];
-    }
+    } 
   };
 
   return {
