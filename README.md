@@ -99,6 +99,33 @@ npm start
     docker-compose build
     docker-compose up -d
 
+
+## Flyway migrations
+Database migrations are handled via npm package node-flywaydb
+Flyway config: ~/epicore/flyway/conf/flyway.js
+Modify .env file to make sure migrations are run on the right platform
+
+### Adding new mirations
+All new migrations must follow the norms as follows
+
+~/flyway/release-X.X
+~/flyway/release-X.X/migrations
+ * Files in this folder will conform to the following nature
+ versioned migration (V), an undo migration (U), or a repeatable migration (R)
+ V[release-number]_[version-number]_[version_number]_[description].sql
+ Examples: V1_0_1_alter_table_hm_ticket.sql
+           V1_0_1_create_table_role.sql
+
+~/flyway/release-X.X/pre-migrations (these are run manually as this will be one time)
+
+### Running migrations
+The migrations can be tested on a local database of choice before committing the changes. Migration files are automatically picked up by Jenkins and migration scripts are executed as part of the migrations
+**Note**: Always start with a flyway-baseline as the first command before migrations
+To run locally: please see package.json
+> npm run flyway-info
+> npm run flyway-baseline
+> npm run flyway-migrate
+
 ## Cypress Tests
 Cypress is included as a dev dependency and is part of our package.json
 To run cypress tests:
