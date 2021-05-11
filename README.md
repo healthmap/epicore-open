@@ -99,7 +99,6 @@ npm start
     docker-compose build
     docker-compose up -d
 
-
 ## Flyway migrations
 Database migrations are handled via npm package node-flywaydb
 Flyway config: ~/epicore/flyway/conf/flyway.js
@@ -110,11 +109,11 @@ All new migrations must follow the norms as follows
 
 ~/flyway/release-X.X
 ~/flyway/release-X.X/migrations
- * Files in this folder will conform to the following nature
- versioned migration (V), an undo migration (U), or a repeatable migration (R)
- V[release-number]_[version-number]_[version_number]_[description].sql
- Examples: V1_0_1_alter_table_hm_ticket.sql
-           V1_0_1_create_table_role.sql
+Files in this folder will conform to the following nature
+versioned migration (V), an undo migration (U), or a repeatable migration (R)
+V[release-number]_[version-number]_[version_number]_[description].sql
+Examples: V1_0_1_alter_table_hm_ticket.sql
+V1_0_1_create_table_role.sql
 
 ~/flyway/release-X.X/pre-migrations (these are run manually as this will be one time)
 
