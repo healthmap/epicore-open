@@ -111,7 +111,7 @@ All new migrations must follow the norms as follows
 ~/flyway/release-X.X/migrations
 Files in this folder will conform to the following nature
 versioned migration (V), an undo migration (U), or a repeatable migration (R)
-V[release-number]_[version-number]_[version_number]_[description].sql
+Vrelease-number_version-number_version_number_description.sql
 Examples: V1_0_1_alter_table_hm_ticket.sql
 V1_0_1_create_table_role.sql
 
