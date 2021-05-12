@@ -74,7 +74,11 @@ if ($formvars->fetp_ids && $formvars->population && $formvars->health_condition 
             $extra_headers['user_ids'] = $idlist;
             $recipient = trim($recipient);
             $custom_emailtext = trim(str_replace("[TOKEN]", $tokens[$fetp_id], $emailtext));
-            $aws_resp = AWSMail::mailfunc($recipient, $subject, $custom_emailtext, EMAIL_NOREPLY, $extra_headers);
+            try {
+                $aws_resp = AWSMail::mailfunc($recipient, $subject, $custom_emailtext, EMAIL_NOREPLY, $extra_headers);
+            } catch (Exception $e) {
+
+            }
 
             // send push notification
             //$push->sendPush($pushevent, $fetp_id);
@@ -94,14 +98,22 @@ if ($formvars->fetp_ids && $formvars->population && $formvars->health_condition 
         if ($moderator['organization_id'] == PROMED_ID) {
             $idlist[0] = PROMED_ID;
             $extra_headers['user_ids'] = $idlist;
-            $aws_resp = AWSMail::mailfunc(EMAIL_PROIN, $subject, $custom_emailtext_proin, EMAIL_NOREPLY, $extra_headers);
+            try {
+                $aws_resp = AWSMail::mailfunc(EMAIL_PROIN, $subject, $custom_emailtext_proin, EMAIL_NOREPLY, $extra_headers);
+            } catch (Exception $e) {
+
+            }
         }
 
         // send copy to epicore info
         $idlist[0] = EPICORE_ID;
         $extra_headers['user_ids'] = $idlist;
-        $aws_resp = AWSMail::mailfunc(EMAIL_INFO_EPICORE, $subject, $custom_emailtext_proin, EMAIL_NOREPLY, $extra_headers);
 
+        try {
+            $aws_resp = AWSMail::mailfunc(EMAIL_INFO_EPICORE, $subject, $custom_emailtext_proin, EMAIL_NOREPLY, $extra_headers);
+        } catch (Exception $e) {
+
+        }
         // send copy to Epicore Admin if duplicate RFI detected
         if ($duplicate_rfi_detected) {
             $this_event_info = $ei->getInfo();
@@ -125,7 +137,11 @@ if ($formvars->fetp_ids && $formvars->population && $formvars->health_condition 
             $custom_emailtext_last = trim(str_replace("[SIMILAR_RFI_LIST]", $duplicate_list, $custom_emailtext3));
             $idlist[0] = EPICORE_ID;
             $extra_headers['user_ids'] = $idlist;
-            $aws_resp = AWSMail::mailfunc(EMAIL_EPICORE_ADMIN, $subject2, $custom_emailtext_last, EMAIL_NOREPLY, $extra_headers);
+            try {
+                $aws_resp = AWSMail::mailfunc(EMAIL_EPICORE_ADMIN, $subject2, $custom_emailtext_last, EMAIL_NOREPLY, $extra_headers);
+            } catch (Exception $e) {
+
+            }
         }
 
         $status = 'success';
@@ -139,6 +155,10 @@ if ($formvars->fetp_ids && $formvars->population && $formvars->health_condition 
     $fetp_ids = false;
 }
 
-print json_encode(array('status' => $status, 'fetps' => $fetp_ids));
+print json_encode(array(
+    'status' => $status,
+    'fetps' => $fetp_ids,
+    'event_id' => $event_id
+));
 
 ?>
