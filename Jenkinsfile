@@ -99,6 +99,28 @@ pipeline {
         }
       }
 
+
+    stage('DB Migration') { 
+      steps { 
+
+              script {
+               
+                      withAWS(region: env.AWS_REGION ,role: env.JENKINS_IAM_ROLE, roleAccount: env.AWS_ACCOUNT_ID) {
+
+                         sh '''
+                         ./getParamsForJenkins.sh
+                         npm install 
+                         npm run-script flyway-info
+                         npm run-script flyway-migrate
+                         rm ./.env
+                         '''
+                        }
+              }
+            }
+
+    }
+
+
       stage('Build Image') { 
             steps { 
 
@@ -107,7 +129,6 @@ pipeline {
                       withAWS(region: env.AWS_REGION ,role: env.JENKINS_IAM_ROLE, roleAccount: env.AWS_ACCOUNT_ID) {
 
                          sh '''
-                         npm install 
                          npm run-script build
                          '''
                           docker.withRegistry( env.DOCKER_REGISTRY_URL, env.DOCKER_REGISTRY_CRED_ID) {

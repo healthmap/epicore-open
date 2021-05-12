@@ -6,6 +6,9 @@
     "start-1": "webpack watch --mode=development",
     "start-2": "node server.js",
     "start": "npm run start-1 & npm run start-2",
+    "flyway-info": "flyway -c flyway/conf/flyway.js info",
+    "flyway-baseline": "flyway -c flyway/conf/flyway.js baseline",
+    "flyway-migrate": "flyway -c flyway/conf/flyway.js migrate",
     "build": "webpack --mode=production",
     "lint": "eslint js/app",
     "lint:fix": "eslint js/app --fix"
@@ -21,7 +24,9 @@
   },
   "homepage": "https://github.com/healthmap/epicore#readme",
   "dependencies": {
+    "dotenv": "^8.6.0",
     "js-cookie": "^2.2.1",
+    "node-flywaydb": "^3.0.5",
     "php-server": "^0.2.1"
   },
   "devDependencies": {
