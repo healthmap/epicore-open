@@ -160,7 +160,9 @@ if(is_numeric($event_id) && is_numeric($user_id)) {
             $emailtext = trim(str_replace("[PRO_IN]", '', $emailtext_event));
             $next_emailtext = trim(str_replace("[EVENT_HISTORY]", $history, $emailtext));
             $custom_emailtext = trim(str_replace("[TOKEN]", $tokens[$fetp_id], $next_emailtext));
-            AWSMail::mailfunc($recipient, $subject, $custom_emailtext, EMAIL_NOREPLY, $extra_headers);
+            try {
+                AWSMail::mailfunc($recipient, $subject, $custom_emailtext, EMAIL_NOREPLY, $extra_headers);
+            } catch (Exception $e) {}
 
             // send push notification
             //$push->sendPush($pushevent, $fetp_id);
@@ -203,9 +205,11 @@ if(is_numeric($event_id) && is_numeric($user_id)) {
 
         // send copy to mods following the Event
         $followers = EventInfo::getFollowers($event_id);
-        foreach ($followers as $follower){
-            array_push($tolist, $follower['email']);
-            array_push($idlist, $follower['user_id']);
+        if (is_array($followers) || is_object($followers )) {
+            foreach ($followers as $follower){
+                array_push($tolist, $follower['email']);
+                array_push($idlist, $follower['user_id']);
+            }
         }
 
         if ($status_type == 're-opened')
@@ -223,7 +227,9 @@ if(is_numeric($event_id) && is_numeric($user_id)) {
             $emailtext = trim(str_replace("[EVENT_HISTORY]", $history, $emailtext_event));
             $custom_emailtext_mods = trim(str_replace("[PRO_IN]", $modfetp, $emailtext));
             $extra_headers['user_ids'] = $idlist;
-            AWSMail::mailfunc($tolist, $subject, $custom_emailtext_mods, EMAIL_NOREPLY, $extra_headers);
+            try {
+                AWSMail::mailfunc($tolist, $subject, $custom_emailtext_mods, EMAIL_NOREPLY, $extra_headers);
+            } catch (Exception $e) {}
         }
 
         print json_encode(array('status' => $status));

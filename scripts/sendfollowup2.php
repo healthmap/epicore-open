@@ -116,7 +116,9 @@ foreach($fetp_emails as $fetp_id => $recipient) {
     $history = $ei->getEventHistoryFETP($fetp_id, $event_id);
     $emailtext = trim(str_replace("[EVENT_HISTORY]", $history, $followupText));
     $emailtext = trim(str_replace("[TOKEN]", $tokens[$fetp_id], $emailtext));
-    $retval = AWSMail::mailfunc($recipient, $subject, $emailtext, EMAIL_NOREPLY, $extra_headers);
+    try {
+        $retval = AWSMail::mailfunc($recipient, $subject, $emailtext, EMAIL_NOREPLY, $extra_headers);
+    } catch (Exception $e) {}
 
     // send push notification
     //$push->sendPush($pushevent, $fetp_id);
@@ -162,9 +164,11 @@ array_push($idlist, EPICORE_ID);
 
 // send copy to mods following the Event
 $followers = EventInfo::getFollowers($event_id);
-foreach ($followers as $follower){
-    array_push($tolist, $follower['email']);
-    array_push($idlist, $follower['user_id']);
+if (is_array($followers) || is_object($followers)) {
+    foreach ($followers as $follower){
+        array_push($tolist, $follower['email']);
+        array_push($idlist, $follower['user_id']);
+    }
 }
 
 // send email
@@ -176,7 +180,9 @@ if (!empty($tolist)) {
     $proin_emailtext = trim(str_replace("[EVENT_HISTORY]", $history, $followupText_proin));
     $custom_emailtext_proin = trim(str_replace("[PRO_IN]", $modfetp, $proin_emailtext));
     $extra_headers['user_ids'] = $idlist;
-    $retval = AWSMail::mailfunc($tolist, $subject, $custom_emailtext_proin, EMAIL_NOREPLY, $extra_headers);
+    try {
+        $retval = AWSMail::mailfunc($tolist, $subject, $custom_emailtext_proin, EMAIL_NOREPLY, $extra_headers);
+    } catch (Exception $e) {}
 }
 
 print json_encode(array('status' => 'success', 'fetps' => $fetp_ids));

@@ -554,7 +554,7 @@ const EventsController2 = (
   $scope.sendFollowup = function(formData, isValid) {
     if (isValid) {
       $scope.submitDisabled = true;
-      formData['event_id'] = true;
+      formData['event_id'] = $routeParams.id;
       if ($routeParams.id) {
         var eid = $routeParams.id;
       }
