@@ -104,8 +104,7 @@ const EventsController2 = (
         url: 'scripts/uploadfile.php',
         data: {
           file: file,
-          event_id: $scope.id,
-          fetp_id: $scope.userInfo.fetp_id,
+          event_id: $scope.id
         },
         method: 'POST',
       });
@@ -676,7 +675,6 @@ const EventsController2 = (
       // formData comes in as object response_permissions: 0
       // if user chooses "Active Search", object is response_permissions: 4
       formData['event_id'] = $routeParams.id;
-      formData['fetp_id'] = $scope.userInfo.fetp_id;
       if ($routeParams.id) {
         var eid = $routeParams.id;
       }
