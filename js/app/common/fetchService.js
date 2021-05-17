@@ -1,7 +1,5 @@
-import { cacheService } from '@/common/cacheService';
 import { Modal } from '@/common/modal';
 
-const { setRequestCache, getRequestCache } = cacheService();
 const { showModal } = Modal();
 
 const fetchService = () => {
@@ -43,11 +41,6 @@ const fetchService = () => {
         });
         return [];
       }
-
-      setRequestCache({
-        url: url,
-        data: data
-      });
 
       return data;
 
