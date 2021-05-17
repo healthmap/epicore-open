@@ -21,16 +21,6 @@ const fetchService = () => {
       url = `${url}?${urlParams}`;
     }
 
-    if (params.cache) {
-      const cachedRequest = getRequestCache({
-        url: url
-      });
-  
-      if (cachedRequest) {
-        return cachedRequest;
-      }
-    }
-
     try {
       const response =  await fetch(url, {
         method: 'GET'
