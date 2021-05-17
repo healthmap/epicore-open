@@ -4,8 +4,14 @@ $formvars = json_decode(file_get_contents("php://input"));
 
 require_once "const.inc.php";
 require_once "UserInfo.class.php";
+require_once "CognitoService.php";
 $status = "incorrect password";
 $path = "home";
+
+$cognitoService = new CognitoService();
+$cognitoService->loginUser('jakub', md5('jakub'));
+die();
+
 
 $env = ENVIRONMENT;
 
