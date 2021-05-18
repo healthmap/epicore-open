@@ -100,31 +100,105 @@ class EventsController
         }
 
         $query = "
-            SELECT distinct event.event_id, event.title,
+            SELECT distinct 
+                event.event_id,
+                event.title,
                 DATE_FORMAT(event.create_date, '%d-%M-%Y') AS create_date,
                 DATE_FORMAT(event.create_date, '%Y-%m-%dT%h:%i:%s') AS iso_create_date,
                 DATE_FORMAT(event_notes.action_date, '%d-%M-%Y') AS action_date,
                 DATE_FORMAT(event_notes.action_date, '%Y-%m-%dT%h:%i:%s') AS iso_action_date,
-                event.requester_id,  user.user_id, hmutbl.name AS person,
+                event.requester_id, 
+                user.user_id, hmutbl.name AS person,
                 organization.name AS organization_name,
-                place.name AS country, event_notes.status,
-                (SELECT COUNT(event_fetp.fetp_id) FROM event_fetp WHERE event_fetp.event_id = event.event_id) AS num_members,
-                (SELECT COUNT(*) FROM response WHERE event_id = event.event_id) AS num_responses,
-                (SELECT COUNT(response.response_id) FROM response WHERE response.event_id = event.event_id AND response.response_permission > 0 AND response.response_permission < 4) AS num_responses_content,
-                (SELECT COUNT(response.response_id) FROM response WHERE event_id = event.event_id AND response_permission = '4') AS num_responses_active,
-                (SELECT COUNT(*) FROM response WHERE useful IS NULL AND response_permission <>0 AND response_permission <>4 AND event_id = event.event_id) AS num_notrated_responses,
-                (SELECT COUNT(*) FROM event_fetp WHERE event_fetp.event_id = event.event_id AND event_fetp.send_date <= (CURDATE() - INTERVAL 14 DAY)) AS no_active_14_days
+                place.name AS country, 
+                event_notes.status,
+                purpose.phe_description,
+                purpose.phe_additional,            
+                
+                (SELECT 
+                            COUNT(event_fetp.fetp_id) 
+                        FROM 
+                             event_fetp 
+                        WHERE 
+                              event_fetp.event_id = event.event_id
+                ) AS num_members,
+                            
+                (SELECT 
+                            COUNT(*) 
+                        FROM 
+                             response 
+                        WHERE 
+                              event_id = event.event_id
+                ) AS num_responses,
+                
+                (SELECT 
+                            COUNT(response.response_id) 
+                        FROM 
+                             response 
+                        WHERE 
+                              response.event_id = event.event_id 
+                        AND 
+                              response.response_permission > 0 
+                        AND 
+                              response.response_permission < 4
+                ) AS num_responses_content,
+                
+                (SELECT 
+                            COUNT(response.response_id) 
+                        FROM 
+                             response 
+                        WHERE 
+                              event_id = event.event_id 
+                        AND 
+                              response_permission = '4'
+                ) AS num_responses_active,
+                
+                (SELECT 
+                            COUNT(*) 
+                        FROM 
+                             response 
+                        WHERE 
+                            useful IS NULL 
+                        AND 
+                            response_permission <> 0 
+                        AND 
+                            response_permission <> 4 
+                        AND 
+                            event_id = event.event_id
+                ) AS num_notrated_responses,
+                
+                (SELECT 
+                            COUNT(*) 
+                        FROM 
+                             event_fetp 
+                        WHERE 
+                              event_fetp.event_id = event.event_id 
+                        AND 
+                              event_fetp.send_date <= (CURDATE() - INTERVAL 14 DAY)
+                ) AS no_active_14_days
+            
             FROM place
-                     INNER JOIN event on event.place_id = place.place_id
-                     INNER JOIN user ON event.requester_id = user.user_id
-                     INNER JOIN organization ON user.organization_id = organization.organization_id
-                     INNER JOIN hm_hmu hmutbl ON hmutbl.hmu_id = user.hmu_id
-                     INNER JOIN event_fetp ON event.event_id = event_fetp.event_id
-                     LEFT OUTER JOIN (
-                SELECT event_notes_id, event_id, status, action_date
-                FROM event_notes
-                where event_notes_id IN (SELECT max(event_notes_id) FROM event_notes GROUP BY event_id)
-            ) event_notes ON event.event_id = event_notes.event_id
+                INNER JOIN event on event.place_id = place.place_id
+                INNER JOIN user ON event.requester_id = user.user_id
+                INNER JOIN organization ON user.organization_id = organization.organization_id
+                INNER JOIN hm_hmu hmutbl ON hmutbl.hmu_id = user.hmu_id
+                INNER JOIN event_fetp ON event.event_id = event_fetp.event_id
+                INNER JOIN purpose ON event.event_id = purpose.event_id
+                LEFT OUTER JOIN (
+                    SELECT 
+                           event_notes_id, 
+                           event_id, 
+                           status, 
+                           action_date
+                    FROM event_notes
+                    WHERE 
+                          event_notes_id IN (
+                              SELECT 
+                                max(event_notes_id) 
+                              FROM event_notes 
+                              GROUP BY event_id
+                          )
+                ) event_notes ON event.event_id = event_notes.event_id
             ";
         if ($is_open) {
             array_push($conditions, "(event_notes.status = 'O' OR event_notes.status is NULL)");
@@ -132,7 +206,7 @@ class EventsController
             array_push($conditions, "event_notes.status = 'C'");
         }
         $query = self::addQueryWhereConditions($query, $conditions);
-        $query .= " order by event.event_id desc";
+        $query .= " order by event.create_date DESC";
 
         $db = getDB();
         return $db->getAll($query);;
