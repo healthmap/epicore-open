@@ -87,17 +87,76 @@ npm start
 > Get files from developer if running as ini.php:
 ~/epicore/scripts/conf/da.ini.php
 
-## Local Development as docker
-    Install Docker (download page, homebrew formulae)
+## Local Development as docker using ECR
+
+    1. Edit docker-compose.yml to use Dockerfile
+
+    2. Configure AWS on your local environment to the role:EPICORE-NONPROD having access to the healthmap account.
+    - Assigning a API Scretekey to AWS using AWS config on local machine
+    - Create folder under root 
+    - /.aws
+    - /.aws/config
+    - /.aws/credentials
+    Please add config details and credentials for AWS here with the Epicore-NonProd role
+    vi ~/.aws/config
+    [EPICORE-NONPROD]
+    role_arn = 
+    region = us-east-1
+    source_profile = default
+
+    3. Install Docker (download from https://docs.docker.com/get-docker/, homebrew formulae)
 
     *** change vendor./autoload.php path *** 
     docker entrypoint would install all composer under /usr/share/php/ If this is incorrect change path accordingly in
-     File: AWSMail.class.php
-     File: db.function.php
+    File: AWSMail.class.php
+    File: db.function.php
+    File: const.inc.php
 
     cd ~/epicore
+    export AWS_PROFILE=EPICORE-NONPROD
     docker-compose build
     docker-compose up -d
+
+## Local Development without ECR/AWS account setup(For contractors and other orgs that do not require AWS account setup)
+
+    1. Edit docker-compose.yml to use Dockerfile_local
+
+    2. Edit entrypoint.sh
+        Comment below lines, as local development will not access parameter file from AWS. Will be using .env directly
+        #aws ssm get-parameters-by-path --path "/" > ssm_parameters.txt                                                              
+        #cat ssm_parameters.txt | jq -r '.[] |  map("\(.Name)=\(.Value|tostring)")'  |  sed 's/"//g' | sed 's/.$//' > .env    
+        #rm -rf ssm_parameters.txt
+
+    3. Build/Run docker
+        cd ~/epicore
+        docker-compose build
+        docker-compose up -d
+
+## Flyway migrations
+Database migrations are handled via npm package node-flywaydb
+Flyway config: ~/epicore/flyway/conf/flyway.js
+Modify .env file to make sure migrations are run on the right platform
+
+### Adding new mirations
+All new migrations must follow the norms as follows
+
+~/flyway/release-X.X
+~/flyway/release-X.X/migrations
+Files in this folder will conform to the following nature
+versioned migration (V), an undo migration (U), or a repeatable migration (R)
+Vrelease-number_version-number_version_number_description.sql
+Examples: V1_0_1_alter_table_hm_ticket.sql
+V1_0_1_create_table_role.sql
+
+~/flyway/release-X.X/pre-migrations (these are run manually as this will be one time)
+
+### Running migrations
+The migrations can be tested on a local database of choice before committing the changes. Migration files are automatically picked up by Jenkins and migration scripts are executed as part of the migrations
+**Note**: Always start with a flyway-baseline as the first command before migrations
+To run locally: please see package.json
+> npm run flyway-info
+> npm run flyway-baseline
+> npm run flyway-migrate
 
 ## Cypress Tests
 Cypress is included as a dev dependency and is part of our package.json
