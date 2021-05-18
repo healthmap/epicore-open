@@ -188,7 +188,7 @@ pipeline {
                               set:       ['image.tag':DOCKER_IMAGE_VERSION]
                             )
                          
-                         sh (script: "kubectl get svc --namespace ${K8S_NAMESPACE}  ${HELM_CHART_NAME} --template \"{{ range (index .status.loadBalancer.ingress 0) }}{{.}}{{ end }}\" ", returnStdout: true)
+                         sh (script: "/usr/bin/kubectl get svc --namespace ${K8S_NAMESPACE}  ${HELM_CHART_NAME} --template \"{{ range (index .status.loadBalancer.ingress 0) }}{{.}}{{ end }}\" ", returnStdout: true)
 
                         }
               
@@ -205,7 +205,7 @@ pipeline {
 
               script {
              
-                    sendSlackNotification ("devops","deployed at http://${SERVICE_ELB}/")
+                    sendSlackNotification ("epicore-collaboration","deployed at http://${SERVICE_ELB}/")
             
                 
                     
