@@ -188,13 +188,7 @@ pipeline {
                               set:       ['image.tag':DOCKER_IMAGE_VERSION]
                             )
                          
-                         sh """
-                         
-                           export SERVICE_ELB=$(kubectl get svc --namespace ${K8S_NAMESPACE}  ${HELM_CHART_NAME} --template \"{{ range (index .status.loadBalancer.ingress 0) }}{{.}}{{ end }}\")
-                            echo $SERVICE_ELB
-                        
-                         """
-
+                         sh (script: "export SERVICE_ELB=$(kubectl get svc --namespace ${K8S_NAMESPACE}  ${HELM_CHART_NAME} --template \"{{ range (index .status.loadBalancer.ingress 0) }}{{.}}{{ end }}\")", returnStdout: true)
 
                         }
               
