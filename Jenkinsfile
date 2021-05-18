@@ -2,6 +2,9 @@
 import org.healthmap.ProjectConfig;
 def _APP_NAME= "epicore"
 def _ENV_NAME = ""
+def SERVICE_ELB = ""
+
+
 if (params.AppEnv=="PROD") {
  _ENV_NAME = "prod"
 }
@@ -184,20 +187,39 @@ pipeline {
                               values:    ['./deploy/helm-chart/values.yaml'],
                               set:       ['image.tag':DOCKER_IMAGE_VERSION]
                             )
+                         
+                         sh """
+                         
+                           export SERVICE_ELB=$(kubectl get svc --namespace ${K8S_NAMESPACE}  ${HELM_CHART_NAME} --template \"{{ range (index .status.loadBalancer.ingress 0) }}{{.}}{{ end }}\")
+                            echo $SERVICE_ELB
+                        
+                         """
 
 
-              }
-              
                         }
+              
+                   }
                       
-    
-
-           
-         
             }
           }
 
  }
+ 
+   post { 
+      
+        success {
+
+              script {
+             
+                    sendSlackNotification ("devops","deployed at http://${SERVICE_ELB}/")
+            
+                
+                    
+              }
+
+              
+        }
+    }
  
  }
 
