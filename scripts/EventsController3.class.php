@@ -198,7 +198,7 @@ class EventsController
         $start_date = null;
         $end_date = null;
         $conditions = [];
-
+        
         if (isset($params["start_date"])) {
             $start_date = $params["start_date"];
         }
@@ -215,9 +215,11 @@ class EventsController
             array_push($conditions, "event.create_date <= '$end_date'");
         }
 
-        array_push($conditions,"(purpose.outcome = 'VP' OR purpose.outcome = 'VN' OR purpose.outcome = 'UP')");
+        array_push($conditions,"event_notes.status = 'C'");
 
-        $query = "SELECT
+        array_push($conditions,"purpose.outcome IN ('VP', 'VN' , 'UP')");
+
+        $query = "SELECT distinct
         event.event_id,
         event.title,
         DATE_FORMAT(event.create_date, '%d-%M-%Y') AS create_date,
@@ -227,20 +229,29 @@ class EventsController
         purpose.outcome AS outcome,
         place.name AS country
         
-        FROM event
+        FROM place
 
-        INNER JOIN event_notes
-        ON event.event_id = event_notes.event_id AND event_notes.status = 'C'
-        
-        INNER JOIN purpose
-        ON event.event_id = purpose.event_id
-        
-        INNER JOIN place
+        INNER JOIN event 
         ON event.place_id = place.place_id
+        
+        INNER JOIN event_fetp 
+        ON event.event_id = event_fetp.event_id
+        
+        LEFT OUTER JOIN (
+            SELECT event_notes_id, event_id, status, action_date
+            FROM event_notes
+            where event_notes_id IN (SELECT max(event_notes_id) FROM event_notes GROUP BY event_id)
+        ) event_notes 
+        ON event.event_id = event_notes.event_id
+
+        INNER JOIN purpose 
+        ON event.event_id = purpose.event_id
+
         ";
 
         $query = self::addQueryWhereConditions($query, $conditions);
 
+        
         $db = getDB();
         $response = $db->getAll($query);
         return $response;
