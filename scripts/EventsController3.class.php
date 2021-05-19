@@ -227,7 +227,7 @@ class EventsController
         DATE_FORMAT(event_notes.action_date, '%d-%M-%Y') AS action_date,
         DATE_FORMAT(event_notes.action_date, '%Y-%m-%dT%h:%i:%s') AS iso_action_date,
         purpose.outcome AS outcome,
-        place.name AS country
+        place.name AS country 
         
         FROM place
 
