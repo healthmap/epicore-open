@@ -10,11 +10,11 @@
 $data = json_decode(file_get_contents("php://input"));
 $mod_email = strip_tags((string)$data->mod_email);
 $mod_org_id = strip_tags((string)$data->mod_org_id);
-
+$mod_name = strip_tags((string)$data->mod_name);
 // add mod
-if ($mod_email && $mod_org_id) {
+if ($mod_email && $mod_org_id && $mod_name) {
     require_once 'UserInfo.class.php';
-    $mod_status = UserInfo::addMod($mod_email, $mod_org_id);
+    $mod_status = UserInfo::addMod($mod_email, $mod_org_id, $mod_name);
     if (is_numeric($mod_status)){
         $status = 'success';
         $mod_id = $mod_status;

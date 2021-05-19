@@ -21,9 +21,9 @@ const ModaccessController = ($scope, $cookieStore, httpServiceInterceptor, urlBa
     $scope.showpage = true;
   }
 
-  $scope.addMod = function(mod_email, mod_org_id) {
-    const mod_data = {mod_email: mod_email, mod_org_id: mod_org_id};
-    http({
+  $scope.addMod = function(mod_email, mod_org_id, mod_name) {
+    const mod_data = {mod_email: mod_email, mod_org_id: mod_org_id, mod_name: mod_name};
+    $http({
       url: urlBase + 'scripts/addmod.php',
       method: 'POST',
       data: mod_data,

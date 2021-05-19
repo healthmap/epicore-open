@@ -1,7 +1,5 @@
-import { cacheService } from '@/common/cacheService';
 import { Modal } from '@/common/modal';
 
-const { setRequestCache, getRequestCache } = cacheService();
 const { showModal } = Modal();
 
 const fetchService = () => {
@@ -17,17 +15,6 @@ const fetchService = () => {
     if (params && options.method === 'GET') {
       const urlParams = new URLSearchParams(params);
       url = `${url}?${urlParams}`;
-    }
-
-    if (options.cache) {
-      const cachedRequest = getRequestCache({
-        url: url,
-        params: options.method === 'POST' ? params : null
-      });
-
-      if (cachedRequest) {
-        return cachedRequest;
-      }
     }
 
     await getErrorMesages();
@@ -68,13 +55,7 @@ const fetchService = () => {
           details: data.error_details
         };
       }
-      if (options.cache) {
-        setRequestCache({
-          url: url,
-          params: options.method === 'POST' ? params : null,
-          data: data
-        });
-      }
+
       responseClone = null;
       return data;
 
