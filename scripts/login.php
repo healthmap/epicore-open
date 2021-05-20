@@ -9,7 +9,8 @@ $status = "incorrect password";
 $path = "home";
 
 $cognitoService = new CognitoService();
-$cognitoService->loginUser('jakub', md5('jakub'));
+$cognitoService->login('jakub', md5('jb'));
+//$cognitoService->singUp('jb', md5('jb') , 'bartkiewiczj@gmail.com');
 die();
 
 

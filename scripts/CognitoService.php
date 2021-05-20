@@ -52,8 +52,11 @@ class CognitoService
     }
     public function login(string $username , string $password)
     {
-        $result = $this->client->adminInitiateAuth([
-            'AuthFlow' => 'ADMIN_NO_SRP_AUTH',
+        //$sing = $this->client->get();
+        //var_dump($sing);die();
+
+        $result = $this->client->InitiateAuth([
+            'AuthFlow' => 'USER_PASSWORD_AUTH',
             'ClientId' => $this->clientId,
             'UserPoolId' => $this->userPoolId,
             'AuthParameters' => [
