@@ -1,4 +1,5 @@
-const TestController = ($scope, $cookieStore, $http, $location, urlBase) => {
+const TestController = ($scope, $cookieStore, httpServiceInterceptor, $location, urlBase) => {
+  const http = httpServiceInterceptor.http;
   // youtube codes
   $scope.code1 = 'LYgaHDL00x0'; // Introduction to Innovative Disease Surveillance Course
   $scope.code2 = '0ZVnTS7Bo3A'; // The EpiCore Training Course
@@ -29,7 +30,7 @@ const TestController = ($scope, $cookieStore, $http, $location, urlBase) => {
       if ($scope.userInfo.status == 'P') {
         const status = 'approved';
         const data = {fetp_id: $scope.userInfo.fetp_id, status: status};
-        $http({
+        http({
           url: urlBase + 'scripts/approveUser.php',
           method: 'POST',
           data: data,
@@ -58,7 +59,7 @@ const TestController = ($scope, $cookieStore, $http, $location, urlBase) => {
 TestController.$inject = [
   '$scope',
   '$cookieStore',
-  '$http',
+  'httpServiceInterceptor',
   '$location',
   'urlBase',
 ];

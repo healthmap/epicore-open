@@ -8,7 +8,7 @@ const Modal = () => {
         </div>
         <div class="modal-body">
           <p>${message}</p>
-          ${details ? `<h5>Details:</h5><p class="small">${details}</p>` : ''}
+          ${details ? `<h5>Details:</h5><p class="small modal-details">${details}</p>` : ''}
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>

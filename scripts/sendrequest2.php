@@ -11,17 +11,22 @@ require_once "EventInfo.class.php";
 require_once "UserInfo.class.php";
 require_once "AWSMail.class.php";
 // require_once 'ePush.class.php';
+require_once "UserContoller3.class.php";
+
+use UserController as userController;
+
+$userData = userController::getUserData();
 
 $formvars = json_decode(file_get_contents("php://input"));
 
 // Save RFI in database and send to selected members
-if ($formvars->uid && $formvars->fetp_ids && $formvars->population && $formvars->health_condition && $formvars->location && $formvars->purpose && $formvars->source) {
+if ($formvars->fetp_ids && $formvars->population && $formvars->health_condition && $formvars->location && $formvars->purpose && $formvars->source) {
 
     // event info
     $event_info['latlon'] = (string)$formvars->location->latlon;
     $event_info['location'] = (string)$formvars->location->location;
     $event_info['location_details'] = (string)$formvars->location->location_details;
-    $event_info['requester_id'] = (int)$formvars->uid;
+    $event_info['requester_id'] = (int)$userData["uid"];
     $event_info['search_countries'] = $formvars->search_countries ? $formvars->search_countries : '';
     $event_info['search_box'] = $formvars->search_box ? $formvars->search_box : '';
     $event_info['create_date'] = date('Y-m-d H:i:s');
@@ -69,7 +74,9 @@ if ($formvars->uid && $formvars->fetp_ids && $formvars->population && $formvars-
             $extra_headers['user_ids'] = $idlist;
             $recipient = trim($recipient);
             $custom_emailtext = trim(str_replace("[TOKEN]", $tokens[$fetp_id], $emailtext));
-            $aws_resp = AWSMail::mailfunc($recipient, $subject, $custom_emailtext, EMAIL_NOREPLY, $extra_headers);
+            try {
+                $aws_resp = AWSMail::mailfunc($recipient, $subject, $custom_emailtext, EMAIL_NOREPLY, $extra_headers);
+            } catch (Exception $e) {}
 
             // send push notification
             //$push->sendPush($pushevent, $fetp_id);
@@ -89,14 +96,19 @@ if ($formvars->uid && $formvars->fetp_ids && $formvars->population && $formvars-
         if ($moderator['organization_id'] == PROMED_ID) {
             $idlist[0] = PROMED_ID;
             $extra_headers['user_ids'] = $idlist;
-            $aws_resp = AWSMail::mailfunc(EMAIL_PROIN, $subject, $custom_emailtext_proin, EMAIL_NOREPLY, $extra_headers);
+            try {
+                $aws_resp = AWSMail::mailfunc(EMAIL_PROIN, $subject, $custom_emailtext_proin, EMAIL_NOREPLY, $extra_headers);
+            } catch (Exception $e) {}
         }
 
         // send copy to epicore info
         $idlist[0] = EPICORE_ID;
         $extra_headers['user_ids'] = $idlist;
-        $aws_resp = AWSMail::mailfunc(EMAIL_INFO_EPICORE, $subject, $custom_emailtext_proin, EMAIL_NOREPLY, $extra_headers);
 
+        try {
+            $aws_resp = AWSMail::mailfunc(EMAIL_INFO_EPICORE, $subject, $custom_emailtext_proin, EMAIL_NOREPLY, $extra_headers);
+        } catch (Exception $e) {}
+        
         // send copy to Epicore Admin if duplicate RFI detected
         if ($duplicate_rfi_detected) {
             $this_event_info = $ei->getInfo();
@@ -120,7 +132,9 @@ if ($formvars->uid && $formvars->fetp_ids && $formvars->population && $formvars-
             $custom_emailtext_last = trim(str_replace("[SIMILAR_RFI_LIST]", $duplicate_list, $custom_emailtext3));
             $idlist[0] = EPICORE_ID;
             $extra_headers['user_ids'] = $idlist;
-            $aws_resp = AWSMail::mailfunc(EMAIL_EPICORE_ADMIN, $subject2, $custom_emailtext_last, EMAIL_NOREPLY, $extra_headers);
+            try {
+                $aws_resp = AWSMail::mailfunc(EMAIL_EPICORE_ADMIN, $subject2, $custom_emailtext_last, EMAIL_NOREPLY, $extra_headers);
+            } catch (Exception $e) {}
         }
 
         $status = 'success';
@@ -134,6 +148,10 @@ if ($formvars->uid && $formvars->fetp_ids && $formvars->population && $formvars-
     $fetp_ids = false;
 }
 
-print json_encode(array('status' => $status, 'fetps' => $fetp_ids));
+print json_encode(array(
+    'status' => $status,
+    'fetps' => $fetp_ids,
+    'event_id' => $event_id
+));
 
 ?>

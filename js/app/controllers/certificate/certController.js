@@ -1,10 +1,10 @@
-const CertController = ($scope, $cookieStore, $http, urlBase) => {
+const CertController = ($scope, httpServiceInterceptor, urlBase) => {
   // get member info
-  $scope.userInfo = $cookieStore.get('epiUserInfo');
+  const http = httpServiceInterceptor.http;
   const data = {};
-  data['uid'] = $scope.userInfo.fetp_id;
+  data['fetp_id'] = true;
   data['idtype'] = 'fetp';
-  $http({
+  http({
     url: urlBase + 'scripts/getapplicant.php',
     method: 'POST',
     data: data,
@@ -48,6 +48,6 @@ const CertController = ($scope, $cookieStore, $http, urlBase) => {
   };
 };
 
-CertController.$inject = ['$scope', '$cookieStore', '$http', 'urlBase'];
+CertController.$inject = ['$scope', 'httpServiceInterceptor', 'urlBase'];
 
 export default CertController;

@@ -9,6 +9,11 @@ require_once "EventInfo.class.php";
 require_once "UserInfo.class.php";
 require_once "AWSMail.class.php";
 require_once 'ePush.class.php';
+require_once "UserContoller3.class.php";
+
+use UserController as userController;
+
+$userData = userController::getUserData();
 
 $formvars = json_decode(file_get_contents("php://input"));
 
@@ -17,7 +22,7 @@ $event_info['latlon'] = (string)$formvars->latlon;
 $event_info['location'] = (string)$formvars->location;
 $event_info['title'] = (string)$formvars->title;
 $event_info['description'] = (string)$formvars->description;
-$event_info['requester_id'] = (int)$formvars->uid;
+$event_info['requester_id'] = (int)$userData["uid"];
 $event_info['search_countries'] = $formvars->search_countries ? $formvars->search_countries : '';
 $event_info['search_box'] = $formvars->search_box ? $formvars->search_box : '';
 $event_info['create_date'] = date('Y-m-d H:i:s');

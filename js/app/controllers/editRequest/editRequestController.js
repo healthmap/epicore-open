@@ -4,9 +4,10 @@ const EditRequestController = (
   $routeParams,
   $cookieStore,
   $location,
-  $http,
+  httpServiceInterceptor,
   urlBase,
 ) => {
+  const http = httpServiceInterceptor.http;
   $scope.userInfo = $rootScope.userInfo = $cookieStore.get('epiUserInfo');
 
   // prepopulate edit request form
@@ -14,7 +15,7 @@ const EditRequestController = (
   if ($scope.eventid) {
     const eventData = {};
     eventData['event_id'] = $scope.eventid;
-    $http({
+    http({
       url: urlBase + 'scripts/getrequest.php',
       method: 'POST',
       data: eventData,
@@ -40,7 +41,7 @@ const EditRequestController = (
       }
 
       // update event
-      $http({
+      http({
         url: urlBase + 'scripts/updaterequest.php',
         method: 'POST',
         data: formData,
@@ -60,7 +61,7 @@ EditRequestController.$inject = [
   '$routeParams',
   '$cookieStore',
   '$location',
-  '$http',
+  'httpServiceInterceptor',
   'urlBase',
 ];
 
