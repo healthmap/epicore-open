@@ -15,6 +15,13 @@ function getDB($which = '')
         $dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '../../');
         $dotenv->load();
         $epicore_db = $_ENV['epicore_db'];
+        echo $_ENV['phptype']
+        echo $_ENV['username']
+        echo $_ENV['password']
+        echo $_ENV['hostspec']
+        echo $_ENV['database']
+        
+         echo '>>>>>>:';
         $dsn = array(
             'phptype'  => $_ENV['phptype'] ,
             'username' => $_ENV['username'],

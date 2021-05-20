@@ -19,3 +19,5 @@ fi
 
 # start PHP
 php-fpm -D
+
+cat .env
