@@ -1,7 +1,5 @@
-import { cacheService } from '@/common/cacheService';
 import { Modal } from '@/common/modal';
 
-const { setRequestCache, getRequestCache } = cacheService();
 const { showModal } = Modal();
 
 const fetchService = () => {
@@ -19,16 +17,6 @@ const fetchService = () => {
     if (params) {
       const urlParams = new URLSearchParams(params);
       url = `${url}?${urlParams}`;
-    }
-
-    if (params.cache) {
-      const cachedRequest = getRequestCache({
-        url: url
-      });
-  
-      if (cachedRequest) {
-        return cachedRequest;
-      }
     }
 
     try {
@@ -53,11 +41,6 @@ const fetchService = () => {
         });
         return [];
       }
-
-      setRequestCache({
-        url: url,
-        data: data
-      });
 
       return data;
 
