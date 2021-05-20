@@ -22,9 +22,9 @@ function getDB($which = '')
             'hostspec' => $_ENV['hostspec'],
             'database' =>  $_ENV['database'] 
         );
-        // echo '>>>>>>:';
-        // echo $dsn;
-        // echo '>>>>>>:';
+         echo '>>>>>>:';
+         echo $dsn;
+         echo '>>>>>>:';
 
         $which = $which ? $which : $epicore_db ;
         $db =& DB::connect($dsn);
