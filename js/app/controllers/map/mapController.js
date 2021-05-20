@@ -1,4 +1,5 @@
-const MapController = ($scope, $http, $cookieStore, urlBase) => {
+const MapController = ($scope, httpServiceInterceptor, $cookieStore, urlBase) => {
+  const http = httpServiceInterceptor.http;
   // only allow moderators
   $scope.userInfo = $cookieStore.get('epiUserInfo');
   // $scope.superuser = (typeof($scope.userInfo) != "undefined") ? $scope.userInfo.superuser: false;
@@ -17,7 +18,7 @@ const MapController = ($scope, $http, $cookieStore, urlBase) => {
 
   $scope.markers = [];
   $scope.numMembers = '';
-  $http({
+  http({
     url: urlBase + 'scripts/getallmarkers.php',
     method: 'POST',
   }).then(function successCallback(res) {
@@ -32,6 +33,6 @@ const MapController = ($scope, $http, $cookieStore, urlBase) => {
   });
 };
 
-MapController.$inject = ['$scope', '$http', '$cookieStore', 'urlBase'];
+MapController.$inject = ['$scope', 'httpServiceInterceptor', '$cookieStore', 'urlBase'];
 
 export default MapController;

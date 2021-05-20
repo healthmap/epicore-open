@@ -1376,3 +1376,7 @@ button.transparent {
   padding: 12px;
   color: #2e3335;
 }
+
+.modal-details {
+  word-break: break-all;
+}

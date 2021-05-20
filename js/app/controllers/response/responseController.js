@@ -1,17 +1,13 @@
 const ResponseController = (
   $scope,
   $routeParams,
-  $cookieStore,
-  $http,
+  httpServiceInterceptor,
   urlBase,
 ) => {
-  $scope.userInfo = $cookieStore.get('epiUserInfo');
+  const http = httpServiceInterceptor.http;
   const formData = {};
-  formData['uid'] = $scope.userInfo.uid;
-  formData['org_id'] = $scope.userInfo.organization_id;
-  formData['fetp_id'] = $scope.userInfo.fetp_id;
   formData['response_id'] = $routeParams.response_id;
-  $http({
+  http({
     url: urlBase + 'scripts/getresponse.php',
     method: 'POST',
     data: formData,
@@ -29,8 +25,7 @@ const ResponseController = (
 ResponseController.$inject = [
   '$scope',
   '$routeParams',
-  '$cookieStore',
-  '$http',
+  'httpServiceInterceptor',
   'urlBase',
 ];
 

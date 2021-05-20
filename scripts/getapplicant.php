@@ -3,10 +3,23 @@
 * Jeff Andre, Feb 21 2016
 * gets applicant info
 */
+
 require_once "const.inc.php";
+require_once  "UserContoller3.class.php";
+
+use UserController as userController;
+
+$userData = userController::getUserData();
+
 $formvars = json_decode(file_get_contents("php://input"));
-$uid = strip_tags($formvars->uid);
+
 $idtype = strip_tags($formvars->idtype);
+
+if ($idtype === "fetp" ) {
+    $uid = $userData["fetp_id"];
+} else {
+    $uid = $userData["uid"];
+}
 
 // get info about specific event
 if($uid && $idtype) {
@@ -23,16 +36,15 @@ if($uid && $idtype) {
     }
 
     if (!$applicant){
-        print json_encode(array('status' => 'failed', 'reason' => 'invalid member id'));
+        echo json_encode(array('status' => 'failed', 'reason' => 'invalid member id'));
         exit;
     }
 } else {
-    print json_encode(array('status' => 'failed', 'reason' => 'missing required parameters'));
+    echo json_encode(array('status' => 'failed', 'reason' => 'missing required parameters'));
     exit;
 }
 
-header('content-type: application/json; charset=utf-8');
-print json_encode($applicant);
+echo json_encode($applicant);
 exit;
 
 ?>

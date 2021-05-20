@@ -51,6 +51,11 @@ class EventsController
 
     private static function getEvents($params)
     {
+        if (!userController::isUserValid()) {
+            echo json_encode(false);
+            return false;
+        }
+
         $requester_id = null;
         $start_date = null;
         $end_date = null;
@@ -76,7 +81,7 @@ class EventsController
         }
 
         if (isset($params["organization_id"])) {
-            $organization_id = $params["organization_id"];
+            $organization_id = userController::getUserData()["organization_id"];
         }
 
         if ($requester_id) {
@@ -278,6 +283,11 @@ class EventsController
 
     private static function getEventSummary($params)
     {
+        if (!userController::isUserValid()) {
+            echo json_encode(false);
+            return false;
+        }
+        
         if (!isset($params['event_id'])) {
             return null;
         }
