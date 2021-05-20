@@ -188,6 +188,8 @@ pipeline {
                               set:       ['image.tag':DOCKER_IMAGE_VERSION]
                             )
                          
+                         sleep(time:120,unit:“SECONDS”)
+
                          SERVICE_ELB = sh (script: "/usr/bin/kubectl get svc --namespace ${K8S_NAMESPACE}  ${HELM_CHART_NAME} --template '{{ range (index .status.loadBalancer.ingress 0) }}{{.}}{{ end }}'", returnStdout: true)
 
                         }
@@ -210,9 +212,10 @@ pipeline {
     
         failure {
             script {
-             sendSlackNotification ("epicore-collaboration", "Build ${BUILD_NUMBER} for  git branch ${BRANCH_NAME} failed")
-              }
+             slackNotification ("epicore-collaboration", "Build ${BUILD_NUMBER} for  git branch ${BRANCH_NAME} failed ", currentBuild.result)
+            }
         }
+
     }
  
  }
