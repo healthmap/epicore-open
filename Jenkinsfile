@@ -188,7 +188,7 @@ pipeline {
                               set:       ['image.tag':DOCKER_IMAGE_VERSION]
                             )
                          
-                         sleep(time:120,unit:“SECONDS”)
+                          sh(script: "sleep 120 ",returnStdout: false)
 
                          SERVICE_ELB = sh (script: "/usr/bin/kubectl get svc --namespace ${K8S_NAMESPACE}  ${HELM_CHART_NAME} --template '{{ range (index .status.loadBalancer.ingress 0) }}{{.}}{{ end }}'", returnStdout: true)
 
