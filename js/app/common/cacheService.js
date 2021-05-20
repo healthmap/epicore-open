@@ -1,34 +1,36 @@
 const cacheService = () => {
-  const sharedScopes = {};
-  sharedScopes.memberPortalInfoAll = [];
-  sharedScopes.memberPortalInfoPastYear = [];
-  sharedScopes.memberPortalInfoPastQuarter = [];
+  const cache = {};
+  cache.data = {};
+  cache.data.memberPortalInfoAll = [];
+  cache.data.memberPortalInfoPastYear = [];
+  cache.data.memberPortalInfoPastQuarter = [];
 
-  sharedScopes.requests = [];
+  cache.data.requests = [];
 
   const clear = () => {
-    sharedScopes = {};
+    cache.data = {};
   };
 
   // Setters
   const setMemberPortalInfoAll = (memInfo) => {
-    return (sharedScopes.memberPortalInfoAll = memInfo);
+    return (cache.data.memberPortalInfoAll = memInfo);
   };
   const setMemberPortalInfoPastYear = (memInfo) => {
-    return (sharedScopes.memberPortalInfoPastYear = memInfo);
+    return (cache.data.memberPortalInfoPastYear = memInfo);
   };
   const setMemberPortalInfoPastQuarter = (memInfo) => {
-    return (sharedScopes.memberPortalInfoPastQuarter = memInfo);
+    return (cache.data.memberPortalInfoPastQuarter = memInfo);
   };
 
   // setRequestCache - params are for POST request only.
-  const setRequestCache = ({url, params = null, data}) => {
-    if (sharedScopes.requests.findIndex(item => {
+  const setRequestCache = ({url, params, data}) => {
+    if (cache.data.requests.findIndex(item => {
       return item.url === url && item.params === params;
     }) !== -1) {
       return;
     }
-    sharedScopes.requests.push({
+
+    cache.data.requests.push({
       url: url,
       params: params,
       data: data
@@ -37,18 +39,18 @@ const cacheService = () => {
 
   // Getters
   const getMemberPortalInfoAll = () => {
-    return [...sharedScopes.memberPortalInfoAll];
+    return [...cache.data.memberPortalInfoAll];
   };
   const getMemberPortalInfoPastYear = () => {
-    return [...sharedScopes.memberPortalInfoPastYear];
+    return [...cache.data.memberPortalInfoPastYear];
   };
   const getMemberPortalInfoPastQuarter = () => {
-    return [...sharedScopes.memberPortalInfoPastQuarter];
+    return [...cache.data.memberPortalInfoPastQuarter];
   };
 
   // getRequestCache - params are for POST request only.
-  const getRequestCache = ({url, params = null}) => {
-    const cachedRequest = sharedScopes.requests.find(item => {
+  const getRequestCache = ({url, params }) => {
+    const cachedRequest = cache.data.requests.find(item => {
       return item.url === url && item.params === params;
     });
     if (cachedRequest) {

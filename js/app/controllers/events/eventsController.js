@@ -3,11 +3,12 @@ const EventsController = (
   $routeParams,
   $cookieStore,
   $location,
-  $http,
+  httpServiceInterceptor,
   eventAPIservice,
   urlBase,
   epicoreMode,
 ) => {
+  const http = httpServiceInterceptor.http;
   $scope.mobile = epicoreMode == 'mobile' ? true : false;
   $scope.isRouteLoading = true;
   $scope.eventsList = [];
@@ -60,11 +61,8 @@ const EventsController = (
     $scope.response_text = '';
     if ($routeParams.response_id) {
       const formData = {};
-      formData['uid'] = $scope.userInfo.uid;
-      formData['org_id'] = $scope.userInfo.organization_id;
-      formData['fetp_id'] = $scope.userInfo.fetp_id;
       formData['response_id'] = $routeParams.response_id;
-      $http({
+      http({
         url: urlBase + 'scripts/getresponse.php',
         method: 'POST',
         data: formData,
@@ -127,7 +125,6 @@ const EventsController = (
   $scope.sendFollowup = function(formData, isValid) {
     if (isValid) {
       $scope.submitDisabled = true;
-      formData['uid'] = $scope.userInfo.uid;
       formData['event_id'] = $routeParams.id;
       if ($routeParams.id) {
         var eid = $routeParams.id;
@@ -135,7 +132,7 @@ const EventsController = (
       if ($routeParams.response_id) {
         formData['response_id'] = $routeParams.response_id;
       }
-      $http({
+      http({
         url: urlBase + 'scripts/sendfollowup.php',
         method: 'POST',
         data: formData,
@@ -187,12 +184,11 @@ const EventsController = (
     if (isValid) {
       $scope.submitDisabled = true;
       formData['event_id'] = $routeParams.id;
-      formData['uid'] = $scope.userInfo.uid;
       formData['thestatus'] = thestatus;
       formData['useful_rids'] = useful_rids.toString();
       formData['usefulpromed_rids'] = usefulpromed_rids.toString();
       formData['notuseful_rids'] = notuseful_rids.toString();
-      $http({
+      http({
         url: urlBase + 'scripts/changestatus.php',
         method: 'POST',
         data: formData,
@@ -227,7 +223,7 @@ const EventsController = (
       if ($routeParams.id) {
         var eid = $routeParams.id;
       }
-      $http({
+      http({
         url: urlBase + 'scripts/sendresponse.php',
         method: 'POST',
         data: formData,
@@ -246,7 +242,7 @@ const EventsController = (
   $scope.deleteEvent = function(eid) {
     if (confirm('Are you sure you want to delete this event?')) {
       data = {eid: eid, superuser: $scope.userInfo.superuser};
-      $http({
+      http({
         url: urlBase + 'scripts/deleteEvent.php',
         method: 'POST',
         data: data,
@@ -267,7 +263,7 @@ EventsController.$inject = [
   '$routeParams',
   '$cookieStore',
   '$location',
-  '$http',
+  'httpServiceInterceptor',
   'eventAPIservice',
   'urlBase',
   'epicoreMode',

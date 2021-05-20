@@ -11,19 +11,29 @@ const fetchService = () => {
     } 
   };
 
-  const fetchGet = async ({ url, params }) => {
-    await getErrorMesages();
-    
-    if (params) {
+  const fetchUrl = async ({ url, params, options }) => {    
+    if (params && options.method === 'GET') {
       const urlParams = new URLSearchParams(params);
       url = `${url}?${urlParams}`;
     }
 
-    try {
-      const response =  await fetch(url, {
-        method: 'GET'
-      });
+    await getErrorMesages();
 
+    const fetchOptions = {
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      method: options.method
+    };
+
+    if (options.method === 'POST' && params) {
+      fetchOptions.body = JSON.stringify(params);
+    }
+
+    const response =  await fetch(url, fetchOptions);
+    let responseClone = response.clone();
+
+    try {
       const status = response.status;
 
       if (status !== 200) {
@@ -39,24 +49,35 @@ const fetchService = () => {
           message: data.error_message,
           details: data.error_details
         });
-        return [];
+        return {
+          error: true,
+          message: data.error_message,
+          details: data.error_details
+        };
       }
 
+      responseClone = null;
       return data;
 
     } catch (error) {
+      const message = params && params.action && epicore_config.errorMessages[params.action] ? epicore_config.errorMessages[params.action] : epicore_config.errorMessages['default'];
+      const details = await responseClone.text();
       showModal({
         id: 'error_message',
         header: epicore_config.errorMessages.header,
-        message: params && params.action ? epicore_config.errorMessages[params.action] : epicore_config.errorMessages['default'],
-        details: error
+        message: message,
+        details: details
       });
-      return [];
+      return {
+        error: true,
+        message: data.error_message,
+        details: data.error_details
+      };
     } 
   };
 
   return {
-    fetchGet
+    fetchUrl,
   };
 };
 
