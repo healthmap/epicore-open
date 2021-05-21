@@ -20,7 +20,9 @@ fi
 # start PHP
 php-fpm -D
 
-cat .env
+pwd
+
+cat ./.env
 
 pwd
 

@@ -1,0 +1,31 @@
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name: get-members
+spec:
+  concurrencyPolicy: Allow
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - command:
+            - sh
+            - -c
+            - ./jobs.sh
+            image: 503172036736.dkr.ecr.us-east-1.amazonaws.com/epicore-app:f9a5960
+            imagePullPolicy: IfNotPresent
+            name: get-members
+            resources:
+              limits:
+                cpu: 512m
+                memory: 1Gi
+            terminationMessagePath: /dev/termination-log
+            terminationMessagePolicy: File
+          
+          restartPolicy: OnFailure
+          schedulerName: default-scheduler
+          securityContext: {}
+          terminationGracePeriodSeconds: 30
+  schedule: 36 16 * * WED
+
