@@ -22,7 +22,9 @@ php-fpm -D
 
 pwd
 
-cat ./.env
+cd /var/www/html
+
+cat .env
 
 pwd
 
