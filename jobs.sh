@@ -18,7 +18,7 @@ else
 fi
 
 # start PHP
-php-fpm -D
+#php-fpm -D
 
 pwd
 
