@@ -1,7 +1,7 @@
 apiVersion: batch/v1beta1
 kind: CronJob
 metadata:
-  name: get-members
+  name: get-rfi-stats
 spec:
   concurrencyPolicy: Allow
   jobTemplate:
@@ -12,10 +12,10 @@ spec:
           - command:
             - sh
             - -c
-            - ./jobs.sh getMembers
+            - ./jobs.sh getRFIstats
             image: 503172036736.dkr.ecr.us-east-1.amazonaws.com/epicore-app:90e7ed2
             imagePullPolicy: IfNotPresent
-            name: get-members
+            name: get-rfi-stats
             resources:
               limits:
                 cpu: 1
