@@ -17,17 +17,18 @@ else
     composer update
 fi
 
-# start PHP
-#php-fpm -D
-
-pwd
 
 cd /var/www/html
-
 cat .env
-
-pwd
-
 cd scripts
-php ./downloadMembers.php
+jobName=$1
+
+if [ "$jobName" = "getMembers" ]; then
+     php ./downloadMembers.php
+elif [ "$jobName" = "getRFIstats" ]; then
+	 php ./downloadEventStats.php
+else
+    echo "No Job found with name $jobName"
+fi
+
 

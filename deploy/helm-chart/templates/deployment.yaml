@@ -35,7 +35,7 @@ spec:
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           volumeMounts:
           - name: persistent-storage
-            mountPath: /app-data
+            mountPath: /var/www/html/data
           ports:
             - name: http
               containerPort: 80
