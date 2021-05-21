@@ -6,8 +6,7 @@ COPY composer.json /usr/share/php/composer.json
 COPY nginx-site.conf /etc/nginx/sites-enabled/default
 
 COPY entrypoint.sh /etc/entrypoint.sh
-COPY env-setup.sh /etc/env-setup.sh
-
+ 
 COPY --chown=www-data:www-data . /var/www/html
 
 COPY . /var/www/html

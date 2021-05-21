@@ -13,6 +13,6 @@ services:
     ports:
       - "8088:80"
     volumes:
-      - ./:/var/www/html/test.epicore.org
+      - ./:/var/www/html
       - ~/.aws:/root/.aws
      
