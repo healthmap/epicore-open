@@ -27,6 +27,8 @@ if [ "$jobName" = "getMembers" ]; then
      php ./downloadMembers.php
 elif [ "$jobName" = "getRFIstats" ]; then
 	 php ./downloadEventStats.php
+elif [ "$jobName" = "getRFIMetrics" ]; then
+	 python ./rfi_metrics.py
 else
     echo "No Job found with name $jobName"
 fi

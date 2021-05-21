@@ -33,4 +33,4 @@ spec:
             - name: persistent-storage
               persistentVolumeClaim:
                 claimName: efs-claim
-  schedule: 36 16 * * WED
+  schedule: 30 1 * * 1
