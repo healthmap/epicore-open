@@ -187,10 +187,12 @@ if(is_numeric($event_id) && is_numeric($user_id)) {
             array_push($tolist, $initiator['email']);
             array_push($idlist, $initiator['user_id']);
         }
-        foreach ($fmoderators as $fmoderator){
-            if (($fmoderator['email'] != $moderator['email']) && ($fmoderator['email'] != $initiator['email'])) {
-                array_push($tolist, $fmoderator['email']);
-                array_push($idlist, $fmoderator['user_id']);
+        if(is_array($fmoderators)) {
+            foreach ($fmoderators as $fmoderator){
+                if (($fmoderator['email'] != $moderator['email']) && ($fmoderator['email'] != $initiator['email'])) {
+                    array_push($tolist, $fmoderator['email']);
+                    array_push($idlist, $fmoderator['user_id']);
+                }
             }
         }
 
