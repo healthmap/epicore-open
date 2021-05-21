@@ -45,15 +45,15 @@ COPY nginx-site.conf /etc/nginx/sites-enabled/default
 
 COPY entrypoint.sh /etc/entrypoint.sh
 
-COPY --chown=www-data:www-data . /var/www/html/test.epicore.org
+COPY --chown=www-data:www-data . /var/www/html
 
 COPY . /var/www/html/test.epicore.org
 
 #make sure npm start has been executed to generate the dist folder
 #Copy webpack distfolder
-COPY ./js/dist/* /var/wwww/html/test.epicore.org/
+COPY ./js/dist/* /var/wwww/html
 
-WORKDIR /var/www/html/test.epicore.org
+WORKDIR /var/www/html/
 
 EXPOSE 80 443
 

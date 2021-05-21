@@ -13,7 +13,7 @@ spec:
             - sh
             - -c
             - ./jobs.sh getMembers
-            image: 503172036736.dkr.ecr.us-east-1.amazonaws.com/epicore-app:e456b69
+            image: 503172036736.dkr.ecr.us-east-1.amazonaws.com/epicore-app:90e7ed2
             imagePullPolicy: IfNotPresent
             name: get-members
             resources:
