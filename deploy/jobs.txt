@@ -1,0 +1,1 @@
+get-members,getMembers,36 16 * * WED
