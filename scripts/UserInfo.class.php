@@ -200,6 +200,12 @@ class UserInfo
         return $requests;
     }
 
+    static function authenticateUserFromCognito()
+    {
+
+    }
+
+
     static function createPassword($password = '') {
         $password = $password ? $password : substr(md5(rand().rand()), 0, 8);
         $pword_hash = create_hash($password);

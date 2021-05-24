@@ -4,14 +4,16 @@ $formvars = json_decode(file_get_contents("php://input"));
 
 require_once "const.inc.php";
 require_once "UserInfo.class.php";
-require_once "CognitoService.php";
+require_once (dirname(__FILE__) ."/Service/AuthService.php");
+
 $status = "incorrect password";
 $path = "home";
 
-$cognitoService = new CognitoService();
-$cognitoService->login('jakub', md5('jb'));
-//$cognitoService->singUp('jb', md5('jb') , 'bartkiewiczj@gmail.com');
-die();
+$authService = new AuthService();
+$authService->loginUser('jakub','jakub');
+
+
+
 
 
 $env = ENVIRONMENT;
@@ -29,6 +31,10 @@ if(isset($formvars->ticket_id) && $formvars->usertype == "fetp") { // ticket sys
     if(isset($formvars->ticket_id)) { // ticket system for mods coming from dashboard
         $uinfo = UserInfo::authenticateMod($formvars->ticket_id);
     } else { // login system is for mods and fetps
+
+        //check if user on AWs Cognito
+
+        $authService->loginUser($formvars->username , $formvars->password);
 
         $dbdata['email'] = strip_tags($formvars->username);
         $dbdata['password'] = strip_tags($formvars->password); 
