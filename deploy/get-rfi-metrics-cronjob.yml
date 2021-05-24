@@ -1,7 +1,7 @@
 apiVersion: batch/v1beta1
 kind: CronJob
 metadata:
-  name: get-rfi-stats
+  name: get-rfi-metrics
 spec:
   concurrencyPolicy: Allow
   jobTemplate:
@@ -12,10 +12,10 @@ spec:
           - command:
             - sh
             - -c
-            - ./jobs.sh getRFIstats
+            - ./jobs.sh getRFIMetrics
             image: 503172036736.dkr.ecr.us-east-1.amazonaws.com/epicore-app:90e7ed2
             imagePullPolicy: IfNotPresent
-            name: get-rfi-stats
+            name: get-rfi-metrics
             resources:
               limits:
                 cpu: 1
@@ -33,5 +33,4 @@ spec:
             - name: persistent-storage
               persistentVolumeClaim:
                 claimName: efs-claim
-  schedule: 30 3 * * 1
- 
+  schedule: 30 5 * * 1

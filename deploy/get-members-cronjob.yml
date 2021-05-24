@@ -18,8 +18,8 @@ spec:
             name: get-members
             resources:
               limits:
-                cpu: 512m
-                memory: 1Gi
+                cpu: 1
+                memory: 512Mi
             terminationMessagePath: /dev/termination-log
             terminationMessagePolicy: File
             volumeMounts:
@@ -33,4 +33,4 @@ spec:
             - name: persistent-storage
               persistentVolumeClaim:
                 claimName: efs-claim
-  schedule: 36 16 * * WED
+  schedule: 30 1 * * 1
