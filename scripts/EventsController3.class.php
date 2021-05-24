@@ -61,11 +61,15 @@ class EventsController
         $end_date = null;
         $is_open = null;
         $organization_id = null;
+        $fetp_id = null;
         $optionalFields = [];
         $conditions = [];
 
         if (isset($params["uid"])) {
             $requester_id = userController::getUserData()["uid"];
+        }
+        if(isset(userController::getUserData()["fetp_id"])){
+            $fetp_id = userController::getUserData()["fetp_id"];
         }
 
         if (isset($params["start_date"])) {
@@ -98,6 +102,10 @@ class EventsController
 
         if ($end_date) {
             array_push($conditions, "event.create_date <= '$end_date'");
+        }
+
+        if($fetp_id){
+            array_push($conditions, "event_fetp.fetp_id = '$fetp_id'");
         }
 
         if (!$is_open) {
