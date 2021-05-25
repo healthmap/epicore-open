@@ -24,8 +24,8 @@ const EventsController2 = (
   $scope.id = $routeParams.id ? $routeParams.id : null;
   $scope.allFETPs = $routeParams.response_id ? false : true;
   $scope.rfiOrderByValue = 'iso_create_date';
-  // if we're on the closed requests page
-  $scope.onOpen = $location.path().indexOf('/closed') > 0 ? false : true;
+  $scope.onPublic = $location.path().indexOf('/public') > 0 ? true : false;
+  $scope.onOpen = !$scope.onPublic && $location.path().indexOf('/closed') > 0 ? false : true;
   $scope.changeStatusText = !$scope.onOpen ? 'Re open' : 'Close';
   $scope.changeStatusType = !$scope.onOpen ? 'reopen' : 'close';
 
@@ -488,6 +488,8 @@ const EventsController2 = (
     var end_date = moment().format('YYYY-MM-DD'); // now
     var start_date = moment().subtract(3, 'months').format('YYYY-MM-DD'); // 3 month ago
     getAllEvents(start_date, end_date, 10);
+  } else if ($scope.onPublic) {
+    $scope.getEvents2('PR');
   } else if ($scope.onOpen) {
     getAllEvents(
       epicoreStartDate,
