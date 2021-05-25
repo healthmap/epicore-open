@@ -1,4 +1,5 @@
-const ModaccessController = ($scope, $cookieStore, $http, urlBase) => {
+const ModaccessController = ($scope, $cookieStore, httpServiceInterceptor, urlBase) => {
+  const http = httpServiceInterceptor.http;
   const data = {};
   $scope.showpage = false;
 
@@ -9,7 +10,7 @@ const ModaccessController = ($scope, $cookieStore, $http, urlBase) => {
   $scope.message = '';
 
   if ($scope.superuser != true) {
-    $http({
+    http({
       url: urlBase + 'scripts/approveaccess.php',
       method: 'POST',
       data: data,
@@ -20,8 +21,8 @@ const ModaccessController = ($scope, $cookieStore, $http, urlBase) => {
     $scope.showpage = true;
   }
 
-  $scope.addMod = function(mod_email, mod_org_id) {
-    const mod_data = {mod_email: mod_email, mod_org_id: mod_org_id};
+  $scope.addMod = function(mod_email, mod_org_id, mod_name) {
+    const mod_data = {mod_email: mod_email, mod_org_id: mod_org_id, mod_name: mod_name};
     $http({
       url: urlBase + 'scripts/addmod.php',
       method: 'POST',
@@ -37,7 +38,7 @@ const ModaccessController = ($scope, $cookieStore, $http, urlBase) => {
   };
 
   $scope.mods = '';
-  $http({
+  http({
     url: urlBase + 'scripts/getmods.php',
     method: 'POST',
   }).then(function successCallback(res) {
@@ -48,6 +49,6 @@ const ModaccessController = ($scope, $cookieStore, $http, urlBase) => {
   });
 };
 
-ModaccessController.$inject = ['$scope', '$cookieStore', '$http', 'urlBase'];
+ModaccessController.$inject = ['$scope', '$cookieStore', 'httpServiceInterceptor', 'urlBase'];
 
 export default ModaccessController;

@@ -5,6 +5,12 @@
  *
  */
 
+require_once "UserContoller3.class.php";
+
+use UserController as userController;
+
+$userData = userController::getUserData();
+
 // get data
 $data = json_decode(file_get_contents("php://input"));
 $pvals = array();
@@ -13,7 +19,7 @@ $pvals['state'] = strip_tags((string)$data->state);
 $pvals['countrycode'] = strip_tags((string)$data->countrycode);
 $pvals['lat'] = strip_tags((string)$data->latitude);
 $pvals['lon'] = strip_tags((string)$data->longitude);
-$pvals['fetp_id'] = strip_tags((string)$data->fetp_id);
+$pvals['fetp_id'] = isset($userData['fetp_id']) ? $userData['fetp_id'] : null;
 
 // add location
 $status = 'success';

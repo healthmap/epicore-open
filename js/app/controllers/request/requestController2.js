@@ -5,11 +5,12 @@ const RequestController2 = (
   $routeParams,
   $cookieStore,
   $location,
-  $http,
+  httpServiceInterceptor,
   urlBase,
   rfiForm,
   epicoreVersion,
 ) => {
+  const http = httpServiceInterceptor.http;
   $scope.userInfo = $rootScope.userInfo = $cookieStore.get('epiUserInfo');
 
   $scope.epicore_version = epicoreVersion;
@@ -27,7 +28,7 @@ const RequestController2 = (
     const eventData = {};
     eventData['event_id'] = $scope.rfiData.event_id;
 
-    $http({
+    http({
       url: urlBase + 'scripts/getrequest2.php',
       method: 'POST',
       data: eventData,
@@ -141,7 +142,7 @@ const RequestController2 = (
           const fdata = {};
           fdata.location = $scope.rfiData.members.location;
           fdata.latlon = $scope.rfiData.members.latlon;
-          $http({
+          http({
             url: urlBase + 'scripts/filter.php',
             method: 'POST',
             data: fdata,
@@ -218,10 +219,9 @@ const RequestController2 = (
     $scope.options = {scrollwheel: false};
     /* only show FETPs on a map to super-users */
     const query = {};
-    query['uid'] = $scope.userInfo.uid;
     query['centerlat'] = latlonarr[0];
     query['centerlon'] = latlonarr[1];
-    $http({
+    http({
       url: urlBase + 'scripts/getmarkers.php',
       method: 'POST',
       data: query,
@@ -246,7 +246,7 @@ const RequestController2 = (
           southwest.lng(),
           northeast.lng(),
         );
-        $http({
+        http({
           url: urlBase + 'scripts/filter.php',
           method: 'POST',
           data: filterData,
@@ -273,7 +273,7 @@ const RequestController2 = (
     $scope.rfiData.members.filtertype = whichclicked;
 
     $scope.radiussel = whichclicked != 'country';
-    $http({
+    http({
       url: urlBase + 'scripts/filter.php',
       method: 'POST',
       data: $scope.rfiData.members, // filterData
@@ -678,7 +678,7 @@ const RequestController2 = (
       // rfi_data['health_condition'] = $scope.rfiData.health_condition;
       rfi_data['location'] = $scope.rfiData.location.location;
 
-      $http({
+      http({
         url: urlBase + 'scripts/checkDuplicateRFI2.php',
         method: 'POST',
         data: rfi_data,
@@ -729,16 +729,15 @@ const RequestController2 = (
       ) {
         // Track RFI
         // var rfi_id = $scope.rfiData.duplicate_rfi.rfi_id;
-        const user_id = $scope.userInfo.uid;
         const dup_events = $scope.rfiData.duplicate_rfis;
         const event_ids = [];
         dup_events.forEach(function(event) {
           event_ids.push(event.event_id);
         });
 
-        // $http({ url: urlBase + 'scripts/trackDuplicateRFI.php', method: "POST", data: {'event_id' :rfi_id, 'user_id': user_id}
+        // http({ url: urlBase + 'scripts/trackDuplicateRFI.php', method: "POST", data: {'event_id' :rfi_id, 'user_id': user_id}
 
-        $http({
+        http({
           url: urlBase + 'scripts/trackDuplicateRFI2.php',
           method: 'POST',
           data: {event_ids: event_ids, user_id: user_id},
@@ -1068,7 +1067,7 @@ const RequestController2 = (
     if (typeof $window.sessionStorage.filePreview != 'undefined') {
       formData['file_preview'] = $window.sessionStorage.filePreview;
     }
-    $http({
+    http({
       url: urlBase + 'scripts/buildrequest2.php',
       method: 'POST',
       data: formData,
@@ -1285,7 +1284,6 @@ const RequestController2 = (
           'search_countries'
         ] = $scope.rfiData.members.countries.toString();
       }
-      formData['uid'] = $scope.userInfo.uid; // requester of RFI
       formData['fetp_ids'] = $scope.rfiData.members.userIds;
       formData['population'] = $scope.rfiData.population;
       formData['health_condition'] = $scope.rfiData.health_condition;
@@ -1314,7 +1312,7 @@ const RequestController2 = (
       }
 
       // formData['duplicate_rfi_id'] = ($scope.rfiData.duplicate_rfi && $scope.rfiData.duplicate_rfi.rfi_id) ? $scope.rfiData.duplicate_rfi.rfi_id : 0;
-      $http({
+      http({
         url: urlBase + 'scripts/sendrequest2.php',
         method: 'POST',
         data: formData,
@@ -1336,7 +1334,6 @@ const RequestController2 = (
       // update request
       const formData = {};
       formData['event_id'] = $scope.rfiData.event_id;
-      formData['uid'] = $scope.userInfo.uid; // requester of RFI
       formData['title'] = $scope.rfiData.event_title;
       formData['location'] = $scope.rfiData.location;
       formData['population'] = $scope.rfiData.population;
@@ -1344,7 +1341,7 @@ const RequestController2 = (
       formData['purpose'] = $scope.rfiData.purpose;
       formData['source'] = $scope.rfiData.source;
 
-      $http({
+      http({
         url: urlBase + 'scripts/updaterequest2.php',
         method: 'POST',
         data: formData,
@@ -1395,7 +1392,7 @@ RequestController2.$inject = [
   '$routeParams',
   '$cookieStore',
   '$location',
-  '$http',
+  'httpServiceInterceptor',
   'urlBase',
   'rfiForm',
   'epicoreVersion',

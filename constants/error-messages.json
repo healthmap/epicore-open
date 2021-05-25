@@ -2,5 +2,6 @@
   "header": "Something went wrong",
   "get_events": "An error occurred during getting events data.",
   "get_event_summary": "An error occurred during getting the event summary data.",
+  "applicant_setpassword_reminder": "An error occurred during sending the password reminder email.",
   "default": "An error occurred during getting data."
 }

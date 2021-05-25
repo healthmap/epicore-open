@@ -5,7 +5,7 @@ const EventsController2 = (
   $routeParams,
   $cookieStore,
   $location,
-  $http,
+  httpServiceInterceptor,
   eventAPIservice2,
   urlBase,
   epicoreMode,
@@ -14,6 +14,7 @@ const EventsController2 = (
   $timeout,
   epicoreStartDate,
 ) => {
+  const http = httpServiceInterceptor.http;
   $scope.mobile = epicoreMode == 'mobile' ? true : false;
   $scope.epicore_version = epicoreVersion;
   $scope.isRouteLoading = true;
@@ -23,8 +24,11 @@ const EventsController2 = (
   $scope.id = $routeParams.id ? $routeParams.id : null;
   $scope.allFETPs = $routeParams.response_id ? false : true;
   $scope.rfiOrderByValue = 'iso_create_date';
-  // if we're on the closed requests page
-  $scope.onOpen = $location.path().indexOf('/closed') > 0 ? false : true;
+  $scope.onPublic = $location.path().indexOf('/public') > 0 ? true : false;
+  $scope.onOpen = !$scope.onPublic && $location.path().indexOf('/closed') > 0 ? false : true;
+  $scope.changeStatusText = !$scope.onOpen ? 'Re open' : 'Close';
+  $scope.changeStatusType = !$scope.onOpen ? 'reopen' : 'close';
+
   if (!$scope.onOpen) {
     $scope.rfiOrderByValue = 'iso_action_date';
   }
@@ -100,8 +104,7 @@ const EventsController2 = (
         url: 'scripts/uploadfile.php',
         data: {
           file: file,
-          event_id: $scope.id,
-          fetp_id: $scope.userInfo.fetp_id,
+          event_id: $scope.id
         },
         method: 'POST',
       });
@@ -147,7 +150,7 @@ const EventsController2 = (
   };
 
   $scope.removeFile = function(file) {
-    $http({
+    http({
       url: urlBase + 'scripts/removefile.php',
       method: 'POST',
       data: {filename: file},
@@ -373,11 +376,8 @@ const EventsController2 = (
         $scope.response_text = '';
         if ($routeParams.response_id) {
           const formData = {};
-          formData['uid'] = $scope.userInfo.uid;
-          formData['org_id'] = $scope.userInfo.organization_id;
-          formData['fetp_id'] = $scope.userInfo.fetp_id;
           formData['response_id'] = $routeParams.response_id;
-          $http({
+          http({
             url: urlBase + 'scripts/getresponse.php',
             method: 'POST',
             data: formData,
@@ -488,6 +488,8 @@ const EventsController2 = (
     var end_date = moment().format('YYYY-MM-DD'); // now
     var start_date = moment().subtract(3, 'months').format('YYYY-MM-DD'); // 3 month ago
     getAllEvents(start_date, end_date, 10);
+  } else if ($scope.onPublic) {
+    $scope.getEvents2('PR');
   } else if ($scope.onOpen) {
     getAllEvents(
       epicoreStartDate,
@@ -535,7 +537,7 @@ const EventsController2 = (
     }
 
     save_metrics_timeout = $timeout(function() {
-      $http({
+      http({
         url: urlBase + 'scripts/updatemetrics.php',
         method: 'POST',
         data: metric_data,
@@ -553,16 +555,14 @@ const EventsController2 = (
   $scope.sendFollowup = function(formData, isValid) {
     if (isValid) {
       $scope.submitDisabled = true;
-      formData['uid'] = $scope.userInfo.uid;
       formData['event_id'] = $routeParams.id;
-      formData['superuser'] = $scope.userInfo.superuser ? 1 : 0;
       if ($routeParams.id) {
         var eid = $routeParams.id;
       }
       if ($routeParams.response_id) {
         formData['response_id'] = $routeParams.response_id;
       }
-      $http({
+      http({
         url: urlBase + 'scripts/sendfollowup2.php',
         method: 'POST',
         data: formData,
@@ -617,8 +617,6 @@ const EventsController2 = (
     if (isValid) {
       $scope.submitDisabled = true;
       formData['event_id'] = $routeParams.id;
-      formData['uid'] = $scope.userInfo.uid;
-      formData['superuser'] = $scope.userInfo.superuser;
       formData['thestatus'] = thestatus;
       formData['useful_rids'] = useful_rids.toString();
       formData['usefulpromed_rids'] = usefulpromed_rids.toString();
@@ -638,7 +636,7 @@ const EventsController2 = (
 
       formData['condition_details'] = $scope.eventsList.condition_details;
 
-      $http({
+      http({
         url: urlBase + 'scripts/changestatus2.php',
         method: 'POST',
         data: formData,
@@ -679,12 +677,11 @@ const EventsController2 = (
       // formData comes in as object response_permissions: 0
       // if user chooses "Active Search", object is response_permissions: 4
       formData['event_id'] = $routeParams.id;
-      formData['fetp_id'] = $scope.userInfo.fetp_id;
       if ($routeParams.id) {
         var eid = $routeParams.id;
       }
       formData['files'] = $scope.ufiles;
-      $http({
+      http({
         url: urlBase + 'scripts/sendresponse2.php',
         method: 'POST',
         data: formData,
@@ -706,8 +703,8 @@ const EventsController2 = (
 
   $scope.deleteEvent = function(eid) {
     if (confirm('Are you sure you want to delete this event?')) {
-      data = {eid: eid, superuser: $scope.userInfo.superuser};
-      $http({
+      const data = {eid: eid};
+      http({
         url: urlBase + 'scripts/deleteEvent2.php',
         method: 'POST',
         data: data,
@@ -804,7 +801,7 @@ EventsController2.$inject = [
   '$routeParams',
   '$cookieStore',
   '$location',
-  '$http',
+  'httpServiceInterceptor',
   'eventAPIservice2',
   'urlBase',
   'epicoreMode',

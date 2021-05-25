@@ -2,6 +2,9 @@
 import org.healthmap.ProjectConfig;
 def _APP_NAME= "epicore"
 def _ENV_NAME = ""
+def SERVICE_ELB = ""
+
+
 if (params.AppEnv=="PROD") {
  _ENV_NAME = "prod"
 }
@@ -99,6 +102,28 @@ pipeline {
         }
       }
 
+
+    stage('DB Migration') { 
+      steps { 
+
+              script {
+               
+                      withAWS(region: env.AWS_REGION ,role: env.JENKINS_IAM_ROLE, roleAccount: env.AWS_ACCOUNT_ID) {
+
+                         sh '''
+                         ./getParamsForJenkins.sh
+                         npm install 
+                         npm run-script flyway-info
+                         npm run-script flyway-migrate
+                         rm ./.env
+                         '''
+                        }
+              }
+            }
+
+    }
+
+
       stage('Build Image') { 
             steps { 
 
@@ -107,7 +132,6 @@ pipeline {
                       withAWS(region: env.AWS_REGION ,role: env.JENKINS_IAM_ROLE, roleAccount: env.AWS_ACCOUNT_ID) {
 
                          sh '''
-                         npm install 
                          npm run-script build
                          '''
                           docker.withRegistry( env.DOCKER_REGISTRY_URL, env.DOCKER_REGISTRY_CRED_ID) {
@@ -163,20 +187,33 @@ pipeline {
                               values:    ['./deploy/helm-chart/values.yaml'],
                               set:       ['image.tag':DOCKER_IMAGE_VERSION]
                             )
+                         
+                         SERVICE_ELB = sh (script: "/usr/bin/kubectl get svc --namespace ${K8S_NAMESPACE}  ${HELM_CHART_NAME} --template '{{ range (index .status.loadBalancer.ingress 0) }}{{.}}{{ end }}'", returnStdout: true)
 
-
-              }
-              
                         }
+              
+                   }
                       
-    
-
-           
-         
             }
           }
 
  }
+ 
+   post { 
+      
+        success {
+
+              script {
+                    sendSlackNotification ("epicore-collaboration","deployed git branch ${BRANCH_NAME} at http://${SERVICE_ELB}/")
+              }
+        }
+    
+        failure {
+            script {
+             sendSlackNotification ("epicore-collaboration", "Build ${BUILD_NUMBER} for  git branch ${BRANCH_NAME} failed")
+              }
+        }
+    }
  
  }
 

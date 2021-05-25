@@ -1,4 +1,7 @@
 import { cacheService } from '@/common/cacheService';
+import { Modal } from '@/common/modal';
+
+const { showModal } = Modal();
 
 const { 
   setMemberPortalInfoAll,
@@ -11,14 +14,15 @@ const {
 
 const ApprovalController = (
   $scope,
-  $http,
   $filter,
   $location,
   $route,
   $cookieStore,
   urlBase,
   epicoreV1StartDate,
+  httpServiceInterceptor
 ) => {
+  const http = httpServiceInterceptor.http;
   const currentLocation = $location.path();
 
   $scope.init = function() {
@@ -78,7 +82,7 @@ const ApprovalController = (
     data.startDate = $scope.selected_start_date;
     data.endDate = $scope.selected_end_date;
     // Default tab - Accepted
-    $http({
+    http({
       url: urlBase + 'scripts/approval.php',
       method: 'POST',
       data: data,
@@ -446,7 +450,7 @@ const ApprovalController = (
       data.endDate = $scope.selected_end_date;
 
       // Fetch data from db
-      $http({
+      http({
         url: $scope.urlBaseStr + 'scripts/approval.php',
         method: 'POST',
         data: data,
@@ -468,7 +472,7 @@ const ApprovalController = (
 
   $scope.setLocationStatus = function(maillist_id, action) {
     data = {maillist_id: maillist_id, action: action};
-    $http({
+    http({
       url: urlBase + 'scripts/setLocationStatus.php',
       method: 'POST',
       data: data,
@@ -525,7 +529,7 @@ const ApprovalController = (
   };
 
   $scope.updateMemberStatus = function(incomingData) {
-    $http({
+    http({
       url: urlBase + 'scripts/setMemberStatus.php',
       method: 'POST',
       data: incomingData,
@@ -548,7 +552,7 @@ const ApprovalController = (
   */
   $scope.downloadMembers = function() {
     $scope.isRouteLoading = true;
-    $http({
+    http({
       url: urlBase + 'scripts/downloadMembers.php',
       method: 'POST',
     }).then(function successCallback() {
@@ -559,7 +563,7 @@ const ApprovalController = (
 
   $scope.downloadEvents = function() {
     $scope.isRouteLoading = true;
-    $http({
+    http({
       url: urlBase + 'scripts/downloadEventStats.php',
       method: 'POST',
     }).then(function successCallback() {
@@ -571,36 +575,40 @@ const ApprovalController = (
   $scope.sendReminderEmailToSelectedApplicants = function(action) {
     const sendEmailsPromisses = [];
 
-    for (i = 0; i < $scope.selectedItems.length; i++) {
+    for (let i = 0; i < $scope.selectedItems.length; i++) {
       data = {action: action, memberid: $scope.selectedItems[i]};
       sendEmailsPromisses.push(
         new Promise(function(resolve) {
-          $http({
+          http({
             url: urlBase + 'scripts/sendreminder.php',
             method: 'POST',
             data: data,
-          }).then(function successCallback() {
-            resolve(true);
+          }).then(function successCallback(response) {
+            if (response.length > 0) {
+              resolve(true);
+            }
           });
         }),
       );
     }
 
-    Promise.all(sendEmailsPromisses).then(function() {
+    Promise.all(sendEmailsPromisses).then(() => {
+      let modalMessage = 'The message has been sent.';
       if ($scope.selectedItems.length > 1) {
-        alert(
-          `The message has been sent to ${$scope.selectedItems.length} persons.`,
-        );
-      } else {
-        alert('The message has been sent.');
+        modalMessage = `The message has been sent to ${$scope.selectedItems.length} persons.`;
       }
+      showModal({
+        id: 'success_message',
+        header: 'Success',
+        message: modalMessage ,
+      });
     });
   };
 
   $scope.sendReminder = function(action) {
     if (confirm('Are you sure you want to send reminder emails?')) {
       data = {action: action};
-      $http({
+      http({
         url: urlBase + 'scripts/sendreminder.php',
         method: 'POST',
         data: data,
@@ -619,7 +627,7 @@ const ApprovalController = (
   $scope.deleteApplicant = function(uid) {
     if (confirm('Are you sure you want to delete this user?')) {
       data = {uid: uid};
-      $http({
+      http({
         url: urlBase + 'scripts/deleteuser.php',
         method: 'POST',
         data: data,
@@ -636,13 +644,13 @@ const ApprovalController = (
 
 ApprovalController.$inject = [
   '$scope',
-  '$http',
   '$filter',
   '$location',
   '$route',
   '$cookieStore',
   'urlBase',
   'epicoreV1StartDate',
+  'httpServiceInterceptor'
 ];
 
 export default ApprovalController;

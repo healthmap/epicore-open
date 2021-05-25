@@ -1882,24 +1882,26 @@ class EventInfo
         $history = '';
         // style message history for email
         $counter =0;
-        foreach ($messages as $message) {
-            if ($counter > 0) {  // skip first (current ) message
-                $mtype = $message['type'];
-                if ($message['type'] == 'Event Notes')
-                    $mtype = $message['person'] . " ". $message['status'] . " event request";
-                if ($message['type'] == 'Moderator Response'){
-                    if ($message['fetp_count'] > 1)
-                        $mtype = $message['person'] . " sent followup to all Members";
-                    else
-                        $mtype = $message['person'] . " sent followup to 1 Member";
+        if (is_array($messages) || is_object($messages)) {
+            foreach ($messages as $message) {
+                if ($counter > 0) {  // skip first (current ) message
+                    $mtype = $message['type'];
+                    if ($message['type'] == 'Event Notes')
+                        $mtype = $message['person'] . " ". $message['status'] . " event request";
+                    if ($message['type'] == 'Moderator Response'){
+                        if ($message['fetp_count'] > 1)
+                            $mtype = $message['person'] . " sent followup to all Members";
+                        else
+                            $mtype = $message['person'] . " sent followup to 1 Member";
+                    }
+                    $mtext = $message['text'];
+                    //$mdatetime = $message['date'];
+                    $mdatetime = date('j-M-Y H:i', strtotime($message['date']));
+                    $history .= "<div style='background-color: #fff;padding:24px;color:#666;border: 1px solid #B4FEF7;'>";
+                    $history .= "<p style='margin:12px 0;'>$mtype,  $mdatetime <br></p>$mtext</div><br>";
                 }
-                $mtext = $message['text'];
-                //$mdatetime = $message['date'];
-                $mdatetime = date('j-M-Y H:i', strtotime($message['date']));
-                $history .= "<div style='background-color: #fff;padding:24px;color:#666;border: 1px solid #B4FEF7;'>";
-                $history .= "<p style='margin:12px 0;'>$mtype,  $mdatetime <br></p>$mtext</div><br>";
+                $counter++;
             }
-            $counter++;
         }
         return $history;
     }

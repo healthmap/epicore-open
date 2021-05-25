@@ -1,3 +1,4 @@
+import HttpServiceInterceptor from './httpServiceInterceptor/httpServiceInterceptor.js';
 import AuthService from './authService/authService.js';
 import EventAPIservice from './eventAPIservice/eventAPIservice.js';
 import EventAPIservice2 from './eventAPIservice/eventAPIservice2.js';
@@ -6,6 +7,7 @@ import RfiForm from './rfiForm/rfiForm.js';
 
 const Services = angular
   .module('EpicoreApp.services', [])
+  .factory('httpServiceInterceptor', HttpServiceInterceptor)
   .factory('authService', AuthService)
   .factory('eventAPIservice', EventAPIservice)
   .factory('eventAPIservice2', EventAPIservice2)
