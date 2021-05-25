@@ -73,6 +73,10 @@ app.config(function ($routeProvider) {
       templateUrl: 'templates/events/events_public.html?cb=' + cacheBustSuffix,
       controller: 'eventsPublicController3',
     })
+    .when('/events2/public', {
+      templateUrl: 'templates/events/events2.html?cb=' + cacheBustSuffix,
+      controller: 'eventsController2',
+    })
     .when('/events_public/articles/:articleID', {
       templateUrl: 'templates/events/publicEventsRFI.html?cb=' + cacheBustSuffix,
       controller: 'eventsController2',
