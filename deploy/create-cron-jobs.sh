@@ -9,71 +9,72 @@ while IFS=, read -r name script schedule; do
   # do something... Don't forget to skip the header line!
   echo "Generating job for $name"
 
-
-cat <<EOF > ./cron-jobs/$name.yml
-apiVersion: batch/v1beta1
-kind: CronJob
-metadata:
-  name: ${name}
-spec:
-  concurrencyPolicy: Allow
-  jobTemplate:
+if [[ ${name::1} != "#" ]]; then
+    cat <<EOF > ./cron-jobs/$name.yml
+    apiVersion: batch/v1beta1
+    kind: CronJob
+    metadata:
+      name: ${name}
     spec:
-      template:
+      concurrencyPolicy: Allow
+      jobTemplate:
         spec:
-          containers:
-          - command:
-            - sh
-            - -c
-            - ./jobs.sh ${script_name}
-            image: ${AWS_ACCOUNT_ID}.dkr.ecr.us-east-1.amazonaws.com/epicore-app:${LATEST_IMG_TAG}
-            imagePullPolicy: IfNotPresent
-            name:  ${name}
-            resources:
-              limits:
-                cpu: 512m
-                memory: 1Gi
-            terminationMessagePath: /dev/termination-log
-            terminationMessagePolicy: File
-            volumeMounts:
-              - mountPath: /var/www/html/data
-                name: persistent-storage
-          restartPolicy: OnFailure
-          schedulerName: default-scheduler
-          securityContext: {}
-          terminationGracePeriodSeconds: 
-          volumes:
-            - name: persistent-storage
-              persistentVolumeClaim:
-                claimName: efs-claim
-  schedule: ${schedule}
- 
+          template: 
+            spec:
+              containers:
+              - command:
+                - sh
+                - -c
+                - ./jobs.sh ${script_name}
+                image: ${AWS_ACCOUNT_ID}.dkr.ecr.us-east-1.amazonaws.com/epicore-app:${LATEST_IMG_TAG}
+                imagePullPolicy: IfNotPresent
+                name:  ${name}
+                resources:
+                  limits:
+                    cpu: 512m
+                    memory: 1Gi
+                terminationMessagePath: /dev/termination-log
+                terminationMessagePolicy: File
+                volumeMounts:
+                  - mountPath: /var/www/html/data
+                    name: persistent-storage
+              restartPolicy: OnFailure
+              schedulerName: default-scheduler
+              securityContext: {}
+              terminationGracePeriodSeconds: 
+              volumes:
+                - name: persistent-storage
+                  persistentVolumeClaim:
+                    claimName: efs-claim
+      schedule: ${schedule}
+    
 EOF
 
+    DEPLOY=$1
 
-DEPLOY=$1
+    if [ "$DEPLOY" = "deploy" ]; then
+    
+      echo "Checking if  Job $name already exists..."
+    
+      kubectl get cronjob  $name -n epicore
 
-if [ "$DEPLOY" = "deploy" ]; then
- 
-   echo "Checking if  Job $name already exists..."
- 
-   kubectl get cronjob  $name -n epicore
+      retVal=$?
+      if [ $retVal -ne 0 ]; then
+          echo "Job does not exists. So deploy"
+          kubectl apply -f ./cron-jobs/$name.yml -n epicore
+        else
+          image_name="${AWS_ACCOUNT_ID}.dkr.ecr.us-east-1.amazonaws.com/epicore-app:${LATEST_IMG_TAG}"
 
-   retVal=$?
-   if [ $retVal -ne 0 ]; then
-	    echo "Job does not exists. So deploy"
-	    kubectl apply -f ./cron-jobs/$name.yml -n epicore
-    else
-    	image_name="${AWS_ACCOUNT_ID}.dkr.ecr.us-east-1.amazonaws.com/epicore-app:${LATEST_IMG_TAG}"
+          echo "Job does exists. So deploy the job with latest image $image_name"
+            kubectl delete cronjob $name -n epicore
+          kubectl apply -f ./cron-jobs/$name.yml -n epicore
+          
 
-    	echo "Job does exists. So deploy the job with latest image $image_name"
-        kubectl delete cronjob $name -n epicore
-    	kubectl apply -f ./cron-jobs/$name.yml -n epicore
-    	 
+      fi
+    
 
-   fi
- 
-
+    fi
+    
 fi
 
 done < jobs.txt

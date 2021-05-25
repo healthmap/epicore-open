@@ -213,25 +213,39 @@ Only superusers can access the approval portal (with username and pw). Supersers
 
 All cron jobs run in root.  There are two sets of cron jobs described below.
 
-### Email Reminders
+### Epicore-V3 EKS Cron jobs
 
-Email reminders are sent for auto-close and warning notifications for RFIs.
+### Email Reminders Cron job
+    Email reminders are sent for auto-close and warning notifications for RFIs.
 
+### Member and RFI stats Cron job
 
-### Member and RFI stats
+    1. Member and RFI stats are saved weekly in a CSV file. See scripts:
+    epicore/crontab/getMembers.sh
+    epicore/crontab/getRFIstats.sh
 
-1. Member and RFI stats are saved weekly in a CSV file. See scripts:
-epicore/crontab/getMembers.sh
-epicore/crontab/getRFIstats.sh
+    2. Stats for the member and RFI dashboards are generated weekly with two python scripts:
+    epicore/scripts/rfi_metrics.py
+    epicore/scripts/responder_metrics2.py
 
-2. Stats for the member and RFI dashboards are generated weekly with two python scripts:
-epicore/scripts/rfi_metrics.py
-epicore/scripts/responder_metrics2.py
+    These scripts use data from the csv files in #1.
 
-These scripts use data from the csv files in #1.
-
-
-
+#### How To add new Cronjob-EKS
+    
+    Files: create-cron-jobs.sh, jobs.sh, jobs.txt
+    1. Add new job to jobs.txt
+        Format: cron-job-name, job-name-to-select,schedule
+        Example: get-members-weekly,getMembers,30 1 * * 1
+    2. Add entry to jobs.sh
+       if [ "$jobName" = "getMembers" ]; then
+        php ./downloadMembers.php
+    3. To deploy: 
+        > export AWS_PROFILE=EPICORE-NONPRO
+        > cd /epicore/deploy
+        > ./create-cron-jobs.sh (creates only the yml files) - check if all correct
+        > ./create-cron-jobs.sh deploy
+        This creates a /deploy/cron-jobs .yml file for each job listed in the jobs.txt which are used to create the jobs on the EKS.
+        Note: Do not checkin the .yml files.
 ### DB Schema changes as of 10/9/2020
 
 The old codebase for epicore used 2 schemas - hm and epicore (see da.ini.php old files). 

@@ -11,6 +11,7 @@
 /img/metrics/
 /node_modules
 
+/deploy/cron-jobs/*.yml
 #webpack dist folder
 /js/dist/
 

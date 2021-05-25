@@ -1,1 +1,29 @@
-get-members,getMembers,36 16 * * WED
+# Total jobs:11
+#
+# Python scripts for generating metrics:
+# Weekly(Mondays) and monthly(day-of-month 1) jobs
+get-members-weekly,getMembers,30 1 * * 1
+get-members-monthly,getMembers,30 2 1 * *
+get-rfi-stats-weekly, getRFIstats,30 3 * * 1
+get-rfi-stats-monthly, getRFIstats,30 4 1 * *
+get-rfi-metrics-weekly, getRFIMetrics,30 5 * * 1
+get-rfi-metrics-monthly, getRFIMetrics,30 6 1 * *
+get-responder-metrics-weekly, getResponderMetrics,0 6 * * 1
+get-responder-metrics-monthly, getResponderMetrics,0 7 1 * *
+#
+#
+# Every morning: Send email notifications for auto-close inactive events, and email reminder to responders with active searches (no content)
+close-inactive-events-everyday, closeInactiveEvents,30 6 * * *
+#
+#
+# Every morning: Send email notifications for auto-close active search events
+close-active-events-everyday, closeActiveEvents,30 7 * * *
+#
+#
+# Every Monday morning: Send email reminder to Requesters with events past due closing
+close-warnings-weekly, closeWarning,30 8 * * 1
+#
+#
+
+
+

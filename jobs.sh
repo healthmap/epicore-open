@@ -29,7 +29,21 @@ elif [ "$jobName" = "getRFIstats" ]; then
 	 php ./downloadEventStats.php
 elif [ "$jobName" = "getRFIMetrics" ]; then
 	 python ./rfi_metrics.py
+elif [ "$jobName" = "getResponderMetrics" ]; then
+	 python ./responder_metrics2.py     
+elif [ "$jobName" = "autoCloseInactiveEvents" ]; then
+	 php closeInactiveEvents.php
+elif [ "$jobName" = "closeInactiveEvents" ]; then
+	 php closeInactiveEvents.php
+elif [ "$jobName" = "closeActiveEvents" ]; then
+	 php closeActiveEvents.php
+elif [ "$jobName" = "closeWarning" ]; then
+	 php closeWarning.php
+
+
+
 else
+
     echo "No Job found with name $jobName"
 fi
 
