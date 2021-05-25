@@ -5,7 +5,7 @@ AWS_ACCOUNT_ID="503172036736"
 LATEST_IMG_TAG=$(aws ecr describe-images --repository-name epicore-app --query 'sort_by(imageDetails,& imagePushedAt)[-1].imageTags[0]' --output text | sort -r | head -n 1)
 
 echo "Latest Image Tag is $LATEST_IMG_TAG"
-while IFS=, read -r name script schedule; do
+while IFS=, read -r name script_name schedule; do
   # do something... Don't forget to skip the header line!
   
 
