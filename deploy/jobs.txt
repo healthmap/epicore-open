@@ -24,6 +24,3 @@ close-active-events-everyday, closeActiveEvents,30 7 * * *
 close-warnings-weekly, closeWarning,30 8 * * 1
 #
 #
-
-
-

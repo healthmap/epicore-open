@@ -7,9 +7,10 @@ LATEST_IMG_TAG=$(aws ecr describe-images --repository-name epicore-app --query '
 echo "Latest Image Tag is $LATEST_IMG_TAG"
 while IFS=, read -r name script schedule; do
   # do something... Don't forget to skip the header line!
-  echo "Generating job for $name"
+  
 
 if [[ ${name::1} != "#" ]]; then
+    echo "Generating job for $name"
     cat <<EOF > ./cron-jobs/$name.yml
     apiVersion: batch/v1beta1
     kind: CronJob
@@ -52,7 +53,7 @@ EOF
 
     DEPLOY=$1
 
-    if [ "$DEPLOY" = "deploy" ]; then
+    if [[ ${name::1} != "#"  && "$DEPLOY" == "deploy" ]]; then
     
       echo "Checking if  Job $name already exists..."
     
@@ -64,11 +65,9 @@ EOF
           kubectl apply -f ./cron-jobs/$name.yml -n epicore
         else
           image_name="${AWS_ACCOUNT_ID}.dkr.ecr.us-east-1.amazonaws.com/epicore-app:${LATEST_IMG_TAG}"
-
           echo "Job does exists. So deploy the job with latest image $image_name"
-            kubectl delete cronjob $name -n epicore
+          kubectl delete cronjob $name -n epicore
           kubectl apply -f ./cron-jobs/$name.yml -n epicore
-          
 
       fi
     
