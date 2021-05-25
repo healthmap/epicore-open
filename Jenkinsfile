@@ -210,9 +210,10 @@ pipeline {
     
         failure {
             script {
-             sendSlackNotification ("epicore-collaboration", "Build ${BUILD_NUMBER} for  git branch ${BRANCH_NAME} failed")
-              }
+             slackNotification ("epicore-collaboration", "Build ${BUILD_NUMBER} for  git branch ${BRANCH_NAME} failed ", currentBuild.result)
+            }
         }
+
     }
  
  }
