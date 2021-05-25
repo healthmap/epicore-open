@@ -240,7 +240,7 @@ All cron jobs run in root.  There are two sets of cron jobs described below.
        if [ "$jobName" = "getMembers" ]; then
         php ./downloadMembers.php
     3. To deploy: 
-        > export AWS_PROFILE=EPICORE-NONPRO
+        > export AWS_PROFILE=EPICORE-NONPROD
         > cd /epicore/deploy
         > ./create-cron-jobs.sh (creates only the yml files) - check if all correct
         > ./create-cron-jobs.sh deploy
