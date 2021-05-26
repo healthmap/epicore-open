@@ -38,24 +38,30 @@
                             </li>
                         </ul>
                     </span>
-                    <span ng-show="onOpen">* Please rate the unrated responses in the RFI(s) highlighted
+                    <!-- false:responder ;true-requester -->
+                    <span ng-show="isOrganization && onOpen">* Please rate the unrated responses in the RFI(s)
+                        highlighted
                         below.</span>
                 </p>
 
                 <div class="form-group" ng-show="isOrganization">
                     <label class="radio-inline">
-                        <input type="radio" ng-model="eventType" value="{{EVENT_TYPES.MY_RFIS.CODE}}" ng-change="getEvents()" />
+                        <input type="radio" ng-model="eventType" value="{{EVENT_TYPES.MY_RFIS.CODE}}"
+                            ng-change="getEvents()" />
                         {{EVENT_TYPES.MY_RFIS.TEXT}}</label>
                     <label class="radio-inline">
-                        <input type="radio" ng-model="eventType" value="{{EVENT_TYPES.MY_ORGANIZATION.CODE}}" ng-change="getEvents()" />
+                        <input type="radio" ng-model="eventType" value="{{EVENT_TYPES.MY_ORGANIZATION.CODE}}"
+                            ng-change="getEvents()" />
                         {{EVENT_TYPES.MY_ORGANIZATION.TEXT}}</label>
                     <label class="radio-inline">
-                        <input type="radio" ng-model="eventType" value="{{EVENT_TYPES.ALL_ORGANIZATIONS.CODE}}" ng-change="getEvents()" />
+                        <input type="radio" ng-model="eventType" value="{{EVENT_TYPES.ALL_ORGANIZATIONS.CODE}}"
+                            ng-change="getEvents()" />
                         {{EVENT_TYPES.ALL_ORGANIZATIONS.TEXT}}</label>
                 </div>
                 <div class="form-group" ng-show="isOrganization" ng-if="!onOpen">
                     <label class="form-label">RFI List Filter</label>
-                    <select ng-options="month as month.name for month in timeFilterValues " ng-model="timeFilterSelectedValue"
+                    <select ng-options="month as month.name for month in timeFilterValues "
+                        ng-model="timeFilterSelectedValue"
                         ng-change="selectClosedEventsMonth(timeFilterSelectedValue)"></select>
                 </div>
 
@@ -67,24 +73,29 @@
                     <table class="small table table-hover table-bordered">
                         <tbody>
                             <tr>
-                                <th width="50px" ng-click="eventsOrderBy = 'event_id'; eventsOrderReverse=!eventsOrderReverse">
+                                <th width="50px"
+                                    ng-click="eventsOrderBy = 'event_id'; eventsOrderReverse=!eventsOrderReverse">
                                     ID <i class="fa fa-sort"></i>
                                 </th>
                                 <th ng-click="eventsOrderBy = 'title'; eventsOrderReverse=!eventsOrderReverse">
                                     Title <i class="fa fa-sort"></i>
                                 </th>
                                 <th width="110px" ng-show="onOpen"
-                                    ng-click="eventsOrderBy = 'create_date'; eventsOrderReverse=!eventsOrderReverse" class="nowrap-mobile">
+                                    ng-click="eventsOrderBy = 'create_date'; eventsOrderReverse=!eventsOrderReverse"
+                                    class="nowrap-mobile">
                                     RFI Date <i class="fa fa-sort"></i>
                                 </th>
                                 <th width="110px" ng-show="!onOpen"
-                                    ng-click="eventsOrderBy = 'action_date'; eventsOrderReverse=!eventsOrderReverse" class="nowrap-mobile">
+                                    ng-click="eventsOrderBy = 'action_date'; eventsOrderReverse=!eventsOrderReverse"
+                                    class="nowrap-mobile">
                                     Closure Date <i class="fa fa-sort"></i>
                                 </th>
-                                <th width="110px" ng-click="eventsOrderBy = 'country'; eventsOrderReverse=!eventsOrderReverse">
+                                <th width="110px"
+                                    ng-click="eventsOrderBy = 'country'; eventsOrderReverse=!eventsOrderReverse">
                                     Location <i class="fa fa-sort"></i>
                                 </th>
-                                <th width="110px" ng-click="eventsOrderBy = 'person'; eventsOrderReverse=!eventsOrderReverse"
+                                <th width="110px"
+                                    ng-click="eventsOrderBy = 'person'; eventsOrderReverse=!eventsOrderReverse"
                                     class="nowrap-mobile">
                                     Requester <i class="fa fa-sort"></i>
                                 </th>
@@ -143,13 +154,17 @@
                                     <span ng-if="!onOpen">Closed</span>
                                 </td>
                                 <td>
-                                    <span ng-if="event.outcome === EVENT_OUTCOME.VERIFIED_POSITIVE.CODE">{{EVENT_OUTCOME.VERIFIED_POSITIVE.TEXT_SHORT}}</span>
-                                    <span ng-if="event.outcome === EVENT_OUTCOME.VERIFIED_NEGATIVE.CODE">{{EVENT_OUTCOME.VERIFIED_NEGATIVE.TEXT_SHORT}}</span>
-                                    <span ng-if="event.outcome === EVENT_OUTCOME.UNVERIFIED.CODE">{{EVENT_OUTCOME.UNVERIFIED.TEXT}}</span>
-                                    <span ng-if="event.outcome === EVENT_OUTCOME.UPDATED_POSITIVE.CODE">{{EVENT_OUTCOME.UPDATED_POSITIVE.TEXT_SHORT}}</span>
-                                    <span ng-if="event.outcome === EVENT_OUTCOME.UPDATED_NEGATIVE.CODE ">{{EVENT_OUTCOME.UPDATED_NEGATIVE.TEXT_SHORT}}</span>
-                                    <a href=""
-                                        ng-click="showEventSummary(event.event_id)"
+                                    <span
+                                        ng-if="event.outcome === EVENT_OUTCOME.VERIFIED_POSITIVE.CODE">{{EVENT_OUTCOME.VERIFIED_POSITIVE.TEXT_SHORT}}</span>
+                                    <span
+                                        ng-if="event.outcome === EVENT_OUTCOME.VERIFIED_NEGATIVE.CODE">{{EVENT_OUTCOME.VERIFIED_NEGATIVE.TEXT_SHORT}}</span>
+                                    <span
+                                        ng-if="event.outcome === EVENT_OUTCOME.UNVERIFIED.CODE">{{EVENT_OUTCOME.UNVERIFIED.TEXT}}</span>
+                                    <span
+                                        ng-if="event.outcome === EVENT_OUTCOME.UPDATED_POSITIVE.CODE">{{EVENT_OUTCOME.UPDATED_POSITIVE.TEXT_SHORT}}</span>
+                                    <span
+                                        ng-if="event.outcome === EVENT_OUTCOME.UPDATED_NEGATIVE.CODE ">{{EVENT_OUTCOME.UPDATED_NEGATIVE.TEXT_SHORT}}</span>
+                                    <a href="" ng-click="showEventSummary(event.event_id)"
                                         ng-show="event.outcome != EVENT_OUTCOME.UNVERIFIED.CODE && event.phe_description">Summary</a>
                                     <p ng-if="summaryLoading === event.event_id">loading...</p>
                                     <span ng-if="!event.outcome">{{EVENT_OUTCOME.PENDING.TEXT}}</span>
@@ -174,14 +189,20 @@
 <div>
     <modal visible="showSummaryModal">
         <pre style="white-space: pre-wrap; word-wrap: break-word">{{modalBody}}</pre>
-        <p>The information included has been verified by EPICORE, a network with a world-wide distribution of public health professionals ensuring a large spectrum of verification activities in proximity to where events are reported.
-            EPICORE members give highest priority to reliable sources of information including direct/indirect documentation about events, official statements and complementary reliable reports obtained at local level. Despite this,
-            EPICORE does not aim to replace any official reporting system and is meant to be a complementary surveillance tool supporting public health actors in their activities.
-            For all these reasons please consider that this information does not represent an official report and contents included should not be qualified as “officially verified”.
+        <p>The information included has been verified by EPICORE, a network with a world-wide distribution of public
+            health professionals ensuring a large spectrum of verification activities in proximity to where events are
+            reported.
+            EPICORE members give highest priority to reliable sources of information including direct/indirect
+            documentation about events, official statements and complementary reliable reports obtained at local level.
+            Despite this,
+            EPICORE does not aim to replace any official reporting system and is meant to be a complementary
+            surveillance tool supporting public health actors in their activities.
+            For all these reasons please consider that this information does not represent an official report and
+            contents included should not be qualified as “officially verified”.
         </p>
     </modal>
 </div>
 <script>
     // TOOLTIP
-    $('[data-toggle="tooltip"]').tooltip( {html: true,trigger:'hover'});
+    $('[data-toggle="tooltip"]').tooltip({ html: true, trigger: 'hover' });
 </script>
