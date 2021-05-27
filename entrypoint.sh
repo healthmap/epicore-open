@@ -2,7 +2,7 @@
 set -e
 
 aws ssm get-parameters-by-path --path "/" > ssm_parameters.txt                                                              
-cat ssm_parameters.txt | jq -r '.[] |  map("\(.Name)=\(.Value|tostring)")'  |  sed 's/"//g' | sed 's/.$//' > .env    
+cat ssm_parameters.txt | jq -r '.[] |  map("\(.Name)=\(.Value|tostring)")'  |  sed 's/"//g' | sed 's/.$//' | sed '/^[[:space:]]*$/d' | sed '/^[[:space:]]*$/d' | sed "s/^[ \t]*//" > .env
 rm -rf ssm_parameters.txt
 
 pip3 install -r requirements.txt
