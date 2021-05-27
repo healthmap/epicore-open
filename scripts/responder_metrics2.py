@@ -9,11 +9,22 @@ from pandas.plotting import register_matplotlib_converters
 register_matplotlib_converters()
 
 
+def clean_pair(pair):
+    if len(pair) > 2:
+        pair = [pair[0], "=".join(pair[1:])]
+        return pair
+    elif len(pair) <= 1:
+        raise TypeError(
+            "Pair must be an iterable of length 2. Is there a blank row in your .env file?")
+    return pair
+
+
 def load_env(path):
     """Load environment variables from .env."""
     with open(path) as f:
         lines = f.readlines()
     pairs = [x.split("=") for x in lines]
+    pairs = [clean_pair(p) for p in pairs]
     env = {k: v.replace("\n", "") for k, v in pairs}
     try:
         return env['DATA_DIR'], env['IMAGE_DIR'], env['SAVE_DATA_DIR']
