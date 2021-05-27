@@ -11,7 +11,7 @@ while IFS=, read -r name script_name schedule; do
 
 if [[ ${name::1} != "#" ]]; then
     echo "Generating job for $name"
-    cat <<EOF > ./cron-jobs/$name.yml
+    cat <<EOF > "./cron-jobs/$name.yml"
     apiVersion: batch/v1beta1
     kind: CronJob
     metadata:
@@ -57,17 +57,17 @@ EOF
     
       echo "Checking if  Job $name already exists..."
     
-      kubectl get cronjob  $name -n epicore
+      kubectl get cronjob  "$name" -n epicore
 
       retVal=$?
       if [ $retVal -ne 0 ]; then
           echo "Job does not exists. So deploy"
-          kubectl apply -f ./cron-jobs/$name.yml -n epicore
+          kubectl apply -f ./cron-jobs/"$name".yml -n epicore
         else
           image_name="${AWS_ACCOUNT_ID}.dkr.ecr.us-east-1.amazonaws.com/epicore-app:${LATEST_IMG_TAG}"
           echo "Job does exists. So deploy the job with latest image $image_name"
-          kubectl delete cronjob $name -n epicore
-          kubectl apply -f ./cron-jobs/$name.yml -n epicore
+          kubectl delete cronjob "$name" -n epicore
+          kubectl apply -f ./cron-jobs/"$name".yml -n epicore
 
       fi
     
