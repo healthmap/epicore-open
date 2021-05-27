@@ -28,9 +28,9 @@ if [ "$jobName" = "getMembers" ]; then
 elif [ "$jobName" = "getRFIstats" ]; then
 	 php ./downloadEventStats.php
 elif [ "$jobName" = "getRFIMetrics" ]; then
-	 python ./rfi_metrics.py
+	 python3 ./rfi_metrics.py
 elif [ "$jobName" = "getResponderMetrics" ]; then
-	 python ./responder_metrics2.py     
+	 python3 ./responder_metrics2.py     
 elif [ "$jobName" = "autoCloseInactiveEvents" ]; then
 	 php closeInactiveEvents.php
 elif [ "$jobName" = "closeInactiveEvents" ]; then
