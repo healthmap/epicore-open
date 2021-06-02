@@ -33,7 +33,7 @@ $rvars["fetp_id"] = $userData["fetp_id"];
 if($rvars['from'] != "events_public") {
    
     if (!userController::isUserValid()) {
-        echo json_encode(false);
+        // echo json_encode(false);
         return false;
     }
 }
