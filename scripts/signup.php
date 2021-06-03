@@ -3,7 +3,6 @@ require_once "const.inc.php";
 require_once "AWSMail.class.php";
 require_once "send_email.php";
 require_once "UserInfo.class.php";
-require_once (dirname(__FILE__) ."/Service/AuthService.php");
 
 // clean variables
 $formvars = json_decode(file_get_contents("php://input"));
