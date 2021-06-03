@@ -1,5 +1,6 @@
 <div ng-if="!mobile || !userInfo.fetp_id" ng-include src="'templates/header/header.html'"></div>
-<div ng-if="mobile && userInfo.active=='Y' && userInfo.fetp_id" ng-include src="'templates/header/header_mobile.html'"></div>
+<div ng-if="mobile && userInfo.active=='Y' && userInfo.fetp_id" ng-include src="'templates/header/header_mobile.html'">
+</div>
 
 <div class="jumbotron dashboard">
     <div class="container">
@@ -8,110 +9,133 @@
 </div>
 
 <div class="wrapper dashboard">
-<div class="container">
-<div class="row">
-    <div class="col-xs-12 mb24">
+    <div class="container">
+        <div class="row">
+            <div class="col-xs-12 mb24">
+                <!-- 
+        <p ng-if="onOpen" ><a href="#/events2" class="btn btn-default"><i class="fa fa-arrow-circle-left"></i> * Back to EpiCore Dashboard</a></p>
+        <p  ng-if="!onOpen" ><a href="#/events2/closed" class="btn btn-default"><i class="fa fa-arrow-circle-left"></i> ** Back to EpiCore Dashboard</a></p> -->
 
-        <p ng-if="onOpen" ><a href="#/events2" class="btn btn-default"><i class="fa fa-arrow-circle-left"></i> Back to EpiCore Dashboard</a></p>
-        <p  ng-if="!onOpen" ><a href="#/events2/closed" class="btn btn-default"><i class="fa fa-arrow-circle-left"></i> Back to EpiCore Dashboard</a></p>
-
-        <!-- REPLY FORM (for FETPS only) -->
-        <span ng-show="!isOrganization && isAuthorizedFETP">
-            <p ng-if="changeStatusText != 'Close'">This RFI is closed, but if you have anything to contribute, you can click on “Respond to this RFI” below and your response will be sent to the requesting moderator. </p>
-            <a href="#/reply2/{{id}}" class="btn btn-primary">Respond Now</a>
-            <span ng-if="changeStatusText == 'Close'" ng-show="!submitDisabled">
-                <a href ng-click="sendResponse({response_permission: '4'})" class="btn btn-primary" ng-show="!activeSearch">Active Search</a>
-                <a href ng-click="sendResponse({response_permission: '0'})" class="btn btn-primary">Nothing to Contribute</a>
-            </span>
-
-            <span ng-show="submitDisabled">
-                <i class="fa fa-spinner fa-spin"></i> Please wait...
-            </span>
-        </span>
-        <br><br> 
-        <!-- END REPLY FORM -->
-
-        <!-- OWNER of event gets additional options to close event or send followup email -->
-        <!-- Superusers get to edit and delete -->
-        <span ng-show="eventsList.event_id">
-            <span ng-if="isRequester && (changeStatusText == 'Close') || userInfo.superuser">
-                <a href="#/followup2/{{id}}" class="btn btn-secondary btn-tab">Send follow-up message to all responders</a>
-            </span>
-            <span ng-if="isRequester && (changeStatusText == 'Close') || userInfo.superuser">
-                <a href="#/{{changeStatusType}}2/{{id}}" class="btn btn-secondary btn-tab" >{{changeStatusText}} RFI</a>
-            </span>
-            <span ng-if="userInfo.superuser && (changeStatusText != 'Close')">
-                <a href="#/summary/{{id}}" class="btn btn-secondary btn-tab" >Edit RFI Summary</a>
-            </span>
-            <span ng-if="userInfo.superuser">
-                <a href="#/rfi_step1/{{id}}" class="btn btn-secondary btn-tab">Edit RFI</a>
-            </span>
-            <span ng-if="userInfo.superuser">
-                <a href="" class="btn btn-secondary btn-tab" ng-click="deleteEvent(id)">Delete RFI</a>
-            </span>
-        </span>
-        <!-- END CLOSE FORM (for owner of event) -->
+                <p ng-if="changeStatusText == 'Close'"><a href="#/events2" class="btn btn-default"><i
+                            class="fa fa-arrow-circle-left"></i> Back to EpiCore Dashboard</a></p>
+                <p ng-if="changeStatusText != 'Close'"><a href="#/events2/closed" class="btn btn-default"><i
+                            class="fa fa-arrow-circle-left"></i> Back to EpiCore Dashboard</a></p>
 
 
 
+                <!-- REPLY FORM (for FETPS only) -->
+                <span ng-show="!isOrganization && isAuthorizedFETP">
+                    <p ng-if="changeStatusText != 'Close'">This RFI is closed, but if you have anything to contribute,
+                        you can click on “Respond to this RFI” below and your response will be sent to the requesting
+                        moderator. </p>
+                    <a href="#/reply2/{{id}}" class="btn btn-primary">Respond Now</a>
+                    <span ng-if="changeStatusText == 'Close'" ng-show="!submitDisabled">
+                        <a href ng-click="sendResponse({response_permission: '4'})" class="btn btn-primary"
+                            ng-show="!activeSearch">Active Search</a>
+                        <a href ng-click="sendResponse({response_permission: '0'})" class="btn btn-primary">Nothing to
+                            Contribute</a>
+                    </span>
+
+                    <span ng-show="submitDisabled">
+                        <i class="fa fa-spinner fa-spin"></i> Please wait...
+                    </span>
+                </span>
+                <br><br>
+                <!-- END REPLY FORM -->
+
+                <!-- OWNER of event gets additional options to close event or send followup email -->
+                <!-- Superusers get to edit and delete -->
+                <span ng-show="eventsList.event_id">
+                    <span ng-if="isRequester && (changeStatusText == 'Close') || userInfo.superuser">
+                        <a href="#/followup2/{{id}}" class="btn btn-secondary btn-tab">Send follow-up message to all
+                            responders</a>
+                    </span>
+                    <span ng-if="isRequester && (changeStatusText == 'Close') || userInfo.superuser">
+                        <a href="#/{{changeStatusType}}2/{{id}}" class="btn btn-secondary btn-tab">{{changeStatusText}}
+                            RFI</a>
+                    </span>
+                    <span ng-if="userInfo.superuser && (changeStatusText != 'Close')">
+                        <a href="#/summary/{{id}}" class="btn btn-secondary btn-tab">Edit RFI Summary</a>
+                    </span>
+                    <span ng-if="userInfo.superuser">
+                        <a href="#/rfi_step1/{{id}}" class="btn btn-secondary btn-tab">Edit RFI</a>
+                    </span>
+                    <span ng-if="userInfo.superuser">
+                        <a href="" class="btn btn-secondary btn-tab" ng-click="deleteEvent(id)">Delete RFI</a>
+                    </span>
+                </span>
+                <!-- END CLOSE FORM (for owner of event) -->
 
 
-    </div>
-</div><!--row-->
 
 
-<div class="row" ng-show="isAuthorizedFETP || (isOrganization && eventsList.event_id)">
-    <div class="col-xs-12">
-        <form name="changeStatusForm">
-            <div class="form-group">
-                <!-- Show Event History Messages -->
 
-                <div class="event-item" ng-repeat="history_item in eventsList.history">
-                    <!-- Original Event Request Message in same organization (Moderator or FETP)-->
-                    <!-- EPI-74 Showing the following info ONLY to superusers -->
-                    <div ng-if="(history_item.type == 'Event Request')">
+            </div>
+        </div>
+        <!--row-->
+
+
+        <div class="row" ng-show="isAuthorizedFETP || (isOrganization && eventsList.event_id)">
+            <div class="col-xs-12">
+                <form name="changeStatusForm">
+                    <div class="form-group">
+                        <!-- Show Event History Messages -->
+
+                        <div class="event-item" ng-repeat="history_item in eventsList.history">
+                            <!-- Original Event Request Message in same organization (Moderator or FETP)-->
+                            <!-- EPI-74 Showing the following info ONLY to superusers -->
+                            <div ng-if="(history_item.type == 'Event Request')">
                                 <strong>{{num_fetp}} responders on RFI # {{eventsList.event_id}}:</strong> <br><br>
-                        
-                        <ul>
-                            <li>Title: {{history_item.title}}</li>
-                            <li>Location: {{history_item.location}}</li>
-                            <!--<ul> 
+
+                                <ul>
+                                    <li>Title: {{history_item.title}}</li>
+                                    <li>Location: {{history_item.location}}</li>
+                                    <!--<ul> 
                                 <li>Available Details: <pre style="white-space: pre-wrap; word-wrap: break-word">{{history_item.location_details}}</pre></li>
                             </ul>-->
-                            <li>Date: {{history_item.event_date}}
-                               <!-- <ul>
+                                    <li>Date: {{history_item.event_date}}
+                                        <!-- <ul>
                                     <li>Available Details: <pre style="white-space: pre-wrap; word-wrap: break-word">{{history_item.event_date_details}}</pre> </li>
                                 </ul>-->
-                            </li>
-                            <li>Affected Population: {{history_item.population}}
-                             <!--   <ul>
+                                    </li>
+                                    <li>Affected Population: {{history_item.population}}
+                                        <!--   <ul>
                                     <li>Available Details: <pre style="white-space: pre-wrap; word-wrap: break-word">{{history_item.population_details}}</pre> </li>
                                 </ul>-->
-                            </li>
-                            <li>Health Condition: {{history_item.condition}}
-                                <ul>
-                                    <li>Health Condition Details: <pre style="white-space: pre-wrap; word-wrap: break-word">{{history_item.hc_details}}</pre> </li>
-                                    <!--     <li>Other Relevant Public Health Details: <pre style="white-space: pre-wrap; word-wrap: break-word">{{history_item.condition_details}}</pre> </li>-->
+                                    </li>
+                                    <li>Health Condition: {{history_item.condition}}
+                                        <ul>
+                                            <li>Health Condition Details:
+                                                <pre
+                                                    style="white-space: pre-wrap; word-wrap: break-word">{{history_item.hc_details}}</pre>
+                                            </li>
+                                            <!--     <li>Other Relevant Public Health Details: <pre style="white-space: pre-wrap; word-wrap: break-word">{{history_item.condition_details}}</pre> </li>-->
+                                        </ul>
+                                    </li>
+                                    <li>Purpose:
+                                        <ul>
+                                            <li ng-repeat="purpose in history_item.purpose"> {{purpose}} </li>
+                                            <li>Personalized Message:
+                                                <pre
+                                                    style="white-space: pre-wrap; word-wrap: break-word">{{history_item.personalized_text}}</pre>
+                                            </li>
+                                        </ul>
+                                    </li>
+                                    <li>Source(s): {{history_item.source}}
+                                        <ul>
+                                            <li>Available Details:
+                                                <pre
+                                                    style="white-space: pre-wrap; word-wrap: break-word">{{history_item.source_details}}</pre>
+                                            </li>
+                                        </ul>
+                                    </li>
                                 </ul>
-                            </li>
-                            <li>Purpose:
-                                <ul>
-                                    <li ng-repeat="purpose in history_item.purpose"> {{purpose}} </li>
-                                    <li>Personalized Message: <pre style="white-space: pre-wrap; word-wrap: break-word">{{history_item.personalized_text}}</pre> </li>
-                                </ul>
-                            </li>
-                            <li>Source(s): {{history_item.source}}
-                                <ul>
-                                    <li>Available Details: <pre style="white-space: pre-wrap; word-wrap: break-word">{{history_item.source_details}}</pre> </li>
-                                </ul>
-                            </li>
-                        </ul>
 
-                    </div>
-                </div>
+                            </div>
+                        </div>
 
-                <!-- REPLY FORM (for FETPS only) moved this to the top-->
-                <!-- <div ng-show="!isOrganization && isAuthorizedFETP">
+                        <!-- REPLY FORM (for FETPS only) moved this to the top-->
+                        <!-- <div ng-show="!isOrganization && isAuthorizedFETP">
                     <p ng-if="changeStatusText != 'Close'">This RFI is closed, but if you have anything to contribute, you can click on “Respond to this RFI” below and your response will be sent to the requesting moderator. </p>
                     <a href="#/reply2/{{id}}" class="btn btn-primary">Respond Now</a>
                     <span ng-if="changeStatusText == 'Close'" ng-show="!submitDisabled">
@@ -124,33 +148,40 @@
                     </span>
                 </div>
                 <br><br> -->
-                <!-- END REPLY FORM -->
+                        <!-- END REPLY FORM -->
 
-                <div ng-include="'templates/messagehistory/messagehistory2.html?v={{cbsuffix}}'" ng-init="closerfi=''"></div><br>
+                        <div ng-include="'templates/messagehistory/messagehistory2.html?v={{cbsuffix}}'"
+                            ng-init="closerfi=''"></div><br>
 
-                <div class="form-group"  ng-if="(changeStatusText != 'Close') && isAuthorizedToFollowup">
-                    <button ng-click="changeRequestStatus(formData, 'Update', changeStatusForm.$valid)" ng-disabled="submitDisabled" type="submit" class="submit btn btn-primary">Update Response Ratings</button>
-                </div><!-- /input-group -->
+                        <div class="form-group" ng-if="(changeStatusText != 'Close') && isAuthorizedToFollowup">
+                            <button ng-click="changeRequestStatus(formData, 'Update', changeStatusForm.$valid)"
+                                ng-disabled="submitDisabled" type="submit" class="submit btn btn-primary">Update
+                                Response Ratings</button>
+                        </div><!-- /input-group -->
 
+                    </div>
+                </form>
             </div>
-        </form>
-    </div>
-</div><!--row-->
-
-    <span ng-show="isRouteLoading">
-        <i class="fa fa-spinner fa-spin"></i> Please wait...
-    </span>
-
-
-    <div class="row" ng-hide="(isAuthorizedFETP || (isOrganization && eventsList.event_id)) || isAuthorizedFETP == null || isOrganization == null">
-    <!--<div class="row" ng-show="!isAuthorizedFETP && !isOrganization || !eventsList.event_id" >-->
-        <div class="col-xs-12">
-            <p>You are not authorized to view this event.</p>
         </div>
-    </div>
+        <!--row-->
 
-</div><!--container-->
-</div><!--wrapper-->
+        <span ng-show="isRouteLoading">
+            <i class="fa fa-spinner fa-spin"></i> Please wait...
+        </span>
+
+
+        <div class="row"
+            ng-hide="(isAuthorizedFETP || (isOrganization && eventsList.event_id)) || isAuthorizedFETP == null || isOrganization == null">
+            <!--<div class="row" ng-show="!isAuthorizedFETP && !isOrganization || !eventsList.event_id" >-->
+            <div class="col-xs-12">
+                <p>You are not authorized to view this event.</p>
+            </div>
+        </div>
+
+    </div>
+    <!--container-->
+</div>
+<!--wrapper-->
 
 
 <div ng-include src="'templates/footer/footer.html'"></div>
