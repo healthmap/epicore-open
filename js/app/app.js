@@ -1,7 +1,6 @@
 import Services from './services/services.js';
 import Controllers from './controllers/controllers.js';
 import initDirectives from './directives/directives.js';
-console.log('test');
 const app = angular.module('EpicoreApp', [
   Services.name,
   Controllers.name,
