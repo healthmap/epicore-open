@@ -10,12 +10,6 @@ $status = "incorrect password";
 $path = "home";
 
 $authService = new AuthService();
-$authService->loginUser('jakub','jakub');
-
-
-
-
-
 $env = ENVIRONMENT;
 
 if(isset($formvars->ticket_id) && $formvars->usertype == "fetp") { // ticket system is for FETPs
@@ -32,13 +26,33 @@ if(isset($formvars->ticket_id) && $formvars->usertype == "fetp") { // ticket sys
         $uinfo = UserInfo::authenticateMod($formvars->ticket_id);
     } else { // login system is for mods and fetps
 
-        //check if user on AWs Cognito
-
-        $authService->loginUser($formvars->username , $formvars->password);
-
         $dbdata['email'] = strip_tags($formvars->username);
-        $dbdata['password'] = strip_tags($formvars->password); 
-        $uinfo = UserInfo::authenticateUser($dbdata);
+        $dbdata['password'] = strip_tags($formvars->password);
+
+        // bartkiewiczj@gmail.com only for dev tests, later will be deleted
+        if($dbdata['email'] == 'bartkiewiczj@gmail.com')
+        {
+            $uinfo = UserInfo::authenticateUser($dbdata , false);
+        }
+        else
+        {
+            $uinfo = UserInfo::authenticateUser($dbdata , true);
+        }
+
+        if(!is_null($uinfo) && $uinfo['email'] == 'bartkiewiczj@gmail.com'){
+            try
+            {
+                $authResponse = $authService->loginUser($formvars->username, $formvars->password);
+                $uinfo['token']['accessToken'] = $authResponse->getAccessToken();
+                $uinfo['token']['refreshToken'] = $authResponse->getRefreshToken();
+                $uinfo['token']['expiresIn'] = $authResponse->getExpiresIn();
+            }
+            catch (\Exception $exception)
+            {
+                $status = "incorrect password";
+                error_log($exception->getMessage());
+            }
+        }
     }
     $user_id = isset($uinfo['fetp_id']) ? $uinfo['fetp_id'] : $uinfo['user_id'];
 }
@@ -91,6 +105,7 @@ if(is_numeric($user_id) && $user_id > 0) {
     }
     $uinfo['superuser'] = (isset($uinfo['user_id']) && in_array($uinfo['user_id'], $super_users)) ? true: false;
 }
-
-print json_encode(array('status' => $status, 'path' => $path, 'uinfo' => $uinfo , 'environment' => $env));
+$content = array('status' => $status, 'path' => $path, 'uinfo' => $uinfo , 'environment' => $env);
+//var_dump($content);die();
+print json_encode($content);
 ?>

@@ -34,6 +34,7 @@ const Services = angular
           'login',
           'setpassword',
           'resetpassword',
+          'confirm',
           'who',
           'how',
           'educator',

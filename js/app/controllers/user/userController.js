@@ -379,6 +379,18 @@ const UserController = (
             environment: data['environment']
           };
 
+          // ticket ref: #245
+         /* if(data['uinfo']['token'] != null)
+          {
+            const token = {
+                accessToken : data['uinfo']['token']['accessToken'],
+                refreshToken : data['uinfo']['token']['refreshToken'],
+                expiresIn : data['uinfo']['token']['expiresIn']
+              }
+              //save token in localStorage
+            $localStorage.token = token;
+          }*/
+
           
           // save username and password
           $localStorage.username = formData['username'];
@@ -444,6 +456,11 @@ const UserController = (
         function successCallback(res) {
           const data = res.data;
           if (data['status'] === 'success') {
+
+            $location.path('/login');
+
+            // old to delete , should be confirm if needed
+            /*
             const isActive =
               typeof data['uinfo']['active'] != 'undefined' ?
                 data['uinfo']['active'] :
@@ -470,7 +487,7 @@ const UserController = (
                   '/' + data['path'];
             }
             $scope.isRouteLoading = false;
-            $location.path(redirpath);
+            $location.path(redirpath);*/
           } else {
             $scope.isRouteLoading = false;
             $rootScope.error_message = 'Invalid email address';
@@ -480,6 +497,39 @@ const UserController = (
         function errorCallback() {
           $scope.isRouteLoading = false;
         },
+      );
+    }
+  };
+
+  $scope.confirm = function (formData)
+  {
+    if (!$scope.setpwForm.$valid) {
+      $scope.isRouteLoading = false;
+      $rootScope.error_message_pw = 'Invalid email address';
+      return false;
+    } else {
+      http({
+        url: urlBase + 'scripts/confirm.php',
+        method: 'POST',
+        data: formData,
+      }).then(
+          function successCallback(res) {
+            const data = res.data;
+            if (data['status'] === 'success') {
+              $scope.isRouteLoading = false;
+              $rootScope.error_message_pw =
+                  'Please check your email or temporary password.';
+              $location.path('/login');
+            } else {
+              $scope.isRouteLoading = false;
+              $rootScope.error_message_pw = 'Invalid email address or temporary password';
+              $route.reload();
+            }
+          },
+          function errorCallback() {
+            $rootScope.error_message_pw = 'Invalid email address';
+            $scope.isRouteLoading = false;
+          },
       );
     }
   };

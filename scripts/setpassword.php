@@ -2,7 +2,39 @@
 /* takes input from the Epicore set password form, authenticates user, and sets password */
 $formvars = json_decode(file_get_contents("php://input"));
 require_once "UserInfo.class.php";
-$status = 'failed';
+require_once (dirname(__FILE__) ."/Service/AuthService.php");
+require_once (dirname(__FILE__) ."/Model/UserCognitoType.php");
+require_once (dirname(__FILE__) ."/Model/ApiResponseStatus.php");
+$status = ApiResponseStatus::failed;
+
+// get username/email and password
+$username = strip_tags($formvars->username);
+$password = strip_tags($formvars->password);
+$verifycode = strip_tags($formvars->verifycode);
+
+if(!empty($verifycode))
+{
+    $fetchObj = UserInfo::authenticateFetpByEmail($formvars->username);
+    if(!empty($fetchObj))
+    {
+        $fetpinfo['username'] = "MEMBER ". $fetchObj['fetp_id'];
+        try
+        {
+            $authService = new AuthService();
+            $authService->updatePassword($username, $password, $verifycode , $verifycode);
+            $status = ApiResponseStatus::success;
+        }
+        catch (Exception $exception)
+        {
+            error_log($exception->getMessage());
+            $status = ApiResponseStatus::failed;
+        }
+
+        print json_encode(array('status' => $status, 'uinfo' => $fetpinfo));
+        die();
+    }
+
+}
 
 // authenticate fetp and get info
 $ticket = strip_tags($formvars->ticket_id);
@@ -10,9 +42,6 @@ $authfetp = UserInfo::authenticateFetp($ticket);
 $fetpinfo = UserInfo::getFETP($authfetp['fetp_id']);
 $fetpinfo['username'] = "MEMBER ". $authfetp['fetp_id'];
 
-// get username/email and password
-$username = strip_tags($formvars->username);
-$password = strip_tags($formvars->password);
 
 // set password if username matches authenticated email
 $emailmatch = (strcasecmp($fetpinfo['email'], $username) == 0) ? true: false;

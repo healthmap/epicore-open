@@ -12,7 +12,7 @@ class UserSignUpResponse
         return $this->userConfirmed;
     }
 
-    public function setUserConfirmed(bool $status): UserSignInResponse
+    public function setUserConfirmed($status)
     {
         $this->userConfirmed = $status;
         return $this;
@@ -26,7 +26,7 @@ class UserSignUpResponse
      * @param string $key
      * @return UserSignInResponse
      */
-    public function setUserSub(string $key): UserSignInResponse
+    public function setUserSub(string $key)
     {
         $this->userSub = $key;
         return $this;

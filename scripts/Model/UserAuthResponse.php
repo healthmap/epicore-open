@@ -7,6 +7,8 @@ class UserAuthResponse {
     private $tokenType;
     private $refreshToken;
     private $tokenId;
+    private $error;
+    private $changepPassword;
 
     /**
      * @return string
@@ -88,6 +90,31 @@ class UserAuthResponse {
     public function setTokenId($token): UserAuthResponse
     {
         $this->tokenId = $token;
+        return $this;
+    }
+
+    public function setError($msg): UserAuthResponse
+    {
+        $this->error = $msg;
+        return $this;
+    }
+
+    public function getError()
+    {
+        return $this->error;
+    }
+
+    /**
+     * @return bool
+     */
+    public function getChangePassword(): bool
+    {
+        return $this->changepPassword;
+    }
+
+    public function setChangePassword(bool $status)
+    {
+        $this->changepPassword = $status;
         return $this;
     }
 }

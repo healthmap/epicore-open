@@ -1,7 +1,7 @@
 import Services from './services/services.js';
 import Controllers from './controllers/controllers.js';
 import initDirectives from './directives/directives.js';
-
+console.log('test');
 const app = angular.module('EpicoreApp', [
   Services.name,
   Controllers.name,
@@ -15,7 +15,6 @@ const app = angular.module('EpicoreApp', [
   'google.places',
   'ngFileUpload',
 ]);
-
 app
   .value('epicoreVersion', epicore_config.vers)
   .value('epicoreStartDate', epicore_config.EPICORE_START_DATE)
@@ -335,6 +334,10 @@ app.config(function ($routeProvider) {
     .when('/resetpassword', {
       templateUrl:
         'templates/resetpassword/resetpassword.html?cb=' + cacheBustSuffix,
+    })
+    .when('/confirm' , {
+      templateUrl:
+          'templates/confirm/confirm.html?cb=' + cacheBustSuffix,
     })
     .when('/home', { templateUrl: home_page + cacheBustSuffix })
     .when('/training', {

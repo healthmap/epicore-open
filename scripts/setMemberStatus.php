@@ -9,6 +9,8 @@
 $status = 'success';
 $message = '';
 $member_status = '';
+require_once (dirname(__FILE__) ."/Service/AuthService.php");
+require_once (dirname(__FILE__) ."/Exception/UserAccountExistException.php");
 
 // set member status
 $data = json_decode(file_get_contents("php://input"));
@@ -22,6 +24,30 @@ if ($approve_id && $approve_status) {
         $status = 'failed';
         $message = 'member not found';
     }
+    $maillist = UserInfo::getMaillistDetails($approve_id);
+    if(!is_null($maillist))
+    {
+        $password = md5(date('Y-m-d h:s'));
+        $authService = new AuthService();
+
+        try {
+            // TODO send user to AWS Cognito
+            $authService->singUp($maillist['email'], $password, $maillist['email']);
+        }
+        catch (\UserAccountExistException $exception)
+        {
+            $status = 'failed';
+            $message = $exception->getMessage();
+            error_log($exception->getMessage());
+        }
+        catch (\Exception $exception)
+        {
+            $status = 'failed';
+            $message = 'invalid paramters';
+            error_log($exception->getMessage());
+        }
+    }
+
 } else{
     $status = 'failed';
     $message = 'invalid paramters';

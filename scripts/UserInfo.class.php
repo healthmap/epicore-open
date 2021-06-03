@@ -199,64 +199,73 @@ class UserInfo
         return $requests;
     }
 
-    static function authenticateUserFromCognito()
-    {
-
-    }
-
-
     static function createPassword($password = '') {
         $password = $password ? $password : substr(md5(rand().rand()), 0, 8);
         $pword_hash = create_hash($password);
         return array($password, $pword_hash);
     }
 
-    static function authenticateUser($dbdata) 
+    static function authenticateUser($dbdata , $passwordRequired = true)
     {
         $email = strip_tags($dbdata['email']);
         // first try the HealthMap database
         $db = getDB();
         $user = $db->getRow("SELECT hmu_id, username, email, pword_hash from hm_hmu WHERE (username = ? OR email = ?) AND confirmed = 1", array($email, $email));
-        $resp = validate_password($dbdata['password'], $user['pword_hash']);
-        
-        
+
         if(is_a($user, 'DB_Error')) {
             print_r($user);
-        
             die('user error!');
         }
-        
-        // $resp = true;
-        $db = getDB();
-        if($resp) {
-        
-            $uinfo = $db->getRow("SELECT user.user_id, user.hmu_id, user.organization_id, organization.name AS orgname FROM user LEFT JOIN epicore.organization ON user.organization_id = organization.organization_id WHERE hmu_id = ?", array($user['hmu_id']));
-            if(is_a($uinfo, 'DB_Error')) {
-                print_r($uinfo);
-                die('uinfo error!');
+
+        if($passwordRequired) {
+            $resp = validate_password($dbdata['password'], $user['pword_hash']);
+            if($resp) {
+
+                $uinfo = $db->getRow("SELECT user.user_id, user.hmu_id, user.organization_id, organization.name AS orgname FROM user LEFT JOIN epicore.organization ON user.organization_id = organization.organization_id WHERE hmu_id = ?", array($user['hmu_id']));
+                if(is_a($uinfo, 'DB_Error')) {
+                    print_r($uinfo);
+                    die('uinfo error!');
+                }
+                $uinfo['username'] = $user['username'];
+                $uinfo['email'] = $user['email'];
+                return $uinfo;
+            } else {
+                // first try the MOD user table.  If none, try the FETP user table.
+                $uinfo = $db->getRow("SELECT user.*, organization.name AS orgname FROM user LEFT JOIN organization ON user.organization_id = organization.organization_id WHERE email = ?", array($email));
+                if(!$uinfo['user_id']) {
+
+                    $uinfo = $db->getRow("SELECT fetp_id, pword_hash, lat, lon, countrycode, active, email, status, locations FROM fetp WHERE email = ?", array($email));
+                    $uinfo['username'] = "Member ".$uinfo['fetp_id'];
+                }
+                if($uinfo['user_id'] || $uinfo['fetp_id']) {
+
+                    $resp = validate_password($dbdata['password'], $uinfo['pword_hash']);
+                    if($resp) {
+                        unset($uinfo['pword_hash']);
+                        return $uinfo;
+                    }
+                }
+                return 0;
             }
+        }
+
+        $user = $db->getRow("SELECT hmu_id, username, email, pword_hash from hm_hmu WHERE (username = ? OR email = ?) AND confirmed = 1", array($email, $email));
+        if(!is_null($user)){
             $uinfo['username'] = $user['username'];
             $uinfo['email'] = $user['email'];
+
             return $uinfo;
-        } else { 
-        
-            // first try the MOD user table.  If none, try the FETP user table.
-            $uinfo = $db->getRow("SELECT user.*, organization.name AS orgname FROM user LEFT JOIN organization ON user.organization_id = organization.organization_id WHERE email = ?", array($email));
-            if(!$uinfo['user_id']) {
-        
-                $uinfo = $db->getRow("SELECT fetp_id, pword_hash, lat, lon, countrycode, active, email, status, locations FROM fetp WHERE email = ?", array($email));
-                $uinfo['username'] = "Member ".$uinfo['fetp_id'];
-            }
-            if($uinfo['user_id'] || $uinfo['fetp_id']) {
-        
-                $resp = validate_password($dbdata['password'], $uinfo['pword_hash']);
-                if($resp) {
-                    unset($uinfo['pword_hash']);
-                    return $uinfo;
-                }
-            }
-            return 0;
         }
+        $uinfo = $db->getRow("SELECT user.*, organization.name AS orgname FROM user 
+                LEFT JOIN organization ON user.organization_id = organization.organization_id 
+                WHERE email = ?", array($email));
+        if(!$uinfo['user_id']) {
+            $uinfo = $db->getRow("SELECT fetp_id, pword_hash, lat, lon, countrycode, active, email, status, locations FROM fetp WHERE email = ?" , array($email));
+            $uinfo['username'] = "Member ".$uinfo['fetp_id'];
+        }
+
+        return $uinfo;
+
     }
 
     static function authenticateMod($ticket_id) 
@@ -273,6 +282,12 @@ class UserInfo
         $user['organization_id'] = $epicore_info['organization_id'];
         $user['orgname'] = $epicore_info['orgname'];
         return $user;
+    }
+
+    static function authenticateFetpByEmail(string $email)
+    {
+        $db = getDB();
+        return $db->getRow("SELECT fetp_id FROM epicore.fetp WHERE email = ?", array($email));
     }
 
     static function authenticateFetp($ticket_id)
@@ -748,7 +763,7 @@ class UserInfo
                     $db->commit();
 
                     // geocode fetp
-                    UserInfo::geocodeFETP($approve_email);
+                  //  UserInfo::geocodeFETP($approve_email);
                 }
                 else{
                     $db->query("update fetp set active='N', status='P' where email='$approve_email'");
@@ -759,7 +774,7 @@ class UserInfo
                 $db->query("update maillist set accept_date='$accept_date', approvestatus='Y' where maillist_id=$approve_id");
                 $db->commit();
                 $fetp_id = UserInfo::getFETPid($approve_email);
-                sendMail($approve_email, $approve_name, "EpiCore Application Decision", $status, $fetp_id);
+               // sendMail($approve_email, $approve_name, "EpiCore Application Decision", $status, $fetp_id);
 
             }
             else if ($status == 'pending_preapproved') {
@@ -784,7 +799,7 @@ class UserInfo
                 $db->commit();
                 $fetp_id = UserInfo::getFETPid($approve_email);
                 $status = 'preapproved';
-                sendMail($approve_email, $approve_name, "We heartily welcome our new EpiCore Member!", $status, $fetp_id);
+            //    sendMail($approve_email, $approve_name, "We heartily welcome our new EpiCore Member!", $status, $fetp_id);
 
             }
             else if (($status == 'approved') ||($status == 'preapproved')) {
@@ -796,7 +811,7 @@ class UserInfo
 
                 if ($status == 'approved') {
                     $fetp_id = UserInfo::getFETPid($approve_email);
-                    sendMail($approve_email, $approve_name, "Congratulations!", $status, $fetp_id);
+                 //   sendMail($approve_email, $approve_name, "Congratulations!", $status, $fetp_id);
                 }
             }
             else if ($status == 'declined') {
@@ -810,7 +825,7 @@ class UserInfo
                     $db->commit();
                 }
 
-                sendMail($approve_email, $approve_name, "EpiCore Application Decision", $status, $approve_id);
+             //   sendMail($approve_email, $approve_name, "EpiCore Application Decision", $status, $approve_id);
 
             }
             else if ($status == 'unsubscribed') {
@@ -988,7 +1003,12 @@ class UserInfo
         return $applicants;
 
     }
-    
+
+    static function getMaillistDetails($id){
+        $db = getDB();
+        return $db->getRow("SELECT email FROM maillist WHERE maillist_id='$id'");
+    }
+
     static function getMemberStatus($member_id){
 
         $db = getDB();

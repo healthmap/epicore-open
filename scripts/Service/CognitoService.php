@@ -1,6 +1,10 @@
 <?php
 
 require_once(dirname(__FILE__) . "/../Model/UserSignUpResponse.php");
+require_once(dirname(__FILE__) . "/../Model/UserAuthResponse.php");
+require_once(dirname(__FILE__) . "/../Exception/NewPasswordException.php");
+
+
 
 if (file_exists("/usr/share/php/vendor/autoload.php")) {
 
@@ -11,7 +15,6 @@ use Aws\CognitoIdentityProvider\CognitoIdentityProviderClient;
 use Aws\Credentials\CredentialProvider;
 use Aws\Exception;
 
-
 class CognitoService
 {
     private $client;
@@ -20,32 +23,44 @@ class CognitoService
 
     public function __construct()
     {
-        $provider = CredentialProvider::defaultProvider();
+        $dotenv = Dotenv\Dotenv::createImmutable(dirname(__FILE__) . '/../../');
+        $dotenv->load();
+
         $this->client = new CognitoIdentityProviderClient([
             'version' => 'latest',
             'profile' => 'default',
             'region' => 'us-east-2',
-            'credentials' => $provider
         ]);
 
-        $this->clientId= '26qu1mhe12dso7o8jjiuthla6v';
-        $this->userPoolId = 'us-east-2_1DeSl642y';
+        $this->clientId= $_ENV['aws_clinet_id'];
+        $this->userPoolId = $_ENV['aws_user_pool_id'];
+
+        if(empty($this->clientId) || empty($this->userPoolId))
+        {
+            print('AWS Congnito .env missing');
+            die();
+        }
     }
+
 
     /**
      * @param string $username
      * @param string $password
      * @param string $email
-     * @return UserSignUpResponse
+     * @return void
      * @throws \Exception
      */
-    public function singUp(string $username , string $password , string $email)
+    public function singUp(string $username , string $password , string $email) : void
     {
-        try {
-            $result = $this->client->signUp([
+        try
+        {
+             $this->client->AdminCreateUser([
                 'ClientId' => $this->clientId,
+                'UserPoolId' => $this->userPoolId,
                 'Username' => $username,
-                'Password' => $password,
+                'ForceAliasCreation' => true,
+                'DesiredDeliveryMediums'=> ['EMAIL'],
+                'TemporaryPassword' => $password,
                 'UserAttributes' => [
                     [
                         'Name' => 'name',
@@ -57,20 +72,11 @@ class CognitoService
                     ]
                 ]
             ]);
-            if (!is_null($result)) {
-                $result = $result->toArray();
-
-                $userSignUpResponse = new UserSignUpResponse();
-                $userSignUpResponse->setUserConfirmed($result['UserSignUpResponse']);
-                $userSignUpResponse->setUserSub($result['UserSub']);
-
-                return $userSignUpResponse;
-            }
-
-            throw new \Exception('Wrong AWS response');
-
-        }catch (Exception\AwsException $ex){
-            throw new $ex;
+        }
+        catch (\Aws\CognitoIdentityProvider\Exception\CognitoIdentityProviderException $exception)
+        {
+            error_log($exception->getMessage());
+            throw  $exception;
         }
     }
 
@@ -92,7 +98,10 @@ class CognitoService
                     'PASSWORD' => $password,
                 ],
             ]);
-
+            if (isset($result['Session']))
+            {
+                throw new \NewPasswordException('New password action');
+            }
             if(!is_null($result)) {
                 $result = $result->toArray();
 
@@ -107,9 +116,12 @@ class CognitoService
                 return $userAuthResponse;
             }
 
-            throw new \Exception('Wrong AWS response');
+            throw new \Aws\CognitoIdentityProvider\Exception\CognitoIdentityProviderException('Wrong AWS response');
 
-        } catch ( \Exception $exception){
+        }
+        catch ( \Aws\CognitoIdentityProvider\Exception\CognitoIdentityProviderException $exception)
+        {
+            error_log($exception->getMessage());
             throw $exception;
         }
     }
@@ -122,7 +134,7 @@ class CognitoService
     {
         try {
             $this->client->forgotPassword([
-                'ClientId' => $this->client_id,
+                'ClientId' => $this->clientId,
                 'Username' => $username
             ]);
 
@@ -139,24 +151,130 @@ class CognitoService
      * @param string $username
      * @return string
      */
-    public function resetPassword(string $code, string $password, string $username) : string
+    public function resetPassword(string $code, string $password, string $username): void
     {
         try {
 
             $this->client->confirmForgotPassword([
-                'ClientId' => $this->client_id,
+                'ClientId' => $this->clientId,
                 'ConfirmationCode' => $code,
                 'Password' => $password,
                 'Username' => $username
             ]);
 
-            return true;
-
-        } catch (Exception $e) {
-            return $e->getMessage();
+        }
+        catch (\Aws\CognitoIdentityProvider\Exception\CognitoIdentityProviderException $e)
+        {
+            error_log($e->getMessage());
+            throw $e;
         }
     }
 
+    /**
+     * @param string $username
+     * @param string $password
+     * @param string $code
+     * @return bool
+     */
+    public function confirmPassword(string $username , string $password , string $code): bool
+    {
+        try
+        {
+             $this->client->ConfirmForgotPassword([
+                'ClientId' => $this->clientId,
+                'Username' => $username,
+                'ConfirmationCode' => $code,
+                'Password' => $password
+
+            ]);
+            return true;
+        }
+        catch (\Aws\CognitoIdentityProvider\Exception\CognitoIdentityProviderException $exception)
+        {
+            error_log($exception->getMessage());
+            throw $exception;
+        }
+    }
+
+    /**
+     * @param string $username
+     */
+    public function adminForgotPassword(string $username): void
+    {
+        try
+        {
+            $result = $this->client->AdminResetUserPassword([
+                'Username' => $username,
+                'UserPoolId' => $this->userPoolId
+            ]);
+            var_dump($result);
+
+
+        }
+        catch (\Aws\CognitoIdentityProvider\Exception\CognitoIdentityProviderException $exception)
+        {
+            error_log($exception->getMessage());
+            throw $exception;
+        }
+    }
+
+    /**
+     * @param string $username
+     */
+    public function forgotPassword(string $username)
+    {
+        try
+        {
+             $this->client->ForgotPassword([
+                'ClientId' => $this->clientId,
+                'Username' => $username
+            ]);
+        }
+        catch (Exception $exception)
+        {
+            error_log($exception->getMessage());
+            throw $exception;
+        }
+    }
+
+    public function adminSetUserPassword(string $username , string $newPassword)
+    {
+        try
+        {
+            $this->client->AdminSetUserPassword([
+                'Username' => $username,
+                'UserPoolId' => $this->userPoolId,
+                'Password' => $newPassword,
+                'Permanent' => true
+            ]);
+        }
+        catch (\Aws\CognitoIdentityProvider\Exception\CognitoIdentityProviderException $exception)
+        {
+            throw $exception;
+        }
+    }
+
+    /**
+     * @param string $username
+     * @return string
+     */
+    public function adminGetUser(string $username) : array
+    {
+        try
+        {
+            $result = $this->client->adminGetUser([
+                'Username' => $username,
+                'UserPoolId' => $this->userPoolId,
+            ]);
+            return $result->toArray();
+
+        }
+        catch (\Aws\CognitoIdentityProvider\Exception\CognitoIdentityProviderException $exception)
+        {
+            throw $exception;
+        }
+
+    }
 
 
 
