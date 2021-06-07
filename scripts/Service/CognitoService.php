@@ -3,7 +3,9 @@
 require_once(dirname(__FILE__) . "/../Model/UserSignUpResponse.php");
 require_once(dirname(__FILE__) . "/../Model/UserAuthResponse.php");
 require_once(dirname(__FILE__) . "/../Exception/NewPasswordException.php");
-
+require_once(dirname(__FILE__) . "/../Exception/UserAccountNotExist.php");
+require_once(dirname(__FILE__) . "/../Exception/UserAccountExistException.php");
+require_once(dirname(__FILE__) . "/../Model/CognitoErrors.php");
 
 
 if (file_exists("/usr/share/php/vendor/autoload.php")) {
@@ -50,11 +52,11 @@ class CognitoService
      * @return void
      * @throws \Exception
      */
-    public function singUp(string $username , string $password , string $email) : void
+    public function singUp(string $username , string $password , string $email , bool $dontSendEmail = false) : void
     {
         try
         {
-             $this->client->AdminCreateUser([
+            $dataContext = [
                 'ClientId' => $this->clientId,
                 'UserPoolId' => $this->userPoolId,
                 'Username' => $username,
@@ -71,10 +73,28 @@ class CognitoService
                         'Value' => $email
                     ]
                 ]
-            ]);
+            ];
+
+            if($dontSendEmail)
+            {
+                $dataContext['MessageAction'] = 'SUPPRESS';
+            }
+
+            $this->client->AdminCreateUser($dataContext);
+
+            // TODO case for user who have already account and we do not want to change their password
+            if($dontSendEmail)
+            {
+                $this->adminSetUserPassword($username , $password);
+            }
         }
         catch (\Aws\CognitoIdentityProvider\Exception\CognitoIdentityProviderException $exception)
         {
+            $error = $exception->toArray();
+            if($error['message'] == CognitoErrors::accountExists)
+            {
+                throw new \UserAccountExistException(error['message']);
+            }
             error_log($exception->getMessage());
             throw  $exception;
         }
@@ -121,6 +141,17 @@ class CognitoService
         }
         catch ( \Aws\CognitoIdentityProvider\Exception\CognitoIdentityProviderException $exception)
         {
+            $error = $exception->toArray();
+
+            if($error['message'] == CognitoErrors::accountExists)
+            {
+                throw new \UserAccountExistException($error['message']);
+            }
+            if($error['message'] == CognitoErrors::accountNotExists)
+            {
+                throw new \UserAccountNotExist($error['message']);
+            }
+
             error_log($exception->getMessage());
             throw $exception;
         }
@@ -207,9 +238,6 @@ class CognitoService
                 'Username' => $username,
                 'UserPoolId' => $this->userPoolId
             ]);
-            var_dump($result);
-
-
         }
         catch (\Aws\CognitoIdentityProvider\Exception\CognitoIdentityProviderException $exception)
         {
@@ -256,7 +284,7 @@ class CognitoService
 
     /**
      * @param string $username
-     * @return string
+     * @return array
      */
     public function adminGetUser(string $username) : array
     {
@@ -275,7 +303,4 @@ class CognitoService
         }
 
     }
-
-
-
 }

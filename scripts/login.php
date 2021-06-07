@@ -29,28 +29,59 @@ if(isset($formvars->ticket_id) && $formvars->usertype == "fetp") { // ticket sys
         $dbdata['email'] = strip_tags($formvars->username);
         $dbdata['password'] = strip_tags($formvars->password);
 
-        // bartkiewiczj@gmail.com only for dev tests, later will be deleted
-        if($dbdata['email'] == 'bartkiewiczj@gmail.com')
+        $authService = new AuthService();
+        $authServiceAddNewAccount = false;
+        try
         {
-            $uinfo = UserInfo::authenticateUser($dbdata , false);
-        }
-        else
-        {
-            $uinfo = UserInfo::authenticateUser($dbdata , true);
-        }
-
-        if(!is_null($uinfo) && $uinfo['email'] == 'bartkiewiczj@gmail.com'){
-            try
+            $authResponse = $authService->LoginUser($dbdata['email'],  $dbdata['password']);
+            if(!is_null($authResponse))
             {
-                $authResponse = $authService->loginUser($formvars->username, $formvars->password);
+                $uinfo = UserInfo::authenticateUser($dbdata , false);
+
                 $uinfo['token']['accessToken'] = $authResponse->getAccessToken();
                 $uinfo['token']['refreshToken'] = $authResponse->getRefreshToken();
                 $uinfo['token']['expiresIn'] = $authResponse->getExpiresIn();
             }
-            catch (\Exception $exception)
+        }
+        catch (\UserAccountNotExist $exception)
+        {
+            $uinfo = UserInfo::authenticateUser($dbdata);
+            if (isset($uinfo['username'])) {
+                $authServiceAddNewAccount = true;
+            }
+            else
             {
-                $status = "incorrect password";
                 error_log($exception->getMessage());
+                $status = "incorrect password";
+            }
+        }
+        catch (\LoginException $exception)
+        {
+            error_log($exception->getMessage());
+            $status = "incorrect password";
+        }
+
+        if($authServiceAddNewAccount)
+        {
+            try {
+                $authService->SingUp($dbdata['email'], $dbdata['password'], $dbdata['email'] , true);
+                $authResponse = $authService->LoginUser($dbdata['email'],  $dbdata['password']);
+                if(!is_null($authResponse))
+                {
+                    $uinfo['token']['accessToken'] = $authResponse->getAccessToken();
+                    $uinfo['token']['refreshToken'] = $authResponse->getRefreshToken();
+                    $uinfo['token']['expiresIn'] = $authResponse->getExpiresIn();
+                }
+            }
+            catch (\UserAccountExistException $exception)
+            {
+                error_log($exception->getMessage());
+                $status = "incorrect password";
+            }
+            catch (\LoginException $exception)
+            {
+                error_log($exception->getMessage());
+                $status = "incorrect password";
             }
         }
     }
@@ -106,6 +137,5 @@ if(is_numeric($user_id) && $user_id > 0) {
     $uinfo['superuser'] = (isset($uinfo['user_id']) && in_array($uinfo['user_id'], $super_users)) ? true: false;
 }
 $content = array('status' => $status, 'path' => $path, 'uinfo' => $uinfo , 'environment' => $env);
-//var_dump($content);die();
 print json_encode($content);
 ?>

@@ -205,7 +205,7 @@ class UserInfo
         return array($password, $pword_hash);
     }
 
-    static function authenticateUser($dbdata , $passwordRequired = true)
+    static function authenticateUser($dbdata , $passwordValidIsRequired = true)
     {
         $email = strip_tags($dbdata['email']);
         // first try the HealthMap database
@@ -217,12 +217,11 @@ class UserInfo
             die('user error!');
         }
 
-        if($passwordRequired) {
+        if($passwordValidIsRequired) {
             $resp = validate_password($dbdata['password'], $user['pword_hash']);
-            if($resp) {
-
+            if ($resp) {
                 $uinfo = $db->getRow("SELECT user.user_id, user.hmu_id, user.organization_id, organization.name AS orgname FROM user LEFT JOIN epicore.organization ON user.organization_id = organization.organization_id WHERE hmu_id = ?", array($user['hmu_id']));
-                if(is_a($uinfo, 'DB_Error')) {
+                if (is_a($uinfo, 'DB_Error')) {
                     print_r($uinfo);
                     die('uinfo error!');
                 }
@@ -232,15 +231,15 @@ class UserInfo
             } else {
                 // first try the MOD user table.  If none, try the FETP user table.
                 $uinfo = $db->getRow("SELECT user.*, organization.name AS orgname FROM user LEFT JOIN organization ON user.organization_id = organization.organization_id WHERE email = ?", array($email));
-                if(!$uinfo['user_id']) {
+                if (!$uinfo['user_id']) {
 
                     $uinfo = $db->getRow("SELECT fetp_id, pword_hash, lat, lon, countrycode, active, email, status, locations FROM fetp WHERE email = ?", array($email));
-                    $uinfo['username'] = "Member ".$uinfo['fetp_id'];
+                    $uinfo['username'] = "Member " . $uinfo['fetp_id'];
                 }
-                if($uinfo['user_id'] || $uinfo['fetp_id']) {
+                if ($uinfo['user_id'] || $uinfo['fetp_id']) {
 
                     $resp = validate_password($dbdata['password'], $uinfo['pword_hash']);
-                    if($resp) {
+                    if ($resp) {
                         unset($uinfo['pword_hash']);
                         return $uinfo;
                     }
@@ -249,23 +248,14 @@ class UserInfo
             }
         }
 
-        $user = $db->getRow("SELECT hmu_id, username, email, pword_hash from hm_hmu WHERE (username = ? OR email = ?) AND confirmed = 1", array($email, $email));
-        if(!is_null($user)){
-            $uinfo['username'] = $user['username'];
-            $uinfo['email'] = $user['email'];
-
-            return $uinfo;
+        $uinfo = $db->getRow("SELECT user.user_id, user.hmu_id, user.organization_id, organization.name AS orgname FROM user LEFT JOIN epicore.organization ON user.organization_id = organization.organization_id WHERE hmu_id = ?", array($user['hmu_id']));
+        if (is_a($uinfo, 'DB_Error')) {
+            print_r($uinfo);
+            die('uinfo error!');
         }
-        $uinfo = $db->getRow("SELECT user.*, organization.name AS orgname FROM user 
-                LEFT JOIN organization ON user.organization_id = organization.organization_id 
-                WHERE email = ?", array($email));
-        if(!$uinfo['user_id']) {
-            $uinfo = $db->getRow("SELECT fetp_id, pword_hash, lat, lon, countrycode, active, email, status, locations FROM fetp WHERE email = ?" , array($email));
-            $uinfo['username'] = "Member ".$uinfo['fetp_id'];
-        }
-
+        $uinfo['username'] = $user['username'];
+        $uinfo['email'] = $user['email'];
         return $uinfo;
-
     }
 
     static function authenticateMod($ticket_id) 

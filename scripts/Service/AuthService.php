@@ -26,8 +26,9 @@ class AuthService implements IAuthService
      * @todo valid existing token
      * @param string $token
      */
-    public function ValidToken(string $token){
-
+    public function ValidToken(string $token)
+    {
+        //
     }
 
     /**
@@ -45,27 +46,31 @@ class AuthService implements IAuthService
         catch (\Aws\CognitoIdentityProvider\Exception\CognitoIdentityProviderException $exception)
         {
             $exceptionMessage = $exception->toArray();
-            if($exceptionMessage['message'] === "Incorrect username or password.")
+            if($exceptionMessage['message'] === CognitoErrors::incorectUserNameOrPassword)
             {
                 throw new \LoginException($exceptionMessage['message']);
             }
-            if($exceptionMessage['message'] === "Password attempts exceeded")
+            if($exceptionMessage['message'] === CognitoErrors::passwordAttemptsExceeded)
             {
                 throw new \LoginPasswordAttemptsExceededException($exceptionMessage['message']);
             }
+            if($exceptionMessage['message'] === CognitoErrors::accountNotExists)
+            {
+                throw new \UserAccountNotExist($exceptionMessage['message']);
+            }
 
-            throw new \Exception('Login process error');
+            throw new \Exception(CognitoErrors::incorectUserNameOrPassword);
         }
     }
 
     /**
      * @throws Exception
      */
-    public function SingUp(string $username, string $password, string $email)
+    public function SingUp(string $username, string $password, string $email , bool $dontSendEmail = false)
     {
         try
         {
-            $this->cognitoService->singUp($username, $password, $email);
+            $this->cognitoService->singUp($username, $password, $email , $dontSendEmail);
         }
         catch (\Aws\CognitoIdentityProvider\Exception\CognitoIdentityProviderException $exception)
         {
@@ -74,7 +79,6 @@ class AuthService implements IAuthService
             {
                 throw new \UserAccountExistException($exceptionMessage['message']);
             }
-
             throw new \Exception($exceptionMessage['message']);
         }
     }
