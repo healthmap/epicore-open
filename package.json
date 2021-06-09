@@ -9,6 +9,7 @@
     "flyway-info": "flyway -c flyway/conf/flyway.js info",
     "flyway-baseline": "flyway -c flyway/conf/flyway.js baseline",
     "flyway-migrate": "flyway -c flyway/conf/flyway.js migrate",
+    "flyway-repair": "flyway -c flyway/conf/flyway.js repair",
     "build": "webpack --mode=production",
     "lint": "eslint js/app",
     "lint:fix": "eslint js/app --fix"
