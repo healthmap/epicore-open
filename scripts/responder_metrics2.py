@@ -1,577 +1,567 @@
-# July 27, 2018
-# Jeff Andre
-#
-# Generates EpiCore Responders Metrics
-#
-# usage:
-#
-#  - no args: generates report for last month of data
-#    resonder_metrics.py
-#
-#  - with args: generates report for month and year
-#    responder_metrics.py month year
-#    where month = 1..12, year = 2015..2100
-#
-#
-import csv
 import datetime
-import numpy as np
-import itertools
-from pandas.plotting import table
-import sys
-import os
-import pandas as pd
+
 import matplotlib
 matplotlib.use('Agg')
-
 import matplotlib.pyplot as plt
-
-# Version issue is resolved by using following registration
+import numpy as np
+import pandas as pd
 from pandas.plotting import register_matplotlib_converters
 register_matplotlib_converters()
 
-# Suppressing Errors
-
-import warnings
-import matplotlib.cbook
-warnings.filterwarnings("ignore",category=matplotlib.cbook.mplDeprecation)
-
-# set max width
-pd.set_option('display.max_colwidth', -1)
-
-pd.set_option('display.max_rows', 1000)
-
-# set month and year
-d = datetime.date.today()
-year = d.year
-month = d.month
-# always use last month to get full month of data
-if (month > 1):
-    month = month - 1
-else:
-    month = 12
-
-# use args if available
-if (len(sys.argv) == 3):
-    arg_month = int(sys.argv[1])
-    arg_year = int(sys.argv[2])
-    if (arg_year >= 2015) and (arg_year <= 2100) and (arg_month > 0) and (arg_month <= 12):
-        month = arg_month
-        year = arg_year
-
-last_year = year - 1
-
-# next month
-next_month = month + 1
-if month == 12:
-    next_month = 1
-
-months = ['January', 'February', 'March', 'April', 'May', 'June',
-          'July', 'August', 'September', 'October', 'November', 'December']
-
-# new applicants and by region
-
-
-def df_table_image(df, file_name, title):
-    ax = plt.subplot(111, frame_on=False)  # no visible frame
-    ax.xaxis.set_visible(False)  # hide the x axis
-    ax.yaxis.set_visible(False)  # hide the y axis
-    df_table = table(ax, df, rowLabels=[
-                     '']*df.shape[0], loc='center', cellLoc='left', colWidths=[0.75, 0.5])
-    df_table.scale(1, 1.5)
-    plt.savefig(file_name, bbox_inches='tight')
-    plt.close()
-
-# no members countries
-
-
-def df_table_image1(df, file_name, title):
-    ax = plt.subplot(111, frame_on=False)  # no visible frame
-    ax.xaxis.set_visible(False)  # hide the x axis
-    ax.yaxis.set_visible(False)  # hide the y axis
-    # plt.title(title)
-    df_table = table(ax, df, rowLabels=[
-                     '']*df.shape[0], loc='center', cellLoc='left', colWidths=[0.75, 0.25])
-    df_table.scale(1, 1.5)
-    plt.savefig(file_name, bbox_inches='tight')
-    plt.close()
-
-# applicants by country
-
-
-def df_table_image2(df, file_name, title):
-    ax = plt.subplot(111, frame_on=False)  # no visible frame
-    ax.xaxis.set_visible(False)  # hide the x axis
-    ax.yaxis.set_visible(False)  # hide the y axis
-    # plt.title(title)
-    df_table = table(ax, df, rowLabels=[
-                     '']*df.shape[0], loc='center', cellLoc='left', colWidths=[0.7, 0.2, 0.3])
-    df_table.scale(1, 1.5)
-    plt.savefig(file_name, bbox_inches='tight')
-    plt.close()
-
-# experience
-
-
-def df_table_image3(df, file_name, title):
-    ax = plt.subplot(111, frame_on=False)  # no visible frame
-    ax.xaxis.set_visible(False)  # hide the x axis
-    ax.yaxis.set_visible(False)  # hide the y axis
-    # plt.title(title)
-    df_table = table(ax, df, rowLabels=[
-                     '']*df.shape[0], loc='center', cellLoc='left', colWidths=[0.8, 0.25, 0.25])
-    df_table.scale(1, 1.5)
-    plt.savefig(file_name, bbox_inches='tight')
-    plt.close()
-
-
-# PROD Location
-data_dir = '/var/www/html/prod.epicore.org/data/'
-# Local Location'
-# data_dir = '/Users/sampathchennuri/Documents/workSpace/Nodejs/healthmap/epicore/data/'
-image_dir = os.path.abspath(os.path.join(
-    os.path.dirname(__file__), '..', 'img/metrics')) + '/'
-save_data_dir = os.path.abspath(os.path.join(
-    os.path.dirname(__file__), '..', 'data')) + '/'
-
-# read world population data
-population_df = pd.read_csv(
-    data_dir + 'population_2018.csv', encoding="ISO-8859-1")
-# fix for Namibia (country code NA)
-population_df['country_code'].fillna('NA', inplace=True)
-
-# read un country codes
-# un_country_codes_df = pd.read_csv(
-#     data_dir + 'un_countrycode.csv', encoding="ISO-8859-1")
-un_country_codes_df = pd.read_csv(
-    data_dir + 'un_countrycode_new.csv', encoding="ISO-8859-1", keep_default_na=False, na_values=['_'])
-# read un country codes
-# un_country_codes_region_df = pd.read_csv(
-#     data_dir + 'un_countrycode_region.csv', encoding="ISO-8859-1")
-un_country_codes_region_df = pd.read_csv(
-    data_dir + 'un_countrycode_new.csv', encoding="ISO-8859-1")
-# read member data into dataframe
-member_df = pd.read_csv(data_dir + 'approval.csv')
-# clean up data column names
-member_df.columns = member_df.columns.to_series().str.strip().str.lower(
-).str.replace(' ', '_').str.replace('(', '').str.replace(')', '')
-# format dates for sorting
-member_df['application_date'] = pd.to_datetime(member_df['application_date'])
-member_df['approval_date'] = pd.to_datetime(member_df['approval_date'])
-member_df['acceptance_date'] = pd.to_datetime(member_df['acceptance_date'])
-# convert ids to int, set id NA values to 0
-# member_df = member_df[member_df.member_id.notnull()]
-member_df['member_id'].fillna('0', inplace=True)
-member_df['member_id'] = member_df.member_id.astype(int)
-# fix for Namibia (country code NA)
-member_df['country_code'].fillna('NA', inplace=True)
-
-# group and sort applicants and approved members by date
-app_df = member_df.groupby(['application_date']).application_date.count(
-).reset_index(name='applicants').sort_values(['application_date'])
-# group and sort by approval_date
-approved_df = member_df.groupby(['approval_date']).approval_date.count(
-).reset_index(name='approved').sort_values(['approval_date'])
-
-# group approved members by health experience
-experience_df = member_df.groupby(
-    ['health_experience', 'approval_date']).health_experience.count().reset_index(name='count')
-members_approved_df = member_df[member_df.approval_date.notnull()]
-# exp_df = member_df.groupby(['health_experience']).health_experience.count().reset_index(name='count')
-exp_df = members_approved_df.groupby(
-    ['health_experience']).health_experience.count().reset_index(name='count')
-
-
-# total experience
-total_exp = exp_df['count'].sum()
-# add column for percent values
-exp_df['percent'] = exp_df['count']*100/total_exp
-exp_df.percent = exp_df.percent.round().astype(int)
-exp_df.rename({'health_experience': 'Experience', 'count': 'Members',
-               'percent': '%'}, axis='columns', inplace=True)
-
-####################################################################
-
-
-# Following will bring in the blank values
-# These are not supposed to be blank, but for some reason, they are..
-# so this has to be accounted for
-
-####################################################################
-
-exp_blank_df_cols = member_df[['first_name', 'application_date',
-                               'health_experience']]
-exp_blank_df = exp_blank_df_cols.query(
-    'health_experience != health_experience').count().reset_index(name='count')
-
-exp_none_df = exp_df[exp_df['Experience'].str.lower().str.contains("none")]
-
-total_none_applicants = exp_blank_df.iloc[1]['count'] + \
-    exp_df.iloc[7]['Members']
-
-modDfObj = exp_df.append(
-    {'Experience': 'None', 'Members': total_none_applicants, '%': "NA"}, ignore_index=True)
-
-exp_obj_with_total_none = modDfObj.drop(modDfObj.index[7])
-
-# print("Null - Left Blank ?? Experience => ", exp_obj_with_total_none)
-
-####################################################################
-#END#
-####################################################################
-
-
-# create image for report
-exp_df.to_html(
-    save_data_dir + 'experience_table.html', index=False)
-# df_table_image3(exp_df, image_dir + 'experience_table.png', 'Professional Background')
-
-
-# get total human experience, filtered by "human"
-human_exp_df = exp_df[exp_df['Experience'].str.lower().str.contains("human")]
-total_human_exp = human_exp_df['%'].sum()
-# human_exp_df = experience_df[experience_df['health_experience'].str.lower().str.contains("human")]
-# total_human_exp = human_exp_df['n'].sum()
-
-# get total animal experience, filtered by "animal:
-animal_exp_df = exp_df[exp_df['Experience'].str.lower().str.contains("animal")]
-total_animal_exp = animal_exp_df['%'].sum()
-# animal_exp_df = experience_df[experience_df['health_experience'].str.lower().str.contains("animal")]
-# total_animal_exp = animal_exp_df['n'].sum()
-# get total environmental experience, filtered by "environmental"
-environmental_exp_df = exp_df[exp_df['Experience'].str.lower(
-).str.contains("environmental")]
-total_environmental_exp = environmental_exp_df['%'].sum()
-# environmental_exp_df = experience_df[experience_df['health_experience'].str.lower().str.contains("environmental")]
-# total_environmental_exp = environmental_exp_df['n'].sum()
-
-# exp_none_df = exp_df[exp_df['Experience'].str.lower().str.contains("none")]
-
-# plot expertise bar chart
-total_health_exp = total_human_exp + total_animal_exp + total_environmental_exp
-human_exp = round((100*total_human_exp/total_health_exp))
-animal_exp = round((100*total_animal_exp/total_health_exp))
-env_exp = round((100*total_environmental_exp/total_health_exp))
-fig2 = plt.figure()
-x = np.arange(3)
-y = [total_human_exp, total_animal_exp, total_environmental_exp]
-# y = [human_exp, animal_exp, env_exp]
-# plt.title('Overall Health Expertise (%)')
-hm, an, en = plt.bar(x, y, align="center", edgecolor="none")
-hm.set_facecolor('#015163')
-an.set_facecolor('#3fc8c8')
-en.set_facecolor('#2e3335')
-plt.xticks(x, ('Human', 'Animal', 'Environmental'))
-plt.tick_params(top='off', bottom='off', left='off', right='off',
-                labelleft='off', labelbottom='on', labelsize=14)
-plt.box(False)
-# add value labels to bars
-for a, b in zip(x, y):
-    plt.text(a, b+2, str(b)+'%', ha="center", color="#2e3335", fontsize=18)
-fig2.savefig(image_dir + "health_expertise.svg",
-             bbox_inches='tight', format='svg')
-
-# generate member applications plot
-fig1 = plt.figure()
-this_year = datetime.date.today().year
-member_title = 'Epicore Applicants ' + str(last_year) + '-' + str(this_year)
-# plt.title(member_title)
-plt.plot(app_df.application_date, app_df.applicants, color='#3fc8c8')
-plt.tick_params(top='off', bottom='off', left='off', right='off',
-                labelleft='on', labelbottom='on', labelsize=12, labelcolor='#878c8d')
-plt.xticks(rotation=20)
-plt.gca().spines['right'].set_color('none')
-plt.gca().spines['top'].set_color('none')
-plt.gca().spines['left'].set_color('#d5d7d8')
-plt.gca().spines['bottom'].set_color('#d5d7d8')
-plt.xlim([datetime.date(last_year, 1, 1), datetime.datetime.now()])
-plt.ylim([0, 10])
-fig1.savefig(image_dir + "applicants_year.svg",
-             format='svg',  bbox_inches='tight')
-
-# get applicants for another plot
-plot_year = year
-plot_start_month = month
-if plot_start_month == 12:
-    plot_year = year-1
-mask = (app_df['application_date'] > pd.Timestamp(datetime.date(plot_year, plot_start_month, 1))) & (
-    app_df['application_date'] < pd.Timestamp(datetime.datetime.now()))
-applicants_plot_df = app_df.loc[mask]
-# generate plot
-fig1 = plt.figure()
-plt.plot(applicants_plot_df.application_date,
-         applicants_plot_df.applicants, color='#3fc8c8')
-plt.tick_params(top='off', bottom='off', left='off', right='off',
-                labelleft='on', labelbottom='on', labelsize=12, labelcolor='#878c8d')
-plt.xticks(rotation=20)
-plt.gca().spines['right'].set_color('none')
-plt.gca().spines['top'].set_color('none')
-plt.gca().spines['left'].set_color('#d5d7d8')
-plt.gca().spines['bottom'].set_color('#d5d7d8')
-plt.xlim([datetime.date(plot_year, plot_start_month, 1), datetime.datetime.now()])
-plt.ylim([0, 10])
-fig1.savefig(image_dir + "applicants_month.svg",
-             format='svg', bbox_inches='tight')
-
-# get total applicants for the month
-start_year = year
-if next_month == 1:
-    start_year = year-1
-mask = (app_df['application_date'] >= pd.Timestamp(datetime.date(start_year, month, 1))) & (
-    app_df['application_date'] < pd.Timestamp(datetime.date(year, next_month, 1)))
-applicants_month = app_df.loc[mask]
-total_applicants = applicants_month['applicants'].sum()
-
-# get accepted applicants with no training
-today = datetime.datetime.now()
-two_months_ago = today - datetime.timedelta(days=60)
-mask = (member_df['user_status'] == 'Accepted') & member_df['course_type'].isnull(
-) & (member_df['acceptance_date'] > two_months_ago)
-# mask = (member_df['user_status'] == 'Accepted') & member_df['course_type'].isnull() & (member_df['acceptance_date'] > pd.Timestamp(datetime.date(2018, 1, 1)))
-app_no_training_df = member_df.loc[mask]
-app_no_training_df.rename(columns={
-                          'acceptance_date': 'Acceptance Date', 'member_id': 'Member ID'}, inplace=True)
-app_no_training_df = app_no_training_df[['Acceptance Date', 'Member ID']]
-app_no_training_df.to_html(
-    save_data_dir + 'app_no_training_table.html', index=False)
-
-
-# get heard about applicants
-start_year = year
-if next_month == 1:
-    start_year = year-1
-mask = (member_df['application_date'] > pd.Timestamp(datetime.date(start_year, month, 1))) & (
-    member_df['application_date'] < pd.Timestamp(datetime.date(year, next_month, 1)))
-members_month_df = member_df.loc[mask]
-members_month_df.rename(
-    columns={'heard_about_epicore_by': 'Source'}, inplace=True)
-heard_about_df = members_month_df.groupby(['Source']).Source.count(
-).reset_index(name='Applicants').sort_values(['Source'])
-# remove problem decodes chars for to_html
-heard_about_df['Source'] = heard_about_df.Source.str.decode(
-    'ascii', errors='ignore')
-heard_about_df.to_html(save_data_dir + 'heard_about_table.html', index=False)
-
-# print("Heard about start -> ", datetime.date(start_year, month, 1), "END --->", datetime.date(year, next_month, 1))
-
-# get total approved members for the month
-mask = (approved_df['approval_date'] >= pd.Timestamp(datetime.date(start_year, month, 1))) & (
-approved_df['approval_date'] < pd.Timestamp(datetime.date(year, next_month, 1)))
-approved_month = approved_df.loc[mask]
-total_approved_month = approved_month['approved'].sum()
-total_approved = approved_df['approved'].sum()
-
-# print("Approve Month => ", approved_month)
-
-# group and sort by application_date, country
-app_country_date_df = member_df.groupby(['country', 'application_date']).country.count(
-).reset_index(name='applicants').sort_values(['country'])
-
-# app_country_data = member_df.groupby(['country']).country.count().reset_index(name='applicants').sort_values(['country'])
-
-# print("App Country Date => ", app_country_date_df)
-
-# get new applicants for each country by month
-mask = (app_country_date_df['application_date'] > pd.Timestamp(datetime.date(start_year, month, 1))) & (
-    app_country_date_df['application_date'] < pd.Timestamp(datetime.date(year, next_month, 1)))
-app_country_month = app_country_date_df.loc[mask]
-app_by_country = app_country_month.groupby(
-    ['country']).sum().reset_index('country')
-
-# print("App by Country -> ", app_country_month)
-# print("App group by C -> ", app_by_country)
-
-
-new_responders_basic_table = member_df[['application_date','approval_date','country_code','country']]
-
-new_responders_grp_by_country = new_responders_basic_table.groupby(['country', 'approval_date']).country.count(
-).reset_index(name='Members').sort_values(['country'])
-
-new_responders_mask = (new_responders_grp_by_country['approval_date'] >= pd.Timestamp(datetime.date(start_year, month, 1))) & (
-    new_responders_grp_by_country['approval_date'] < pd.Timestamp(datetime.date(year, next_month, 1)))
-
-masked_new_responders_grp_by_country = new_responders_grp_by_country.loc[new_responders_mask]
-
-output_new_responders = masked_new_responders_grp_by_country.groupby(['country']).sum().reset_index()
-
-output_new_responders.to_html(
-    save_data_dir + 'new_applicants_table.html', index=False)
-
-
-# create image for report
-# app_by_country.to_html(
-#     save_data_dir + 'new_applicants_table.html', index=False)
-# df_table_image(app_by_country, image_dir + 'new_applicants_table.png', '')
-
-# group and sort by country
-approved_mask = member_df['user_status'] == 'Approved'
-member_approved_df = member_df.loc[approved_mask]
-app_country_df = member_approved_df.groupby(['country', 'country_code', 'who_region']).country.count(
-).reset_index(name='applicants').sort_values(['country'])
-# merge country and population tables
-app_country_pop_df = app_country_df.merge(
-    population_df, how='left', on='country_code')
-app_country_pop_df.rename(columns={'country_x': 'country'}, inplace=True)
-del app_country_pop_df['country_y']
-
-# print(app_country_pop_df)
-
-# merge with 3 letter UN country codes
-app_country_pop_un_df = app_country_pop_df.merge(
-    un_country_codes_df, how='left', on='country_code')
-app_country_pop_un_df.rename(columns={'country_x': 'country'}, inplace=True)
-del app_country_pop_un_df['country_y']
-
-# print(app_country_pop_un_df)
-
-# include member density (responders per 1 million population) and sort by density
-app_country_pop_un_df['member_density'] = 1000 * \
-    app_country_pop_un_df['applicants']/app_country_pop_un_df['population']
-app_country_pop_un_df['member_density'] = app_country_pop_un_df['member_density'].round(
-    2)
-app_country_pop_un_df = app_country_pop_un_df.sort_values(['country'])
-
-# get countries with no members
-all_country_df = un_country_codes_df.merge(
-    app_country_df, how='left', on='country_code')
-all_country_df.rename(columns={'country_x': 'country'}, inplace=True)
-del all_country_df['country_y']
-all_country_df.sort_values(['applicants'], inplace=True)
-mask = all_country_df['applicants'].isnull()
-no_member_countries = all_country_df.loc[mask]
-no_member_countries = no_member_countries[['country', 'un_country_code']]
-no_member_countries = no_member_countries[no_member_countries.un_country_code.notnull(
-)]
-
-total_no_member_countries = len(no_member_countries.index)
-# len(all_country_df.index) - total_no_member_countries
-total_member_countries = len(app_country_df)
-# df_table_image1(no_member_countries, image_dir + 'no_applicants_countries_table.png', '')
-no_member_countries.to_html(save_data_dir + 'no_applicants_countries_table.html', index=False)
-
-# merge no member countries with regions
-no_member_countries_regions_df = no_member_countries.merge(
-    un_country_codes_region_df, how='left', on='un_country_code')
-no_member_countries_regions_df = no_member_countries_regions_df[[
-    'country_x', 'country_code', 'un_country_code', 'who_region', 'sub-region']]
-no_member_countries_regions_df.rename(columns={'country_x': 'country', 'who_region': 'Region', 'sub-region': 'sub_region'}, inplace=True)
-
-# print("No member country with Regions => ", no_member_countries_regions_df)
-
-# group by region
-no_members_reg = no_member_countries_regions_df.groupby('Region').agg({'un_country_code': lambda x: ', '.join(x)})
-
-# print("No Member Countries Group by Region ==> ", no_members_reg)
-
-
-####################################################################
-
-#           Implementing New country codes/ Regions data
-#           based on the latest data from UN
-
-#           EpiCore team has approved the display of new regions
-#           Africa -- Americas -- Europe -- Asia -- Oceania
-
-#           Updated by Sam, CH157135 - 07/26/2019
-####################################################################
-
-# Merge current approval data to the new regions list
-no_member_countries_new_df = member_approved_df.merge(un_country_codes_region_df, how='left', on='country_code')
-
-# Pick few columns for ease
-no_member_countries_new_df = no_member_countries_new_df[['approval_date', 'country_code', 'un_country_code', 'who_region_x', 'who_region_y']]
-
-# Rename Columns
-no_member_countries_new_df.rename(columns={'approval_date': 'approval_date', 'country_code': 'country_code', 'un_country_code': 'un_country_code', 'who_region_x': 'who_region_old', 'who_region_y': 'Region'}, inplace=True)
-
-# Group by Region and sum up the total applicants from that region
-po_grouped_df = no_member_countries_new_df.groupby(['Region']).Region.count().reset_index(name='applicants').sort_values(['Region'])
-
-# Finally Merge the above output to the list of NO MEMBER countries in the region
-final_output_df = po_grouped_df.merge(no_members_reg, how='left', on='Region')
-
-total_region_applicants = final_output_df.applicants.sum()
-
-final_output_df['Members(%)'] = (100*final_output_df['applicants']/total_region_applicants).round().astype(int)
-# exp_df.percent = exp_df.percent.round().astype(int)
-final_output_df.rename(columns={'applicants': 'Members'}, inplace=True)
-
-final_output_df.rename(columns={'un_country_code': 'Countries with No Members'}, inplace=True)
-
-final_output_df.fillna('', inplace=True)
-
-# print("No Member Countries with New countries from UN list==> ",final_output_df)
-
-final_output_df.to_html(save_data_dir + 'no_members_region_table.html', index=False)
-
-####################################################################
-
-#                           END
-
-####################################################################
-
-
-# applicants by country table
-app_country_density_df = app_country_pop_un_df[['country', 'applicants', 'member_density']]
-app_country_density_df.rename(columns={'country': 'Country', 'applicants': 'n', 'member_density': 'Density'}, inplace=True)
-app_country_density_df.to_html(save_data_dir + 'country_table.html', index=False)
-# df_table_image2(app_country_density_df, image_dir + 'country_table.png', '')
-
-
-# group by region, count members in regions, and sort by region
-app_region_df = members_approved_df.groupby(['who_region']).who_region.count().reset_index(name='applicants').sort_values(['who_region'])
-
-# print("App Region DF = > ", app_region_df)
-
-# re-arrange regions
-central_america_df = app_region_df[app_region_df['who_region'].str.lower().str.contains("central america")]
-central_america_total = central_america_df['applicants'].sum()
-app_region_df.at[5, 'who_region'] = 'Central-South America'
-app_region_df.at[5, 'applicants'] = int(central_america_total)
-new_region_df = app_region_df.drop([3, 7])
-new_region_df.rename(columns={'who_region': 'Region'}, inplace=True)
-
-# print("New Region output => ", new_region_df)
-
-# create image
-# df_table_image(new_region_df, image_dir + 'region_table.png', 'Applicants by Region')
-new_region_df.to_html(save_data_dir + 'region_table.html', index=False)
-
-# data frame for members by region merged with counties with no members
-# calculate %
-total_region_applicants = new_region_df.applicants.sum()
-new_region_df['Members(%)'] = (100*new_region_df['applicants']/total_region_applicants).round().astype(int)
-# exp_df.percent = exp_df.percent.round().astype(int)
-new_region_df.rename(columns={'applicants': 'Members'}, inplace=True)
-
-# print("New Region DF => ", new_region_df)
-# print("No Members Region -> ", no_members_reg)
-
-# merge with no members regions
-no_members_region_df = new_region_df.merge(no_members_reg, how='left', on='Region')
-# no_members_region_df.rename(
-#     columns={'un_country_code': 'Countries with No Members'}, inplace=True)
-# no_members_region_df.fillna('', inplace=True)
-
-# no_members_region_df.to_html(
-#     save_data_dir + 'no_members_region_table.html', index=False)
-
-
-# creat data frame for memebership summary
-data = [['Responders', total_approved],
-        ['New Applicants', str(total_applicants)],
-        ['New Responders', str(total_approved_month)],
-        ['Countries Represented', str(total_member_countries)], \
-        # ['Countries not represented', str(total_no_member_countries)]
+
+def clean_pair(pair):
+    if len(pair) > 2:
+        pair = [pair[0], "=".join(pair[1:])]
+        return pair
+    elif len(pair) <= 1:
+        raise TypeError(
+            "Pair must be an iterable of length 2. Is there a blank row in your .env file?")
+    return pair
+
+
+def load_env(path):
+    """Load environment variables from .env."""
+    with open(path) as f:
+        lines = f.readlines()
+    pairs = [x.split("=") for x in lines]
+    pairs = [clean_pair(p) for p in pairs]
+    env = {k: v.replace("\n", "") for k, v in pairs}
+    try:
+        return env['DATA_DIR'], env['IMAGE_DIR'], env['SAVE_DATA_DIR']
+    except KeyError as e:
+        print("Environment variable missing:")
+        print(e)
+
+
+_DATA_DIR, _IMAGE_DIR, _SAVE_DATA_DIR = load_env("../.env")
+
+
+def load_population():
+    """Load and clean population data."""
+    population = pd.read_csv(
+        _DATA_DIR + "population_2018.csv", encoding="ISO-8859-1")
+    # fix for Namibia (country code NA)
+    population["country_code"].fillna("NA", inplace=True)
+    return population
+
+
+def load_country_codes():
+    """Load and clean UN Country Codes."""
+    un_codes = pd.read_csv(
+        _DATA_DIR + "un_countrycode_new.csv", encoding="ISO-8859-1")
+    un_codes = un_codes.fillna("NA")
+    return un_codes
+
+
+def load_members():
+    """Load and clean members approval data."""
+    members = pd.read_csv(_DATA_DIR + "approval.csv")
+    # clean up data column names
+    members.columns = (
+        members.columns.to_series()
+        .str.strip()
+        .str.lower()
+        .str.replace(" ", "_", regex=False)
+        .str.replace("(", "", regex=False)
+        .str.replace(")", "", regex=False)
+    )
+    # format dates for sorting
+    members["application_date"] = pd.to_datetime(members["application_date"])
+    members["approval_date"] = pd.to_datetime(members["approval_date"])
+    members["acceptance_date"] = pd.to_datetime(members["acceptance_date"])
+    # convert ids to int, set id NA values to 0
+    members["member_id"].fillna("0", inplace=True)
+    members["member_id"] = members.member_id.astype(int)
+    # fix for Namibia (country code NA)
+    members["country_code"].fillna("NA", inplace=True)
+    return members
+
+
+def process_apps_by_date(members):
+    """Build applicants by date aggregates."""
+    # group and sort applicants and approved members by date
+    apps_by_date = (
+        members.groupby(["application_date"])
+        .application_date.count()
+        .reset_index(name="applicants")
+        .sort_values(["application_date"])
+    )
+    return apps_by_date
+
+
+def process_exp(members):
+    """Build member counts with health experience."""
+    approved = members[members.approval_date.notnull()]
+    exp = (
+        approved.groupby(["health_experience"])
+        .health_experience.count()
+        .reset_index(name="count")
+    )
+
+    # total experience
+    total_exp = exp["count"].sum()
+    # add column for percent values
+    exp["percent"] = exp["count"] * 100 / total_exp
+    exp.percent = exp.percent.round().astype(int)
+    exp.columns = ["Experience", "Members", "%"]
+    return exp
+
+
+def process_members(members, population, un_codes):
+    """Build merged dataframes split by members/no members."""
+    approved = members.loc[members["user_status"] == "Approved"].copy()
+    app_country = (
+        approved.groupby(["country", "country_code", "who_region"])
+        .country.count()
+        .reset_index(name="applicants")
+        .sort_values(["country"])
+    )
+    # merge country and population tables
+    app_country_pop = app_country.merge(
+        population.drop("country", axis=1), how="left", on="country_code"
+    )
+
+    # merge with 3 letter UN country codes
+    mem_countries = app_country_pop.merge(
+        un_codes.drop("country", axis=1), how="left", on="country_code"
+    )
+
+    # include members density (responders per 1 million population) and sort by density
+    mem_countries["member_density"] = (
+        1000 * mem_countries["applicants"] / mem_countries["population"]
+    ).round(2)
+    mem_countries = mem_countries.sort_values(["member_density"])
+
+    # get countries with no members
+    all_country = un_codes.merge(
+        app_country.drop("country", axis=1), how="left", on="country_code"
+    )
+    all_country.sort_values(["applicants"], inplace=True)
+    mask = all_country["applicants"].isnull()
+    no_mem_countries = all_country.loc[mask].copy()
+    no_mem_countries = no_mem_countries[["country", "un_country_code"]]
+    no_mem_countries = no_mem_countries[no_mem_countries.un_country_code.notnull(
+    )]
+    return mem_countries, no_mem_countries
+
+
+def process_new_region(members):
+    """Build members by WHO region dataframe."""
+    approved = members.loc[members["user_status"] == "Approved"].copy()
+    # group by region, count members in regions, and sort by region
+    app_region = (
+        approved.groupby(["who_region"])
+        .who_region.count()
+        .reset_index(name="applicants")
+        .sort_values(["who_region"])
+    )
+
+    # re-arrange regions
+    central_america = app_region[
+        app_region["who_region"].str.lower().str.contains("central america")
+    ]
+    central_america_total = central_america["applicants"].sum()
+    app_region.at[5, "who_region"] = "Central-South America"
+    app_region.at[5, "applicants"] = int(central_america_total)
+    new_region = app_region.drop([3, 7])
+    new_region.rename(columns={"who_region": "Region"}, inplace=True)
+    return new_region
+
+
+def get_masks(df, dt_col):
+    """Get boolean masks for filtering by timeframe."""
+    last_month, year = get_last_month_year()
+
+    last_month = (df[dt_col].dt.month == last_month) & (
+        df[dt_col].dt.year == year)
+    ytd = df[dt_col].dt.year == year
+    last_year = df[dt_col].dt.year == (year - 1)
+
+    return last_month, ytd, last_year
+
+
+def get_last_month_year():
+    """Get last full month and associated year."""
+    today = datetime.date.today()
+    first_day_of_month = today.replace(day=1)
+    last_day_last_month = first_day_of_month - datetime.timedelta(days=1)
+    last_month = last_day_last_month.month
+    year = last_day_last_month.year
+    return last_month, year
+
+
+def get_total_applicants_month(apps_by_date):
+    """Get total count of applicants for last full month."""
+    last_month, _, _ = get_masks(apps_by_date, "application_date")
+    applicants_month = apps_by_date.loc[last_month].copy()
+    total_apps = applicants_month["applicants"].sum()
+    return total_apps
+
+
+def get_approved_totals(members):
+    """Get total count of approvals for all time and last month."""
+    approved_by_date = (
+        members.groupby(["approval_date"])
+        .approval_date.count()
+        .reset_index(name="approved")
+        .sort_values(["approval_date"])
+    )
+    last_month, _, _ = get_masks(approved_by_date, "approval_date")
+    approved_month = approved_by_date.loc[last_month].copy()
+
+    tot_appr = approved_by_date["approved"].sum()
+    tot_appr_month = approved_month["approved"].sum()
+    return tot_appr, tot_appr_month
+
+
+def get_comma_separated(codes):
+    """Takes list of codes, returns comma separated string."""
+    return ", ".join(codes)
+
+
+def plot_experience(exp):
+    """Save chart of members by health experience."""
+    # get total human experience, filtered by "human"
+    human_exp = exp[exp["Experience"].str.lower().str.contains("human")]
+    total_human_exp = human_exp["%"].sum()
+    # get total animal experience, filtered by "animal:
+    animal_exp = exp[exp["Experience"].str.lower().str.contains("animal")]
+    total_animal_exp = animal_exp["%"].sum()
+    # get total environmental experience, filtered by "environmental"
+    environmental_exp = exp[exp["Experience"].str.lower(
+    ).str.contains("environmental")]
+    total_environmental_exp = environmental_exp["%"].sum()
+    # plot expertise bar chart
+    fig2 = plt.figure()
+    x = np.arange(3)
+    y = [total_human_exp, total_animal_exp, total_environmental_exp]
+    hm, an, en = plt.bar(x, y, align="center", edgecolor="none")
+    hm.set_facecolor("#015163")
+    an.set_facecolor("#3fc8c8")
+    en.set_facecolor("#2e3335")
+    plt.xticks(x, ("Human", "Animal", "Environmental"))
+    plt.tick_params(
+        top=False,
+        bottom=False,
+        left=False,
+        right=False,
+        labelleft=False,
+        labelbottom=True,
+        labelsize=14,
+    )
+    plt.box(False)
+    # add value labels to bars
+    for a, b in zip(x, y):
+        plt.text(a, b + 2, str(b) + "%", ha="center",
+                 color="#2e3335", fontsize=18)
+    fig2.savefig(_IMAGE_DIR + "health_expertise.svg",
+                 bbox_inches="tight", format="svg")
+
+
+def plot_applicants(apps_by_date, year):
+    """Save plot of applicants by date."""
+    fig = plt.figure()
+    plt.plot(
+        apps_by_date.application_date,
+        apps_by_date.applicants,
+        color="#3fc8c8",
+    )
+    plt.tick_params(
+        top=False,
+        bottom=False,
+        left=False,
+        right=False,
+        labelleft=True,
+        labelbottom=True,
+        labelsize=12,
+        labelcolor="#878c8d",
+    )
+    plt.xticks(rotation=20)
+    plt.gca().spines["right"].set_color("none")
+    plt.gca().spines["top"].set_color("none")
+    plt.gca().spines["left"].set_color("#d5d7d8")
+    plt.gca().spines["bottom"].set_color("#d5d7d8")
+    plt.xlim([datetime.date((year - 1), 1, 1), datetime.datetime.now()])
+    plt.ylim([0, 10])
+    fig.savefig(_IMAGE_DIR + "applicants_year.svg",
+                format="svg", bbox_inches="tight")
+
+
+def plot_applicants_last_month(apps_by_date):
+    """Save plot of applicants by date for last month."""
+    last_month, year = get_last_month_year()
+    last_month_mask, _, _ = get_masks(apps_by_date, "application_date")
+    applicants_plot = apps_by_date.loc[last_month_mask].copy()
+    # generate plot
+    fig = plt.figure()
+    plt.plot(
+        applicants_plot.application_date,
+        applicants_plot.applicants,
+        color="#3fc8c8",
+    )
+    plt.tick_params(
+        top=False,
+        bottom=False,
+        left=False,
+        right=False,
+        labelleft=True,
+        labelbottom=True,
+        labelsize=12,
+        labelcolor="#878c8d",
+    )
+    plt.xticks(rotation=20)
+    plt.gca().spines["right"].set_color("none")
+    plt.gca().spines["top"].set_color("none")
+    plt.gca().spines["left"].set_color("#d5d7d8")
+    plt.gca().spines["bottom"].set_color("#d5d7d8")
+    plt.xlim([datetime.date(year, last_month, 1), datetime.datetime.now()])
+    plt.ylim([0, 10])
+    fig.savefig(_IMAGE_DIR + "applicants_month.svg",
+                format="svg", bbox_inches="tight")
+
+
+def create_experience_table(exp):
+    """Export experience report."""
+    exp.to_html(_SAVE_DATA_DIR + "experience_table.html", index=False)
+
+
+def create_app_no_training_table(members):
+    """Export accepted applicants w/ no training report."""
+    today = datetime.datetime.now()
+    two_months_ago = today - datetime.timedelta(days=60)
+    mask = (
+        (members["user_status"] == "Accepted")
+        & (members["course_type"].isnull())
+        & (members["acceptance_date"] > two_months_ago)
+    )
+    app_no_training = members.loc[mask].copy()
+    app_no_training.rename(
+        columns={"acceptance_date": "Acceptance Date",
+                 "member_id": "members ID"},
+        inplace=True,
+    )
+    app_no_training = app_no_training[["Acceptance Date", "members ID"]]
+    app_no_training.to_html(
+        _SAVE_DATA_DIR + "app_no_training_table.html", index=False)
+
+
+def create_heard_about_table(members):
+    """Export heard about Epicore report."""
+    last_month_mask, _, _ = get_masks(members, "application_date")
+    members_month = members.loc[
+        last_month_mask,
+    ].copy()
+    members_month.rename(
+        columns={"heard_about_epicore_by": "Source"}, inplace=True)
+    heard_about = (
+        members_month.groupby(["Source"])
+        .Source.count()
+        .reset_index(name="Applicants")
+        .sort_values(["Source"])
+    )
+    heard_about.to_html(_SAVE_DATA_DIR + "heard_about_table.html", index=False)
+
+
+def create_new_applicants_table(members):
+    """Export new applicants report."""
+    members = members[
+        ["application_date", "approval_date", "country_code", "country"]
+    ].copy()
+
+    new_by_country = (
+        members.groupby(["country", "approval_date"])
+        .country.count()
+        .reset_index(name="Members")
+        .sort_values(["country"])
+    )
+    last_month_mask, _, _ = get_masks(new_by_country, "approval_date")
+    new_last_month = new_by_country.loc[last_month_mask].copy()
+
+    report = new_last_month.groupby(["country"]).sum().reset_index()
+    report.to_html(_SAVE_DATA_DIR + "new_applicants_table.html", index=False)
+
+
+def create_no_member_countries_table(no_mem_countries):
+    """Export countries with no members report."""
+    no_mem_countries.to_html(
+        _SAVE_DATA_DIR + "no_applicants_countries_table.html", index=False
+    )
+
+
+def create_no_members_region_table(members, no_mem_countries, un_codes):
+    """Export regions with no members report."""
+    approved = members.loc[members["user_status"] == "Approved"].copy()
+    # merge no members countries with regions
+    no_member_regions = no_mem_countries.merge(
+        un_codes, how="left", on="un_country_code"
+    )
+    no_member_regions = no_member_regions[
+        ["country_x", "country_code", "un_country_code", "who_region"]
+    ]
+    no_member_regions.rename(
+        columns={"country_x": "country", "who_region": "Region"}, inplace=True
+    )
+
+    # group by region
+    no_members_reg = no_member_regions.groupby("Region").agg(
+        {"un_country_code": get_comma_separated}
+    )
+
+    # Merge current approval data to the new regions list
+    no_member_merged = approved.merge(un_codes, how="left", on="country_code")
+
+    # Pick few columns for ease
+    no_member_merged = no_member_merged[
+        [
+            "approval_date",
+            "country_code",
+            "un_country_code",
+            "who_region_x",
+            "who_region_y",
         ]
+    ]
 
-membership_df = pd.DataFrame(data, columns=['Metric', 'Value'])
-membership_df.to_csv(save_data_dir + 'membership.csv', sep='|', index=False)
-membership_df.to_html(save_data_dir + 'membership.html', index=False)
-# df_table_image(membership_df, image_dir + 'membership.png', '')
+    # Rename Columns
+    no_member_merged.rename(
+        columns={
+            "approval_date": "approval_date",
+            "country_code": "country_code",
+            "un_country_code": "un_country_code",
+            "who_region_x": "who_region_old",
+            "who_region_y": "Region",
+        },
+        inplace=True,
+    )
 
-# creat data frame for memebers in region
-data_region = [['Countries and territories included: ' + str(total_member_countries), 'Countries and territories missing: ' + str(total_no_member_countries)]]
+    # Group by Region and sum up the total applicants from that region
+    po_grouped = (
+        no_member_merged.groupby(["Region"])
+        .Region.count()
+        .reset_index(name="applicants")
+        .sort_values(["Region"])
+    )
 
-data_region_df = pd.DataFrame(data_region, columns=['', ''])
-data_region_df.to_html(save_data_dir + 'members_regions.html', index=False)
+    # Finally Merge the above output to the list of NO members countries in the region
+    report = po_grouped.merge(no_members_reg, how="left", on="Region")
+
+    total_region_applicants = report.applicants.sum()
+
+    report["Members(%)"] = (
+        (100 * report["applicants"] /
+         total_region_applicants).round().astype(int)
+    )
+    report.rename(
+        columns={
+            "applicants": "Members",
+            "un_country_code": "Countries with No Members",
+        },
+        inplace=True,
+    )
+    report.fillna("", inplace=True)
+
+    report.to_html(_SAVE_DATA_DIR +
+                   "no_members_region_table.html", index=False)
+    return report
+
+
+def create_country_table(mem_countries):
+    """Export applicants by country report."""
+    app_country_density = mem_countries[
+        ["country", "applicants", "member_density"]
+    ].copy()
+    app_country_density.rename(
+        columns={"country": "Country", "applicants": "n",
+                 "member_density": "Density"},
+        inplace=True,
+    )
+    app_country_density.to_html(
+        _SAVE_DATA_DIR + "country_table.html", index=False)
+
+
+def create_region_table(new_region):
+    """Export region table report."""
+    # data frame for members by region merged with counties with no members
+    # calculate %
+    total_region_applicants = new_region.applicants.sum()
+    new_region["Members(%)"] = (
+        (100 * new_region["applicants"].astype(float) /
+         float(total_region_applicants)).round(1)
+    )
+    new_region.rename(columns={"applicants": "Members"}, inplace=True)
+    new_region.to_html(_SAVE_DATA_DIR + "region_table.html", index=False)
+
+
+def create_membership_table(
+    tot_appr,
+    total_apps,
+    tot_appr_month,
+    total_member_countries,
+):
+    """Export membership summary report."""
+    # creat data frame for memebership summary
+    data = [
+        ["Responders", tot_appr],
+        ["New Applicants", str(total_apps)],
+        ["New Responders", str(tot_appr_month)],
+        ["Countries Represented", str(total_member_countries)],
+    ]
+
+    membership = pd.DataFrame(data, columns=["Metric", "Value"])
+    membership.to_csv(_SAVE_DATA_DIR + "membership.csv", sep="|", index=False)
+    membership.to_html(_SAVE_DATA_DIR + "membership.html", index=False)
+
+
+def create_members_regions_table(total_member_countries, total_no_member_countries):
+    """Export regions with/without members report."""
+    data_region = [
+        [
+            "Countries and territories included: " +
+            str(total_member_countries),
+            "Countries and territories missing: " +
+            str(total_no_member_countries),
+        ]
+    ]
+
+    data_region = pd.DataFrame(data_region, columns=["", ""])
+    data_region.to_html(_SAVE_DATA_DIR + "members_regions.html", index=False)
+
+
+def main():
+    """Main function for generating plots/reports."""
+    population = load_population()
+    un_codes = load_country_codes()
+    members = load_members()
+
+    exp = process_exp(members)
+    apps_by_date = process_apps_by_date(members)
+    mem_countries, no_mem_countries = process_members(
+        members, population, un_codes)
+    new_region = process_new_region(members)
+
+    _, year = get_last_month_year()
+    total_apps = get_total_applicants_month(apps_by_date)
+    tot_appr, tot_appr_month = get_approved_totals(members)
+
+    plot_experience(exp)
+    plot_applicants(apps_by_date, year)
+    plot_applicants_last_month(apps_by_date)
+
+    create_experience_table(exp)
+    create_app_no_training_table(members)
+    create_heard_about_table(members)
+    create_new_applicants_table(members)
+    create_no_members_region_table(members, no_mem_countries, un_codes)
+    create_country_table(mem_countries)
+    create_region_table(new_region)
+    create_membership_table(
+        tot_appr,
+        total_apps,
+        tot_appr_month,
+        mem_countries.shape[0],
+    )
+    create_members_regions_table(
+        mem_countries.shape[0], no_mem_countries.shape[0])
+
+
+if __name__ == "__main__":
+    main()

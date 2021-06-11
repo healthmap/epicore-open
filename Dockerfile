@@ -6,15 +6,16 @@ COPY composer.json /usr/share/php/composer.json
 COPY nginx-site.conf /etc/nginx/sites-enabled/default
 
 COPY entrypoint.sh /etc/entrypoint.sh
+ 
+COPY --chown=www-data:www-data . /var/www/html
 
-COPY --chown=www-data:www-data . /var/www/html/test.epicore.org
-
-COPY . /var/www/html/test.epicore.org
+COPY . /var/www/html
 
 #As part of the Jenkins build - npm run-script build is executed
 #Copy webpack dist folder to workidr
-COPY ./js/dist/* /var/wwww/html/test.epicore.org/
+COPY ./js/dist/* /var/wwww/html/
 
-WORKDIR /var/www/html/test.epicore.org
+WORKDIR /var/www/html
+
 
 ENTRYPOINT ["/etc/entrypoint.sh"]

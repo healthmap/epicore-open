@@ -9,15 +9,6 @@ require_once "UserContoller3.class.php";
 
 use UserController as userController;
 
-if($rvars['from'] !== "events_public") {
-    if (!userController::isUserValid()) {
-        echo json_encode(false);
-        return false;
-    }
-}
-  
-$userData = userController::getUserData();
-
 // check for authoriziation token in query string
 if(!$_GET['auth']) {
     print "Sorry you are not authorized to use this service.";
@@ -38,6 +29,16 @@ $rvars["uid"] = $userData["uid"];
 $rvars["fetp_id"] = $userData["fetp_id"];
 
 
+//logged user verification
+if($rvars['from'] != "events_public") {
+   
+    if (!userController::isUserValid()) {
+        // echo json_encode(false);
+        return false;
+    }
+}
+$userData = userController::getUserData();
+
 require_once "db.function.php";
 $db = getDB();
 
@@ -48,11 +49,11 @@ if(isset($rvars['event_id']) && is_numeric($rvars['event_id'])) {
     $ei = new EventInfo($rvars['event_id']);
     
     if($rvars['from'] == "responses") {
-         //echo 'from responses page';
+        //  echo 'from responses page';
         $indexed_array = $ei->getResponses();
     
     } else if($rvars['from'] == "events_public") { //for the articles page
-        //echo 'public rfi details page';
+        // echo 'public rfi details page';
         $indexed_arrayRow = $ei->getInfo(); 
         //filePreview: Not required for now - do not remove
         //$indexed_arrayFile['filePreview'] = $ei->buildEmailForEvent($indexed_arrayRow, 'rfi', '', 'file'); 
@@ -97,14 +98,14 @@ if(isset($rvars['event_id']) && is_numeric($rvars['event_id'])) {
     $end_date = $rvars['end_date'] ? $rvars['end_date'] : date("Y-m-d H:i:s");
     
     if ($rvars['public']){
-         //echo 'public rfi list page';
+        //  echo 'public rfi list page';
         // get closed events for public
         $uid = '0'; // no user id value
         //$indexed_array = EventInfo::getEventsCache($uid, 'C', 'database', V2START_DATE);
         $indexed_array = EventInfo::getAllEvents($uid, 'C', $start_date, $end_date);
 
     } else {
-        //echo 'with login-dashboard-list-page';
+        // echo 'with login-dashboard-list-page';
         // status can be "closed" or "open"
         require_once "UserInfo.class.php";
         $ui = new UserInfo($userData['uid'], $userData['fetp_id']);

@@ -1,0 +1,247 @@
+country,country_code,un_country_code,who_region
+Afghanistan,AF,AFG,WHO EMRO
+Oland Islands,AX,ALA,WHO EURO
+Albania,AL,ALB,WHO EURO
+Algeria,DZ,DZA,WHO AFRO
+American Samoa,AS,ASM,WHO WPRO
+Andorra,AD,AND,WHO EURO
+Angola,AO,AGO,WHO AFRO
+Anguilla,AI,AIA,WHO AMRO
+Antarctica,AQ,ATA,ANTARCTICA
+Antigua and Barbuda,AG,ATG,WHO AMRO
+Argentina,AR,ARG,WHO AMRO
+Armenia,AM,ARM,WHO EURO
+Aruba,AW,ABW,WHO AMRO
+Australia,AU,AUS,WHO WPRO
+Austria,AT,AUT,WHO EURO
+Azerbaijan,AZ,AZE,WHO EURO
+Bahamas,BS,BHS,WHO AMRO
+Bahrain,BH,BHR,WHO EMRO
+Bangladesh,BD,BGD,WHO SEARO
+Barbados,BB,BRB,WHO AMRO
+Belarus,BY,BLR,WHO EURO
+Belgium,BE,BEL,WHO EURO
+Belize,BZ,BLZ,WHO AMRO
+Benin,BJ,BEN,WHO AFRO
+Bermuda,BM,BMU,WHO AMRO
+Bhutan,BT,BTN,WHO SEARO
+Bolivia (Plurinational State of),BO,BOL,WHO AMRO
+"Bonaire, Sint Eustatius and Saba",BQ,BES,WHO AMRO
+Bosnia and Herzegovina,BA,BIH,WHO EURO
+Botswana,BW,BWA,WHO AFRO
+Brazil,BR,BRA,WHO AMRO
+Brunei Darussalam,BN,BRN,WHO WPRO
+Bulgaria,BG,BGR,WHO EURO
+Burkina Faso,BF,BFA,WHO AFRO
+Burundi,BI,BDI,WHO AFRO
+Cambodia,KH,KHM,WHO WPRO
+Cameroon,CM,CMR,WHO AFRO
+Canada,CA,CAN,WHO AMRO
+Cape Verde,CV,CPV,WHO AFRO
+Cayman Islands,KY,CYM,WHO AMRO
+Central African Republic,CF,CAF,WHO AFRO
+Chad,TD,TCD,WHO AFRO
+Chile,CL,CHL,WHO AMRO
+China,CN,CHN,WHO WPRO
+Christmas Island,CX,CXR,WHO WPRO
+Cocos (Keeling) Islands,CC,CCK,WHO WPRO
+Colombia,CO,COL,WHO AMRO
+Comoros,KM,COM,WHO AFRO
+Congo,CG,COG,WHO AFRO
+"Congo, Democratic Republic of the",CD,COD,WHO AFRO
+Cook Islands,CK,COK,WHO WPRO
+Costa Rica,CR,CRI,WHO AMRO
+Cote d'Ivoire,CI,CIV,WHO AFRO
+Croatia,HR,HRV,WHO EURO
+Cuba,CU,CUB,WHO AMRO
+Curacao,CW,CUW,WHO AMRO
+Cyprus,CY,CYP,WHO EURO
+Czechia,CZ,CZE,WHO EURO
+Denmark,DK,DNK,WHO EURO
+Djibouti,DJ,DJI,WHO EMRO
+Dominica,DM,DMA,WHO AMRO
+Dominican Republic,DO,DOM,WHO AMRO
+Ecuador,EC,ECU,WHO AMRO
+Egypt,EG,EGY,WHO EMRO
+El Salvador,SV,SLV,WHO AMRO
+Equatorial Guinea,GQ,GNQ,WHO AFRO
+Eritrea,ER,ERI,WHO AFRO
+Estonia,EE,EST,WHO EURO
+Eswatini,SZ,SWZ,WHO AFRO
+Ethiopia,ET,ETH,WHO AFRO
+Falkland Islands (Malvinas),FK,FLK,WHO AMRO
+Faroe Islands,FO,FRO,WHO EURO
+Fiji,FJ,FJI,WHO WPRO
+Finland,FI,FIN,WHO EURO
+France,FR,FRA,WHO EURO
+French Guiana,GF,GUF,WHO AMRO
+French Polynesia,PF,PYF,WHO WPRO
+Gabon,GA,GAB,WHO AFRO
+Gambia,GM,GMB,WHO AFRO
+Georgia,GE,GEO,WHO EURO
+Germany,DE,DEU,WHO EURO
+Ghana,GH,GHA,WHO AFRO
+Gibraltar,GI,GIB,WHO EURO
+Greece,GR,GRC,WHO EURO
+Greenland,GL,GRL,WHO EURO
+Grenada,GD,GRD,WHO AMRO
+Guadeloupe,GP,GLP,WHO AMRO
+Guam,GU,GUM,WHO WPRO
+Guatemala,GT,GTM,WHO AMRO
+Guernsey,GG,GGY,WHO EURO
+Guinea,GN,GIN,WHO AFRO
+Guinea-Bissau,GW,GNB,WHO AFRO
+Guyana,GY,GUY,WHO AMRO
+Haiti,HT,HTI,WHO AMRO
+Heard Island and McDonald Islands,HM,HMD,WHO WPRO
+Holy See,VA,VAT,WHO EURO
+Honduras,HN,HND,WHO AMRO
+Hong Kong,HK,HKG,WHO WPRO
+Hungary,HU,HUN,WHO EURO
+Iceland,IS,ISL,WHO EURO
+India,IN,IND,WHO SEARO
+Indonesia,ID,IDN,WHO SEARO
+Iran (Islamic Republic of),IR,IRN,WHO EMRO
+Iraq,IQ,IRQ,WHO EMRO
+Ireland,IE,IRL,WHO EURO
+Isle of Man,IM,IMN,WHO EURO
+Israel,IL,ISR,WHO EURO
+Italy,IT,ITA,WHO EURO
+Jamaica,JM,JAM,WHO AMRO
+Japan,JP,JPN,WHO WPRO
+Jersey,JE,JEY,WHO EURO
+Jordan,JO,JOR,WHO EMRO
+Kazakhstan,KZ,KAZ,WHO EURO
+Kenya,KE,KEN,WHO AFRO
+Kiribati,KI,KIR,WHO WPRO
+Korea (Democratic People's Republic of),KP,PRK,WHO SEARO
+"Korea, Republic of",KR,KOR,WHO WPRO
+Kuwait,KW,KWT,WHO EMRO
+Kyrgyzstan,KG,KGZ,WHO EURO
+Lao People's Democratic Republic,LA,LAO,WHO WPRO
+Latvia,LV,LVA,WHO EURO
+Lebanon,LB,LBN,WHO EMRO
+Lesotho,LS,LSO,WHO AFRO
+Liberia,LR,LBR,WHO AFRO
+Libya,LY,LBY,WHO EMRO
+Liechtenstein,LI,LIE,WHO EURO
+Lithuania,LT,LTU,WHO EURO
+Luxembourg,LU,LUX,WHO EURO
+Macao,MO,MAC,WHO WPRO
+Madagascar,MG,MDG,WHO AFRO
+Malawi,MW,MWI,WHO AFRO
+Malaysia,MY,MYS,WHO WPRO
+Maldives,MV,MDV,WHO SEARO
+Mali,ML,MLI,WHO AFRO
+Malta,MT,MLT,WHO EURO
+Marshall Islands,MH,MHL,WHO WPRO
+Martinique,MQ,MTQ,WHO AMRO
+Mauritania,MR,MRT,WHO AFRO
+Mauritius,MU,MUS,WHO AFRO
+Mayotte,YT,MYT,WHO AFRO
+Mexico,MX,MEX,WHO AMRO
+Micronesia (Federated States of),FM,FSM,WHO WPRO
+"Moldova, Republic of",MD,MDA,WHO EURO
+Monaco,MC,MCO,WHO EURO
+Mongolia,MN,MNG,WHO WPRO
+Montenegro,ME,MNE,WHO EURO
+Montserrat,MS,MSR,WHO AMRO
+Morocco,MA,MAR,WHO EMRO
+Mozambique,MZ,MOZ,WHO AFRO
+Myanmar,MM,MMR,WHO SEARO
+Namibia,NA,NAM,WHO AFRO
+Nauru,NR,NRU,WHO WPRO
+Nepal,NP,NPL,WHO SEARO
+Netherlands,NL,NLD,WHO EURO
+New Caledonia,NC,NCL,WHO WPRO
+New Zealand,NZ,NZL,WHO WPRO
+Nicaragua,NI,NIC,WHO AMRO
+Niger,NE,NER,WHO AFRO
+Nigeria,NG,NGA,WHO AFRO
+Niue,NU,NIU,WHO WPRO
+Norfolk Island,NF,NFK,WHO WPRO
+North Macedonia,MK,MKD,WHO EURO
+Northern Mariana Islands,MP,MNP,WHO WPRO
+Norway,NO,NOR,WHO EURO
+Oman,OM,OMN,WHO EMRO
+Pakistan,PK,PAK,WHO EMRO
+Palau,PW,PLW,WHO WPRO
+"Palestine, State of",PS,PSE,WHO EMRO
+Panama,PA,PAN,WHO AMRO
+Papua New Guinea,PG,PNG,WHO WPRO
+Paraguay,PY,PRY,WHO AMRO
+Peru,PE,PER,WHO AMRO
+Philippines,PH,PHL,WHO WPRO
+Pitcairn,PN,PCN,WHO WPRO
+Poland,PL,POL,WHO EURO
+Portugal,PT,PRT,WHO EURO
+Puerto Rico,PR,PRI,WHO AMRO
+Qatar,QA,QAT,WHO EMRO
+Reunion,RE,REU,WHO AFRO
+Romania,RO,ROU,WHO EURO
+Russian Federation,RU,RUS,WHO EURO
+Rwanda,RW,RWA,WHO AFRO
+Saint Bartholemy,BL,BLM,WHO AMRO
+"Saint Helena, Ascension and Tristan da Cunha",SH,SHN,WHO AFRO
+Saint Kitts and Nevis,KN,KNA,WHO AMRO
+Saint Lucia,LC,LCA,WHO AMRO
+Saint Martin (French part),MF,MAF,WHO AMRO
+Saint Pierre and Miquelon,PM,SPM,WHO AMRO
+Saint Vincent and the Grenadines,VC,VCT,WHO AMRO
+Samoa,WS,WSM,WHO WPRO
+San Marino,SM,SMR,WHO EURO
+Sao Tome and Principe,ST,STP,WHO AFRO
+Saudi Arabia,SA,SAU,WHO EMRO
+Senegal,SN,SEN,WHO AFRO
+Serbia,RS,SRB,WHO EURO
+Seychelles,SC,SYC,WHO AFRO
+Sierra Leone,SL,SLE,WHO AFRO
+Singapore,SG,SGP,WHO WPRO
+Sint Maarten (Dutch part),SX,SXM,WHO AMRO
+Slovakia,SK,SVK,WHO EURO
+Slovenia,SI,SVN,WHO EURO
+Solomon Islands,SB,SLB,WHO WPRO
+Somalia,SO,SOM,WHO EMRO
+South Africa,ZA,ZAF,WHO AFRO
+South Georgia and the South Sandwich Islands,GS,SGS,WHO AMRO
+South Sudan,SS,SSD,WHO EMRO
+Spain,ES,ESP,WHO EURO
+Sri Lanka,LK,LKA,WHO SEARO
+Sudan,SD,SDN,WHO EMRO
+Suriname,SR,SUR,WHO AMRO
+Svalbard and Jan Mayen,SJ,SJM,WHO EURO
+Sweden,SE,SWE,WHO EURO
+Switzerland,CH,CHE,WHO EURO
+Syrian Arab Republic,SY,SYR,WHO EMRO
+"Taiwan, Province of China",TW,TWN,WHO WPRO
+"Tanzania, United Republic of",TZ,TZA,WHO AFRO
+Tajikistan,TJ,TJK,WHO EURO
+Thailand,TH,THA,WHO SEARO
+Timor-Leste,TL,TLS,WHO SEARO
+Togo,TG,TGO,WHO AFRO
+Tokelau,TK,TKL,WHO WPRO
+Tonga,TO,TON,WHO WPRO
+Trinidad and Tobago,TT,TTO,WHO AMRO
+Tunisia,TN,TUN,WHO EMRO
+Turkey,TR,TUR,WHO EURO
+Turkmenistan,TM,TKM,WHO EURO
+Turks and Caicos Islands,TC,TCA,WHO AMRO
+Tuvalu,TV,TUV,WHO WPRO
+Uganda,UG,UGA,WHO AFRO
+Ukraine,UA,UKR,WHO EURO
+United Arab Emirates,AE,ARE,WHO EMRO
+United Kingdom of Great Britain and Northern Ireland,GB,GBR,WHO EURO
+United States of America,US,USA,WHO AMRO
+United States Minor Outlying Islands,UM,UMI,WHO AMRO
+Uruguay,UY,URY,WHO AMRO
+Uzbekistan,UZ,UZB,WHO EURO
+Vanuatu,VU,VUT,WHO WPRO
+Venezuela (Bolivarian Republic of),VE,VEN,WHO AMRO
+Viet Nam,VN,VNM,WHO WPRO
+Virgin Islands (British),VG,VGB,WHO AMRO
+Virgin Islands (U.S.),VI,VIR,WHO AMRO
+Wallis and Futuna,WF,WLF,WHO WPRO
+Western Sahara,EH,ESH,WHO AFRO
+Yemen,YE,YEM,WHO EMRO
+Zambia,ZM,ZMB,WHO AFRO
+Zimbabwe,ZW,ZWE,WHO AFRO
