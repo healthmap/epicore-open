@@ -524,7 +524,7 @@ const UserController = (
               $scope.isRouteLoading = false;
               $rootScope.error_message_pw =
                   'Please check your email or temporary password.';
-              $location.path('/login');
+            $location.path('/login');
             } else {
               $scope.isRouteLoading = false;
               $rootScope.error_message_pw = 'Invalid email address or temporary password';
