@@ -518,20 +518,20 @@ const UserController = (
         method: 'POST',
         data: formData,
       }).then(
-          function successCallback(res) {
+        function successCallback(res) {
             const data = res.data;
             if (data['status'] === 'success') {
               $scope.isRouteLoading = false;
               $rootScope.error_message_pw =
                   'Please check your email or temporary password.';
-              $location.path('/login');
+            $location.path('/login');
             } else {
               $scope.isRouteLoading = false;
               $rootScope.error_message_pw = 'Invalid email address or temporary password';
               $route.reload();
             }
           },
-          function errorCallback() {
+        function errorCallback() {
             $rootScope.error_message_pw = 'Invalid email address';
             $scope.isRouteLoading = false;
           },
