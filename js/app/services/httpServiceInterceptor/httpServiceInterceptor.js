@@ -20,7 +20,7 @@ const HttpServiceInterceptor = ($rootScope, $timeout) => {
           data: response
         };
 
-        if (response.error) {
+        if (!response || response.error) {
           reject(output);
         } else {
           resolve(output);
