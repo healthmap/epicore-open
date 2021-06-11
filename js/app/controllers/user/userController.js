@@ -531,7 +531,7 @@ const UserController = (
               $route.reload();
             }
           },
-          function errorCallback() {
+        function errorCallback() {
             $rootScope.error_message_pw = 'Invalid email address';
             $scope.isRouteLoading = false;
           },
