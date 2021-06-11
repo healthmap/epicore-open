@@ -68,11 +68,6 @@ const fetchService = () => {
         message: message,
         details: details
       });
-      // return {
-      //   error: true,
-      //   message: data.error_message,
-      //   details: data.error_details
-      // };
     }
   };
 
