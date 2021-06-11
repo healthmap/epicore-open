@@ -8,10 +8,10 @@ const fetchService = () => {
     if (!epicore_config.errorMessages) {
       const errorMessages = await fetch('constants/error-messages.json');
       epicore_config.errorMessages = await errorMessages.json();
-    } 
+    }
   };
 
-  const fetchUrl = async ({ url, params, options }) => {    
+  const fetchUrl = async ({ url, params, options }) => {
     if (params && options.method === 'GET') {
       const urlParams = new URLSearchParams(params);
       url = `${url}?${urlParams}`;
@@ -30,7 +30,7 @@ const fetchService = () => {
       fetchOptions.body = JSON.stringify(params);
     }
 
-    const response =  await fetch(url, fetchOptions);
+    const response = await fetch(url, fetchOptions);
     let responseClone = response.clone();
 
     try {
@@ -68,12 +68,7 @@ const fetchService = () => {
         message: message,
         details: details
       });
-      return {
-        error: true,
-        message: data.error_message,
-        details: data.error_details
-      };
-    } 
+    }
   };
 
   return {
