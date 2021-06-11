@@ -490,7 +490,12 @@ const UserController = (
             $location.path(redirpath);*/
           } else {
             $scope.isRouteLoading = false;
-            $rootScope.error_message = 'Invalid email address';
+            if(data['message'] == '') {
+              $rootScope.error_message = 'Invalid email address or password';
+            }
+            if(data['message'] != '') {
+              $rootScope.error_message = data['message'];
+            }
             $route.reload();
           }
         },

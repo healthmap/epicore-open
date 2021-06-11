@@ -8,7 +8,8 @@ class UserSignUpResponse
     private $userConfirmed;
     private $userSub;
 
-    public function getUserConfirmed(){
+    public function getUserConfirmed()
+    {
         return $this->userConfirmed;
     }
 

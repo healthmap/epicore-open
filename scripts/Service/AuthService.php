@@ -1,12 +1,16 @@
 <?php
 
 require_once (dirname(__FILE__) ."/CognitoService.php");
+require_once (dirname(__FILE__) ."/ValidationService.php");
 require_once (dirname(__FILE__) ."/IAuthService.php");
 require_once(dirname(__FILE__) . "/../Model/UserCognitoType.php");
+require_once(dirname(__FILE__) . "/../Model/User.php");
 require_once(dirname(__FILE__) . "/../Exception/LoginException.php");
 require_once(dirname(__FILE__) . "/../Exception/LoginPasswordAttemptsExceededException.php");
 require_once(dirname(__FILE__) . "/../Exception/UserAccountExistException.php");
+require_once(dirname(__FILE__) . "/../Exception/PasswordValidationException.php");
 require_once(dirname(__FILE__) . "/../Exception/UserIsConfirmed.php");
+require_once(dirname(__FILE__) . "/../Exception/InvalidCodeException.php");
 
 class AuthService implements IAuthService
 {
@@ -16,10 +20,17 @@ class AuthService implements IAuthService
     private $cognitoService;
 
     /**
+     * @var ValidationService
+     */
+    private $validationService;
+
+    /**
      * AuthService constructor.
      */
-    public function __construct(){
+    public function __construct()
+    {
         $this->cognitoService = new CognitoService();
+        $this->validationService = new ValidationService();
     }
 
     /**
@@ -35,17 +46,26 @@ class AuthService implements IAuthService
      * @param string $username
      * @param string $password
      * @return UserAuthResponse
-     * @throws Exception
+     * @throws LoginException
+     * @throws LoginPasswordAttemptsExceededException
+     * @throws UserAccountNotExist
+     * @throws PasswordValidationException
      */
     public function LoginUser(string $username, string $password): UserAuthResponse
     {
         try
         {
+            $user = new User();
+            $user->setPassword($password);
+            // TODO valid
+            $this->validationService->password($user);
+
             return $this->cognitoService->login($username , $password);
         }
         catch (\Aws\CognitoIdentityProvider\Exception\CognitoIdentityProviderException $exception)
         {
             $exceptionMessage = $exception->toArray();
+          //  var_dump($exceptionMessage);die();
             if($exceptionMessage['message'] === CognitoErrors::incorectUserNameOrPassword)
             {
                 throw new \LoginException($exceptionMessage['message']);
@@ -58,19 +78,39 @@ class AuthService implements IAuthService
             {
                 throw new \UserAccountNotExist($exceptionMessage['message']);
             }
-
-            throw new \Exception(CognitoErrors::incorectUserNameOrPassword);
+        }
+        catch (PasswordValidationException $exception)
+        {
+            throw $exception;
         }
     }
 
     /**
-     * @throws Exception
+     * @param string $username
+     * @param string $password
+     * @param bool $dontSendEmail
+     * @param bool $dontUpdatePassword
+     * @throws NoEmailProvidedException
+     * @throws PasswordValidationException
+     * @throws UserAccountExistException
      */
-    public function SingUp(string $username, string $password, string $email , bool $dontSendEmail = false)
+    public function SingUp(string $username, string $password = '' , bool $dontSendEmail = false , bool $dontUpdatePassword = false)
     {
         try
         {
-            $this->cognitoService->singUp($username, $password, $email , $dontSendEmail);
+            if(!$dontSendEmail)
+            {
+                $password = $this->generatePassword();
+            }
+
+            // TODO valid password
+            $user = new User();
+            $user->setPassword($password);
+
+            $this->validationService->password($user);
+
+            //TODO send user to AWS Cognito
+            $this->cognitoService->singUp($username, $password , $username , $dontSendEmail , $dontUpdatePassword);
         }
         catch (\Aws\CognitoIdentityProvider\Exception\CognitoIdentityProviderException $exception)
         {
@@ -79,7 +119,14 @@ class AuthService implements IAuthService
             {
                 throw new \UserAccountExistException($exceptionMessage['message']);
             }
-            throw new \Exception($exceptionMessage['message']);
+            if($exceptionMessage['message'] === CognitoErrors::noEmailProvided)
+            {
+                throw new \NoEmailProvidedException($exceptionMessage['message']);
+            }
+        }
+        catch (\PasswordValidationException $exception)
+        {
+            throw $exception;
         }
     }
 
@@ -93,10 +140,23 @@ class AuthService implements IAuthService
     {
         try
         {
+            $user = new User();
+            $user->setPassword($password);
+
+            // TODO validate password
+            $this->validationService->password($user);
+
+            // TODO confirm password in AWS Cognito
             $this->cognitoService->confirmPassword($username , $password , $code);
         }
-        catch (Aws\CognitoIdentityProvider\Exception\CognitoIdentityProviderException $exception)
+        catch (Aws\CognitoIdentityProvider\Exception\CognitoIdentityProviderException | PasswordValidationException $exception)
         {
+            $message = $exception->toArray();
+            if($message['message'] === CognitoErrors::invalidCode)
+            {
+                throw new InvalidCodeException($message['message']);
+            }
+            var_dump($message);
             throw $exception;
         }
     }
@@ -119,29 +179,35 @@ class AuthService implements IAuthService
     /**
      * @param string $username
      * @param string $password
+     * @param string $newPassword
+     * @throws PasswordValidationException
      * @throws UserIsConfirmed
-     * @return bool
      * @throws Exception
      */
-    public function ConfirmAccount(string $username , string $password , string $newPassword ): bool
+    public function ConfirmAccount(string $username , string $password , string $newPassword ): void
     {
         try
         {
+            $user = new User();
+            $user->setPassword($password);
+
+            // TODO valid password
+            $this->validationService->password($user);
+
+            // TODO login user by AWS Cognito
             $this->LoginUser($username , $password);
-            return true;
         }
         catch (\NewPasswordException $exception)
         {
             $user = $this->cognitoService->adminGetUser($username);
             if(!empty($user))
             {
-                if($user['UserStatus'] === "CONFIRMED")
+                if($user['UserStatus'] === CognitoErrors::confirmed)
                 {
                     throw new \UserIsConfirmed('User is CONFIRMED');
                 }
             }
             $this->cognitoService->adminSetUserPassword($username, $newPassword);
-            return true;
         }
         catch (\Aws\CognitoIdentityProvider\Exception\CognitoIdentityProviderException $exception)
         {
@@ -149,6 +215,19 @@ class AuthService implements IAuthService
 
             throw new \Exception($exceptionMessage['message']);
         }
+    }
+
+    /**
+     * @param string $password
+     * @return string
+     */
+    private function generatePassword(string $password = ''): string
+    {
+        if(empty($password))
+        {
+            return substr(md5(rand().rand()), 0, 12);
+        }
+        return substr(md5($password), 0, 12);
     }
 
 }

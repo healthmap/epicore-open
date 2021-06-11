@@ -5,9 +5,14 @@ $formvars = json_decode(file_get_contents("php://input"));
 require_once "const.inc.php";
 require_once "UserInfo.class.php";
 require_once (dirname(__FILE__) ."/Service/AuthService.php");
+require_once (dirname(__FILE__) ."/Service/ValidationService.php");
+require_once (dirname(__FILE__) ."/Exception/PasswordValidationException.php");
+require_once (dirname(__FILE__) ."/Exception/EmailValidationException.php");
 
 $status = "incorrect password";
 $path = "home";
+$cognitoChangePassExceptionPath = false;
+$cognitoAuthStatus = true;
 
 $authService = new AuthService();
 $env = ENVIRONMENT;
@@ -29,65 +34,103 @@ if(isset($formvars->ticket_id) && $formvars->usertype == "fetp") { // ticket sys
         $dbdata['email'] = strip_tags($formvars->username);
         $dbdata['password'] = strip_tags($formvars->password);
 
-        $authService = new AuthService();
-        $authServiceAddNewAccount = false;
+
+        $validationService = new ValidationService();
+
+        $user = new User();
+        $user->setEmail($dbdata['email']);
+
         try
         {
-            $authResponse = $authService->LoginUser($dbdata['email'],  $dbdata['password']);
-            if(!is_null($authResponse))
-            {
-                $uinfo = UserInfo::authenticateUser($dbdata , false);
-
-                $uinfo['token']['accessToken'] = $authResponse->getAccessToken();
-                $uinfo['token']['refreshToken'] = $authResponse->getRefreshToken();
-                $uinfo['token']['expiresIn'] = $authResponse->getExpiresIn();
-            }
+            $validationService->email($user);
+            $uinfo = UserInfo::authenticateUser($dbdata, false);
         }
-        catch (\UserAccountNotExist $exception)
+        catch (EmailValidationException $exception)
         {
             $uinfo = UserInfo::authenticateUser($dbdata);
-            if (isset($uinfo['username'])) {
-                $authServiceAddNewAccount = true;
-            }
-            else
-            {
-                error_log($exception->getMessage());
-                $status = "incorrect password";
-            }
-        }
-        catch (\LoginException $exception)
-        {
-            error_log($exception->getMessage());
-            $status = "incorrect password";
+            $uinfo['superuser'] = (isset($uinfo['user_id']) && in_array($uinfo['user_id'], $super_users)) ? true: false;
         }
 
-        if($authServiceAddNewAccount)
+        if(isset($uinfo['superuser']) && !$uinfo['superuser'] && !empty($uinfo['email']))
         {
-            try {
-                $authService->SingUp($dbdata['email'], $dbdata['password'], $dbdata['email'] , true);
-                $authResponse = $authService->LoginUser($dbdata['email'],  $dbdata['password']);
-                if(!is_null($authResponse))
-                {
+            $authService = new AuthService();
+            $authServiceAddNewAccount = false;
+
+            try
+            {
+                $authResponse = $authService->LoginUser($dbdata['email'], $dbdata['password']);
+                if (!is_null($authResponse)) {
+
                     $uinfo['token']['accessToken'] = $authResponse->getAccessToken();
                     $uinfo['token']['refreshToken'] = $authResponse->getRefreshToken();
                     $uinfo['token']['expiresIn'] = $authResponse->getExpiresIn();
                 }
+                $cognitoAuthStatus = true;
             }
-            catch (\UserAccountExistException $exception)
-            {
+            catch (\UserAccountNotExist $exception) {
+                $uinfo = UserInfo::authenticateUser($dbdata);
+                if (isset($uinfo['username'])) {
+                    $authServiceAddNewAccount = true;
+                } else {
+                    error_log($exception->getMessage());
+                    $status = "incorrect password";
+                    $cognitoAuthStatus = false;
+                }
+            } catch (\LoginException $exception) {
                 error_log($exception->getMessage());
                 $status = "incorrect password";
+                $cognitoAuthStatus = false;
             }
-            catch (\LoginException $exception)
-            {
-                error_log($exception->getMessage());
-                $status = "incorrect password";
+
+            if ($authServiceAddNewAccount) {
+                try
+                {
+                    $authServiceAddNewAccount = false;
+
+                    $authService->SingUp($dbdata['email'], $dbdata['password'], true);
+                    $authResponse = $authService->LoginUser($dbdata['email'], $dbdata['password']);
+                    if (!is_null($authResponse)) {
+                        $uinfo['token']['accessToken'] = $authResponse->getAccessToken();
+                        $uinfo['token']['refreshToken'] = $authResponse->getRefreshToken();
+                        $uinfo['token']['expiresIn'] = $authResponse->getExpiresIn();
+                    }
+                }
+                catch (\UserAccountExistException | \LoginException $exception)
+                {
+                    error_log($exception->getMessage());
+                    $status = "incorrect password";
+                    $cognitoAuthStatus = false;
+                }
+                catch (PasswordValidationException $exception)
+                {
+                    $authServiceAddNewAccount = true;
+                }
+
+                if($authServiceAddNewAccount)
+                {
+                    try
+                    {
+                        $authService->SingUp($dbdata['email'], '' , true , true);
+                        $authService->ForgotPassword($dbdata['email']);
+
+                        // TODO set flag to redirect user to /setpassword
+
+                        $cognitoChangePassExceptionPath = true;
+                    }
+                    catch (\UserAccountExistException | \LoginException | PasswordValidationException $exception)
+                    {
+                        error_log($exception->getMessage());
+                        $status = "incorrect password";
+                        $cognitoAuthStatus = false;
+                    }
+                }
             }
         }
     }
-    $user_id = isset($uinfo['fetp_id']) ? $uinfo['fetp_id'] : $uinfo['user_id'];
+    if($cognitoAuthStatus) {
+        $user_id = isset($uinfo['fetp_id']) ? $uinfo['fetp_id'] : $uinfo['user_id'];
+    }
 }
-
 // make sure it's a valid user id (or fetp id)
 if(is_numeric($user_id) && $user_id > 0) {
     // if it was a mod who successfully logged in, let's now repopulate the fetp table with latest eligible tephinet ids
@@ -134,7 +177,13 @@ if(is_numeric($user_id) && $user_id > 0) {
             $path = "events";
         }
     }
-    $uinfo['superuser'] = (isset($uinfo['user_id']) && in_array($uinfo['user_id'], $super_users)) ? true: false;
+
+    if($cognitoChangePassExceptionPath)
+    {
+        $status = "success";
+        $path = 'setpassword';
+    }
+    //$uinfo['superuser'] = (isset($uinfo['user_id']) && in_array($uinfo['user_id'], $super_users)) ? true: false;
 }
 $content = array('status' => $status, 'path' => $path, 'uinfo' => $uinfo , 'environment' => $env);
 print json_encode($content);

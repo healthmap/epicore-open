@@ -52,7 +52,7 @@ class CognitoService
      * @return void
      * @throws \Exception
      */
-    public function singUp(string $username , string $password , string $email , bool $dontSendEmail = false) : void
+    public function singUp(string $username , string $password , string $email , bool $dontSendEmail = false , bool $dontUpdatePassword) : void
     {
         try
         {
@@ -71,7 +71,12 @@ class CognitoService
                     [
                         'Name' => 'email',
                         'Value' => $email
-                    ]
+                    ],
+                    [
+                        'Name' => 'email_verified',
+                        'Value' => 'true'
+                    ],
+
                 ]
             ];
 
@@ -83,7 +88,7 @@ class CognitoService
             $this->client->AdminCreateUser($dataContext);
 
             // TODO case for user who have already account and we do not want to change their password
-            if($dontSendEmail)
+            if($dontSendEmail && !$dontUpdatePassword)
             {
                 $this->adminSetUserPassword($username , $password);
             }
@@ -118,6 +123,7 @@ class CognitoService
                     'PASSWORD' => $password,
                 ],
             ]);
+           // var_dump($result);die();
             if (isset($result['Session']))
             {
                 throw new \NewPasswordException('New password action');

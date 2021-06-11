@@ -12,6 +12,8 @@ require_once 'pbkdf2.php';
 require_once "AWSMail.class.php";
 require_once "send_email.php";
 require_once "Geocode.php";
+require_once (dirname(__FILE__) ."/Model/Role.php");
+
 
 
 class UserInfo
@@ -210,14 +212,13 @@ class UserInfo
         $email = strip_tags($dbdata['email']);
         // first try the HealthMap database
         $db = getDB();
-        $user = $db->getRow("SELECT hmu_id, username, email, pword_hash from hm_hmu WHERE (username = ? OR email = ?) AND confirmed = 1", array($email, $email));
-
-        if(is_a($user, 'DB_Error')) {
-            print_r($user);
-            die('user error!');
-        }
 
         if($passwordValidIsRequired) {
+            $user = $db->getRow("SELECT hmu_id, username, email, pword_hash from hm_hmu WHERE (username = ? OR email = ?) AND confirmed = 1", array($email, $email));
+            if(is_a($user, 'DB_Error')) {
+                print_r($user);
+                die('user error!');
+            }
             $resp = validate_password($dbdata['password'], $user['pword_hash']);
             if ($resp) {
                 $uinfo = $db->getRow("SELECT user.user_id, user.hmu_id, user.organization_id, organization.name AS orgname FROM user LEFT JOIN epicore.organization ON user.organization_id = organization.organization_id WHERE hmu_id = ?", array($user['hmu_id']));
@@ -248,13 +249,29 @@ class UserInfo
             }
         }
 
-        $uinfo = $db->getRow("SELECT user.user_id, user.hmu_id, user.organization_id, organization.name AS orgname FROM user LEFT JOIN epicore.organization ON user.organization_id = organization.organization_id WHERE hmu_id = ?", array($user['hmu_id']));
-        if (is_a($uinfo, 'DB_Error')) {
-            print_r($uinfo);
-            die('uinfo error!');
+        $user = $db->getRow("SELECT hmu_id, username, email, pword_hash from hm_hmu WHERE (username = ? OR email = ?) AND confirmed = 1", array($email, $email));
+        if(is_null($user))
+        {
+            $user = $db->getRow("SELECT email , fetp_id from fetp WHERE email = ?", array($dbdata['email']));
+            if (is_a($user, 'DB_Error')) {
+                print_r($user);
+                die('uinfo error!');
+            }
+        }else
+        {
+            $user - $db->getRow("SELECT user.user_id, user.hmu_id, user.organization_id, organization.name AS orgname FROM user LEFT JOIN epicore.organization ON user.organization_id = organization.organization_id WHERE hmu_id = ?", array($user['hmu_id']));
         }
-        $uinfo['username'] = $user['username'];
+        $uinfo['username'] = $user['email'];
         $uinfo['email'] = $user['email'];
+        $uinfo['superuser'] = false;
+        if(isset($user['fetp_id']))
+        {
+            $uinfo['fetp_id'] = $user['fetp_id'];
+        }
+        if(isset($user['user_id']))
+        {
+            $uinfo['user_id'] = $user['user_id'];
+        }
         return $uinfo;
     }
 
@@ -748,8 +765,8 @@ class UserInfo
                 // copy maillist to new fetp if it does not exist and set fetp status to 'P'
                 $fetpemail = $db->getOne("select email from fetp where email='$approve_email'");
                 if (!$fetpemail) {
-                    $db->query("INSERT INTO fetp (email, countrycode, active, status, maillist_id)
-                        VALUES ('$approve_email', '$approve_countrycode', 'N','P', '$approve_id')");
+                    $db->query("INSERT INTO fetp (email, countrycode, active, status, maillist_id , roleId)
+                        VALUES ('$approve_email', '$approve_countrycode', 'N','P', '$approve_id' ," .Role::responder .")");
                     $db->commit();
 
                     // geocode fetp

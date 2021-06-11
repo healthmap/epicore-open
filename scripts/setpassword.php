@@ -3,6 +3,7 @@
 $formvars = json_decode(file_get_contents("php://input"));
 require_once "UserInfo.class.php";
 require_once (dirname(__FILE__) ."/Service/AuthService.php");
+require_once (dirname(__FILE__) ."/Exception/InvalidCodeException.php");
 require_once (dirname(__FILE__) ."/Model/UserCognitoType.php");
 require_once (dirname(__FILE__) ."/Model/ApiResponseStatus.php");
 $status = ApiResponseStatus::failed;
@@ -11,6 +12,7 @@ $status = ApiResponseStatus::failed;
 $username = strip_tags($formvars->username);
 $password = strip_tags($formvars->password);
 $verifycode = strip_tags($formvars->verifycode);
+$message = '';
 
 if(!empty($verifycode))
 {
@@ -21,16 +23,17 @@ if(!empty($verifycode))
         try
         {
             $authService = new AuthService();
-            $authService->updatePassword($username, $password, $verifycode , $verifycode);
+            $authService->UpdatePassword($username, $password, $verifycode);
             $status = ApiResponseStatus::success;
         }
-        catch (Exception $exception)
+        catch (PasswordValidationException | InvalidCodeException $exception)
         {
             error_log($exception->getMessage());
+            $message = $exception->getMessage();
             $status = ApiResponseStatus::failed;
         }
 
-        print json_encode(array('status' => $status, 'uinfo' => $fetpinfo));
+        print json_encode(array('status' => $status, 'uinfo' => $fetpinfo , 'message' => $message));
         die();
     }
 

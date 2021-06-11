@@ -14,6 +14,8 @@ $username = strip_tags($formvars->username);
 $verifycode = strip_tags($formvars->verifycode);
 $newpassword = strip_tags($formvars->newpassword);
 
+$message = null;
+
 if(!empty($username) && !empty($verifycode))
 {
     $authService = new AuthService();
@@ -25,9 +27,11 @@ if(!empty($username) && !empty($verifycode))
     {
         $status = ApiResponseStatus::goToLogin;
     }
-    catch (Exception $exception)
+    catch (\PasswordValidationException $exception)
     {
+        $message = $exception->getMessage();
         $status = ApiResponseStatus::failed;
     }
+
 }
-print json_encode(array('status' => $status, 'uinfo' => $fetpinfo));
+print json_encode(array('status' => $status, 'uinfo' => $fetpinfo , 'message' => $message));

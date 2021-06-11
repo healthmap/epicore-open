@@ -27,18 +27,23 @@ if ($approve_id && $approve_status) {
     $maillist = UserInfo::getMaillistDetails($approve_id);
     if(!is_null($maillist))
     {
-        $password = md5(date('Y-m-d h:s'));
         $authService = new AuthService();
 
         try {
             // TODO send user to AWS Cognito
-            $authService->singUp($maillist['email'], $password, $maillist['email']);
+            $authService->singUp($maillist['email']);
         }
         catch (\UserAccountExistException $exception)
         {
             $status = 'failed';
             $message = $exception->getMessage();
             error_log($exception->getMessage());
+        }
+        catch (\NoEmailProvidedException $exception)
+        {
+            $status = 'failed';
+            error_log($exception->getMessage());
+            $message = $exception->getMessage();
         }
         catch (\Exception $exception)
         {
