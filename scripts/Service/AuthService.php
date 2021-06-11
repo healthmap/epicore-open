@@ -65,7 +65,6 @@ class AuthService implements IAuthService
         catch (\Aws\CognitoIdentityProvider\Exception\CognitoIdentityProviderException $exception)
         {
             $exceptionMessage = $exception->toArray();
-          //  var_dump($exceptionMessage);die();
             if($exceptionMessage['message'] === CognitoErrors::incorectUserNameOrPassword)
             {
                 throw new \LoginException($exceptionMessage['message']);
@@ -156,7 +155,6 @@ class AuthService implements IAuthService
             {
                 throw new InvalidCodeException($message['message']);
             }
-            var_dump($message);
             throw $exception;
         }
     }

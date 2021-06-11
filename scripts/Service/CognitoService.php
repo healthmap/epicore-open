@@ -123,7 +123,6 @@ class CognitoService
                     'PASSWORD' => $password,
                 ],
             ]);
-           // var_dump($result);die();
             if (isset($result['Session']))
             {
                 throw new \NewPasswordException('New password action');
