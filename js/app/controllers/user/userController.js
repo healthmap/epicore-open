@@ -518,7 +518,7 @@ const UserController = (
         method: 'POST',
         data: formData,
       }).then(
-          function successCallback(res) {
+        function successCallback(res) {
             const data = res.data;
             if (data['status'] === 'success') {
               $scope.isRouteLoading = false;
