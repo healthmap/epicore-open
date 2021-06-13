@@ -44,6 +44,7 @@ const Services = angular
           'certificate',
           'events_public',
           'login_mobile',
+          'resendVerify'
         );
 
         // if user is not authenticated, make them go to homepage if on an auth-only page

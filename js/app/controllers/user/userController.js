@@ -437,6 +437,53 @@ const UserController = (
     clear();
   };
 
+  $scope.resendVerify = function (formData)
+  {
+    $scope.isRouteLoading = false;
+    console.log(formData);
+
+    if (!$scope.setpwForm.$valid) {
+      $scope.isRouteLoading = false;
+      $rootScope.error_message = 'Invalid email or password';
+      return false;
+    }
+    else
+    {
+      if(formData.username === undefined || formData.username === '')
+      {
+        return false;
+      }
+      http({
+        url: urlBase + 'scripts/resendcode.php',
+        method: 'POST',
+        data: formData,
+      }).then(
+          function successCallback(res) {
+            const data = res.data;
+            if (data['status'] === 'success')
+            {
+              $location.path('/setpassword');
+            } else {
+              $rootScope.error_message = 'Invalid email address or password';
+              $scope.isRouteLoading = false;
+              if(data['message'] == '') {
+                $rootScope.error_message = 'Invalid email address or password';
+              }
+              if(data['message'] != '') {
+                $rootScope.error_message = data['message'];
+              }
+              ///return false;
+              $route.reload();
+            }
+          },
+          function errorCallback() {
+            $scope.isRouteLoading = false;
+          },
+      );
+    }
+
+  }
+
   /* set password */
   $scope.setPassword = function(formData) {
     $scope.isRouteLoading = true;
@@ -448,60 +495,39 @@ const UserController = (
       $rootScope.error_message = 'Invalid email or password';
       return false;
     } else {
+      if(formData.username === undefined || formData.username === '')
+      {
+        return false;
+      }
+      if(formData.username === undefined || formData.password === '')
+      {
+        return false;
+      }
+
       http({
         url: urlBase + 'scripts/setpassword.php',
         method: 'POST',
         data: formData,
       }).then(
-        function successCallback(res) {
-          const data = res.data;
-          if (data['status'] === 'success') {
-
-            $location.path('/login');
-
-            // old to delete , should be confirm if needed
-            /*
-            const isActive =
-              typeof data['uinfo']['active'] != 'undefined' ?
-                data['uinfo']['active'] :
-                'Y';
-            $cookieStore.put('epiUserInfo', {
-              uid: data['uinfo']['user_id'],
-              isPromed: false,
-              isOrganization: false,
-              organization_id: data['uinfo']['organization_id'],
-              organization: data['uinfo']['orgname'],
-              fetp_id: data['uinfo']['fetp_id'],
-              email: data['uinfo']['email'],
-              uname: data['uinfo']['username'],
-              active: isActive,
-              status: data['uinfo']['status'],
-            });
-            $rootScope.error_message = false;
-            let redirpath = '/training';
-            // FETPs that are activated and approved status get to review page
-            if (data['uinfo']['fetp_id'] && data['uinfo']['active'] == 'Y') {
-              redirpath =
-                typeof querystr['redir'] != 'undefined' ?
-                  querystr['redir'] :
-                  '/' + data['path'];
+          function successCallback(res) {
+            const data = res.data;
+            if (data['status'] === 'success')
+            {
+              $location.path('/login');
+            } else {
+              $scope.isRouteLoading = false;
+              if(data['message'] == '') {
+                $rootScope.error_message = 'Invalid email address or password';
+              }
+              if(data['message'] != '') {
+                $rootScope.error_message = data['message'];
+              }
+              $route.reload();
             }
+          },
+          function errorCallback() {
             $scope.isRouteLoading = false;
-            $location.path(redirpath);*/
-          } else {
-            $scope.isRouteLoading = false;
-            if(data['message'] == '') {
-              $rootScope.error_message = 'Invalid email address or password';
-            }
-            if(data['message'] != '') {
-              $rootScope.error_message = data['message'];
-            }
-            $route.reload();
-          }
-        },
-        function errorCallback() {
-          $scope.isRouteLoading = false;
-        },
+          },
       );
     }
   };

@@ -10,6 +10,7 @@ require_once(dirname(__FILE__) . "/../Exception/LoginPasswordAttemptsExceededExc
 require_once(dirname(__FILE__) . "/../Exception/UserAccountExistException.php");
 require_once(dirname(__FILE__) . "/../Exception/PasswordValidationException.php");
 require_once(dirname(__FILE__) . "/../Exception/UserIsConfirmed.php");
+require_once(dirname(__FILE__) . "/../Exception/UserAccountNotExist.php");
 require_once(dirname(__FILE__) . "/../Exception/InvalidCodeException.php");
 
 class AuthService implements IAuthService
@@ -155,12 +156,14 @@ class AuthService implements IAuthService
             {
                 throw new InvalidCodeException($message['message']);
             }
-            throw $exception;
+            throw new Exception($message['message']);
         }
     }
 
     /**
      * @param string $username
+     * @throws UserAccountNotExist
+     * @throws Exception
      */
     public function ForgotPassword(string $username)
     {
@@ -170,7 +173,13 @@ class AuthService implements IAuthService
         }
         catch (\Aws\CognitoIdentityProvider\Exception\CognitoIdentityProviderException $exception)
         {
-            throw $exception;
+            $code = $exception->toArray();
+            if($code['message']=== "Username/client id combination not found.")
+            {
+                throw new UserAccountNotExist($code['message']);
+            }
+
+            throw new Exception($code['message']);
         }
     }
 

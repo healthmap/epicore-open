@@ -26,7 +26,7 @@ if(!empty($verifycode))
             $authService->UpdatePassword($username, $password, $verifycode);
             $status = ApiResponseStatus::success;
         }
-        catch (PasswordValidationException | InvalidCodeException $exception)
+        catch (PasswordValidationException | InvalidCodeException | Exception $exception)
         {
             error_log($exception->getMessage());
             $message = $exception->getMessage();
@@ -34,6 +34,12 @@ if(!empty($verifycode))
         }
 
         print json_encode(array('status' => $status, 'uinfo' => $fetpinfo , 'message' => $message));
+        die();
+    }
+    else
+    {
+        $message = 'Username not found.';
+        print json_encode(array('status' => $status, 'uinfo' => null , 'message' => $message));
         die();
     }
 
