@@ -28,16 +28,22 @@ class CognitoService
         $dotenv = Dotenv\Dotenv::createImmutable(dirname(__FILE__) . '/../../');
         $dotenv->load();
 
+        // TODO get from .env aws profile
+        $profile = $_ENV['aws_profile'];
+
         $this->client = new CognitoIdentityProviderClient([
             'version' => 'latest',
-            'profile' => 'default',
+            'profile' => $profile,
             'region' => 'us-east-2',
         ]);
 
+        // TODO get from .env aws_clinet_id
         $this->clientId= $_ENV['aws_clinet_id'];
+
+        // TODO get from .env aws_user_pool_id
         $this->userPoolId = $_ENV['aws_user_pool_id'];
 
-        if(empty($this->clientId) || empty($this->userPoolId))
+        if(empty($this->clientId) || empty($this->userPoolId) || empty($profile))
         {
             print('AWS Congnito .env missing');
             die();
