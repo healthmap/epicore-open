@@ -31,11 +31,16 @@ class CognitoService
         // TODO get from .env aws profile
         $profile = $_ENV['aws_profile'];
 
-        $this->client = new CognitoIdentityProviderClient([
-            'version' => 'latest',
-            'profile' => $profile,
-            'region' => 'us-east-2',
-        ]);
+        // TODO get from .env aws region
+        $region = $_ENV['aws_region'];
+
+        // TODO get from .env aws version
+        $version = $_ENV['aws_version'];
+
+        if(empty($version))
+        {
+            $version = 'latest';
+        }
 
         // TODO get from .env aws_clinet_id
         $this->clientId= $_ENV['aws_clinet_id'];
@@ -48,6 +53,13 @@ class CognitoService
             print('AWS Congnito .env missing');
             die();
         }
+
+        // TODO init CognitoIdentityProviderClient
+        $this->client = new CognitoIdentityProviderClient([
+            'version' => $version,
+            'profile' => $profile,
+            'region' => 'us-east-2',
+        ]);
     }
 
 
