@@ -252,18 +252,26 @@ class UserInfo
         $user = $db->getRow("SELECT hmu_id, username, email, pword_hash from hm_hmu WHERE (username = ? OR email = ?) AND confirmed = 1", array($email, $email));
         if(is_null($user))
         {
-            $user = $db->getRow("SELECT email , fetp_id from fetp WHERE email = ?", array($dbdata['email']));
+            $user = $db->getRow("SELECT email , fetp_id , role.id as roleId , role.name as roleName from fetp 
+                    INNER JOIN role ON role.id = fetp.roleId
+                    WHERE email = ?", array($dbdata['email']));
             if (is_a($user, 'DB_Error')) {
                 print_r($user);
                 die('uinfo error!');
             }
-        }else
+        }
+        else
         {
-            $user - $db->getRow("SELECT user.user_id, user.hmu_id, user.organization_id, organization.name AS orgname FROM user LEFT JOIN epicore.organization ON user.organization_id = organization.organization_id WHERE hmu_id = ?", array($user['hmu_id']));
+            $user - $db->getRow("SELECT user.user_id, user.hmu_id, user.organization_id, organization.name AS orgname , role.id as roleId , role.name as roleName FROM user
+                INNER JOIN role ON role.id = user.roleId
+                LEFT JOIN epicore.organization ON user.organization_id = organization.organization_id WHERE hmu_id = ?", array($user['hmu_id']));
         }
         $uinfo['username'] = $user['email'];
         $uinfo['email'] = $user['email'];
         $uinfo['superuser'] = false;
+        $uinfo['roleId'] = $user['roleId'];
+        $uinfo['roleName'] = $user['roleName'];
+
         if(isset($user['fetp_id']))
         {
             $uinfo['fetp_id'] = $user['fetp_id'];

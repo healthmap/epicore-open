@@ -58,7 +58,7 @@ class CognitoService
         $this->client = new CognitoIdentityProviderClient([
             'version' => $version,
             'profile' => $profile,
-            'region' => 'us-east-2',
+            'region' => $region,
         ]);
     }
 
@@ -174,8 +174,7 @@ class CognitoService
             {
                 throw new \UserAccountNotExist($error['message']);
             }
-
-            error_log($exception->getMessage());
+            error_log($exception['message']);
             throw $exception;
         }
     }

@@ -51,6 +51,7 @@ class AuthService implements IAuthService
      * @throws LoginPasswordAttemptsExceededException
      * @throws UserAccountNotExist
      * @throws PasswordValidationException
+     * @throws Exception
      */
     public function LoginUser(string $username, string $password): UserAuthResponse
     {
@@ -78,6 +79,7 @@ class AuthService implements IAuthService
             {
                 throw new \UserAccountNotExist($exceptionMessage['message']);
             }
+            throw new Exception($exceptionMessage['message']);
         }
         catch (PasswordValidationException $exception)
         {

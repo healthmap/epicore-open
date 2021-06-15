@@ -350,7 +350,6 @@ const UserController = (
       function successCallback(res) {
         const data = res.data;
         if (data['status'] === 'success') {
-          
           // determines if user is an organization or FETP
           $rootScope.isOrganization =
             data['uinfo']['organization_id'] > 0 ? true : false;
@@ -376,31 +375,23 @@ const UserController = (
             status: data['uinfo']['status'],
             superuser: data['uinfo']['superuser'],
             locations: memberLocations,
-            environment: data['environment']
+            environment: data['environment'],
+            role : {
+              roleId : data['uinfo']['roleId'],
+              roleName : data['uinfo']['roleName']
+            }
           };
 
-          // ticket ref: #245
-         /* if(data['uinfo']['token'] != null)
-          {
-            const token = {
-                accessToken : data['uinfo']['token']['accessToken'],
-                refreshToken : data['uinfo']['token']['refreshToken'],
-                expiresIn : data['uinfo']['token']['expiresIn']
-              }
-              //save token in localStorage
-            $localStorage.token = token;
-          }*/
-
-          
           // save username and password
           $localStorage.username = formData['username'];
-          // $localStorage.password = formData['password'];
+
+          $localStorage.user = formData['username'];
+
           // save user in cookie
           $cookieStore.put('epiUserInfo', newUserInfo);
 
           // save user in local storage for mobile app
           $localStorage.user = newUserInfo;
-
           $rootScope.error_message = false;
 
           // FETPs that aren't activated yet don't get review page

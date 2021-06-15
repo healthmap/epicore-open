@@ -50,6 +50,11 @@ if(isset($formvars->ticket_id) && $formvars->usertype == "fetp") { // ticket sys
             $uinfo = UserInfo::authenticateUser($dbdata);
             $uinfo['superuser'] = (isset($uinfo['user_id']) && in_array($uinfo['user_id'], $super_users)) ? true: false;
         }
+        catch (\Exception $exception)
+        {
+            $status = "incorrect password";
+            $cognitoAuthStatus = false;
+        }
 
         if(isset($uinfo['superuser']) && !$uinfo['superuser'] && !empty($uinfo['email']))
         {
