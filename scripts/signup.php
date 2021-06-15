@@ -34,10 +34,16 @@ if($exists) {
     if (($fetpinfo['active'] == 'N') && ($fetpinfo['status'] == 'A')){
         $status = 'preapproved';
         sendMail($pvals['email'], $pvals['firstname'],'EpiCore Project Official Launch', $status, $fetpid);
+        //for debugging only
+        // $awsMailResult = sendMail($pvals['email'], $pvals['firstname'],'EpiCore Project Official Launch', $status, $fetpid);
+        // print json_encode(array('aws-mail-status-for-preapproved' => $awsMailResult));
     }
     else{ // send application received email to others
         $status = 'apply';
         sendMail($pvals['email'], $pvals['firstname'],'EpiCore Application Received', $status, $user_id);
+        //for debugging only
+        //$awsMailResult = sendMail($pvals['email'], $pvals['firstname'],'EpiCore Application Received', $status, $user_id);
+        //print json_encode(array('aws-mail-status-for-apply' => $awsMailResult));
     }
 }
 

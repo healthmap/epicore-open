@@ -13,6 +13,10 @@ epicore_app_client_id_secret=$(aws cognito-idp describe-user-pool-client --user-
 
 echo "epicore_app_client_id_secret=$epicore_app_client_id_secret" >> .env
 
+echo "epicore_aws_region=$AWS_REGION" >> .env
+
+
+
 pip3 install -r requirements.txt
 
 

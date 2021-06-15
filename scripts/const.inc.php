@@ -1,6 +1,7 @@
 <?php
 
-require_once '/usr/share/php/vendor/autoload.php';
+// require_once '/usr/share/php/vendor/autoload.php';
+require_once '/Users/lakshmiyajurvedi/work/Applications/php/vendor/autoload.php';
 $dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '../../');
 
 $dotenv->load();
@@ -25,12 +26,21 @@ $emailadmin = $_ENV['emailadmin'];
 #$promed_info = $_ENV['promed_info'];
 $emailproin = $_ENV['emailproin'];
 
+$aws_region = $_ENV['epicore_aws_region'];
+$aws_userPoolId = $_ENV['epicore_user_pool_id'];
+$aws_appClientId = $_ENV['epicore_app_client_id'];
+$aws_appClientIdSecret = $_ENV['epicore_app_client_id_secret'];
 
 // echo '>>>>';
 // echo $environment;
 // echo '<<<<:';
 
 define('ENVIRONMENT', $environment);
+
+define('AWS_REGION', $aws_region);
+define('AWS_USER_POOL_ID', $aws_userPoolId);
+define('AWS_APP_CLIENT_ID', $aws_appClientId);
+define('AWS_APP_CLIENT_ID_SECRET', $aws_appClientIdSecret);
 
 // approval username and password
 define('APPROVAL_USERNAME', $approval_username);

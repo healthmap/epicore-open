@@ -1,9 +1,11 @@
 <?php
  
 require_once "db.function.php";
+require_once 'const.inc.php';
 if (file_exists("/usr/share/php/vendor/autoload.php")) {
     require_once '/usr/share/php/vendor/autoload.php';
 }
+
 
 use Aws\Ses\SesClient;
 use Aws\Exception\AwsException;
@@ -16,8 +18,9 @@ class AWSMail
         // Change the value of the profile parameter if you want to use a profile in your credentials file
         // other than the default.
         $SesClient = new SesClient([
+            'profile' => 'default',
             'version' => '2010-12-01',
-            'region'  => 'us-east-1'
+            'region'  => AWS_REGION
         ]);
 
         $to = is_array($to) ? $to : explode(",", $to);
