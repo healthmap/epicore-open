@@ -25,28 +25,14 @@ class CognitoService
 
     public function __construct()
     {
-        $dotenv = Dotenv\Dotenv::createImmutable(dirname(__FILE__) . '/../../');
-        $dotenv->load();
-
-        // TODO get from .env aws profile
-        $profile = $_ENV['aws_profile'];
-
-        // TODO get from .env aws region
-        $region = $_ENV['aws_region'];
-
-        // TODO get from .env aws version
-        $version = $_ENV['aws_version'];
-
-        if(empty($version))
-        {
-            $version = 'latest';
-        }
-
         // TODO get from .env aws_clinet_id
-        $this->clientId= $_ENV['aws_clinet_id'];
+        $this->clientId = aws_client_id;
 
         // TODO get from .env aws_user_pool_id
-        $this->userPoolId = $_ENV['aws_user_pool_id'];
+        $this->userPoolId = aws_user_pool_id;
+
+        // TODO get from .env aws_profile
+        $profile = aws_profile;
 
         if(empty($this->clientId) || empty($this->userPoolId) || empty($profile))
         {
@@ -56,9 +42,9 @@ class CognitoService
 
         // TODO init CognitoIdentityProviderClient
         $this->client = new CognitoIdentityProviderClient([
-            'version' => $version,
+            'version' => aws_version,
             'profile' => $profile,
-            'region' => $region,
+            'region' => aws_region,
         ]);
     }
 

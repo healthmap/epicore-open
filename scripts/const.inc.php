@@ -25,6 +25,22 @@ $emailadmin = $_ENV['emailadmin'];
 #$promed_info = $_ENV['promed_info'];
 $emailproin = $_ENV['emailproin'];
 
+#aws cognito
+$awsProfile = $_ENV['aws_profile'];
+$awsRegion = $_ENV['aws_region'];
+$awsVersion = $_ENV['aws_version'];
+$awsClientId= $_ENV['aws_client_id'];
+$awsUserPoolId = $_ENV['aws_user_pool_id'];
+
+if(empty($awsVersion)){
+    $awsVersion = 'latest';
+}
+
+define('aws_profile' , $awsProfile);
+define('aws_region' , $awsRegion);
+define('aws_version' , $awsVersion);
+define('aws_client_id' , $awsClientId);
+define('aws_user_pool_id' , $awsUserPoolId);
 
 // echo '>>>>';
 // echo $environment;
