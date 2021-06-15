@@ -2,16 +2,19 @@
 /**
  * db.function.php
 */
+require_once (dirname(__FILE__) ."/common/AWSCredentialsProvider.php");
+
+$AWSCredentialsProviderInstance = AWSCredentialsProvider::getInstance();
 
 function getDB($which = '')
 {
-
 
     static $db;
     if(!is_object($db)) {
 
         require_once(dirname(__FILE__).'/DB/DB.php');
         require_once '/usr/share/php/vendor/autoload.php';
+        
         $dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '../../');
         $dotenv->load();
         $epicore_db = $_ENV['epicore_db'];
