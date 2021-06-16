@@ -19,7 +19,7 @@ class AWSCredentialsProvider
     private function __construct()
     {
         $profile = new InstanceProfileProvider();
-        $ARN = "arn:aws:iam::503172036736:role/epicore-k8s-app-role";
+        $ARN = "arn:aws:iam::503172036736:role/OrganizationAccountAccessRole";
         $sessionName = "aws-access-assume-role-epicore-nonprod";
 
         $assumeRoleCredentials = new AssumeRoleCredentialProvider([
