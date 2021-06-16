@@ -10,7 +10,7 @@ require_once "db.function.php";
 require_once 'const.inc.php';
 
 if (file_exists("/usr/share/php/vendor/autoload.php")) {
-    require_once '/usr/share/php/vendor/autoload.php';;
+    require_once '/usr/share/php/vendor/autoload.php';
 }
 
 // AWSMail::mailfunc('lyajurvedi@gmail.com','test subject','this is a test message','info@healthmap.org');
@@ -28,7 +28,7 @@ class AWSMail
     
         try {
             $SesClient = new SesClient([
-                'profile' => 'default',
+                // 'profile' => 'default',
                 'version' => '2010-12-01',
                 'region'  => AWS_REGION,
                 'credentials' => $AWSCredentialsProviderInstance->fetchAWSCredentialsFromRole()
