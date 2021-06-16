@@ -10,7 +10,7 @@ function getDB($which = '')
     if(!is_object($db)) {
 
         require_once(dirname(__FILE__).'/DB/DB.php');
-        require_once '/usr/share/php/vendor/autoload.php';
+        require_once '/usr/share/php/vendor/autoload.php';;;
         
         $dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '../../');
         $dotenv->load();

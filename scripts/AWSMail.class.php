@@ -3,14 +3,14 @@
 use Aws\Ses\SesClient;
 use Aws\Exception\AwsException;
 use Aws\Credentials\CredentialProvider;
-use Aws\S3\S3Client;
- 
+
+require_once (dirname(__FILE__) ."/common/AWSCredentialsProvider.php");
 
 require_once "db.function.php";
 require_once 'const.inc.php';
 
 if (file_exists("/usr/share/php/vendor/autoload.php")) {
-    require_once '/usr/share/php/vendor/autoload.php';
+    require_once '/usr/share/php/vendor/autoload.php';;
 }
 
 // AWSMail::mailfunc('lyajurvedi@gmail.com','test subject','this is a test message','info@healthmap.org');
@@ -24,16 +24,14 @@ class AWSMail
         // Change the value of the profile parameter if you want to use a profile in your credentials file
         // other than the default.
 
-        // Use the default credential provider
-        $provider = CredentialProvider::defaultProvider();
-
-
+        $AWSCredentialsProviderInstance = AWSCredentialsProvider::getInstance();
+    
         try {
             $SesClient = new SesClient([
                 'profile' => 'default',
                 'version' => '2010-12-01',
                 'region'  => AWS_REGION,
-                'credentials' =>  $provider
+                'credentials' => $AWSCredentialsProviderInstance->fetchAWSCredentialsFromRole()
             ]);
 
             $to = is_array($to) ? $to : explode(",", $to);

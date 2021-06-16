@@ -1,6 +1,7 @@
 <?php
 
-require_once '/usr/share/php/vendor/autoload.php';
+require_once '/usr/share/php/vendor/autoload.php';;
+
 $dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '../../');
 
 $dotenv->load();
@@ -29,6 +30,8 @@ $aws_region = $_ENV['epicore_aws_region'];
 $aws_userPoolId = $_ENV['epicore_user_pool_id'];
 $aws_appClientId = $_ENV['epicore_app_client_id'];
 $aws_appClientIdSecret = $_ENV['epicore_app_client_id_secret'];
+$aws_epicoreArn = $_ENV['epicore_aws_arn'];
+$aws_epicoreIamRolename = $_ENV['epicore_aws_iam_rolename'];
 
 // echo '>>>>';
 // echo $environment;
@@ -40,6 +43,9 @@ define('AWS_REGION', $aws_region);
 define('AWS_USER_POOL_ID', $aws_userPoolId);
 define('AWS_APP_CLIENT_ID', $aws_appClientId);
 define('AWS_APP_CLIENT_ID_SECRET', $aws_appClientIdSecret);
+define('AWS_EPICORE_ARN', $aws_epicoreArn);
+define('AWS_EPICORE_IAM_ROLENAME', $aws_epicoreIamRolename);
+
 
 // approval username and password
 define('APPROVAL_USERNAME', $approval_username);
