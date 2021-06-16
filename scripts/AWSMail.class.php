@@ -27,10 +27,6 @@ class AWSMail
 
         $AWSCredentialsProviderInstance = AWSCredentialsProvider::getInstance();
 
-        echo '-------->';
-        print_r($AWSCredentialsProviderInstance->fetchAWSCredentialsFromRole());
-        echo '-------->';
-
         try {
             $SesClient = new SesClient([
                 'profile' => 'default',
