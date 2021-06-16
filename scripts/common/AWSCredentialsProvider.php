@@ -51,7 +51,13 @@ class AWSCredentialsProvider
     
     public function fetchAWSCredentialsFromRole()
     {
-      return $this->provider;
+      // return $this->provider;
+      return self::memoize(
+        self::chain(
+            self::env(),
+            self::$provider
+        )
+      );
     }
     
 }
