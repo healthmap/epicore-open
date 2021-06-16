@@ -2,8 +2,6 @@
 /**
  * db.function.php
 */
-require_once (dirname(__FILE__) ."/common/AWSCredentialsProvider.php");
-
 
 function getDB($which = '')
 {
