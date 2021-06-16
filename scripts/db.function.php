@@ -4,7 +4,6 @@
 */
 require_once (dirname(__FILE__) ."/common/AWSCredentialsProvider.php");
 
-$AWSCredentialsProviderInstance = AWSCredentialsProvider::getInstance();
 
 function getDB($which = '')
 {
