@@ -5,6 +5,7 @@ require_once(dirname(__FILE__) . "/../Model/UserAuthResponse.php");
 require_once(dirname(__FILE__) . "/../Exception/NewPasswordException.php");
 require_once(dirname(__FILE__) . "/../Exception/UserAccountNotExist.php");
 require_once(dirname(__FILE__) . "/../Exception/UserAccountExistException.php");
+require_once(dirname(__FILE__) . "/../Exception/CognitoException.php");
 require_once(dirname(__FILE__) . "/../Model/CognitoErrors.php");
 
 
@@ -90,7 +91,6 @@ class CognitoService
             }
 
             $this->client->AdminCreateUser($dataContext);
-
             // TODO case for user who have already account and we do not want to change their password
             if($dontSendEmail && !$dontUpdatePassword)
             {
@@ -188,7 +188,6 @@ class CognitoService
      * @param string $code
      * @param string $password
      * @param string $username
-     * @return string
      */
     public function resetPassword(string $code, string $password, string $username): void
     {
@@ -306,6 +305,44 @@ class CognitoService
 
         }
         catch (\Aws\CognitoIdentityProvider\Exception\CognitoIdentityProviderException $exception)
+        {
+            throw $exception;
+        }
+
+    }
+
+    /**
+     * @param string $token
+     */
+    public function getUser(string $token): void
+    {
+        try
+        {
+            $this->client->getUser([
+                'AccessToken' => $token
+            ]);
+        }
+        catch(\Aws\CognitoIdentityProvider\Exception\CognitoIdentityProviderException $exception)
+        {
+            throw $exception;
+        }
+
+    }
+
+    /**
+     * @param string $username
+     * @return bool
+     */
+    public function revokeToken(string $username): void
+    {
+        try
+        {
+            $this->client->AdminUserGlobalSignOut([
+               'UserPoolId' => $this->userPoolId,
+                'Username' => $username
+            ]);
+        }
+        catch(CognitoException $exception)
         {
             throw $exception;
         }

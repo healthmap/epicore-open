@@ -3,10 +3,10 @@ import { eventsService } from '@/common/eventsService';
 import { EVENT_TYPES, EVENT_SOURCE, EVENT_OUTCOME } from '@/constants/eventsConstants';
 
 
-const { getUser } = userService();
+const { getUser , hasToken } = userService();
 const { getEvents, getEventSummary, getTimeFilterSelectValues } = eventsService();
 
-const EventsController3 = ($scope, $location, epicoreMode, epicoreStartDate) => {
+const EventsController3 = ($scope, $location, epicoreMode, epicoreStartDate , $localStorage , $route) => {
   $scope.userInfo  = getUser();
   $scope.mobile = epicoreMode == 'mobile' ? true : false;
   $scope.events = [];
@@ -21,7 +21,6 @@ const EventsController3 = ($scope, $location, epicoreMode, epicoreStartDate) => 
   $scope.eventsOrderReverse = true;
   $scope.isRouteLoading = true;
   $scope.summaryLoading = null;
-
   const d = new Date();
   $scope.date = d.setDate(d.getDate() - 14);
  
@@ -30,6 +29,14 @@ const EventsController3 = ($scope, $location, epicoreMode, epicoreStartDate) => 
     end_date = null
   }) => {
     $scope.isRouteLoading = true;
+
+    const tokenValidation = await hasToken($localStorage.user);
+
+    if(!tokenValidation)
+    {
+      $location.path('/login');
+      $route.reload();
+    }
 
     $scope.events = await getEvents({
       uid: $scope.eventType === EVENT_TYPES.MY_RFIS.CODE ? true : false,
@@ -199,6 +206,6 @@ const EventsController3 = ($scope, $location, epicoreMode, epicoreStartDate) => 
  
 };
 
-EventsController3.$inject = ['$scope', '$location', 'epicoreMode' , 'epicoreStartDate'];
+EventsController3.$inject = ['$scope', '$location', 'epicoreMode' , 'epicoreStartDate' , '$localStorage' , '$route'];
 
 export default EventsController3;

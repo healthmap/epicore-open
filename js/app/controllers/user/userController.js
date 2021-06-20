@@ -362,6 +362,16 @@ const UserController = (
             typeof data['uinfo']['active'] != 'undefined' ?
               data['uinfo']['locations'] :
               false;
+
+          let token = null;
+          if(data.uinfo.token != undefined)
+          {
+            let dataToken = data.uinfo.token.accessToken;
+            if(dataToken != ''){
+              token = dataToken;
+            }
+          }
+
           const newUserInfo = {
             uid: data['uinfo']['user_id'],
             isPromed: isPromed,
@@ -379,9 +389,9 @@ const UserController = (
             role : {
               roleId : data['uinfo']['roleId'],
               roleName : data['uinfo']['roleName']
-            }
+            },
+            token : token
           };
-
           // save username and password
           $localStorage.username = formData['username'];
 
@@ -423,6 +433,17 @@ const UserController = (
 
   /* log out */
   $scope.userLogout = function() {
+
+    let formData = {
+      'username' : $localStorage.user.email
+    }
+
+    http({
+      url: urlBase + 'scripts/revoke.php',
+      method: 'POST',
+      data: formData,
+    });
+
     $cookieStore.remove('epiUserInfo');
     $window.sessionStorage.clear();
     clear();

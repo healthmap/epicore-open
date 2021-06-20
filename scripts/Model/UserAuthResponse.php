@@ -112,7 +112,11 @@ class UserAuthResponse {
         return $this->changepPassword;
     }
 
-    public function setChangePassword(bool $status)
+    /**
+     * @param bool $status
+     * @return $this
+     */
+    public function setChangePassword(bool $status): self
     {
         $this->changepPassword = $status;
         return $this;
