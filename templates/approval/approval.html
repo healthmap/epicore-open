@@ -1,415 +1,458 @@
 <div ng-include src="'templates/header/header.html?c'"></div>
 <div class="jumbotron dashboard">
-    <div class="container floated-heading">
-        <h1 class="pull-left">Approval Portal</h1>
-        <a data-toggle="modal" data-target="#memberstatus" href="" class="pull-right">Member status
-            <i class="fa fa-question-circle"></i>
-        </a>
-    </div>
+	<div class="container floated-heading">
+		<h1 class="pull-left">Approval Portal</h1>
+		<a data-toggle="modal" data-target="#memberstatus" href="" class="pull-right">Member status
+			<i class="fa fa-question-circle"></i>
+		</a>
+	</div>
 </div>
 
 <div class="modal fade" id="memberstatus" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal">
-                    <span aria-hidden="true">&times;</span>
-                    <span class="sr-only">Close</span>
-                </button>
-                <h4 class="modal-title" id="myModalLabel">Member Status Types</h4>
-            </div>
-            <div class="modal-body">
-                <p>
-                    <strong>Accepted</strong>
-                    <br /> The applicant has been accepted to take the training course.</p>
-                <p>
-                    <strong>Member</strong>
-                    <br /> The accepted applicant has taken the training course and is approved to use the Epicore platform.</p>
-                <p>
-                    <strong>Pre-approved</strong>
-                    <br /> The applicant has taken the training course and is pre-approved to use the Epicore platform.</p>
-                <p>
-                    <strong>Denied</strong>
-                    <br /> The applicant was denied and does not have access to the Epicore platform.</p>
-                <p>
-                    <strong>New Applicant</strong>
-                    <br /> The applicant has not been accepted to take the training course yet, and does not have access to the
-                    Epicore platform.</p>
-            </div>
-        </div>
-    </div>
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">
+					<span aria-hidden="true">&times;</span>
+					<span class="sr-only">Close</span>
+				</button>
+				<h4 class="modal-title" id="myModalLabel">Member Status Types</h4>
+			</div>
+			<div class="modal-body">
+				<p>
+					<strong>Accepted</strong>
+					<br /> The applicant has been accepted to take the training course.
+				</p>
+				<p>
+					<strong>Member</strong>
+					<br /> The accepted applicant has taken the training course and is approved to use the Epicore
+					platform.
+				</p>
+				<p>
+					<strong>Pre-approved</strong>
+					<br /> The applicant has taken the training course and is pre-approved to use the Epicore platform.
+				</p>
+				<p>
+					<strong>Denied</strong>
+					<br /> The applicant was denied and does not have access to the Epicore platform.
+				</p>
+				<p>
+					<strong>New Applicant</strong>
+					<br /> The applicant has not been accepted to take the training course yet, and does not have access
+					to the
+					Epicore platform.
+				</p>
+			</div>
+		</div>
+	</div>
 </div>
 
 <div class="wrapper dashboard">
 
-    <div class="container">
-        <div ng-show="!showpage">
-            <i class="fa fa-spinner fa-spin"></i> Please wait...
-        </div>
-        <div ng-show="!superuser">
-            <h3>You do not have access to this page.</h3>
-        </div>
-        <div ng-show="superuser && showpage" ng-controller="approvalController" ng-init="predicate='apply_date_iso'; reverse=!reverse">
+	<div class="container">
+		<div ng-show="!showpage">
+			<i class="fa fa-spinner fa-spin"></i> Please wait...
+		</div>
+		<div ng-show="!superuser">
+			<h3>You do not have access to this page.</h3>
+		</div>
+		<div ng-show="superuser && showpage" ng-controller="approvalController"
+			ng-init="predicate='apply_date_iso'; reverse=!reverse">
 
-            <span ng-show="isRouteLoading">
-                <i class="fa fa-spinner fa-spin"></i> Please wait...
-            </span>
+			<span ng-show="isRouteLoading">
+				<i class="fa fa-spinner fa-spin"></i> Please wait...
+			</span>
 
-            <div class="form-group pull-right">
-                <label class="form-label" >Member List Filter</label>
-                <select ng-options="month as month.name for month in event_months " ng-model="selected_month" ng-change="getApprovalMonth()"></select>
-            </div>
-            <br/>
-            
+			<div class="form-group pull-right">
+				<label class="form-label">Member List Filter</label>
+				<select ng-options="month as month.name for month in event_months " ng-model="selected_month"
+					ng-change="getApprovalMonth()"></select>
+			</div>
+			<br />
 
-            <!--
+
+			<!--
             <h4>Send Reminder Options:</h4>
             <button type="button" class="btn btn-secondary secondary-color btn-tab mb24" ng-click="sendReminder('preapprove_reminder')">Set Password (Pre-approved)</button>
             <button type="button" class="btn btn-secondary secondary-color btn-tab mb24" ng-click="sendReminder('setpassword_reminder')">Set Password (Accepted)</button>
             <button type="button" class="btn btn-secondary secondary-color btn-tab mb24" ng-click="sendReminder('training_reminder')">Finish Training</button>
             <button type="button" class="btn btn-secondary secondary-color btn-tab mb24" ng-click="sendReminder('launch_reminder')">Join Epicore</button>-->
 
-            <!-- <button ng-show="!allapp" type="button" ng-click="selectMembers(true)" class="btn btn-default btn-sm stacked">Show All Members</button> -->
-            <button ng-show="allapp" type="button" ng-click="selectMembers(false)" class="btn btn-default btn-sm stacked">Show Inactive Members</button>
-            {{waitmessage}}
-            </p>
+			<!-- <button ng-show="!allapp" type="button" ng-click="selectMembers(true)" class="btn btn-default btn-sm stacked">Show All Members</button> -->
+			<button ng-show="allapp" type="button" ng-click="selectMembers(false)" class="btn btn-default btn-sm stacked">Show
+				Inactive Members</button>
+			{{waitmessage}}
+			</p>
 
-      
 
-            <div class="collapse-search-container mb32">
 
-                <ul ng-class="{'search-open': searchOpen}" class="nav nav-pills pt6 pb6">
-                    <li class="search-expand" ng-click="searchOpen = !searchOpen" data-toggle="collapse" href="#collapseSearch">
-                        <i class="far fa-search" ng-click="clearSearch($event)" ng-class="{'fa-times': searchOpen}"></i>
-                    </li>
-                    <li ng-class="{'active' : activeHeaderItem === 'New Applicants'}">
-                        <a href=""  ng-click="loadMemberInfo('/approval/')">New Applicants ({{num_inactive}})</a>
-                    </li>
-                    <li ng-class="{active : activeHeaderItem === 'Accepted'}">
-                        <a href="" ng-click="loadMemberInfo('/approval/accepted')">Accepted ({{num_accepted}})</a>
-                    </li>
-                    <li ng-class="{active : activeHeaderItem === 'Members'}">
-                        <a href="" ng-click="loadMemberInfo('/approval/members')">Members ({{num_approved}})</a>
-                    </li>
-                    <li ng-class="{'active' : activeHeaderItem === 'Pre Approved'}">
-                        <a href="" ng-click="loadMemberInfo('/approval/pre_approved')">Pre-approved ({{num_preapproved}})</a>
-                    </li>
-                    <li ng-class="{active : activeHeaderItem === 'Denied'}">
-                        <a href="" ng-click="loadMemberInfo('/approval/denied')">Denied ({{num_denied}})</a>
-                    </li>
-                    <li class="pull-right" ng-if="activeHeaderItem === 'Accepted' || activeHeaderItem === 'Pre Approved'">
-                        <!-- <a href="">
+			<div class="collapse-search-container mb32">
+
+				<ul ng-class="{'search-open': searchOpen}" class="nav nav-pills pt6 pb6">
+					<li class="search-expand" ng-click="searchOpen = !searchOpen" data-toggle="collapse" href="#collapseSearch">
+						<i class="far fa-search" ng-click="clearSearch($event)" ng-class="{'fa-times': searchOpen}"></i>
+					</li>
+					<li ng-class="{'active' : activeHeaderItem === 'New Applicants'}">
+						<a href="" ng-click="loadMemberInfo('/approval/')">New Applicants ({{num_inactive}})</a>
+					</li>
+					<li ng-class="{active : activeHeaderItem === 'Accepted'}">
+						<a href="" ng-click="loadMemberInfo('/approval/accepted')">Accepted ({{num_accepted}})</a>
+					</li>
+					<li ng-class="{active : activeHeaderItem === 'Members'}">
+						<a href="" ng-click="loadMemberInfo('/approval/members')">Members ({{num_approved}})</a>
+					</li>
+					<li ng-class="{'active' : activeHeaderItem === 'Pre Approved'}">
+						<a href="" ng-click="loadMemberInfo('/approval/pre_approved')">Pre-approved
+							({{num_preapproved}})</a>
+					</li>
+					<li ng-class="{active : activeHeaderItem === 'Denied'}">
+						<a href="" ng-click="loadMemberInfo('/approval/denied')">Denied ({{num_denied}})</a>
+					</li>
+					<li class="pull-right" ng-if="activeHeaderItem === 'Accepted' || activeHeaderItem === 'Pre Approved'">
+						<!-- <a href="">
                             <i ng-click="pwchecked=!pwchecked" ng-init="!pwchecked" ng-class="{'fa-check-square': pwchecked, 'fa-square-o': !pwchecked}"
                                 class="custom-checkbox fa icon clickable"></i>
                             <span class="ml8">Doesn't have a password</span>
                         </a> -->
-                        <a href="">
-                            <i ng-click="passwordCheck()" ng-class="{'fa-check-square': pwcheck, 'fa-square-o': !pwcheck}" class="custom-checkbox fa icon clickable"></i>
-                            <span class="ml8">Doesn't have a password</span>
-                        </a>
-                    </li>
-                </ul>
+						<a href="">
+							<i ng-click="passwordCheck()" ng-class="{'fa-check-square': pwcheck, 'fa-square-o': !pwcheck}"
+								class="custom-checkbox fa icon clickable"></i>
+							<span class="ml8">Doesn't have a password</span>
+						</a>
+					</li>
+				</ul>
 
-           
-                <div id="collapseSearch" class="collapse">
-                    <div class="input-group">
-                        <span class="input-group-addon">
-                            <i class="far fa-search"></i>
-                        </span>
-                        <input ng-model="query_input" class="input-group" ng-keypress="searchMembers($event)">
 
-                    </div>
-                </div>
-            </div>
+				<div id="collapseSearch" class="collapse">
+					<div class="input-group">
+						<span class="input-group-addon">
+							<i class="far fa-search"></i>
+						</span>
+						<input ng-model="query_input" class="input-group" ng-keypress="searchMembers($event)">
 
-            <div class="table-responsive">
-                <div class="table-action-bar" ng-show="displayHeaderGreenBar">
-                    <div class="text-center">
-                        <!-- <i class="fa fa-square-o icon"></i> -->
-                        <!-- <a href="">
+					</div>
+				</div>
+			</div>
+
+			<div class="table-responsive">
+				<div class="table-action-bar" ng-show="displayHeaderGreenBar">
+					<div class="text-center">
+						<!-- <i class="fa fa-square-o icon"></i> -->
+						<!-- <a href="">
                             <i ng-click="CheckUncheckAll()" ng-model="IsAllChecked" ng-class="{'fa-check-square': IsAllChecked, 'fa-square-o': !IsAllChecked}" class="custom-checkbox fa icon clickable"></i>
                         </a> -->
-                        <input type="checkbox" ng-model="IsAllChecked" ng-change="CheckUncheckAll()" />
-                    </div>
-                    <div class="dropdown">
-                        <a href="" data-toggle="dropdown">Send reminder email
-                            <i class="ml8 fas fa-angle-down"></i>
-                        </a>
-                        <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
-                            <li ng-click="sendReminderEmailToSelectedApplicants('applicant_setpassword_reminder')">Set password reminder</li>
-                            <li ng-click="sendReminderEmailToSelectedApplicants('applicant_finishtraining_reminder')">Finish training reminder</li>
-                        </ul>
-                    </div>
-                    <div class="dropdown">
-                        <a href="" data-toggle="dropdown">Update Status
-                            <i class="ml8 fas fa-angle-down"></i>
-                        </a>
-                        <ul class="dropdown-menu" role="menu">
-                                <li ng-click="approveApplicant(true,'','pending')">Accepted</li>
-                                <li ng-click="approveApplicant(true,'','approved')">Member</li>
-                                <li ng-click="approveApplicant(true,'','pending_preapproved')">Pre-approved</li>
-                                <li ng-click="approveApplicant(true,'','declined')">Denied</li>
-                            </ul>
-                        <!-- <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+						<input type="checkbox" ng-model="IsAllChecked" ng-change="CheckUncheckAll()" />
+					</div>
+					<div class="dropdown">
+						<a href="" data-toggle="dropdown">Send reminder email
+							<i class="ml8 fas fa-angle-down"></i>
+						</a>
+						<ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+							<li ng-click="sendReminderEmailToSelectedApplicants('applicant_setpassword_reminder')">Set
+								password reminder</li>
+							<li ng-click="sendReminderEmailToSelectedApplicants('applicant_finishtraining_reminder')">
+								Finish training reminder</li>
+						</ul>
+					</div>
+					<div class="dropdown">
+						<a href="" data-toggle="dropdown">Update Status
+							<i class="ml8 fas fa-angle-down"></i>
+						</a>
+						<ul class="dropdown-menu" role="menu">
+							<li ng-click="approveApplicant(true,'','pending')">Accepted</li>
+							<li ng-click="approveApplicant(true,'','approved')">Member</li>
+							<li ng-click="approveApplicant(true,'','pending_preapproved')">Pre-approved</li>
+							<li ng-click="approveApplicant(true,'','declined')">Denied</li>
+						</ul>
+						<!-- <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
                             <li>Accepted</li>
                             <li>Member</li>
                             <li>Pre-approved</li>
                             <li>Denied</li>
                         </ul> -->
-                    </div>
-                    <div>
-                        <a href="" data-toggle="modal" data-target="#confirm-delete">
-                            <i class="fas fa-trash"></i>
-                            <span class="ml8">Delete</span>
-                        </a>
-                    </div>
-                </div>
-                <table class='admin-table small table table-hover no-header-hover'>
-                    <tr ng-show="!displayHeaderGreenBar">
-                        <th width="50px;" class="text-center">
-                            <!-- <i class="clickable fa fa-square-o icon"></i> -->
-                            <!-- <input class="clickable custom-checkbox" type="checkbox" ng-model="IsAllChecked" ng-change="CheckUncheckAll()" /> -->
-                            <input type="checkbox" ng-model="IsAllChecked" ng-change="CheckUncheckAll()" />
-                        </th>
-                        <th>
-                            <a href="" ng-click="predicate = 'lastname'; reverse=!reverse">Name
-                                <i class="ml8 fa fa-arrow-down" ng-show="predicate == 'lastname' && !reverse"></i>
-                                <i class="fa fa-arrow-up ml8" ng-show="predicate == 'lastname' && reverse"></i>
-                            </a>
-                        </th>
-                        <th>
-                            <a href="" ng-click="predicate = 'country'; reverse=!reverse">Country
-                                <i class="ml8 fa fa-arrow-down" ng-show="predicate == 'country' && !reverse"></i>
-                                <i class="fa fa-arrow-up ml8" ng-show="predicate == 'country' && reverse"></i>
-                            </a>
-                        </th>
-                        <th>
-                            <a href="" ng-click="predicate = 'apply_date_iso'; reverse=!reverse">Applied
-                                <i class="ml8 fa fa-arrow-down" ng-show="predicate == 'apply_date_iso' && !reverse"></i>
-                                <i class="fa fa-arrow-up ml8" ng-show="predicate == 'apply_date_iso' && reverse"></i>
-                            </a>
-                        </th>
-                        <th ng-if="displayAcceptedDateColumn">
-                            <a href="" ng-click="predicate = 'accept_date_iso'; reverse=!reverse">Accepted
-                                <i class="ml8 fa fa-arrow-down" ng-show="predicate == 'accept_date_iso' && !reverse"></i>
-                                <i class="fa fa-arrow-up ml8" ng-show="predicate == 'accept_date_iso' && reverse"></i>
-                            </a>
-                        </th>
-                        <th ng-if="displayApprovedDateColumn">
-                            <a href="" ng-click="predicate = 'approve_date_iso'; reverse=!reverse">Approved
-                                <i class="ml8 fa fa-arrow-down" ng-show="predicate == 'approve_date_iso' && reverse"></i>
-                                <i class="fa fa-arrow-circle-o-up" ng-show="predicate == 'approve_date_iso' && !reverse"></i>
-                            </a>
-                        </th>
-                        <th ng-if="displayCourseColumn">Course</th>
-                        <th ng-if="displayPasswordColumn">
-                            <a href="" ng-click="predicate = 'pword'; reverse=!reverse">Password
-                                <i class="ml8 fa fa-arrow-down" ng-show="predicate == 'pword' && !reverse"></i>
-                                <i class="fa fa-arrow-up ml8" ng-show="predicate == 'pword' && reverse"></i>
-                            </a>
-                        </th>
-                        <th>Status</th>
-                        <th class="large">
-                            <!-- <i data-toggle="tooltip" data-placement="bottom" title="Collapse all" alt="accept" class="fa fa-arrow-circle-o-up add-tooltip"></i> -->
-                            <!-- <span class="expand-row" ng-click="isCollapsed1 = !isCollapsed1">
+					</div>
+					<div id="deleteApplicantMember">
+						<a href="" data-toggle="modal" data-target="#confirm-delete">
+							<i class="fas fa-trash"></i>
+							<span class="ml8" ng-click="deleteSelectedApplicants()">Delete</span>
+						</a>
+					</div>
+
+					<div ng-show="delteWIP">
+						<i class="fa fa-spinner fa-spin"></i> Please wait deleteing...
+					</div>
+				</div>
+				<table class='admin-table small table table-hover no-header-hover'>
+					<tr ng-show="!displayHeaderGreenBar">
+						<th width="50px;" class="text-center">
+							<!-- <i class="clickable fa fa-square-o icon"></i> -->
+							<!-- <input class="clickable custom-checkbox" type="checkbox" ng-model="IsAllChecked" ng-change="CheckUncheckAll()" /> -->
+							<input type="checkbox" ng-model="IsAllChecked" ng-change="CheckUncheckAll()" />
+						</th>
+						<th>
+							<a href="" ng-click="predicate = 'lastname'; reverse=!reverse">Name
+								<i class="ml8 fa fa-arrow-down" ng-show="predicate == 'lastname' && !reverse"></i>
+								<i class="fa fa-arrow-up ml8" ng-show="predicate == 'lastname' && reverse"></i>
+							</a>
+						</th>
+						<th>
+							<a href="" ng-click="predicate = 'country'; reverse=!reverse">Country
+								<i class="ml8 fa fa-arrow-down" ng-show="predicate == 'country' && !reverse"></i>
+								<i class="fa fa-arrow-up ml8" ng-show="predicate == 'country' && reverse"></i>
+							</a>
+						</th>
+						<th>
+							<a href="" ng-click="predicate = 'apply_date_iso'; reverse=!reverse">Applied
+								<i class="ml8 fa fa-arrow-down" ng-show="predicate == 'apply_date_iso' && !reverse"></i>
+								<i class="fa fa-arrow-up ml8" ng-show="predicate == 'apply_date_iso' && reverse"></i>
+							</a>
+						</th>
+						<th ng-if="displayAcceptedDateColumn">
+							<a href="" ng-click="predicate = 'accept_date_iso'; reverse=!reverse">Accepted
+								<i class="ml8 fa fa-arrow-down" ng-show="predicate == 'accept_date_iso' && !reverse"></i>
+								<i class="fa fa-arrow-up ml8" ng-show="predicate == 'accept_date_iso' && reverse"></i>
+							</a>
+						</th>
+						<th ng-if="displayApprovedDateColumn">
+							<a href="" ng-click="predicate = 'approve_date_iso'; reverse=!reverse">Approved
+								<i class="ml8 fa fa-arrow-down" ng-show="predicate == 'approve_date_iso' && reverse"></i>
+								<i class="fa fa-arrow-circle-o-up" ng-show="predicate == 'approve_date_iso' && !reverse"></i>
+							</a>
+						</th>
+						<th ng-if="displayCourseColumn">Course</th>
+						<th ng-if="displayPasswordColumn">
+							<a href="" ng-click="predicate = 'pword'; reverse=!reverse">Password
+								<i class="ml8 fa fa-arrow-down" ng-show="predicate == 'pword' && !reverse"></i>
+								<i class="fa fa-arrow-up ml8" ng-show="predicate == 'pword' && reverse"></i>
+							</a>
+						</th>
+						<th>Status</th>
+						<th class="large">
+							<!-- <i data-toggle="tooltip" data-placement="bottom" title="Collapse all" alt="accept" class="fa fa-arrow-circle-o-up add-tooltip"></i> -->
+							<!-- <span class="expand-row" ng-click="isCollapsed1 = !isCollapsed1">
                                 <i title="Expand all" class="fa fa-arrow-circle-o-down" ng-show="!isCollapsed1"></i>
                                 <i title="Collapse all" class="fa fa-arrow-circle-o-up" ng-show="isCollapsed1"></i>
                             </span> -->
 
-                            <span ng-if="toggleRowExpandCollapse" class="expand-row" ng-click="setVisible(displayAllRows)">
-                                <i title="Expand all" class="fa fa-arrow-circle-o-down" ng-show="displayAllRows"></i>
-                                <i title="Collapse all" class="fa fa-arrow-circle-o-up" ng-show="!displayAllRows"></i>
-                            </span>
+							<span ng-if="toggleRowExpandCollapse" class="expand-row" ng-click="setVisible(displayAllRows)">
+								<i title="Expand all" class="fa fa-arrow-circle-o-down" ng-show="displayAllRows"></i>
+								<i title="Collapse all" class="fa fa-arrow-circle-o-up" ng-show="!displayAllRows"></i>
+							</span>
 
-                            <!-- <button ng-click="setVisible(true)">Show All</button>
+							<!-- <button ng-click="setVisible(true)">Show All</button>
                             <button ng-click="setVisible(false)">Hide All</button> -->
-                        </th>
-                    </tr>
+						</th>
+					</tr>
 
-                    <tbody ng-repeat="applicant in applicants | filter:query | orderBy:predicate:reverse">
-                        <!-- <tr onclick="this.className += ' active'"> -->
-                        <tr ng-class="{'active' : IsAllChecked === true || applicant.Selected === true}">
-                            <td width="50px" class="text-center">
-                                <!-- <i ng-show="applicant.checked" class="fa fa-check-square icon clickable" ng-click="CheckUncheckHeader()"></i>
+					<tbody ng-repeat="applicant in applicants | filter:query | orderBy:predicate:reverse">
+						<!-- <tr onclick="this.className += ' active'"> -->
+						<tr ng-class="{'active' : IsAllChecked === true || applicant.Selected === true}">
+							<td width="50px" class="text-center">
+								<!-- <i ng-show="applicant.checked" class="fa fa-check-square icon clickable" ng-click="CheckUncheckHeader()"></i>
                                 <i ng-show="!applicant.checked" class="clickable fa fa-square-o icon" ng-click="CheckUncheckHeader()"></i> -->
-                                <!-- <input class="fa fa-check-square icon clickable custom-checkbox" type="checkbox" ng-model="applicant.Selected" ng-change="CheckUncheckHeader()"
+								<!-- <input class="fa fa-check-square icon clickable custom-checkbox" type="checkbox" ng-model="applicant.Selected" ng-change="CheckUncheckHeader()"
                                 /> -->
-                                <!-- <a href="">
+								<!-- <a href="">
                                     <i ng-click="rowChecked=!rowChecked" ng-init="!rowChecked" ng-class="{'fa-check-square': rowChecked, 'fa-square-o': !rowChecked}"
                                         class="custom-checkbox fa icon clickable"></i>
                                 </a> -->
-                                <input type="checkbox" ng-change="isChecked(applicant)" ng-model="applicant.Selected">
-                                <!-- <a href="">
+								<input type="checkbox" ng-change="isChecked(applicant)" ng-model="applicant.Selected">
+								<!-- <a href="">
                                         <i ng-click="isChecked(applicant)" ng-class="{'fa-check-square': applicant.Selected, 'fa-square-o': !applicant.Selected}" class="custom-checkbox fa icon clickable"></i>
                                     </a> -->
 
-                            </td>
-                            <td>
-                                <strong class="change-on-hover">{{applicant.firstname}} {{applicant.lastname}}</strong>
-                                <br />
-                                <span class="small-text" ng-if="displayApplicantNumber">Applicant {{applicant.maillist_id}}</span>
-                                <span class="small-text" ng-if="displayMemberNumber"> Member {{applicant.member_id}}</span>
-                            </td>
-                            <td>{{applicant.country}}</td>
-                            <td>{{ applicant.apply_date }}</td>
-                            <td ng-if="displayAcceptedDateColumn">{{applicant.accept_date | date:'dd MMM, yyyy'}}</td>
-                            <td ng-if="displayApprovedDateColumn">{{applicant.approve_date}}</td>
-                            <td ng-if="displayCourseColumn">
-                                <span ng-show="(applicant.online_course == 1) && (applicant.inperson_course == 0)">Online</span>
-                                <span ng-show="(applicant.inperson_course == 1) && (applicant.online_course == 0)">In person</span>
-                                <span ng-show="(applicant.inperson_course == 1) && (applicant.online_course == 1)">I&O</span>
-                            </td>
-                            <td ng-if="displayPasswordColumn">{{applicant.pword}}</td>
-                            <td>
-                                <div class="btn-group">
-                                    <button type="button" class="small outline btn btn-default dropdown-toggle" data-toggle="dropdown">
-                                        <span ng_show="applicant.status == 'Pending'">Accepted</span>
-                                        <span ng_show="applicant.status == 'Inactive'">New Applicant</span>
-                                        <span ng_show="applicant.status == 'Approved'">Member</span>
-                                        <span ng_show="applicant.status == 'Denied'">Denied</span>
-                                        <span ng_show="applicant.status == 'Pre-approved'">Pre-approved</span>
-                                        <span class="ml8">
-                                            <i class="fas fa-angle-down"></i>
-                                        </span>
-                                    </button>
-                                    <ul class="dropdown-menu" role="menu">
-                                        <li ng-click="approveApplicant(false,applicant.maillist_id,'pending')">Accepted</li>
-                                        <li ng-click="approveApplicant(false,applicant.maillist_id,'approved')">Member</li>
-                                        <li ng-click="approveApplicant(false,applicant.maillist_id,'pending_preapproved')">Pre-approved</li>
-                                        <li ng-click="approveApplicant(false,applicant.maillist_id,'declined')">Denied</li>
-                                    </ul>
-                                </div>
-                                <td>
-                                    <span class="expand-row" ng-click="applicant.visible = !applicant.visible">
-                                        <i class="fa fa-arrow-circle-o-down" ng-show="!applicant.visible"></i>
-                                        <i class="fa fa-arrow-circle-o-up" ng-show="applicant.visible"></i>
-                                    </span>
-                                </td>
-                        </tr>
-                        <!-- <li ng-repeat="applicant in applicants | filter:query | orderBy:predicate:reverse" ng-click="applicant.visible = !applicant.visible"
+							</td>
+							<td>
+								<strong class="change-on-hover">{{applicant.firstname}} {{applicant.lastname}}</strong>
+								<br />
+								<span class="small-text" ng-if="displayApplicantNumber">Applicant
+									{{applicant.maillist_id}}</span>
+								<span class="small-text" ng-if="displayMemberNumber"> Member
+									{{applicant.member_id}}</span>
+							</td>
+							<td>{{applicant.country}}</td>
+							<td>{{ applicant.apply_date }}</td>
+							<td ng-if="displayAcceptedDateColumn">{{applicant.accept_date | date:'dd MMM, yyyy'}}</td>
+							<td ng-if="displayApprovedDateColumn">{{applicant.approve_date}}</td>
+							<td ng-if="displayCourseColumn">
+								<span ng-show="(applicant.online_course == 1) && (applicant.inperson_course == 0)">Online</span>
+								<span ng-show="(applicant.inperson_course == 1) && (applicant.online_course == 0)">In
+									person</span>
+								<span ng-show="(applicant.inperson_course == 1) && (applicant.online_course == 1)">I&O</span>
+							</td>
+							<td ng-if="displayPasswordColumn">{{applicant.pword}}</td>
+							<td>
+								<div class="btn-group">
+									<button type="button" class="small outline btn btn-default dropdown-toggle" data-toggle="dropdown">
+										<span ng_show="applicant.status == 'Pending'">Accepted</span>
+										<span ng_show="applicant.status == 'Inactive'">New Applicant</span>
+										<span ng_show="applicant.status == 'Approved'">Member</span>
+										<span ng_show="applicant.status == 'Denied'">Denied</span>
+										<span ng_show="applicant.status == 'Pre-approved'">Pre-approved</span>
+										<span class="ml8">
+											<i class="fas fa-angle-down"></i>
+										</span>
+									</button>
+									<ul class="dropdown-menu" role="menu">
+										<li ng-click="approveApplicant(false,applicant.maillist_id,'pending')">Accepted
+										</li>
+										<li ng-click="approveApplicant(false,applicant.maillist_id,'approved')">Member
+										</li>
+										<li ng-click="approveApplicant(false,applicant.maillist_id,'pending_preapproved')">
+											Pre-approved</li>
+										<li ng-click="approveApplicant(false,applicant.maillist_id,'declined')">Denied
+										</li>
+									</ul>
+								</div>
+							<td>
+								<span class="expand-row" ng-click="applicant.visible = !applicant.visible">
+									<i class="fa fa-arrow-circle-o-down" ng-show="!applicant.visible"></i>
+									<i class="fa fa-arrow-circle-o-up" ng-show="applicant.visible"></i>
+								</span>
+							</td>
+						</tr>
+						<!-- <li ng-repeat="applicant in applicants | filter:query | orderBy:predicate:reverse" ng-click="applicant.visible = !applicant.visible"
                         ng-show="applicant.visible">
                         {{applicant.country}}
                     </li> -->
 
-                        <tr class="small member-details-expanded" ng-show="applicant.visible" class="list-unstyled">
-                            <td></td>
-                            <td colspan="9">
-                                <div>
-                                    <span class="pull-left">
+						<tr class="small member-details-expanded" ng-show="applicant.visible" class="list-unstyled">
+							<td></td>
+							<td colspan="9">
+								<div>
+									<span class="pull-left">
 
-                                    </span>
-                                    <span class="pull-right">
-                                            <span ng-show="!applicant.locations || applicant.locations == 0">
-                                                <button class="pull-left transparent" type="button" ng-click="setLocationStatus(applicant.maillist_id,'enable')">
-                                                    <i alt="accept" class="fa fa-square-o"></i>
-                                                </button> More locations</span>
-                                            <span ng-show="applicant.locations">
-                                                </b>
-                                                <button type="button" class="pull-left transparent" ng-click="setLocationStatus(applicant.maillist_id,'disable')">
-                                                    <i alt="accept" class="fa fa-check-square-o"></i>
-                                                </button> More locations</span>
-                                            <button class="ml32 btn btn-default btn-sm" type="button" ng-click="editApplicant(applicant.maillist_id,'edit')">Edit</button>
-                                        </span> 
+									</span>
+									<span class="pull-right">
+										<span ng-show="!applicant.locations || applicant.locations == 0">
+											<button class="pull-left transparent" type="button"
+												ng-click="setLocationStatus(applicant.maillist_id,'enable')">
+												<i alt="accept" class="fa fa-square-o"></i>
+											</button> More locations</span>
+										<span ng-show="applicant.locations">
+											</b>
+											<button type="button" class="pull-left transparent"
+												ng-click="setLocationStatus(applicant.maillist_id,'disable')">
+												<i alt="accept" class="fa fa-check-square-o"></i>
+											</button> More locations</span>
+										<button class="ml32 btn btn-default btn-sm" type="button"
+											ng-click="editApplicant(applicant.maillist_id,'edit')">Edit</button>
+									</span>
 
-                                    <!--<button  class="btn btn-default btn-sm stacked" type="button" ng-click="deleteApplicant(applicant.maillist_id)"><i class="fa fa-trash-o"></i></button>-->
-                                </div>
-                                <p class="mb16">{{applicant.email}} &#8226; {{applicant.city}}, {{applicant.state}}</p>
-                                <p class="mb16">
-                                    <strong>Work</strong>
-                                    <br /> Job tite: {{applicant.job_title}}
-                                    <br />Organization: {{applicant.organization}} &#8226;
+									<!--<button  class="btn btn-default btn-sm stacked" type="button" ng-click="deleteApplicant(applicant.maillist_id)"><i class="fa fa-trash-o"></i></button>-->
+								</div>
+								<p class="mb16">{{applicant.email}} &#8226; {{applicant.city}}, {{applicant.state}}</p>
+								<p class="mb16">
+									<strong>Work</strong>
+									<br /> Job tite: {{applicant.job_title}}
+									<br />Organization: {{applicant.organization}} &#8226;
 
 
-                                    <span ng_show="applicant.sector == 'G'">Governmental</span>
-                                    <span ng_show="applicant.sector == 'N'">Nongovernmental / Nonprofit </span>
-                                    <span ng_show="applicant.sector == 'P'">Private / For-Profit</span>
-                                    &#8226;
-                                    <span ng_show="applicant.health_org_university">University or any academic or research institution</span>
-                                    <span ng_show="applicant.health_org_doh">Ministry / Department of Health</span>
-                                    <span ng_show="applicant.health_org_clinic">Medical clinic</span>
-                                    <span ng_show="applicant.health_org_other">Other health-related organizations</span>
-                                    <span ng_show="applicant.health_org_none">No category applies</span>
-                                </p>
-                                <span ng-show="applicant.bachelors_type || applicant.gradstudent_type || applicant.masters_type || applicant.medical_type || applicant.doctorate_type || applicant.otherdegree_type">
-                                    <b>Degrees:</b>
-                                    <span ng-show="applicant.bachelors_type">{{applicant.bachelors_type}}, </span>
-                                    <span ng-show="applicant.gradstudent_type">{{applicant.gradstudent_type}}, </span>
-                                    <span ng-show="applicant.masters_type">{{applicant.masters_type}}, </span>
-                                    <span ng-show="applicant.medical_type">{{applicant.medical_type}}, </span>
-                                    <span ng-show="applicant.doctorate_type">{{applicant.doctorate_type}}, </span>
-                                    <span ng-show="applicant.otherdegree_type">{{applicant.otherdegree_type}}</span>
-                                </span>
+									<span ng_show="applicant.sector == 'G'">Governmental</span>
+									<span ng_show="applicant.sector == 'N'">Nongovernmental / Nonprofit </span>
+									<span ng_show="applicant.sector == 'P'">Private / For-Profit</span>
+									&#8226;
+									<span ng_show="applicant.health_org_university">University or any academic or
+										research institution</span>
+									<span ng_show="applicant.health_org_doh">Ministry / Department of Health</span>
+									<span ng_show="applicant.health_org_clinic">Medical clinic</span>
+									<span ng_show="applicant.health_org_other">Other health-related organizations</span>
+									<span ng_show="applicant.health_org_none">No category applies</span>
+								</p>
+								<span
+									ng-show="applicant.bachelors_type || applicant.gradstudent_type || applicant.masters_type || applicant.medical_type || applicant.doctorate_type || applicant.otherdegree_type">
+									<b>Degrees:</b>
+									<span ng-show="applicant.bachelors_type">{{applicant.bachelors_type}}, </span>
+									<span ng-show="applicant.gradstudent_type">{{applicant.gradstudent_type}}, </span>
+									<span ng-show="applicant.masters_type">{{applicant.masters_type}}, </span>
+									<span ng-show="applicant.medical_type">{{applicant.medical_type}}, </span>
+									<span ng-show="applicant.doctorate_type">{{applicant.doctorate_type}}, </span>
+									<span ng-show="applicant.otherdegree_type">{{applicant.otherdegree_type}}</span>
+								</span>
 
-                                <p class="mb16">
-                                    <strong>Education</strong>
-                                    <span ng-show="applicant.universities">Universities: {{applicant.universities}} </span>
-                                    <span ng-show="applicant.university1">
-                                        <br>1: {{applicant.university1}}, {{applicant.school_country1}} &#8226; {{applicant.major1}}
-                                        &#8226; {{applicant.degree1}}
-                                        <span ng-show="applicant.degree1 == 'other'"> - {{applicant.other_degree1}}}</span>
-                                    </span>
-                                    <span ng-show="applicant.university2">
-                                        <br>2: {{applicant.university2}}, {{applicant.school_country2}} &#8226; {{applicant.major2}}
-                                        &#8226; {{applicant.degree2}}
-                                        <span ng-show="applicant.degree2 == 'other'"> - {{applicant.other_degree2}}}</span>
-                                    </span>
-                                    <span ng-show="applicant.university3">
-                                        <br>3: {{applicant.university3}}, {{applicant.school_country3}} &#8226; {{applicant.major3}}
-                                        &#8226; {{applicant.degree3}}
-                                        <span ng-show="applicant.degree3 == 'other'"> - {{applicant.other_degree3}}</span>
-                                    </span>
-                                </p>
-                                <p class="mb16">
-                                    <strong>Experience</strong>
-                                    <br /> Health Experience:
-                                    <span ng_show="applicant.human_health">Human health, </span>
-                                    <span ng_show="applicant.animal_health">Animal health, </span>
-                                    <span ng_show="applicant.env_health">Environmental health</span>
-                                    <span ng_show="applicant.health_exp_none">None</span>
-                                    <span ng_show="!applicant.human_health && !applicant.animal_health && !applicant.env_health && !applicant.health_exp_none">
-                                        <br />Basic Knowledge:
-                                        <span ng-show="applicant.clinical_med_adult">Clinical Medicine – Adult, </span>
-                                        <span ng-show="applicant.clinical_med_pediatric">Clinical Medicine – Pediatric, </span>
-                                        <span ng-show="applicant.clinical_med_vet">Clinical Medicine – Vet, </span>
-                                        <span ng-show="applicant.research">Research, </span>
-                                        <span ng-show="applicant.microbiology">microbiology, </span>
-                                        <span ng-show="applicant.virology">virology, </span>
-                                        <span ng-show="applicant.parasitology">parasitology, </span>
-                                        <span ng-show="applicant.vaccinology">vaccinology, </span>
-                                        <span ng-show="applicant.epidemiology">epidemiology, </span>
-                                        <span ng-show="applicant.biotechnology">biotechnology, </span>
-                                        <span ng-show="applicant.pharmacy">pharmacy, </span>
-                                        <span ng-show="applicant.publichealth">public health, </span>
-                                        <span ng-show="applicant.disease_surv">disease surveillance, </span>
-                                        <span ng-show="applicant.informatics">informatics, </span>
-                                        <span ng-show="applicant.biostatistics">biostatistics, </span>
-                                        <span ng-show="applicant.other_knowledge">{{applicant.other_knowledge_type}}</span>
-                                    </span>
-                                    <br />FETP Training:
-                                    <span ng_show="(applicant.training != 1) && (applicant.other_training != 1)">none</span>
-                                    <span ng_show="applicant.fetp_training">{{applicant.fetp_training}} (TEPHINET)</span>
-                                    <span ng_show="applicant.other_fetp_training">{{applicant.other_fetp_training}} (outside TEPHINET)</span>
-                                    <br />Years of Experience:
-                                    <span ng_show="applicant.health_exp == 'A'">none</span>
-                                    <span ng_show="applicant.health_exp == 'B'">less than 3 years</span>
-                                    <span ng_show="applicant.health_exp == 'C'">3-5 years</span>
-                                    <span ng_show="applicant.health_exp == 'D'">5-10 years</span>
-                                    <span ng_show="applicant.health_exp == 'E'">More than 10 years</span>
-                                    <p class="mb16">Heard about Epicore by:
-                                        <span ng-show="applicant.googlesearch">Googlesearch, </span>
-                                        <span ng-show="applicant.conference">Conference: {{applicant.conference_type}}, </span>
-                                        <span ng-show="applicant.nextgenu">NextGenU, </span>
-                                        <span ng-show="applicant.epicoreworkshop">Workshop: {{applicant.epicoreworkshop_type}}, </span>
-                                        <span ng-show="applicant.promoemail">Email: {{applicant.promoemail_type}}, </span>
-                                        <span ng-show="applicant.othercontact">Other: {{applicant.othercontact_type}}</span>
-                                    </p>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-
+								<p class="mb16">
+									<strong>Education</strong>
+									<span ng-show="applicant.universities">Universities: {{applicant.universities}}
+									</span>
+									<span ng-show="applicant.university1">
+										<br>1: {{applicant.university1}}, {{applicant.school_country1}} &#8226;
+										{{applicant.major1}}
+										&#8226; {{applicant.degree1}}
+										<span ng-show="applicant.degree1 == 'other'"> -
+											{{applicant.other_degree1}}}</span>
+									</span>
+									<span ng-show="applicant.university2">
+										<br>2: {{applicant.university2}}, {{applicant.school_country2}} &#8226;
+										{{applicant.major2}}
+										&#8226; {{applicant.degree2}}
+										<span ng-show="applicant.degree2 == 'other'"> -
+											{{applicant.other_degree2}}}</span>
+									</span>
+									<span ng-show="applicant.university3">
+										<br>3: {{applicant.university3}}, {{applicant.school_country3}} &#8226;
+										{{applicant.major3}}
+										&#8226; {{applicant.degree3}}
+										<span ng-show="applicant.degree3 == 'other'"> -
+											{{applicant.other_degree3}}</span>
+									</span>
+								</p>
+								<p class="mb16">
+									<strong>Experience</strong>
+									<br /> Health Experience:
+									<span ng_show="applicant.human_health">Human health, </span>
+									<span ng_show="applicant.animal_health">Animal health, </span>
+									<span ng_show="applicant.env_health">Environmental health</span>
+									<span ng_show="applicant.health_exp_none">None</span>
+									<span
+										ng_show="!applicant.human_health && !applicant.animal_health && !applicant.env_health && !applicant.health_exp_none">
+										<br />Basic Knowledge:
+										<span ng-show="applicant.clinical_med_adult">Clinical Medicine – Adult, </span>
+										<span ng-show="applicant.clinical_med_pediatric">Clinical Medicine – Pediatric,
+										</span>
+										<span ng-show="applicant.clinical_med_vet">Clinical Medicine – Vet, </span>
+										<span ng-show="applicant.research">Research, </span>
+										<span ng-show="applicant.microbiology">microbiology, </span>
+										<span ng-show="applicant.virology">virology, </span>
+										<span ng-show="applicant.parasitology">parasitology, </span>
+										<span ng-show="applicant.vaccinology">vaccinology, </span>
+										<span ng-show="applicant.epidemiology">epidemiology, </span>
+										<span ng-show="applicant.biotechnology">biotechnology, </span>
+										<span ng-show="applicant.pharmacy">pharmacy, </span>
+										<span ng-show="applicant.publichealth">public health, </span>
+										<span ng-show="applicant.disease_surv">disease surveillance, </span>
+										<span ng-show="applicant.informatics">informatics, </span>
+										<span ng-show="applicant.biostatistics">biostatistics, </span>
+										<span ng-show="applicant.other_knowledge">{{applicant.other_knowledge_type}}</span>
+									</span>
+									<br />FETP Training:
+									<span ng_show="(applicant.training != 1) && (applicant.other_training != 1)">none</span>
+									<span ng_show="applicant.fetp_training">{{applicant.fetp_training}}
+										(TEPHINET)</span>
+									<span ng_show="applicant.other_fetp_training">{{applicant.other_fetp_training}}
+										(outside TEPHINET)</span>
+									<br />Years of Experience:
+									<span ng_show="applicant.health_exp == 'A'">none</span>
+									<span ng_show="applicant.health_exp == 'B'">less than 3 years</span>
+									<span ng_show="applicant.health_exp == 'C'">3-5 years</span>
+									<span ng_show="applicant.health_exp == 'D'">5-10 years</span>
+									<span ng_show="applicant.health_exp == 'E'">More than 10 years</span>
+								<p class="mb16">Heard about Epicore by:
+									<span ng-show="applicant.googlesearch">Googlesearch, </span>
+									<span ng-show="applicant.conference">Conference: {{applicant.conference_type}},
+									</span>
+									<span ng-show="applicant.nextgenu">NextGenU, </span>
+									<span ng-show="applicant.epicoreworkshop">Workshop:
+										{{applicant.epicoreworkshop_type}}, </span>
+									<span ng-show="applicant.promoemail">Email: {{applicant.promoemail_type}}, </span>
+									<span ng-show="applicant.othercontact">Other: {{applicant.othercontact_type}}</span>
+								</p>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+		<!-- 
         <div class="modal fade" id="confirm-delete" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content">
@@ -425,17 +468,17 @@
                     </div>
                 </div>
             </div>
-        </div>
+        </div> -->
 
 
-    </div>
-    <!--container-->
+	</div>
+	<!--container-->
 </div>
 <!--wrapper-->
 
 
 <script>
-    $(document).ready(function () {
-        $('[data-toggle="tooltip"]').tooltip()
-    });
+	$(document).ready(function () {
+		$('[data-toggle="tooltip"]').tooltip();
+	});
 </script>

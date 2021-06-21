@@ -3,13 +3,14 @@ import { Modal } from '@/common/modal';
 
 const { showModal } = Modal();
 
-const { 
+const {
   setMemberPortalInfoAll,
   setMemberPortalInfoPastYear,
   setMemberPortalInfoPastQuarter,
   getMemberPortalInfoAll,
   getMemberPortalInfoPastYear,
-  getMemberPortalInfoPastQuarter
+  getMemberPortalInfoPastQuarter,
+  clearMemPortalCache
 } = cacheService();
 
 const ApprovalController = (
@@ -25,7 +26,7 @@ const ApprovalController = (
   const http = httpServiceInterceptor.http;
   const currentLocation = $location.path();
 
-  $scope.init = function() {
+  $scope.init = function () {
     $scope.sharedCacheMemInfo = getMemberPortalInfoPastQuarter();
     // only allow superusers for admin
     $scope.userInfo = $cookieStore.get('epiUserInfo');
@@ -33,6 +34,7 @@ const ApprovalController = (
       typeof $scope.userInfo != 'undefined' ? $scope.userInfo.superuser : false;
     // $scope.superuser = true;
     $scope.showpage = false;
+    $scope.delteWIP = false;
     $scope.membersavailable = false;
     $scope.eventsavailable = false;
     $scope.num_applicants = 0;
@@ -44,9 +46,9 @@ const ApprovalController = (
     $scope.num_setpassword = 0;
     $scope.allapp = false;
     const timeValues = [];
-    timeValues.push({name: 'All', value: 'all'});
-    timeValues.push({name: 'Past Year', value: 'past-year'});
-    timeValues.push({name: 'Past Quarter', value: 'recent'});
+    timeValues.push({ name: 'All', value: 'all' });
+    timeValues.push({ name: 'Past Year', value: 'past-year' });
+    timeValues.push({ name: 'Past Quarter', value: 'recent' });
     $scope.event_months = timeValues.reverse();
     $scope.selected_month = timeValues[0]; // default past-quarter
     $scope.urlBaseStr = urlBase;
@@ -81,6 +83,7 @@ const ApprovalController = (
     var data = {};
     data.startDate = $scope.selected_start_date;
     data.endDate = $scope.selected_end_date;
+
     // Default tab - Accepted
     http({
       url: urlBase + 'scripts/approval.php',
@@ -94,7 +97,7 @@ const ApprovalController = (
     });
   }
 
-  $scope.loadMemberInfo = function(currentLocation) {
+  $scope.loadMemberInfo = function (currentLocation) {
     // Scope vars reset
     $scope.showpage = false;
     $scope.membersavailable = false;
@@ -238,52 +241,52 @@ const ApprovalController = (
     }
 
     switch (currentLocation) {
-    case '/approval/accepted': {
-      $scope.activeHeaderItem = 'Accepted';
-      $scope.outputList = accepted_applicants;
-      $scope.nppassword_applicants = accepted_applicants_nopw;
-      $scope.displayAcceptedDateColumn = true;
-      $scope.displayPasswordColumn = true;
-      $scope.displayMemberNumber = true;
-      break;
-    }
-    case '/approval/pre_approved': {
-      $scope.activeHeaderItem = 'Pre Approved';
-      $scope.outputList = preapproved_applicants;
-      $scope.nppassword_applicants = preapproved_applicants_nopw;
-      $scope.displayAcceptedDateColumn = true;
-      $scope.displayPasswordColumn = true;
-      $scope.displayCourseColumn = true;
+      case '/approval/accepted': {
+        $scope.activeHeaderItem = 'Accepted';
+        $scope.outputList = accepted_applicants;
+        $scope.nppassword_applicants = accepted_applicants_nopw;
+        $scope.displayAcceptedDateColumn = true;
+        $scope.displayPasswordColumn = true;
+        $scope.displayMemberNumber = true;
+        break;
+      }
+      case '/approval/pre_approved': {
+        $scope.activeHeaderItem = 'Pre Approved';
+        $scope.outputList = preapproved_applicants;
+        $scope.nppassword_applicants = preapproved_applicants_nopw;
+        $scope.displayAcceptedDateColumn = true;
+        $scope.displayPasswordColumn = true;
+        $scope.displayCourseColumn = true;
 
-      $scope.displayMemberNumber = true;
+        $scope.displayMemberNumber = true;
 
-      break;
-    }
-    case '/approval/members': {
-      $scope.activeHeaderItem = 'Members';
-      $scope.outputList = total_members;
-      $scope.nppassword_applicants = [];
-      $scope.displayAcceptedDateColumn = true;
-      $scope.displayApprovedDateColumn = true;
-      $scope.displayCourseColumn = true;
+        break;
+      }
+      case '/approval/members': {
+        $scope.activeHeaderItem = 'Members';
+        $scope.outputList = total_members;
+        $scope.nppassword_applicants = [];
+        $scope.displayAcceptedDateColumn = true;
+        $scope.displayApprovedDateColumn = true;
+        $scope.displayCourseColumn = true;
 
-      $scope.displayMemberNumber = true;
-      break;
-    }
-    case '/approval/denied': {
-      $scope.activeHeaderItem = 'Denied';
-      $scope.nppassword_applicants = [];
-      $scope.outputList = denied_applicants;
-      $scope.displayApplicantNumber = true;
-      break;
-    }
-    default: {
-      $scope.activeHeaderItem = 'New Applicants';
-      $scope.outputList = inactive_applicants;
-      $scope.nppassword_applicants = [];
-      $scope.displayApplicantNumber = true;
-      break;
-    }
+        $scope.displayMemberNumber = true;
+        break;
+      }
+      case '/approval/denied': {
+        $scope.activeHeaderItem = 'Denied';
+        $scope.nppassword_applicants = [];
+        $scope.outputList = denied_applicants;
+        $scope.displayApplicantNumber = true;
+        break;
+      }
+      default: {
+        $scope.activeHeaderItem = 'New Applicants';
+        $scope.outputList = inactive_applicants;
+        $scope.nppassword_applicants = [];
+        $scope.displayApplicantNumber = true;
+        break;
+      }
     }
 
     $scope.displayAllRows = true;
@@ -305,14 +308,14 @@ const ApprovalController = (
     return memInfoData;
   };
 
-  $scope.clearSearch = function(clickEvent) {
+  $scope.clearSearch = function (clickEvent) {
     if (clickEvent.target.attributes[0].nodeValue == 'far fa-search fa-times') {
       $scope.query_input = '';
       $scope.searchMembers('reset');
     }
   };
 
-  $scope.searchMembers = function(keyEvent) {
+  $scope.searchMembers = function (keyEvent) {
     // $scope.query = $scope.query_input;
     const month = $scope.selected_month;
     $scope.sharedCacheMemInfo = [];
@@ -348,7 +351,7 @@ const ApprovalController = (
     }
   };
 
-  $scope.passwordCheck = function() {
+  $scope.passwordCheck = function () {
     $scope.pwcheck = !$scope.pwcheck;
     if ($scope.pwcheck == true) {
       $scope.applicants = $scope.nppassword_applicants;
@@ -357,14 +360,14 @@ const ApprovalController = (
     }
   };
 
-  $scope.setVisible = function(visible) {
-    angular.forEach($scope.applicants, function(applicant) {
+  $scope.setVisible = function (visible) {
+    angular.forEach($scope.applicants, function (applicant) {
       applicant.visible = visible;
     });
     $scope.displayAllRows = !$scope.displayAllRows;
   };
 
-  $scope.isChecked = function(applicant) {
+  $scope.isChecked = function (applicant) {
     if (applicant.Selected == true) {
       $scope.selectedItems.push(applicant.maillist_id);
     } else {
@@ -381,7 +384,7 @@ const ApprovalController = (
     }
   };
 
-  $scope.CheckUncheckHeader = function(user) {
+  $scope.CheckUncheckHeader = function (user) {
     // $scope.IsAllChecked = true;
     $scope.displayHeaderGreenBar = true;
     const applicantItems = $scope.applicants;
@@ -399,7 +402,7 @@ const ApprovalController = (
   };
   // $scope.CheckUncheckHeader();
 
-  $scope.CheckUncheckAll = function() {
+  $scope.CheckUncheckAll = function () {
     $scope.displayHeaderGreenBar = !$scope.displayHeaderGreenBar;
     const applicantItems = $scope.applicants;
     for (let i = 0; i < applicantItems.length; i++) {
@@ -409,7 +412,7 @@ const ApprovalController = (
   };
 
   // get member data for selected month
-  $scope.getApprovalMonth = function() {
+  $scope.getApprovalMonth = function () {
     $scope.isRouteLoading = true;
     const month = $scope.selected_month;
     let memInfoData = [];
@@ -470,8 +473,8 @@ const ApprovalController = (
     }
   };
 
-  $scope.setLocationStatus = function(maillist_id, action) {
-    data = {maillist_id: maillist_id, action: action};
+  $scope.setLocationStatus = function (maillist_id, action) {
+    data = { maillist_id: maillist_id, action: action };
     http({
       url: urlBase + 'scripts/setLocationStatus.php',
       method: 'POST',
@@ -490,7 +493,7 @@ const ApprovalController = (
     });
   };
 
-  $scope.selectMembers = function(status) {
+  $scope.selectMembers = function (status) {
     const r = confirm('Please wait a little while if you select OK');
     if (r == true) {
       if (status) {
@@ -503,7 +506,7 @@ const ApprovalController = (
     }
   };
 
-  $scope.approveApplicantHeader = function(maillist_id, action) {};
+  $scope.approveApplicantHeader = function (maillist_id, action) { };
   /*
        --------------- Added by Sam ---------------------
        isHeader param here, is used to differentiate the incoming elements.
@@ -511,24 +514,24 @@ const ApprovalController = (
        If header, then we loop through the list of maillist_ids and update status
   */
 
-  $scope.approveApplicant = function(isHeader, maillist_id, action) {
+  $scope.approveApplicant = function (isHeader, maillist_id, action) {
     if (confirm('Are you sure to continue with \'' + action + '\' action?')) {
       if (isHeader == true && $scope.selectedItems.length > 1) {
         for (i = 0; i < $scope.selectedItems.length - 1; i++) {
-          data = {maillist_id: $scope.selectedItems[i], action: action};
+          data = { maillist_id: $scope.selectedItems[i], action: action };
           $scope.updateMemberStatus(data);
         }
       } else {
         if (maillist_id == '') {
           maillist_id = $scope.selectedItems[0];
         }
-        data = {maillist_id: maillist_id, action: action};
+        data = { maillist_id: maillist_id, action: action };
         $scope.updateMemberStatus(data);
       }
     }
   };
 
-  $scope.updateMemberStatus = function(incomingData) {
+  $scope.updateMemberStatus = function (incomingData) {
     http({
       url: urlBase + 'scripts/setMemberStatus.php',
       method: 'POST',
@@ -550,7 +553,7 @@ const ApprovalController = (
   /*
       ----------------------- END -------------------------------
   */
-  $scope.downloadMembers = function() {
+  $scope.downloadMembers = function () {
     $scope.isRouteLoading = true;
     http({
       url: urlBase + 'scripts/downloadMembers.php',
@@ -561,7 +564,7 @@ const ApprovalController = (
     });
   };
 
-  $scope.downloadEvents = function() {
+  $scope.downloadEvents = function () {
     $scope.isRouteLoading = true;
     http({
       url: urlBase + 'scripts/downloadEventStats.php',
@@ -572,13 +575,13 @@ const ApprovalController = (
     });
   };
 
-  $scope.sendReminderEmailToSelectedApplicants = function(action) {
+  $scope.sendReminderEmailToSelectedApplicants = function (action) {
     const sendEmailsPromisses = [];
 
     for (let i = 0; i < $scope.selectedItems.length; i++) {
-      data = {action: action, memberid: $scope.selectedItems[i]};
+      data = { action: action, memberid: $scope.selectedItems[i] };
       sendEmailsPromisses.push(
-        new Promise(function(resolve) {
+        new Promise(function (resolve) {
           http({
             url: urlBase + 'scripts/sendreminder.php',
             method: 'POST',
@@ -600,14 +603,14 @@ const ApprovalController = (
       showModal({
         id: 'success_message',
         header: 'Success',
-        message: modalMessage ,
+        message: modalMessage,
       });
     });
   };
 
-  $scope.sendReminder = function(action) {
+  $scope.sendReminder = function (action) {
     if (confirm('Are you sure you want to send reminder emails?')) {
-      data = {action: action};
+      data = { action: action };
       http({
         url: urlBase + 'scripts/sendreminder.php',
         method: 'POST',
@@ -620,23 +623,75 @@ const ApprovalController = (
     }
   };
 
-  $scope.editApplicant = function(uid, action) {
+  $scope.editApplicant = function (uid, action) {
     $location.path('/application/' + uid + '/' + action + '/member');
   };
 
-  $scope.deleteApplicant = function(uid) {
-    if (confirm('Are you sure you want to delete this user?')) {
-      data = {uid: uid};
-      http({
-        url: urlBase + 'scripts/deleteuser.php',
-        method: 'POST',
-        data: data,
-      }).then(function successCallback(res) {
-        const data = res.data;
-        if (data['status'] === 'success') $route.reload();
-        else {
-          alert(data['message']);
-        }
+
+  $scope.deleteApplicantAction = function () {
+
+    $scope.delteWIP = false;
+    const applicantsDeletedPromises = [];
+    for (let i = 0; i < $scope.selectedItems.length; i++) {
+      $scope.delteWIP = true;
+      data = { uid: $scope.selectedItems[i] };
+      applicantsDeletedPromises.push(
+        new Promise(function (resolve) {
+          http({
+            url: urlBase + 'scripts/deleteuser.php',
+            method: 'POST',
+            data: data,
+          }).then(function successCallback(response) {
+
+            const respdata = response.data;
+            return resolve(response.data);
+          });
+        }),
+      );
+    }
+
+    Promise.all(applicantsDeletedPromises)
+      .then(function (results) {
+        $scope.delteWIP = false;
+        let countSuccess = 0;
+        let countFail = 0;
+        results.forEach(obj => {
+          Object.entries(obj).forEach(([key, value]) => {
+            if (key === 'status' && value === 'success')
+              countSuccess++;
+            else if (key === 'status' && value === 'failed')
+              countFail++;
+          });
+        });
+
+        let modalMessage = `Successfully deleted ${countSuccess} applicants. Failed to delete ${countFail} records`;
+
+        showModal({
+          id: 'success_message',
+          header: 'Success',
+          message: modalMessage,
+        });
+      })
+      .then(function () {
+        //'finally reload - page as member portal needs a re-fetch');
+        clearMemPortalCache();
+        $route.reload();
+      });
+
+  };
+
+
+  $scope.deleteSelectedApplicants = function () {
+
+    let selectedItemsLength = $scope.selectedItems ? $scope.selectedItems.length : 0;
+    //calling a modal with action.
+    if (selectedItemsLength && selectedItemsLength > 0) {
+      showModal({
+        id: 'error_message',
+        header: 'Delete Applicant',
+        message: `You are about to delete ${selectedItemsLength} applicant(s). Applicant IDs: [ ${$scope.selectedItems} ] will be deleted. This action cannot be undone.`,
+        action: 'delete-confirm',
+        details: ''
       });
     }
   };

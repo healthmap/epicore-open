@@ -1,6 +1,6 @@
 import { cacheService } from '@/common/cacheService';
 
-const { clear } = cacheService();
+const { clearMemPortalCache } = cacheService();
 
 const UserController = (
   $rootScope,
@@ -28,7 +28,7 @@ const UserController = (
   const querystr = $location.search() ? $location.search() : '';
 
   /* get the active state of page you're on */
-  $scope.getClass = function(path) {
+  $scope.getClass = function (path) {
     if (path == $location.path()) {
       return 'active';
     } else {
@@ -36,7 +36,7 @@ const UserController = (
     }
   };
 
-  $scope.go = function(path) {
+  $scope.go = function (path) {
     $location.path(path);
   };
 
@@ -121,14 +121,14 @@ const UserController = (
 
   $scope.uservals = {};
 
-  $scope.userLocationChange = function(userLocation) {
+  $scope.userLocationChange = function (userLocation) {
     const administrative_areas = [];
-    userLocation.address_components.forEach(function(item) {
+    userLocation.address_components.forEach(function (item) {
       if (item.types.indexOf('country') !== -1) {
         $scope.uservals.country = item.short_name;
       }
 
-      item.types.filter(function(type) {
+      item.types.filter(function (type) {
         if (type.indexOf('administrative_area') !== -1) {
           administrative_areas.push(item.short_name);
         }
@@ -153,7 +153,7 @@ const UserController = (
     $scope.formData.password = $localStorage.password;
   }
 
-  $scope.signup = function(uservals, isValid) {
+  $scope.signup = function (uservals, isValid) {
     $scope.attempted = true;
     $scope.signup_message = '';
     // validate checkboxes
@@ -238,7 +238,7 @@ const UserController = (
 
   // Sign in with Touch id for iOS or login with username & password
   $scope.mobile_message = '';
-  $scope.signIn = function() {
+  $scope.signIn = function () {
     $scope.formData.password = '';
     $scope.autologin = true;
     if (
@@ -248,7 +248,7 @@ const UserController = (
     ) {
       // check touch id support of iOS
       $cordovaTouchID.checkSupport().then(
-        function() {
+        function () {
           // success, TouchID supported
           // iOS touch id authentication
           $cordovaTouchID
@@ -256,7 +256,7 @@ const UserController = (
               'Use touch id to login or cancel to login with password.',
             )
             .then(
-              function() {
+              function () {
                 // success
                 // username and password must be set first time to use touch id
                 if (
@@ -276,7 +276,7 @@ const UserController = (
                   // alert('Please enter Epicore email (username) and password to use touch id')
                 }
               },
-              function() {
+              function () {
                 $scope.autologin = false;
                 $scope.formData.password = '';
                 $scope.mobile_message =
@@ -285,7 +285,7 @@ const UserController = (
               },
             );
         },
-        function(error) {
+        function (error) {
           $scope.autologin = false;
           $scope.formData.password = '';
           // alert('Touch id not supported or you have not enabled touch id on your device.');
@@ -300,7 +300,7 @@ const UserController = (
   };
 
   /* log in */
-  $scope.userLogin = function(formData) {
+  $scope.userLogin = function (formData) {
     $scope.isRouteLoading = true;
 
     // no formdata passed, get ticket id and (optional) event_id from URL
@@ -350,7 +350,7 @@ const UserController = (
       function successCallback(res) {
         const data = res.data;
         if (data['status'] === 'success') {
-          
+
           // determines if user is an organization or FETP
           $rootScope.isOrganization =
             data['uinfo']['organization_id'] > 0 ? true : false;
@@ -379,7 +379,7 @@ const UserController = (
             environment: data['environment']
           };
 
-          
+
           // save username and password
           $localStorage.username = formData['username'];
           // $localStorage.password = formData['password'];
@@ -419,14 +419,14 @@ const UserController = (
   };
 
   /* log out */
-  $scope.userLogout = function() {
+  $scope.userLogout = function () {
     $cookieStore.remove('epiUserInfo');
     $window.sessionStorage.clear();
-    clear();
+    clearMemPortalCache();
   };
 
   /* set password */
-  $scope.setPassword = function(formData) {
+  $scope.setPassword = function (formData) {
     $scope.isRouteLoading = true;
     if (typeof querystr['t'] != 'undefined') {
       formData['ticket_id'] = querystr['t'];
@@ -485,7 +485,7 @@ const UserController = (
   };
 
   /* Reset password */
-  $scope.resetPassword = function(formData) {
+  $scope.resetPassword = function (formData) {
     if (!$scope.setpwForm.$valid) {
       $scope.isRouteLoading = false;
       $rootScope.error_message_pw = 'Invalid email address';
