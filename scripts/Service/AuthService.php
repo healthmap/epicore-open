@@ -35,12 +35,19 @@ class AuthService implements IAuthService
     }
 
     /**
-     * @todo valid existing token
      * @param string $token
+     * @return bool
      */
-    public function ValidToken(string $token)
+    public function ValidToken(string $token): bool
     {
-        //
+        try{
+            $this->cognitoService->getUser($token);
+            return true;
+        }
+        catch (\CognitoException $exception)
+        {
+            throw $exception;
+        }
     }
 
     /**
@@ -239,4 +246,19 @@ class AuthService implements IAuthService
         return substr(md5($password), 0, 12);
     }
 
+    /**
+     * @param string $username
+     * @return bool
+     */
+    public function RevokeToken(string $username): bool
+    {
+        try{
+            $this->cognitoService->revokeToken($username);
+            return true;
+        }
+        catch (\CognitoException $exception)
+        {
+            return false;
+        }
+    }
 }
