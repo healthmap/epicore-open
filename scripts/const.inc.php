@@ -26,31 +26,26 @@ $emailadmin = $_ENV['emailadmin'];
 #$promed_info = $_ENV['promed_info'];
 $emailproin = $_ENV['emailproin'];
 
-#aws cognito
-$awsProfile = $_ENV['epicore_aws_profile'];
-$awsRegion = $_ENV['epicore_aws_region'];
-$awsClientId= $_ENV['epicore_app_client_id'];
-$awsUserPoolId = $_ENV['epicore_user_pool_id'];
-
+$aws_region = $_ENV['epicore_aws_region'];
+$aws_userPoolId = $_ENV['epicore_user_pool_id'];
+$aws_appClientId = $_ENV['epicore_app_client_id'];
+$aws_appClientIdSecret = $_ENV['epicore_app_client_id_secret'];
 $aws_epicoreArn = $_ENV['epicore_aws_arn'];
 $aws_epicoreIamRolename = $_ENV['epicore_aws_iam_rolename'];
-$aws_region = $_ENV['epicore_aws_region'];
-
-
-define('aws_profile' , $awsProfile);
-define('aws_region' , $awsRegion);
-define('aws_client_id' , $awsClientId);
-define('aws_user_pool_id' , $awsUserPoolId);
-
-define('AWS_EPICORE_ARN', $aws_epicoreArn);
-define('AWS_EPICORE_IAM_ROLENAME', $aws_epicoreIamRolename);
-define('AWS_REGION', $aws_region);
 
 // echo '>>>>';
 // echo $environment;
 // echo '<<<<:';
 
 define('ENVIRONMENT', $environment);
+
+define('AWS_REGION', $aws_region);
+define('AWS_USER_POOL_ID', $aws_userPoolId);
+define('AWS_APP_CLIENT_ID', $aws_appClientId);
+define('AWS_APP_CLIENT_ID_SECRET', $aws_appClientIdSecret);
+define('AWS_EPICORE_ARN', $aws_epicoreArn);
+define('AWS_EPICORE_IAM_ROLENAME', $aws_epicoreIamRolename);
+
 
 // approval username and password
 define('APPROVAL_USERNAME', $approval_username);
