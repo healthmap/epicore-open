@@ -27,18 +27,15 @@ class CognitoService
     public function __construct()
     {
         // TODO get from .env aws_clinet_id
-        $this->clientId = aws_client_id;
+        $this->clientId = AWS_APP_CLIENT_ID;
 
         // TODO get from .env aws_user_pool_id
-        $this->userPoolId = aws_user_pool_id;
+        $this->userPoolId = AWS_USER_POOL_ID;
 
-        // TODO get from .env aws_profile
-        $profile = aws_profile;
-
-        if(empty($this->clientId) || empty($this->userPoolId) || empty($profile))
+        if(empty($this->clientId) || empty($this->userPoolId))
         {
-      //      print('AWS Congnito .env missing');
-       //     die();
+            print('AWS Congnito .env missing');
+            die();
         }
 
         $AWSCredentialsProviderInstance = AWSCredentialsProvider::getInstance();
