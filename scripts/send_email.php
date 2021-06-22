@@ -131,6 +131,9 @@ function sendMail($email, $name, $subject, $status, $user_id, $event_title = '',
     if ($link)
         $emailtext = str_replace("[LINK]", $link, $emailtext);
     $aws_resp = AWSMail::mailfunc($email, $subject, $emailtext, EMAIL_NOREPLY, $extra_headers);
-
+    
+    // for debugging
+    // print json_encode($aws_resp);
     return true;
+
 }

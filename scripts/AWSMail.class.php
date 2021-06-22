@@ -1,45 +1,59 @@
 <?php
- 
+
+use Aws\Ses\SesClient;
+use Aws\Exception\AwsException;
+use Aws\Credentials\CredentialProvider;
+
+require_once (dirname(__FILE__) ."/common/AWSCredentialsProvider.php");
+
 require_once "db.function.php";
+require_once 'const.inc.php';
+
 if (file_exists("/usr/share/php/vendor/autoload.php")) {
     require_once '/usr/share/php/vendor/autoload.php';
 }
 
-use Aws\Ses\SesClient;
-use Aws\Exception\AwsException;
 // AWSMail::mailfunc('lyajurvedi@gmail.com','test subject','this is a test message','info@healthmap.org');
+
+
 class AWSMail
 {
     function mailfunc($to, $subject, $msg, $from, $extra_headers = array()) {
-    	// $email = new AmazonSES();
+    	
         // Create an SesClient. Change the value of the region parameter .
         // Change the value of the profile parameter if you want to use a profile in your credentials file
         // other than the default.
-        $SesClient = new SesClient([
-            'version' => '2010-12-01',
-            'region'  => 'us-east-1'
-        ]);
 
-        $to = is_array($to) ? $to : explode(",", $to);
-        $ccAdrs = (array) null;
-        $bccAdrs = (array) null;
-	    if(isset($extra_headers['cc'])) {
-	        $ccAdrs = is_array($extra_headers['cc']) ? $extra_headers['cc'] : explode(",", $extra_headers['cc']);
-	    } else {
-            
-        }
-	    if(isset($extra_headers['bcc'])) {
-	        $bccAdrs = is_array($extra_headers['bcc']) ? $extra_headers['bcc'] : explode(",", $extra_headers['bcc']);
-	    }
-        $char_set = 'UTF-8';
-
-
-        // Specify a configuration set. If you do not want to use a configuration
-        // set, comment the following variable, and the
-        // 'ConfigurationSetName' => $configuration_set argument below.
-        // $configuration_set = 'ConfigSet';
-
+        $AWSCredentialsProviderInstance = AWSCredentialsProvider::getInstance();
+    
         try {
+            $SesClient = new SesClient([
+                // 'profile' => 'default',
+                'version' => '2010-12-01',
+                'region'  => AWS_REGION,
+                'credentials' => $AWSCredentialsProviderInstance->fetchAWSCredentialsFromRole()
+            ]);
+
+            $to = is_array($to) ? $to : explode(",", $to);
+            $ccAdrs = (array) null;
+            $bccAdrs = (array) null;
+            if(isset($extra_headers['cc'])) {
+                $ccAdrs = is_array($extra_headers['cc']) ? $extra_headers['cc'] : explode(",", $extra_headers['cc']);
+            } else {
+                
+            }
+            if(isset($extra_headers['bcc'])) {
+                $bccAdrs = is_array($extra_headers['bcc']) ? $extra_headers['bcc'] : explode(",", $extra_headers['bcc']);
+            }
+            $char_set = 'UTF-8';
+
+
+            // Specify a configuration set. If you do not want to use a configuration
+            // set, comment the following variable, and the
+            // 'ConfigurationSetName' => $configuration_set argument below.
+            // $configuration_set = 'ConfigSet';
+
+        
             $result = $SesClient->sendEmail([
                 'Destination' => [
                     'ToAddresses' => $to,
