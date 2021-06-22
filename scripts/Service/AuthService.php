@@ -12,6 +12,7 @@ require_once(dirname(__FILE__) . "/../Exception/PasswordValidationException.php"
 require_once(dirname(__FILE__) . "/../Exception/UserIsConfirmed.php");
 require_once(dirname(__FILE__) . "/../Exception/UserAccountNotExist.php");
 require_once(dirname(__FILE__) . "/../Exception/InvalidCodeException.php");
+require_once(dirname(__FILE__) . "/../Exception/CognitoException.php");
 
 class AuthService implements IAuthService
 {
@@ -37,6 +38,7 @@ class AuthService implements IAuthService
     /**
      * @param string $token
      * @return bool
+     * @throws CognitoException
      */
     public function ValidToken(string $token): bool
     {
@@ -44,9 +46,10 @@ class AuthService implements IAuthService
             $this->cognitoService->getUser($token);
             return true;
         }
-        catch (\CognitoException $exception)
+        catch (\CognitoException  $exception)
         {
             throw $exception;
+
         }
     }
 
@@ -249,6 +252,7 @@ class AuthService implements IAuthService
     /**
      * @param string $username
      * @return bool
+     * @throws CognitoException
      */
     public function RevokeToken(string $username): bool
     {
@@ -258,7 +262,7 @@ class AuthService implements IAuthService
         }
         catch (\CognitoException $exception)
         {
-            return false;
+           throw $exception;
         }
     }
 }

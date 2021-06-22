@@ -7,8 +7,11 @@ const cacheService = () => {
 
   cache.data.requests = [];
 
-  const clear = () => {
+  const clearMemPortalCache = () => {
     cache.data = {};
+    cache.data.memberPortalInfoAll = [];
+    cache.data.memberPortalInfoPastYear = [];
+    cache.data.memberPortalInfoPastQuarter = [];
   };
 
   // Setters
@@ -23,7 +26,7 @@ const cacheService = () => {
   };
 
   // setRequestCache - params are for POST request only.
-  const setRequestCache = ({url, params, data}) => {
+  const setRequestCache = ({ url, params, data }) => {
     if (cache.data.requests.findIndex(item => {
       return item.url === url && item.params === params;
     }) !== -1) {
@@ -49,7 +52,7 @@ const cacheService = () => {
   };
 
   // getRequestCache - params are for POST request only.
-  const getRequestCache = ({url, params }) => {
+  const getRequestCache = ({ url, params }) => {
     const cachedRequest = cache.data.requests.find(item => {
       return item.url === url && item.params === params;
     });
@@ -60,7 +63,7 @@ const cacheService = () => {
   };
 
   return {
-    clear,
+    clearMemPortalCache,
     setMemberPortalInfoAll,
     setMemberPortalInfoPastYear,
     setMemberPortalInfoPastQuarter,
@@ -72,4 +75,4 @@ const cacheService = () => {
   };
 };
 
-export  { cacheService };
+export { cacheService };

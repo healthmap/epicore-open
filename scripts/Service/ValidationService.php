@@ -3,11 +3,10 @@
 require_once(dirname(__FILE__) . "/../Exception/PasswordValidationException.php");
 require_once(dirname(__FILE__) . "/../Exception/EmailValidationException.php");
 
-if (file_exists("/usr/share/php/vendor/autoload.php"))
-{
+if (file_exists("/usr/share/php/vendor/autoload.php")) {
+    require_once '/usr/share/php/vendor/autoload.php';
 }
 
-require_once '../vendor/autoload.php';
 use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Constraints\PositiveOrZero;

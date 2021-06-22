@@ -7,12 +7,12 @@ require_once(dirname(__FILE__) . "/../Exception/UserAccountNotExist.php");
 require_once(dirname(__FILE__) . "/../Exception/UserAccountExistException.php");
 require_once(dirname(__FILE__) . "/../Exception/CognitoException.php");
 require_once(dirname(__FILE__) . "/../Model/CognitoErrors.php");
-
+require_once (dirname(__FILE__) ."/../common/AWSCredentialsProvider.php");
 
 if (file_exists("/usr/share/php/vendor/autoload.php")) {
-
+    require_once '/usr/share/php/vendor/autoload.php';
 }
-require_once '../vendor/autoload.php';
+//require_once '../vendor/autoload.php';
 
 use Aws\CognitoIdentityProvider\CognitoIdentityProviderClient;
 use Aws\Credentials\CredentialProvider;
@@ -37,14 +37,18 @@ class CognitoService
 
         if(empty($this->clientId) || empty($this->userPoolId) || empty($profile))
         {
-            print('AWS Congnito .env missing');
-            die();
+      //      print('AWS Congnito .env missing');
+       //     die();
         }
+
+        $AWSCredentialsProviderInstance = AWSCredentialsProvider::getInstance();
+
 
         // TODO init CognitoIdentityProviderClient
         $this->client = new CognitoIdentityProviderClient([
-            'version' => aws_version,
-            'profile' => $profile,
+            'version' => 'latest',
+          //  'profile' => $profile,
+            'credentials' => $AWSCredentialsProviderInstance->fetchAWSCredentialsFromRole(),
             'region' => aws_region,
         ]);
     }
@@ -332,6 +336,7 @@ class CognitoService
     /**
      * @param string $username
      * @return bool
+     * @throws CognitoException
      */
     public function revokeToken(string $username): void
     {
@@ -342,9 +347,10 @@ class CognitoService
                 'Username' => $username
             ]);
         }
-        catch(CognitoException $exception)
+        catch(\Aws\CognitoIdentityProvider\Exception\CognitoIdentityProviderException $exception)
         {
-            throw $exception;
+            $message = $exception->toArray();
+            throw new \CognitoException($message['message']);
         }
 
     }

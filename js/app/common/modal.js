@@ -1,5 +1,6 @@
 const Modal = () => {
-  const showModal = ({id, header, message, details}) => {
+  const showModal = ({ id, header, message, details, action }) => {
+
     const modalContent = `<div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
@@ -11,20 +12,31 @@ const Modal = () => {
           ${details ? `<h5>Details:</h5><p class="small modal-details">${details}</p>` : ''}
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+          ${action ? '<button id="btnDeleteConfirm" type="button" class="btn btn-primary" data-dismiss="modal">Delete</button>' : ''}
+          <button id="btnClose" type="button" class="btn btn-default" data-dismiss="modal">Close</button>
         </div>
       </div>
-    </div>`;
+    </div>
+    <script>
+      $(document).ready(function () {
+        $('#btnDeleteConfirm').click(function () {
+          angular.element(document.getElementById('deleteApplicantMember')).scope().deleteApplicantAction();
+        });
+      });
+    </script>`;
 
     let modalInstance = $(`#${id}`);
 
     if (modalInstance.length === 0) {
       $('body').append(`<div id="${id}" class="modal fade"></div>`);
+
       modalInstance = $(`#${id}`);
+
     }
 
     modalInstance.html(modalContent);
     modalInstance.modal('show');
+
   };
 
   return {

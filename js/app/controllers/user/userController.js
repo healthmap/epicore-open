@@ -1,6 +1,6 @@
 import { cacheService } from '@/common/cacheService';
 
-const { clear } = cacheService();
+const { clearMemPortalCache } = cacheService();
 
 const UserController = (
   $rootScope,
@@ -350,6 +350,7 @@ const UserController = (
       function successCallback(res) {
         const data = res.data;
         if (data['status'] === 'success') {
+          
           // determines if user is an organization or FETP
           $rootScope.isOrganization =
             data['uinfo']['organization_id'] > 0 ? true : false;
@@ -402,6 +403,7 @@ const UserController = (
 
           // save user in local storage for mobile app
           $localStorage.user = newUserInfo;
+
           $rootScope.error_message = false;
 
           // FETPs that aren't activated yet don't get review page
@@ -446,58 +448,11 @@ const UserController = (
 
     $cookieStore.remove('epiUserInfo');
     $window.sessionStorage.clear();
-    clear();
+    clearMemPortalCache();
   };
 
-  $scope.resendVerify = function (formData)
-  {
-    $scope.isRouteLoading = false;
-    console.log(formData);
-
-    if (!$scope.setpwForm.$valid) {
-      $scope.isRouteLoading = false;
-      $rootScope.error_message = 'Invalid email or password';
-      return false;
-    }
-    else
-    {
-      if(formData.username === undefined || formData.username === '')
-      {
-        return false;
-      }
-      http({
-        url: urlBase + 'scripts/resendcode.php',
-        method: 'POST',
-        data: formData,
-      }).then(
-          function successCallback(res) {
-            const data = res.data;
-            if (data['status'] === 'success')
-            {
-              $location.path('/setpassword');
-            } else {
-              $rootScope.error_message = 'Invalid email address or password';
-              $scope.isRouteLoading = false;
-              if(data['message'] == '') {
-                $rootScope.error_message = 'Invalid email address or password';
-              }
-              if(data['message'] != '') {
-                $rootScope.error_message = data['message'];
-              }
-              ///return false;
-              $route.reload();
-            }
-          },
-          function errorCallback() {
-            $scope.isRouteLoading = false;
-          },
-      );
-    }
-
-  }
-
   /* set password */
-  $scope.setPassword = function(formData) {
+  $scope.setPassword = function (formData) {
     $scope.isRouteLoading = true;
     if (typeof querystr['t'] != 'undefined') {
       formData['ticket_id'] = querystr['t'];
@@ -507,15 +462,6 @@ const UserController = (
       $rootScope.error_message = 'Invalid email or password';
       return false;
     } else {
-      if(formData.username === undefined || formData.username === '')
-      {
-        return false;
-      }
-      if(formData.username === undefined || formData.password === '')
-      {
-        return false;
-      }
-
       http({
         url: urlBase + 'scripts/setpassword.php',
         method: 'POST',
@@ -578,7 +524,7 @@ const UserController = (
   };
 
   /* Reset password */
-  $scope.resetPassword = function(formData) {
+  $scope.resetPassword = function (formData) {
     if (!$scope.setpwForm.$valid) {
       $scope.isRouteLoading = false;
       $rootScope.error_message_pw = 'Invalid email address';

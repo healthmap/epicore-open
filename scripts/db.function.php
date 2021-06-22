@@ -6,7 +6,6 @@
 function getDB($which = '')
 {
 
-
     static $db;
     if(!is_object($db)) {
 
