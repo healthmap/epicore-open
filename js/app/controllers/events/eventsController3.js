@@ -1,12 +1,13 @@
 import { userService } from '@/common/userService';
 import { eventsService } from '@/common/eventsService';
 import { EVENT_TYPES, EVENT_SOURCE, EVENT_OUTCOME } from '@/constants/eventsConstants';
-
+import { cacheService } from '@/common/cacheService';
 
 const { getUser , hasToken } = userService();
 const { getEvents, getEventSummary, getTimeFilterSelectValues } = eventsService();
+const { clearMemPortalCache } = cacheService();
 
-const EventsController3 = ($scope, $location, epicoreMode, epicoreStartDate , $localStorage , $route) => {
+const EventsController3 = ($scope, $location, epicoreMode, epicoreStartDate , $localStorage , $route , $cookieStore , $window) => {
   $scope.userInfo  = getUser();
   $scope.mobile = epicoreMode == 'mobile' ? true : false;
   $scope.events = [];
@@ -34,6 +35,10 @@ const EventsController3 = ($scope, $location, epicoreMode, epicoreStartDate , $l
 
     if(!tokenValidation)
     {
+      $cookieStore.remove('epiUserInfo');
+      $window.sessionStorage.clear();
+      clearMemPortalCache();
+
       $location.path('/login');
       $route.reload();
     }
@@ -206,6 +211,6 @@ const EventsController3 = ($scope, $location, epicoreMode, epicoreStartDate , $l
  
 };
 
-EventsController3.$inject = ['$scope', '$location', 'epicoreMode' , 'epicoreStartDate' , '$localStorage' , '$route'];
+EventsController3.$inject = ['$scope', '$location', 'epicoreMode' , 'epicoreStartDate' , '$localStorage' , '$route' , '$cookieStore' , '$window'];
 
 export default EventsController3;
