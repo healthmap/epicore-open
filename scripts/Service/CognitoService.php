@@ -46,7 +46,7 @@ class CognitoService
             'version' => 'latest',
           //  'profile' => $profile,
             'credentials' => $AWSCredentialsProviderInstance->fetchAWSCredentialsFromRole(),
-            'region' => aws_region,
+            'region' => AWS_REGION,
         ]);
     }
 
