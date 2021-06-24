@@ -789,7 +789,7 @@ class UserInfo
                 $db->query("update maillist set accept_date='$accept_date', approvestatus='Y' where maillist_id=$approve_id");
                 $db->commit();
                 $fetp_id = UserInfo::getFETPid($approve_email);
-               // sendMail($approve_email, $approve_name, "EpiCore Application Decision", $status, $fetp_id);
+                sendMail($approve_email, $approve_name, "EpiCore Application Decision", $status, $fetp_id);
 
             }
             else if ($status == 'pending_preapproved') {
@@ -814,7 +814,7 @@ class UserInfo
                 $db->commit();
                 $fetp_id = UserInfo::getFETPid($approve_email);
                 $status = 'preapproved';
-            //    sendMail($approve_email, $approve_name, "We heartily welcome our new EpiCore Member!", $status, $fetp_id);
+                sendMail($approve_email, $approve_name, "We heartily welcome our new EpiCore Member!", $status, $fetp_id);
 
             }
             else if (($status == 'approved') ||($status == 'preapproved')) {
@@ -826,7 +826,7 @@ class UserInfo
 
                 if ($status == 'approved') {
                     $fetp_id = UserInfo::getFETPid($approve_email);
-                 //   sendMail($approve_email, $approve_name, "Congratulations!", $status, $fetp_id);
+                    sendMail($approve_email, $approve_name, "Congratulations!", $status, $fetp_id);
                 }
             }
             else if ($status == 'declined') {
@@ -840,7 +840,7 @@ class UserInfo
                     $db->commit();
                 }
 
-             //   sendMail($approve_email, $approve_name, "EpiCore Application Decision", $status, $approve_id);
+                sendMail($approve_email, $approve_name, "EpiCore Application Decision", $status, $approve_id);
 
             }
             else if ($status == 'unsubscribed') {
