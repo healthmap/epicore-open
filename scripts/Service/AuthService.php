@@ -127,6 +127,7 @@ class AuthService implements IAuthService
         catch (\Aws\CognitoIdentityProvider\Exception\CognitoIdentityProviderException $exception)
         {
             $exceptionMessage = $exception->toArray();
+
             if($exceptionMessage['message'] === "User account already exists")
             {
                 throw new \UserAccountExistException($exceptionMessage['message']);
@@ -244,9 +245,10 @@ class AuthService implements IAuthService
     {
         if(empty($password))
         {
-            return substr(md5(rand().rand()), 0, 12);
+            $password = 'Erz2' .md5(date('Y-m-d hh:ss'));
+            return substr($password , 0, 6 );
         }
-        return substr(md5($password), 0, 12);
+        return $password;
     }
 
     /**
@@ -263,6 +265,23 @@ class AuthService implements IAuthService
         catch (\CognitoException $exception)
         {
            throw $exception;
+        }
+    }
+
+    /**
+     * @param string $username
+     * @return bool
+     * @throws CognitoException
+     */
+    public function DeleteUser(string $username): bool
+    {
+        try{
+            $this->cognitoService->deleteUser($username);
+            return true;
+        }
+        catch (\CognitoException $exception)
+        {
+            throw $exception;
         }
     }
 }

@@ -41,10 +41,11 @@ class CognitoService
         $AWSCredentialsProviderInstance = AWSCredentialsProvider::getInstance();
 
 
+
         // TODO init CognitoIdentityProviderClient
         $this->client = new CognitoIdentityProviderClient([
             'version' => 'latest',
-          //  'profile' => $profile,
+          // 'profile' => 'default',
             'credentials' => $AWSCredentialsProviderInstance->fetchAWSCredentialsFromRole(),
             'region' => AWS_REGION,
         ]);
@@ -85,7 +86,6 @@ class CognitoService
 
                 ]
             ];
-
             if($dontSendEmail)
             {
                 $dataContext['MessageAction'] = 'SUPPRESS';
@@ -128,6 +128,7 @@ class CognitoService
                     'PASSWORD' => $password,
                 ],
             ]);
+
             if (isset($result['Session']))
             {
                 throw new \NewPasswordException('New password action');
@@ -351,4 +352,26 @@ class CognitoService
         }
 
     }
+
+    /**
+     * @param string $username
+     * @throws CognitoException
+     */
+    public function deleteUser(string $username)
+    {
+        try
+        {
+            $this->client->AdminDeleteUser([
+                'UserPoolId' => $this->userPoolId,
+                'Username' => $username
+            ]);
+        }
+        catch(\Aws\CognitoIdentityProvider\Exception\CognitoIdentityProviderException $exception)
+        {
+            $message = $exception->toArray();
+            throw new \CognitoException($message['message']);
+        }
+    }
+
+
 }
