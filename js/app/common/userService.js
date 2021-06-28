@@ -26,7 +26,7 @@ const userService = () => {
         cache: false
       };
       const response = await fetchUrl({url, params, options});
-      if(response.w) {
+      if(response) {
         return true;
       }
       return false;

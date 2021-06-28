@@ -200,7 +200,6 @@ class AuthService implements IAuthService
      * @param string $username
      * @param string $password
      * @param string $newPassword
-     * @throws PasswordValidationException
      * @throws UserIsConfirmed
      * @throws Exception
      */
@@ -214,11 +213,6 @@ class AuthService implements IAuthService
             // TODO valid password
             $this->validationService->password($user);
 
-            // TODO login user by AWS Cognito
-            $this->LoginUser($username , $password);
-        }
-        catch (\NewPasswordException $exception)
-        {
             $user = $this->cognitoService->adminGetUser($username);
             if(!empty($user))
             {
@@ -229,10 +223,13 @@ class AuthService implements IAuthService
             }
             $this->cognitoService->adminSetUserPassword($username, $newPassword);
         }
+        catch (\PasswordValidationException $exception)
+        {
+            throw new \Exception($exception->getMessage());
+        }
         catch (\Aws\CognitoIdentityProvider\Exception\CognitoIdentityProviderException $exception)
         {
             $exceptionMessage = $exception->toArray();
-
             throw new \Exception($exceptionMessage['message']);
         }
     }
@@ -241,7 +238,7 @@ class AuthService implements IAuthService
      * @param string $password
      * @return string
      */
-    private function generatePassword(string $password = ''): string
+    public function generatePassword(string $password = ''): string
     {
         if(empty($password))
         {
@@ -282,6 +279,28 @@ class AuthService implements IAuthService
         catch (\CognitoException $exception)
         {
             throw $exception;
+        }
+    }
+
+    /**
+     * @throws CognitoException
+     * @throws UserAccountNotExist
+     */
+    public function User(string $username)
+    {
+        try
+        {
+            $this->cognitoService->adminGetUser($username);
+        }
+        catch (Aws\CognitoIdentityProvider\Exception\CognitoIdentityProviderException $exception)
+        {
+            $message = $exception->toArray();
+            if($message['message'] === CognitoErrors::accountNotExists)
+            {
+                throw new \UserAccountNotExist($message['message']);
+            }
+
+            throw new \CognitoException($message['message']);
         }
     }
 }

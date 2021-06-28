@@ -20,5 +20,4 @@ catch (CognitoException $exception)
     $message = $exception->getMessage();
     $status = false;
 }
-
-print json_encode(array('authorization' => $status, 'message' => $message));
+echo json_encode(array('authorization' => $status, 'message' => $message));

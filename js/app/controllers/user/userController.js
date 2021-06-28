@@ -472,11 +472,11 @@ const UserController = (
             if (data['status'] === 'success') {
               $scope.isRouteLoading = false;
               $rootScope.error_message_pw =
-                  'Please check your email or temporary password.';
+                  'Please check your address , validate code or password.';
             $location.path('/login');
             } else {
               $scope.isRouteLoading = false;
-              $rootScope.error_message_pw = 'Invalid email address or temporary password';
+              $rootScope.error_message_pw = 'Invalid email address , validate code or password';
               $route.reload();
             }
           },
@@ -486,6 +486,38 @@ const UserController = (
       );
     }
   };
+
+  /** Confirm password **/
+  $scope.confirm = function (formData){
+    if (!$scope.setpwForm.$valid) {
+      $scope.isRouteLoading = false;
+      $rootScope.error_message_pw = 'Invalid email address';
+      return false;
+    } else {
+      http({
+        url: urlBase + 'scripts/confirm.php',
+        method: 'POST',
+        data: formData,
+      }).then(
+          function successCallback(res) {
+            const data = res.data;
+            if (data['status'] === 'success') {
+              $location.path('/login');
+              $route.reload();
+            } else {
+              $scope.isRouteLoading = false;
+              $rootScope.error_message_pw = 'Invalid email address or temporary password';
+              $route.reload();
+            }
+          },
+          function errorCallback() {
+            $rootScope.error_message_pw = 'Invalid email address';
+            $scope.isRouteLoading = false;
+          },
+      );
+    }
+  }
+
 
   /* Reset password */
   $scope.resetPassword = function (formData) {

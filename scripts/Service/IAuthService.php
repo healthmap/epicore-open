@@ -13,4 +13,6 @@ interface IAuthService
     public function ForgotPassword(string $username);
     public function ConfirmAccount(string $username , string $password , string $newPassword);
     public function DeleteUser(string $username);
+    public function User(string $username);
+    public function generatePassword(string $password);
 }

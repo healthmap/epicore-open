@@ -43,15 +43,38 @@ if ($action == 'applicant_setpassword_reminder') {
     if(!empty($applicant_info))
     {
         $authService = new AuthService();
-        try
-        {
-            $authService->ForgotPassword($applicant_info['email']);
+        $cognitoForgotPassword = false;
+        $cognitoAddNewAccount = false;
+
+        try {
+            $authService->User($applicant_info['email']);
+            $cognitoForgotPassword = true;
         }
-        catch (\Exception $exception)
+        catch (\CognitoException | UserAccountNotExist $exception)
         {
-            error_log($exception->getMessage());
-            $message =  $exception->getMessage();
-            $status = 'failure';
+            $cognitoAddNewAccount = true;
+        }
+        if($cognitoAddNewAccount) {
+            try
+            {
+                $authService->SingUp($applicant_info['email'], $authService->generatePassword(), true);
+            }
+            catch (NoEmailProvidedException | PasswordValidationException | UserAccountExistException | \CognitoException $e)
+            {
+                error_log($e->getMessage());
+                $message = $e->getMessage();
+                $status = 'failure';
+            }
+        }
+        if($cognitoForgotPassword) {
+            try
+            {
+                $authService->ForgotPassword($applicant_info['email']);
+            } catch (\Exception $exception) {
+                error_log($exception->getMessage());
+                $message = $exception->getMessage();
+                $status = 'failure';
+            }
         }
     }
 

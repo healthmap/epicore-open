@@ -27,7 +27,7 @@ if(!empty($username) && !empty($verifycode))
     {
         $status = ApiResponseStatus::goToLogin;
     }
-    catch (\PasswordValidationException $exception)
+    catch (\PasswordValidationException | Exception $exception)
     {
         $message = $exception->getMessage();
         $status = ApiResponseStatus::failed;

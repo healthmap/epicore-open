@@ -789,7 +789,7 @@ class UserInfo
                 $db->query("update maillist set accept_date='$accept_date', approvestatus='Y' where maillist_id=$approve_id");
                 $db->commit();
                 $fetp_id = UserInfo::getFETPid($approve_email);
-                sendMail($approve_email, $approve_name, "EpiCore Application Decision", $status, $fetp_id);
+               // sendMail($approve_email, $approve_name, "EpiCore Application Decision", $status, $fetp_id);
 
             }
             else if ($status == 'pending_preapproved') {

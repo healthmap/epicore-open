@@ -38,17 +38,24 @@ class CognitoService
             die();
         }
 
-        $AWSCredentialsProviderInstance = AWSCredentialsProvider::getInstance();
+        try
+        {
+            $AWSCredentialsProviderInstance = AWSCredentialsProvider::getInstance();
 
+            // TODO init CognitoIdentityProviderClient
+            $this->client = new CognitoIdentityProviderClient([
+                'version' => 'latest',
+                //'profile' => 'default',
+                'credentials' => $AWSCredentialsProviderInstance->fetchAWSCredentialsFromRole(),
+                'region' => AWS_REGION,
+            ]);
+        }
+        catch (\Aws\CognitoIdentityProvider\Exception\CognitoIdentityProviderException $exception)
+        {
+            echo 'Aws error: ' .$exception->getMessage();
+            die();
+        }
 
-
-        // TODO init CognitoIdentityProviderClient
-        $this->client = new CognitoIdentityProviderClient([
-            'version' => 'latest',
-          // 'profile' => 'default',
-            'credentials' => $AWSCredentialsProviderInstance->fetchAWSCredentialsFromRole(),
-            'region' => AWS_REGION,
-        ]);
     }
 
 
