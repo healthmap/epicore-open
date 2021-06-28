@@ -486,6 +486,42 @@ const UserController = (
       );
     }
   };
+  /* set password */
+  $scope.resendVerify = function(formData) {
+    $scope.isRouteLoading = true;
+    if (typeof querystr['t'] != 'undefined') {
+      formData['ticket_id'] = querystr['t'];
+    }
+    if (!$scope.setpwForm.$valid) {
+      $scope.isRouteLoading = false;
+      $rootScope.error_message = 'Invalid email';
+      return false;
+    } else {
+
+      http({
+        url: urlBase + 'scripts/resetpassword.php',
+        method: 'POST',
+        data: formData,
+      }).then(
+          function successCallback(res) {
+            const data = res.data;
+            if (data['status'] === 'success') {
+              $scope.isRouteLoading = false;
+              $rootScope.error_message_pw =
+                  'Please check your address.';
+              $location.path('/setpassword');
+            } else {
+              $scope.isRouteLoading = false;
+              $rootScope.error_message_pw = 'Invalid email address';
+              $route.reload();
+            }
+          },
+          function errorCallback() {
+            $scope.isRouteLoading = false;
+          },
+      );
+    }
+  };
 
   /** Confirm password **/
   $scope.confirm = function (formData){
