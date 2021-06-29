@@ -581,25 +581,39 @@ const ApprovalController = (
     for (let i = 0; i < $scope.selectedItems.length; i++) {
       data = { action: action, memberid: $scope.selectedItems[i] };
       sendEmailsPromisses.push(
-        new Promise(function (resolve) {
+        new Promise(function (resolve, reject) {
           http({
             url: urlBase + 'scripts/sendreminder.php',
             method: 'POST',
             data: data,
           }).then(function successCallback(response) {
-            if (response.length > 0) {
-              resolve(true);
-            }
+            const result = response.data;
+            resolve(result);
+          }, function errorCallback() {
+            reject('fail');
           });
         }),
       );
     }
 
-    Promise.all(sendEmailsPromisses).then(() => {
-      let modalMessage = 'The message has been sent.';
-      if ($scope.selectedItems.length > 1) {
-        modalMessage = `The message has been sent to ${$scope.selectedItems.length} persons.`;
+    Promise.all(sendEmailsPromisses).then((result) => {
+
+      var emailsSentCount = 0;
+      var emailsFailedCount = 0;
+
+      for (let j = 0; j < result.length; j++) {
+        if (result[j].fetp_id)
+          emailsSentCount += 1;
+        else
+          emailsFailedCount += 1;
       }
+
+      let modalMessage = 'The message has been sent.';
+      if (emailsFailedCount > 0)
+        modalMessage = `Successfully sent ${emailsSentCount} emails. Failed to send ${emailsFailedCount} email`;
+      else
+        modalMessage = `Successfully sent ${emailsSentCount} email(s).`;
+
       showModal({
         id: 'success_message',
         header: 'Success',
@@ -607,6 +621,8 @@ const ApprovalController = (
       });
     });
   };
+
+
 
   $scope.sendReminder = function (action) {
     if (confirm('Are you sure you want to send reminder emails?')) {
