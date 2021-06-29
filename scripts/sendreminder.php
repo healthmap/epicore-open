@@ -47,7 +47,11 @@ if ($action == 'applicant_setpassword_reminder') {
         $cognitoAddNewAccount = false;
 
         try {
-            $authService->User($applicant_info['email']);
+            $user = $authService->User($applicant_info['email']);
+            if(is_array($user) && isset($user['UserStatus']) && $user['UserStatus'] === 'FORCE_CHANGE_PASSWORD')
+            {
+               $authService->forceResetPassword($applicant_info['email'] , $authService->generatePassword());
+            }
             $cognitoForgotPassword = true;
         }
         catch (\CognitoException | UserAccountNotExist $exception)

@@ -15,4 +15,5 @@ interface IAuthService
     public function DeleteUser(string $username);
     public function User(string $username);
     public function generatePassword(string $password);
+    public function forceResetPassword(string $username);
 }

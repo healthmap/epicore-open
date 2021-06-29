@@ -286,11 +286,17 @@ class AuthService implements IAuthService
      * @throws CognitoException
      * @throws UserAccountNotExist
      */
-    public function User(string $username)
+    public function User(string $username): ?array
     {
         try
         {
-            $this->cognitoService->adminGetUser($username);
+            $result = $this->cognitoService->adminGetUser($username);
+            if(isset($result['UserStatus']))
+            {
+                return ['UserStatus' => $result['UserStatus']];
+            }
+            return null;
+
         }
         catch (Aws\CognitoIdentityProvider\Exception\CognitoIdentityProviderException $exception)
         {
@@ -302,5 +308,22 @@ class AuthService implements IAuthService
 
             throw new \CognitoException($message['message']);
         }
+    }
+
+    /**
+     * @throws CognitoException
+     */
+    public function forceResetPassword(string $username)
+    {
+        try
+        {
+            $this->cognitoService->adminSetUserPassword($username, $this->generatePassword());
+        }
+        catch (\Aws\CognitoIdentityProvider\Exception\CognitoIdentityProviderException $exception)
+        {
+            $message = $exception->toArray();
+            throw new CognitoException($message['message']);
+        }
+
     }
 }

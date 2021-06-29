@@ -45,7 +45,7 @@ class CognitoService
             // TODO init CognitoIdentityProviderClient
             $this->client = new CognitoIdentityProviderClient([
                 'version' => 'latest',
-                //'profile' => 'default',
+            //    'profile' => 'default',
                 'credentials' => $AWSCredentialsProviderInstance->fetchAWSCredentialsFromRole(),
                 'region' => AWS_REGION,
             ]);
@@ -323,11 +323,11 @@ class CognitoService
     /**
      * @param string $token
      */
-    public function getUser(string $token): void
+    public function getUser(string $token): \Aws\Result
     {
         try
         {
-            $this->client->getUser([
+            return $this->client->getUser([
                 'AccessToken' => $token
             ]);
         }
@@ -371,6 +371,26 @@ class CognitoService
             $this->client->AdminDeleteUser([
                 'UserPoolId' => $this->userPoolId,
                 'Username' => $username
+            ]);
+        }
+        catch(\Aws\CognitoIdentityProvider\Exception\CognitoIdentityProviderException $exception)
+        {
+            $message = $exception->toArray();
+            throw new \CognitoException($message['message']);
+        }
+    }
+
+    /**
+     * @throws CognitoException
+     */
+    public function adminUpdateUserAttributes(string $username , array $attributes)
+    {
+        try
+        {
+            $this->client->AdminUpdateUserAttributes([
+                'UserPoolId' => $this->userPoolId,
+                'Username' => $username,
+                'UserAttributes' => $attributes
             ]);
         }
         catch(\Aws\CognitoIdentityProvider\Exception\CognitoIdentityProviderException $exception)
