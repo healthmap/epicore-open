@@ -27,16 +27,12 @@ class AWSCredentialsProvider
         $ARN = "arn:aws:iam::".AWS_EPICORE_ARN.":role/".AWS_EPICORE_IAM_ROLENAME;
         
         $sessionName = "aws-access-assume-role-epicore-nonprod";
-
-        // echo 'region:'.AWS_REGION;
-        // echo 'arn:'.AWS_EPICORE_ARN;;
-        // echo 'role:'.AWS_EPICORE_IAM_ROLENAME;
-        
+      
         $assumeRoleCredentials = new AssumeRoleCredentialProvider([
             'client' => new StsClient([
                 'region' => AWS_REGION,
                 'version' => '2011-06-15',
-                'credentials' => $profile,
+                'credentials' => $profile
                 // 'debug' => true,
             ]),
             'assume_role_params' => [
