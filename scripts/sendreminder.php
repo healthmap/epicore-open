@@ -24,14 +24,6 @@ if ($action == 'preapprove_reminder') {
     sendMail('info@epicore.org', 'Info', "Reminder | You're almost there!", $action, '0');
 }
 
-/* ***************************************************************************
-    Following block of conditions is added by Sam, CH157135..
-    
-    Based on the incoming action and maillistID, we collect the email for the 
-    corrensponding applicant and send an email.
-
-*** ***************************************************************************/
-
 if ($action == 'applicant_setpassword_reminder') {
     
     $applicant_info = $db->getRow("select fetp_id, f.email,firstname from epicore.fetp as f, epicore.maillist as m  where f.maillist_id=m.maillist_id  AND m.maillist_id='$memberid'");
@@ -45,19 +37,19 @@ if ($action == 'applicant_setpassword_reminder') {
 if ($action == 'applicant_finishtraining_reminder') {
     
     $applicant_training_info = $db->getRow("select fetp_id, f.email,firstname from epicore.fetp as f, epicore.maillist as m  where f.maillist_id=m.maillist_id  AND m.maillist_id='$memberid'");
-    
-    print_r($applicant_training_info);
-    
-    sendMail($applicant_training_info['email'], $applicant_training_info['firstname'], "Reminder | You're almost there!", 'training_reminder', $applicant_training_info['fetp_id']);
+  
+    $maillist = $applicant_training_info;
+
+    $result = sendMail($applicant_training_info['email'], $applicant_training_info['firstname'], "Reminder | You're almost there!", 'training_reminder', $applicant_training_info['fetp_id']);
+
     // sendMail('info@epicore.org', 'Info', "Reminder | You're almost there!", $action, '0');
 }
-
-/*  *********************           END            ****************************/ 
 
 // get accepted members with no password and accepted at least one week ago
 if ($action == 'setpassword_reminder') {
     $maillist = $db->getAll("select fetp_id, f.email,firstname from fetp as f, maillist as m  where f.email=m.email and active='N'
                             and status='P' and pword_hash is null AND accept_date <= NOW() - INTERVAL 1 WEEK");
+    
     foreach ($maillist as $member) {
         sendMail($member['email'], $member['firstname'], "Reminder | You're almost there!", $action, $member['fetp_id']);
     }

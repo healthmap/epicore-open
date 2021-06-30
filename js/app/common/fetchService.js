@@ -12,6 +12,7 @@ const fetchService = () => {
   };
 
   const fetchUrl = async ({ url, params, options }) => {
+
     if (params && options.method === 'GET') {
       const urlParams = new URLSearchParams(params);
       url = `${url}?${urlParams}`;
@@ -31,6 +32,8 @@ const fetchService = () => {
     }
 
     const response = await fetch(url, fetchOptions);
+
+
     let responseClone = response.clone();
 
     try {
@@ -42,7 +45,7 @@ const fetchService = () => {
 
       const data = await response.json();
 
-      if (data.error) {
+      if (data && data.error) {
         showModal({
           id: 'error_message',
           header: epicore_config.errorMessages.header,
