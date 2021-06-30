@@ -363,7 +363,6 @@ const UserController = (
             typeof data['uinfo']['active'] != 'undefined' ?
               data['uinfo']['locations'] :
               false;
-
           let token = null;
           if(data.uinfo.token != undefined)
           {
@@ -486,7 +485,7 @@ const UserController = (
       );
     }
   };
-  /* set password */
+  /* set resendVerify */
   $scope.resendVerify = function(formData) {
     $scope.isRouteLoading = true;
     if (typeof querystr['t'] != 'undefined') {

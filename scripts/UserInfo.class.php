@@ -221,7 +221,9 @@ class UserInfo
             }
             $resp = validate_password($dbdata['password'], $user['pword_hash']);
             if ($resp) {
-                $uinfo = $db->getRow("SELECT user.user_id, user.hmu_id, user.organization_id, organization.name AS orgname FROM user LEFT JOIN epicore.organization ON user.organization_id = organization.organization_id WHERE hmu_id = ?", array($user['hmu_id']));
+                $uinfo = $db->getRow("SELECT user.user_id, user.hmu_id, user.organization_id, organization.name AS orgname , role.id as roleId , role.name as roleName FROM user 
+                    INNER JOIN role ON role.id = user.roleId
+                    LEFT JOIN epicore.organization ON user.organization_id = organization.organization_id WHERE hmu_id = ?", array($user['hmu_id']));
                 if (is_a($uinfo, 'DB_Error')) {
                     print_r($uinfo);
                     die('uinfo error!');
@@ -231,10 +233,11 @@ class UserInfo
                 return $uinfo;
             } else {
                 // first try the MOD user table.  If none, try the FETP user table.
-                $uinfo = $db->getRow("SELECT user.*, organization.name AS orgname FROM user LEFT JOIN organization ON user.organization_id = organization.organization_id WHERE email = ?", array($email));
+                $uinfo = $db->getRow("SELECT user.*, organization.name AS orgname , role.id as roleId , role.name as roleName FROM user INNER JOIN role ON role.id = user.roleId LEFT JOIN organization ON user.organization_id = organization.organization_id WHERE email = ?", array($email));
                 if (!$uinfo['user_id']) {
 
-                    $uinfo = $db->getRow("SELECT fetp_id, pword_hash, lat, lon, countrycode, active, email, status, locations FROM fetp WHERE email = ?", array($email));
+                    $uinfo = $db->getRow("SELECT fetp_id, pword_hash, lat, lon, countrycode, active, email, status, locations ,  role.id as roleId , role.name as roleName FROM fetp 
+                        INNER JOIN role ON role.id = fetp.roleId WHERE email = ?", array($email));
                     $uinfo['username'] = "Member " . $uinfo['fetp_id'];
                 }
                 if ($uinfo['user_id'] || $uinfo['fetp_id']) {
@@ -266,7 +269,18 @@ class UserInfo
                 INNER JOIN role ON role.id = user.roleId
                 LEFT JOIN epicore.organization ON user.organization_id = organization.organization_id WHERE hmu_id = ?", array($user['hmu_id']));
         }
-        $uinfo['username'] = $user['email'];
+
+        if(isset($user['username']))
+        {
+            $uinfo['username'] = "Member " . $user['username'];
+        }
+        if(isset($user['hmu_id'])){
+            $uinfo['username'] = "Member " . $user['hmu_id'];
+        }
+        if(isset($user['fetp_id'])){
+            $uinfo['username'] = "Member " . $user['fetp_id'];
+        }
+
         $uinfo['email'] = $user['email'];
         $uinfo['superuser'] = false;
         $uinfo['roleId'] = $user['roleId'];
