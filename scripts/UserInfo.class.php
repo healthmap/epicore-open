@@ -811,12 +811,12 @@ class UserInfo
                 // copy maillist to new fetp if it does not exist and set to pending_preapproved (active = N, status = A)
                 $fetpemail = $db->getOne("select email from fetp where email='$approve_email'");
                 if (!$fetpemail) {
-                    $db->query("INSERT INTO fetp (email, countrycode, active, status, maillist_id)
-                        VALUES ('$approve_email', '$approve_countrycode', 'N','A', '$approve_id')");
+                    $db->query("INSERT INTO fetp (email, countrycode, active, status, maillist_id , roleId)
+                        VALUES ('$approve_email', '$approve_countrycode', 'N','A', '$approve_id') ," .Role::responder);
                     $db->commit();
 
                     // geocode fetp
-                    UserInfo::geocodeFETP($approve_email);
+                   // UserInfo::geocodeFETP($approve_email);
                 }
                 else{
                     $db->query("update fetp set active='N', status='A' where email='$approve_email'");
@@ -828,10 +828,10 @@ class UserInfo
                 $db->commit();
                 $fetp_id = UserInfo::getFETPid($approve_email);
                 $status = 'preapproved';
-                sendMail($approve_email, $approve_name, "We heartily welcome our new EpiCore Member!", $status, $fetp_id);
+              //  sendMail($approve_email, $approve_name, "We heartily welcome our new EpiCore Member!", $status, $fetp_id);
 
             }
-            else if (($status == 'approved') ||($status == 'preapproved')) {
+            else if (($status == 'approved') || ($status == 'preapproved')) {
                 $db->query("update fetp set active='Y', status='A' where email='$approve_email'");
                 $db->commit();
                 $approve_date = date('Y-m-d H:i:s', strtotime('now'));

@@ -24,9 +24,19 @@ if ($approve_id && $approve_status) {
         $status = 'failed';
         $message = 'member not found';
     }
-    $maillist = UserInfo::getMaillistDetails($approve_id);
-    if(!is_null($maillist))
+
+    $cognitoCommand = false;
+    switch ($member_status)
     {
+        case 'Pending':
+        case 'Approved':
+        case 'Pre-approved':
+            $cognitoCommand = true;
+            break;
+    }
+    if($cognitoCommand)
+    {
+        $maillist = UserInfo::getMaillistDetails($approve_id);
         $authService = new AuthService();
 
         try {
