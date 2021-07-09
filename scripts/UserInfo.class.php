@@ -255,7 +255,9 @@ class UserInfo
         $user = $db->getRow("SELECT hmu_id, username, email, pword_hash from hm_hmu WHERE (username = ? OR email = ?) AND confirmed = 1", array($email, $email));
         if(is_null($user))
         {
-            $user = $db->getRow("SELECT email , fetp_id , role.id as roleId , role.name as roleName from fetp 
+            $user = $db->getRow("SELECT email , fetp_id , role.id as roleId , role.name as roleName , pword_hash , lat , lon , countrycode , active ,
+                    status , locations
+                    from fetp 
                     INNER JOIN role ON role.id = fetp.roleId
                     WHERE email = ?", array($dbdata['email']));
             if (is_a($user, 'DB_Error')) {
@@ -270,6 +272,15 @@ class UserInfo
                 LEFT JOIN epicore.organization ON user.organization_id = organization.organization_id WHERE hmu_id = ?", array($user['hmu_id']));
         }
 
+        $fetp_id = null;
+        $pword_hash = null;
+        $lat = null;
+        $lon = null;
+        $countrycode = null;
+        $active = null;
+        $locations = null;
+
+
         if(isset($user['username']))
         {
             $uinfo['username'] = "Member " . $user['username'];
@@ -279,12 +290,44 @@ class UserInfo
         }
         if(isset($user['fetp_id'])){
             $uinfo['username'] = "Member " . $user['fetp_id'];
+            $fetp_id = $user['fetp_id'];
+        }
+        if(isset($user['pword_hash']))
+        {
+            $pword_hash = $user['pword_hash'];
+        }
+        if(isset($user['lat']))
+        {
+            $lat = $user['lat'];
+        }
+        if(isset($user['lon']))
+        {
+            $lon = $user['lon'];
+        }
+        if(isset($user['countrycode']))
+        {
+            $countrycode = $user['countrycode'];
+        }
+        if(isset($user['active']))
+        {
+            $active = $user['active'];
+        }
+        if(isset($user['locations']))
+        {
+            $locations = $user['locations'];
         }
 
         $uinfo['email'] = $user['email'];
         $uinfo['superuser'] = false;
         $uinfo['roleId'] = $user['roleId'];
+        $uinfo['lon'] = $lon;
+        $uinfo['pword_hash'] = $pword_hash;
+        $uinfo['lat'] = $lat;
         $uinfo['roleName'] = $user['roleName'];
+        $uinfo['countrycode'] = $countrycode;
+        $uinfo['active'] = $active;
+        $uinfo['locations'] = $locations;
+        $uinfo['fetp_id'] = $fetp_id;
 
         if(isset($user['fetp_id']))
         {
