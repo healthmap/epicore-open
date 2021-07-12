@@ -1,6 +1,8 @@
 import { cacheService } from '@/common/cacheService';
+import { userService } from '@/common/userService';
 
 const { clearMemPortalCache } = cacheService();
+const { hasToken } = userService();
 
 const UserController = (
   $rootScope,
@@ -45,6 +47,17 @@ const UserController = (
   $scope.action = $routeParams.action;
   $scope.idtype = $routeParams.idtype;
   if ($scope.uid && $scope.action == 'edit') {
+    const tokenValidation = hasToken($localStorage.user);
+    if(!tokenValidation) {
+      $cookieStore.remove('epiUserInfo');
+      $window.sessionStorage.clear();
+      clearMemPortalCache();
+
+      $location.path('/login');
+      $route.reload();
+    }
+
+
     $scope.more_schools1 = true;
     $scope.more_schools2 = true;
     const data = {};
