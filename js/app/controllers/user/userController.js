@@ -363,7 +363,6 @@ const UserController = (
       function successCallback(res) {
         const data = res.data;
         if (data['status'] === 'success') {
-          
           // determines if user is an organization or FETP
           $rootScope.isOrganization =
             data['uinfo']['organization_id'] > 0 ? true : false;
@@ -418,14 +417,19 @@ const UserController = (
 
           $rootScope.error_message = false;
 
-          // FETPs that aren't activated yet don't get review page
-          if (data['uinfo']['fetp_id'] && data['uinfo']['active'] == 'N') {
-            var redirpath = '/training';
-          } else {
-            var redirpath =
-              typeof querystr['redir'] != 'undefined' ?
-                querystr['redir'] :
-                '/' + data['path'];
+          if(data['path']!= "setpassword") {
+
+            // FETPs that aren't activated yet don't get review page
+            if (data['uinfo']['fetp_id'] && data['uinfo']['active'] == 'N') {
+              var redirpath = '/training';
+            } else {
+              var redirpath =
+                  typeof querystr['redir'] != 'undefined' ?
+                      querystr['redir'] :
+                      '/' + data['path'];
+            }
+          }else{
+            var redirpath = '/setpassword';
           }
 
           $scope.isRouteLoading = false;

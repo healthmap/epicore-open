@@ -34,102 +34,98 @@ if(isset($formvars->ticket_id) && $formvars->usertype == "fetp") { // ticket sys
         $dbdata['email'] = strip_tags($formvars->username);
         $dbdata['password'] = strip_tags($formvars->password);
 
+        $passwordWeekProcess = false;
+        $passwordValidationProcess = false;
+        $isSuperAdmin = false;
 
         $validationService = new ValidationService();
 
         $user = new User();
         $user->setEmail($dbdata['email']);
+        $user->setPassword($dbdata['password']);
 
         try
         {
+            $_isAdmin = false;
             $validationService->email($user);
+            $validationService->password($user);
             $uinfo = UserInfo::authenticateUser($dbdata, false);
+            if(!$uinfo){
+                $status = "incorrect password";
+                $cognitoAuthStatus = false;
+            }
+            if($uinfo['roleName'] === "admin"){
+                $_isAdmin = true;
+                $uinfo = UserInfo::authenticateUser($dbdata);
+
+                die();
+
+                $uinfo['superuser'] = (isset($uinfo['user_id']) && in_array($uinfo['user_id'], $super_users)) ? true: false;
+            }
+            if(!$_isAdmin) {
+               $authResponse = $authService->LoginUser($user->getEmail(), $user->getPassword());
+               if (!is_null($authResponse)) {
+                   $uinfo['token']['accessToken'] = $authResponse->getAccessToken();
+                   $uinfo['token']['refreshToken'] = $authResponse->getRefreshToken();
+                   $uinfo['token']['expiresIn'] = $authResponse->getExpiresIn();
+               }
+           }
         }
         catch (EmailValidationException $exception)
         {
             $uinfo = UserInfo::authenticateUser($dbdata);
-            $uinfo['superuser'] = (isset($uinfo['user_id']) && in_array($uinfo['user_id'], $super_users)) ? true: false;
+            if(!$uinfo) {
+                $status = "incorrect password";
+                $cognitoAuthStatus = false;
+            }
+            if($uinfo) {
+                $uinfo['superuser'] = (isset($uinfo['user_id']) && in_array($uinfo['user_id'], $super_users)) ? true : false;
+                if ($uinfo['superuser']) {
+                    $isSuperAdmin = true;
+                }
+            }
         }
-        catch (\Exception $exception)
+        catch (PasswordValidationException $exception)
         {
-            $status = "incorrect password";
-            $cognitoAuthStatus = false;
-        }
-
-        if(isset($uinfo['superuser']) && !$uinfo['superuser'] && !empty($uinfo['email']))
-        {
-            $authService = new AuthService();
-            $authServiceAddNewAccount = false;
-
-            try
+            $cognitoAuthStatus = true;
+            $uinfo = UserInfo::authenticateUser($dbdata, false);
+            if(!$uinfo)
             {
-                $authResponse = $authService->LoginUser($dbdata['email'], $dbdata['password']);
+                $status = "incorrect password";
+                $cognitoAuthStatus = false;
+            }
+            if($cognitoAuthStatus) {
+                try {
+                    $cognitoUser = $authService->User($user->getEmail());
+                    $status = "incorrect password";
+                    $cognitoAuthStatus = false;
+                } catch (UserAccountNotExist $exception) {
+                    $authService->SingUp($user->getEmail(), '', true, true);
+                    $authService->ForgotPassword($dbdata['email']);
+                    $cognitoChangePassExceptionPath = true;
+                }
+                catch (Exception | CognitoException $e) {
+                }
+            }
+        }
+        catch (\UserAccountNotExist $exception) {
+            try {
+                $authService->SingUp($user->getEmail(), $user->getPassword(), true, false);
+                $authResponse = $authService->LoginUser($user->getEmail(), $user->getPassword());
                 if (!is_null($authResponse)) {
-
                     $uinfo['token']['accessToken'] = $authResponse->getAccessToken();
                     $uinfo['token']['refreshToken'] = $authResponse->getRefreshToken();
                     $uinfo['token']['expiresIn'] = $authResponse->getExpiresIn();
                 }
-                $cognitoAuthStatus = true;
             }
-            catch (\UserAccountNotExist $exception) {
-                $uinfo = UserInfo::authenticateUser($dbdata);
-                if (isset($uinfo['username'])) {
-                    $authServiceAddNewAccount = true;
-                } else {
-                    error_log($exception->getMessage());
-                    $status = "incorrect password";
-                    $cognitoAuthStatus = false;
-                }
-            } catch (\LoginException $exception) {
-                error_log($exception->getMessage());
+            catch (\LoginException | CognitoException | Exception $exception){
                 $status = "incorrect password";
                 $cognitoAuthStatus = false;
             }
-
-            if ($authServiceAddNewAccount) {
-                try
-                {
-                    $authServiceAddNewAccount = false;
-
-                    $authService->SingUp($dbdata['email'], $dbdata['password'], true);
-                    $authResponse = $authService->LoginUser($dbdata['email'], $dbdata['password']);
-                    if (!is_null($authResponse)) {
-                        $uinfo['token']['accessToken'] = $authResponse->getAccessToken();
-                        $uinfo['token']['refreshToken'] = $authResponse->getRefreshToken();
-                        $uinfo['token']['expiresIn'] = $authResponse->getExpiresIn();
-                    }
-                }
-                catch (\UserAccountExistException | \LoginException $exception)
-                {
-                    error_log($exception->getMessage());
-                    $status = "incorrect password";
-                    $cognitoAuthStatus = false;
-                }
-                catch (PasswordValidationException $exception)
-                {
-                    $authServiceAddNewAccount = true;
-                }
-
-                if($authServiceAddNewAccount)
-                {
-                    try
-                    {
-                        $authService->SingUp($dbdata['email'], '' , true , true);
-                        $authService->ForgotPassword($dbdata['email']);
-
-                        // TODO set flag to redirect user to /setpassword
-
-                        $cognitoChangePassExceptionPath = true;
-                    }
-                    catch (\UserAccountExistException | \LoginException | PasswordValidationException $exception)
-                    {
-                        error_log($exception->getMessage());
-                        $status = "incorrect password";
-                        $cognitoAuthStatus = false;
-                    }
-                }
-            }
+        }
+        catch (\LoginException | CognitoException | Exception $exception){
+            $status = "incorrect password";
+            $cognitoAuthStatus = false;
         }
     }
     if($cognitoAuthStatus) {

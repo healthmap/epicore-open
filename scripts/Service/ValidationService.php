@@ -12,6 +12,7 @@ use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Constraints\PositiveOrZero;
 use Symfony\Component\Validator\Constraints\Email;
 use Symfony\Component\Validator\Validation;
+use Symfony\Component\Validator\Constraints\Regex;
 
 class ValidationService
 {
@@ -25,7 +26,11 @@ class ValidationService
         $violations = $validator->validate($user->getPassword(), [
             new Length(['min' => 6]),
             new NotBlank(),
-            new PositiveOrZero()
+            new Regex([
+                'pattern' => '/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$/',
+                'match' => true,
+                'message' => 'Please check password.The password is not valid'
+            ])
         ]);
 
         if (0 !== count($violations))

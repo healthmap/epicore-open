@@ -191,6 +191,9 @@ class AuthService implements IAuthService
             {
                 throw new UserAccountNotExist($code['message']);
             }
+            if($code['message'] === "User password cannot be reset in the current state."){
+                throw new CognitoException(CognitoErrors::cantResetPassword);
+            }
 
             throw new Exception($code['message']);
         }

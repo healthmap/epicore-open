@@ -22,6 +22,18 @@ if ($fetp_id) {
         $authService->ForgotPassword($user_email);
         $status = 'success';
     }
+    catch (\CognitoException $exception){
+        if($exception->getMessage() === CognitoErrors::cantResetPassword){
+            try
+            {
+                $authService->forceResetPassword($user_email);
+                $authService->ForgotPassword($user_email);
+            }
+            catch (CognitoException | UserAccountNotExist | Exception $exception){
+                $status = 'failed';
+            }
+        }
+    }
     catch (\Exception $exception)
     {
         $status = 'failed';

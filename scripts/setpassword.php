@@ -22,6 +22,15 @@ if(!empty($verifycode))
         $fetpinfo['username'] = "MEMBER ". $fetchObj['fetp_id'];
         try
         {
+            $validationService = new ValidationService();
+
+            $user = new User();
+            $user->setEmail($username);
+            $user->setPassword($password);
+
+            $validationService->email($user);
+            $validationService->password($user);
+
             $authService = new AuthService();
             $authService->UpdatePassword($username, $password, $verifycode);
             $status = ApiResponseStatus::success;
