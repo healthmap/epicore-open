@@ -271,7 +271,6 @@ class UserInfo
                 INNER JOIN role ON role.id = user.roleId
                 LEFT JOIN epicore.organization ON user.organization_id = organization.organization_id WHERE hmu_id = ?", array($user['hmu_id']));
         }
-
         if(isset($user['username']))
         {
             $uinfo['username'] = "Member " . $user['username'];
@@ -293,7 +292,7 @@ class UserInfo
         {
             $uinfo['lon'] = $user['lon'];
         }
-        if(isset($user['countrycode']) && !isset($user['countrycode']))
+        if(isset($user['countrycode']) && !empty($user['countrycode']))
         {
             $uinfo['countrycode'] = $user['countrycode'];
         }
