@@ -54,15 +54,12 @@ if(isset($formvars->ticket_id) && $formvars->usertype == "fetp") { // ticket sys
                 $status = "incorrect password";
                 $cognitoAuthStatus = false;
             }
-            if($uinfo['roleName'] === "admin"){
+            if(!$uinfo && $uinfo['roleName'] === "admin"){
                 $_isAdmin = true;
                 $uinfo = UserInfo::authenticateUser($dbdata);
-
-                die();
-
                 $uinfo['superuser'] = (isset($uinfo['user_id']) && in_array($uinfo['user_id'], $super_users)) ? true: false;
             }
-            if(!$_isAdmin) {
+            if(!$_isAdmin && is_array($uinfo)) {
                $authResponse = $authService->LoginUser($user->getEmail(), $user->getPassword());
                if (!is_null($authResponse)) {
                    $uinfo['token']['accessToken'] = $authResponse->getAccessToken();

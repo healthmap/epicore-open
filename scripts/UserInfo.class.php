@@ -30,7 +30,7 @@ class UserInfo
         return $this->db->getOne("SELECT organization_id FROM user WHERE user_id = ?", array($this->id));
     }
 
-    static function addMod($email, $org_id, $mod_name){
+    static function addMod($email, $org_id, $mod_name , $role = 1){
         if ($email && is_numeric($org_id)) {
             $db1 = getDB();
             $hmu_id = $db1->getOne("SELECT hmu_id from hm_hmu WHERE email = ?", array($email));
@@ -40,7 +40,7 @@ class UserInfo
                 if ($org_id >=1 and $org_id <= $max_org_id) {
                     $hid = $db2->getOne("SELECT hmu_id FROM user WHERE hmu_id ='$hmu_id' ");
                     if ($hid != $hmu_id) {
-                        $db2->query("INSERT INTO user (organization_id, hmu_id) VALUES (?,'$hmu_id')", array($org_id));
+                        $db2->query("INSERT INTO user (organization_id, hmu_id , roleId) VALUES (?,'$hmu_id' , $role)", array($org_id));
                         $user_id = $db2->getOne("SELECT LAST_INSERT_ID()");
                         $db2->commit();
                         return $user_id;
@@ -272,70 +272,58 @@ class UserInfo
                 LEFT JOIN epicore.organization ON user.organization_id = organization.organization_id WHERE hmu_id = ?", array($user['hmu_id']));
         }
 
-        $fetp_id = null;
-        $pword_hash = null;
-        $lat = null;
-        $lon = null;
-        $countrycode = null;
-        $active = null;
-        $locations = null;
-
-
         if(isset($user['username']))
         {
             $uinfo['username'] = "Member " . $user['username'];
         }
         if(isset($user['hmu_id'])){
-            $uinfo['username'] = "Member " . $user['hmu_id'];
+            $uinfo['username'] = $user['username'];
+            $uinfo['hmu_id'] = $user['hmu_id'];
         }
         if(isset($user['fetp_id'])){
             $uinfo['username'] = "Member " . $user['fetp_id'];
-            $fetp_id = $user['fetp_id'];
+            $uinfo['fetp_id'] = $user['fetp_id'];
         }
-        if(isset($user['pword_hash']))
+
+        if(isset($user['lat']) && !empty($user['lat']))
         {
-            $pword_hash = $user['pword_hash'];
+            $uinfo['lat'] = $user['lat'];
         }
-        if(isset($user['lat']))
+        if(isset($user['lon']) && !empty($user['lon']))
         {
-            $lat = $user['lat'];
+            $uinfo['lon'] = $user['lon'];
         }
-        if(isset($user['lon']))
+        if(isset($user['countrycode']) && !isset($user['countrycode']))
         {
-            $lon = $user['lon'];
+            $uinfo['countrycode'] = $user['countrycode'];
         }
-        if(isset($user['countrycode']))
+        if(isset($user['active']) && !empty($user['active']))
         {
-            $countrycode = $user['countrycode'];
+            $uinfo['active'] = $user['active'];
         }
-        if(isset($user['active']))
+        if(isset($user['locations']) && !empty($user['locations']))
         {
-            $active = $user['active'];
+            $uinfo['locations'] = $user['locations'];
         }
-        if(isset($user['locations']))
-        {
-            $locations = $user['locations'];
+        if(isset($user['roleId']) && !empty($user['roleId'])){
+            $uinfo['roleId'] = $user['roleId'];
+        }
+        if(isset($user['roleName']) && !empty($user['roleName'])){
+            $uinfo['roleName'] = $user['roleName'];
+        }
+        if(isset($user['orgname']) && !empty($user['orgname'])){
+            $uinfo['orgname'] = $user['orgname'];
+        }
+        if(isset($user['organization_id']) && !empty($user['organization_id'])) {
+            $uinfo['organization_id'] = $user['organization_id'];
         }
 
         $uinfo['email'] = $user['email'];
         $uinfo['superuser'] = false;
-        $uinfo['roleId'] = $user['roleId'];
-        $uinfo['lon'] = $lon;
-        $uinfo['pword_hash'] = $pword_hash;
-        $uinfo['lat'] = $lat;
-        $uinfo['roleName'] = $user['roleName'];
-        $uinfo['countrycode'] = $countrycode;
-        $uinfo['active'] = $active;
-        $uinfo['locations'] = $locations;
-        $uinfo['fetp_id'] = $fetp_id;
 
-        if(isset($user['fetp_id']))
+        if(is_null( $uinfo['email'] ))
         {
-            $uinfo['fetp_id'] = $user['fetp_id'];
-        }
-        if(isset($user['user_id']))
-        {
-            $uinfo['user_id'] = $user['user_id'];
+            return false;
         }
         return $uinfo;
     }
