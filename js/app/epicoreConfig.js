@@ -29,5 +29,6 @@ epicore_config.android_senderId = '67299923213';
 
 epicore_config.API = {
   EVENTS_v3: 'scripts/EventsAPI3.php',
-  EVENTS_v2: 'scripts/EventsAPI2.php'
+  EVENTS_v2: 'scripts/EventsAPI2.php',
+  AUTH: 'scripts/auth.php'
 };

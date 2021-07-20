@@ -1,4 +1,6 @@
 import Cookies from 'js-cookie';
+import { fetchService } from '@/common/fetchService';
+const { fetchUrl } = fetchService();
 
 const userService = () => {
   const getUser = () => {
@@ -12,9 +14,31 @@ const userService = () => {
     return getUser() ? true : false;
   };
 
+  const hasToken = async (user) => {
+    if (user.token != undefined && user.token != null && !user.superuser) {
+      const url = epicore_config.urlBase + epicore_config.API.AUTH;
+      const params = {
+        token: user.token,
+      };
+
+      const options = {
+        method: 'POST',
+        cache: false
+      };
+      const response = await fetchUrl({url, params, options});
+      if(response) {
+        return true;
+      }
+      return false;
+    }
+
+    return true;
+  }
+
   return {
     getUser,
-    isAuthenticated
+    isAuthenticated,
+    hasToken
   };
 };
 
