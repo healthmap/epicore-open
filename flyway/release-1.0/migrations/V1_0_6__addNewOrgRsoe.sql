@@ -3,6 +3,6 @@
 
 USE epicore;
 
-INSERT INTO epicore.organization (`organization_id`, `name`) VALUES ('8', 'RSOE');
+INSERT INTO epicore.organization (organization_id, name) VALUES ('8', 'RSOE');
 
 commit;
