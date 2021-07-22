@@ -515,7 +515,7 @@ const UserController = (
     } else {
 
       http({
-        url: urlBase + 'scripts/resetpassword.php',
+        url: urlBase + 'scripts/resendcode.php',
         method: 'POST',
         data: formData,
       }).then(
