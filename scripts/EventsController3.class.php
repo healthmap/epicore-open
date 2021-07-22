@@ -49,6 +49,26 @@ class EventsController
         }
     }
 
+    private static function getRoleIdFromCookie()
+    {
+        $role = null;
+        if(isset($_COOKIE['epiUserInfo']))
+        {
+            $cookie = $_COOKIE['epiUserInfo'];
+            $cookie = json_decode($cookie , true);
+            if(isset($cookie['role']['roleId']))
+            {
+                if($cookie['role']['roleName'] != 'admin')
+                {
+                    $role = $cookie['role']['roleId'];
+                }
+            }
+        }
+
+        return $role;
+    }
+
+
     private static function getEvents($params)
     {
         if (!userController::isUserValid()) {
@@ -110,6 +130,12 @@ class EventsController
 
         if (!$is_open) {
             array_push($optionalFields, "purpose.phe_description");
+        }
+
+        if(!is_null(self::getRoleIdFromCookie()))
+        {
+            $roleId = self::getRoleIdFromCookie();
+            array_push($conditions, "fetp.roleId = $roleId");
         }
 
         $query = "
@@ -196,6 +222,7 @@ class EventsController
                 INNER JOIN organization ON user.organization_id = organization.organization_id
                 INNER JOIN hm_hmu hmutbl ON hmutbl.hmu_id = user.hmu_id
                 INNER JOIN event_fetp ON event.event_id = event_fetp.event_id
+                INNER JOIN fetp ON fetp.fetp_id = event_fetp.fetp_id
                 INNER JOIN purpose ON event.event_id = purpose.event_id
                 LEFT OUTER JOIN (
                     SELECT 

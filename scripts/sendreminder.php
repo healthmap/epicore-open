@@ -6,6 +6,8 @@
 require_once "send_email.php";
 require_once 'UserInfo.class.php';
 require_once "db.function.php";
+require_once (dirname(__FILE__) ."/Service/AuthService.php");
+require_once (dirname(__FILE__) ."/Model/CognitoErrors.php");
 
 $db = getDB();
 
@@ -14,6 +16,9 @@ $action = (string)$data->action;
 $memberid = (int)$data->memberid;
 
 $maillist = '';
+$message = '';
+$status = 'success';
+
 // unsubscribed/pre-approved members with no password and accepted at least one week ago
 if ($action == 'preapprove_reminder') {
     $maillist = $db->getAll("select fetp_id, f.email,firstname from fetp as f, maillist as m  where f.email=m.email 
@@ -25,13 +30,52 @@ if ($action == 'preapprove_reminder') {
 }
 
 if ($action == 'applicant_setpassword_reminder') {
-    
     $applicant_info = $db->getRow("select fetp_id, f.email,firstname from epicore.fetp as f, epicore.maillist as m  where f.maillist_id=m.maillist_id  AND m.maillist_id='$memberid'");
-    
-    // print_r($applicant_info);
-    
-    sendMail($applicant_info['email'], $applicant_info['firstname'], "Reminder | You're almost there!", 'setpassword_reminder', $applicant_info['fetp_id']);
-    // sendMail('info@epicore.org', 'Info', "Reminder | You're almost there!", $action, '0');
+
+    if(!empty($applicant_info))
+    {
+        $authService = new AuthService();
+        $cognitoForgotPassword = false;
+        $cognitoAddNewAccount = false;
+
+        try {
+            $user = $authService->User($applicant_info['email']);
+            if(is_array($user) && isset($user['UserStatus']) && $user['UserStatus'] === 'FORCE_CHANGE_PASSWORD')
+            {
+               $authService->forceResetPassword($applicant_info['email'] , $authService->generatePassword());
+            }
+            $cognitoForgotPassword = true;
+        }
+        catch (\CognitoException | UserAccountNotExist $exception)
+        {
+            $cognitoAddNewAccount = true;
+        }
+        if($cognitoAddNewAccount) {
+            try
+            {
+                $authService->SingUp($applicant_info['email'], $authService->generatePassword(), true);
+            }
+            catch (NoEmailProvidedException | PasswordValidationException | UserAccountExistException | \CognitoException $e)
+            {
+                error_log($e->getMessage());
+                $message = $e->getMessage();
+                $status = 'failure';
+            }
+        }
+        if($cognitoForgotPassword) {
+            try
+            {
+                $authService->ForgotPassword($applicant_info['email']);
+            } catch (\Exception $exception) {
+                error_log($exception->getMessage());
+                $message = $exception->getMessage();
+                $status = 'failure';
+            }
+        }
+    }
+
+    echo json_encode(['status' => $status , 'message' => $message]);
+    exit(0);
 }
 
 if ($action == 'applicant_finishtraining_reminder') {

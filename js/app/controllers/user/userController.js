@@ -1,6 +1,8 @@
 import { cacheService } from '@/common/cacheService';
+import { userService } from '@/common/userService';
 
 const { clearMemPortalCache } = cacheService();
+const { hasToken } = userService();
 
 const UserController = (
   $rootScope,
@@ -45,6 +47,17 @@ const UserController = (
   $scope.action = $routeParams.action;
   $scope.idtype = $routeParams.idtype;
   if ($scope.uid && $scope.action == 'edit') {
+    const tokenValidation = hasToken($localStorage.user);
+    if(!tokenValidation) {
+      $cookieStore.remove('epiUserInfo');
+      $window.sessionStorage.clear();
+      clearMemPortalCache();
+
+      $location.path('/login');
+      $route.reload();
+    }
+
+
     $scope.more_schools1 = true;
     $scope.more_schools2 = true;
     const data = {};
@@ -350,7 +363,6 @@ const UserController = (
       function successCallback(res) {
         const data = res.data;
         if (data['status'] === 'success') {
-
           // determines if user is an organization or FETP
           $rootScope.isOrganization =
             data['uinfo']['organization_id'] > 0 ? true : false;
@@ -363,6 +375,15 @@ const UserController = (
             typeof data['uinfo']['active'] != 'undefined' ?
               data['uinfo']['locations'] :
               false;
+          let token = null;
+          if(data.uinfo.token != undefined)
+          {
+            let dataToken = data.uinfo.token.accessToken;
+            if(dataToken != ''){
+              token = dataToken;
+            }
+          }
+
           const newUserInfo = {
             uid: data['uinfo']['user_id'],
             isPromed: isPromed,
@@ -376,10 +397,15 @@ const UserController = (
             status: data['uinfo']['status'],
             superuser: data['uinfo']['superuser'],
             locations: memberLocations,
-            environment: data['environment']
+            environment: data['environment'],
+            role : {
+              roleId : data['uinfo']['roleId'],
+              roleName : data['uinfo']['roleName']
+            },
+            token : token
           };
 
-
+          
           // save username and password
           $localStorage.username = formData['username'];
           // $localStorage.password = formData['password'];
@@ -391,14 +417,19 @@ const UserController = (
 
           $rootScope.error_message = false;
 
-          // FETPs that aren't activated yet don't get review page
-          if (data['uinfo']['fetp_id'] && data['uinfo']['active'] == 'N') {
-            var redirpath = '/training';
-          } else {
-            var redirpath =
-              typeof querystr['redir'] != 'undefined' ?
-                querystr['redir'] :
-                '/' + data['path'];
+          if(data['path']!= "setpassword") {
+
+            // FETPs that aren't activated yet don't get review page
+            if (data['uinfo']['fetp_id'] && data['uinfo']['active'] == 'N') {
+              var redirpath = '/training';
+            } else {
+              var redirpath =
+                  typeof querystr['redir'] != 'undefined' ?
+                      querystr['redir'] :
+                      '/' + data['path'];
+            }
+          }else{
+            var redirpath = '/setpassword';
           }
 
           $scope.isRouteLoading = false;
@@ -419,14 +450,25 @@ const UserController = (
   };
 
   /* log out */
-  $scope.userLogout = function () {
+  $scope.userLogout = function() {
+
+    let formData = {
+      'username' : $localStorage.user.email
+    }
+
+    http({
+      url: urlBase + 'scripts/revoke.php',
+      method: 'POST',
+      data: formData,
+    });
+
     $cookieStore.remove('epiUserInfo');
     $window.sessionStorage.clear();
     clearMemPortalCache();
   };
 
   /* set password */
-  $scope.setPassword = function (formData) {
+  $scope.setPassword = function(formData) {
     $scope.isRouteLoading = true;
     if (typeof querystr['t'] != 'undefined') {
       formData['ticket_id'] = querystr['t'];
@@ -442,47 +484,92 @@ const UserController = (
         data: formData,
       }).then(
         function successCallback(res) {
-          const data = res.data;
-          if (data['status'] === 'success') {
-            const isActive =
-              typeof data['uinfo']['active'] != 'undefined' ?
-                data['uinfo']['active'] :
-                'Y';
-            $cookieStore.put('epiUserInfo', {
-              uid: data['uinfo']['user_id'],
-              isPromed: false,
-              isOrganization: false,
-              organization_id: data['uinfo']['organization_id'],
-              organization: data['uinfo']['orgname'],
-              fetp_id: data['uinfo']['fetp_id'],
-              email: data['uinfo']['email'],
-              uname: data['uinfo']['username'],
-              active: isActive,
-              status: data['uinfo']['status'],
-            });
-            $rootScope.error_message = false;
-            let redirpath = '/training';
-            // FETPs that are activated and approved status get to review page
-            if (data['uinfo']['fetp_id'] && data['uinfo']['active'] == 'Y') {
-              redirpath =
-                typeof querystr['redir'] != 'undefined' ?
-                  querystr['redir'] :
-                  '/' + data['path'];
+            const data = res.data;
+            if (data['status'] === 'success') {
+              $scope.isRouteLoading = false;
+              $rootScope.error_message_pw =
+                  'Please check your address , validate code or password.';
+            $location.path('/login');
+            } else {
+              $scope.isRouteLoading = false;
+              $rootScope.error_message_pw = 'Invalid email address , validate code or password';
+              $route.reload();
             }
-            $scope.isRouteLoading = false;
-            $location.path(redirpath);
-          } else {
-            $scope.isRouteLoading = false;
-            $rootScope.error_message = 'Invalid email address';
-            $route.reload();
-          }
-        },
+          },
         function errorCallback() {
           $scope.isRouteLoading = false;
         },
       );
     }
   };
+  /* set resendVerify */
+  $scope.resendVerify = function(formData) {
+    $scope.isRouteLoading = true;
+    if (typeof querystr['t'] != 'undefined') {
+      formData['ticket_id'] = querystr['t'];
+    }
+    if (!$scope.setpwForm.$valid) {
+      $scope.isRouteLoading = false;
+      $rootScope.error_message = 'Invalid email';
+      return false;
+    } else {
+
+      http({
+        url: urlBase + 'scripts/resendcode.php',
+        method: 'POST',
+        data: formData,
+      }).then(
+          function successCallback(res) {
+            const data = res.data;
+            if (data['status'] === 'success') {
+              $scope.isRouteLoading = false;
+              $rootScope.error_message_pw =
+                  'Please check your address.';
+              $location.path('/setpassword');
+            } else {
+              $scope.isRouteLoading = false;
+              $rootScope.error_message_pw = 'Invalid email address';
+              $route.reload();
+            }
+          },
+          function errorCallback() {
+            $scope.isRouteLoading = false;
+          },
+      );
+    }
+  };
+
+  /** Confirm password **/
+  $scope.confirm = function (formData){
+    if (!$scope.setpwForm.$valid) {
+      $scope.isRouteLoading = false;
+      $rootScope.error_message_pw = 'Invalid email address';
+      return false;
+    } else {
+      http({
+        url: urlBase + 'scripts/confirm.php',
+        method: 'POST',
+        data: formData,
+      }).then(
+          function successCallback(res) {
+            const data = res.data;
+            if (data['status'] === 'success') {
+              $location.path('/login');
+              $route.reload();
+            } else {
+              $scope.isRouteLoading = false;
+              $rootScope.error_message_pw = 'Invalid email address or temporary password';
+              $route.reload();
+            }
+          },
+          function errorCallback() {
+            $rootScope.error_message_pw = 'Invalid email address';
+            $scope.isRouteLoading = false;
+          },
+      );
+    }
+  }
+
 
   /* Reset password */
   $scope.resetPassword = function (formData) {

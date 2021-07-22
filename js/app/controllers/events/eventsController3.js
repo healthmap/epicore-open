@@ -1,12 +1,13 @@
 import { userService } from '@/common/userService';
 import { eventsService } from '@/common/eventsService';
 import { EVENT_TYPES, EVENT_SOURCE, EVENT_OUTCOME } from '@/constants/eventsConstants';
+import { cacheService } from '@/common/cacheService';
 
-
-const { getUser } = userService();
+const { getUser , hasToken } = userService();
 const { getEvents, getEventSummary, getTimeFilterSelectValues } = eventsService();
+const { clearMemPortalCache } = cacheService();
 
-const EventsController3 = ($scope, $location, epicoreMode, epicoreStartDate) => {
+const EventsController3 = ($scope, $location, epicoreMode, epicoreStartDate , $localStorage , $route , $cookieStore , $window) => {
   $scope.userInfo  = getUser();
   $scope.mobile = epicoreMode == 'mobile' ? true : false;
   $scope.events = [];
@@ -21,7 +22,6 @@ const EventsController3 = ($scope, $location, epicoreMode, epicoreStartDate) => 
   $scope.eventsOrderReverse = true;
   $scope.isRouteLoading = true;
   $scope.summaryLoading = null;
-
   const d = new Date();
   $scope.date = d.setDate(d.getDate() - 14);
  
@@ -30,6 +30,18 @@ const EventsController3 = ($scope, $location, epicoreMode, epicoreStartDate) => 
     end_date = null
   }) => {
     $scope.isRouteLoading = true;
+
+    const tokenValidation = await hasToken($localStorage.user);
+
+    if(!tokenValidation)
+    {
+      $cookieStore.remove('epiUserInfo');
+      $window.sessionStorage.clear();
+      clearMemPortalCache();
+
+      $location.path('/login');
+      $route.reload();
+    }
 
     $scope.events = await getEvents({
       uid: $scope.eventType === EVENT_TYPES.MY_RFIS.CODE ? true : false,
@@ -199,6 +211,6 @@ const EventsController3 = ($scope, $location, epicoreMode, epicoreStartDate) => 
  
 };
 
-EventsController3.$inject = ['$scope', '$location', 'epicoreMode' , 'epicoreStartDate'];
+EventsController3.$inject = ['$scope', '$location', 'epicoreMode' , 'epicoreStartDate' , '$localStorage' , '$route' , '$cookieStore' , '$window'];
 
 export default EventsController3;

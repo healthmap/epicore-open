@@ -4,9 +4,17 @@ $formvars = json_decode(file_get_contents("php://input"));
 
 require_once "const.inc.php";
 require_once "UserInfo.class.php";
+require_once (dirname(__FILE__) ."/Service/AuthService.php");
+require_once (dirname(__FILE__) ."/Service/ValidationService.php");
+require_once (dirname(__FILE__) ."/Exception/PasswordValidationException.php");
+require_once (dirname(__FILE__) ."/Exception/EmailValidationException.php");
+
 $status = "incorrect password";
 $path = "home";
+$cognitoChangePassExceptionPath = false;
+$cognitoAuthStatus = true;
 
+$authService = new AuthService();
 $env = ENVIRONMENT;
 
 if(isset($formvars->ticket_id) && $formvars->usertype == "fetp") { // ticket system is for FETPs
@@ -24,12 +32,103 @@ if(isset($formvars->ticket_id) && $formvars->usertype == "fetp") { // ticket sys
     } else { // login system is for mods and fetps
 
         $dbdata['email'] = strip_tags($formvars->username);
-        $dbdata['password'] = strip_tags($formvars->password); 
-        $uinfo = UserInfo::authenticateUser($dbdata);
-    }
-    $user_id = isset($uinfo['fetp_id']) ? $uinfo['fetp_id'] : $uinfo['user_id'];
-}
+        $dbdata['password'] = strip_tags($formvars->password);
 
+        $passwordWeekProcess = false;
+        $passwordValidationProcess = false;
+        $isSuperAdmin = false;
+
+        $validationService = new ValidationService();
+
+        $user = new User();
+        $user->setEmail($dbdata['email']);
+        $user->setPassword($dbdata['password']);
+
+        try
+        {
+            $_isAdmin = false;
+            $validationService->email($user);
+            $validationService->password($user);
+            $uinfo = UserInfo::authenticateUser($dbdata, false);
+            if(!$uinfo){
+                $status = "incorrect password";
+                $cognitoAuthStatus = false;
+            }
+            if(!$uinfo && $uinfo['roleName'] === "admin"){
+                $_isAdmin = true;
+                $uinfo = UserInfo::authenticateUser($dbdata);
+                $uinfo['superuser'] = (isset($uinfo['user_id']) && in_array($uinfo['user_id'], $super_users)) ? true: false;
+            }
+            if(!$_isAdmin && is_array($uinfo)) {
+               $authResponse = $authService->LoginUser($user->getEmail(), $user->getPassword());
+               if (!is_null($authResponse)) {
+                   $uinfo['token']['accessToken'] = $authResponse->getAccessToken();
+                   $uinfo['token']['refreshToken'] = $authResponse->getRefreshToken();
+                   $uinfo['token']['expiresIn'] = $authResponse->getExpiresIn();
+               }
+           }
+        }
+        catch (EmailValidationException $exception)
+        {
+            $uinfo = UserInfo::authenticateUser($dbdata);
+            if(!$uinfo) {
+                $status = "incorrect password";
+                $cognitoAuthStatus = false;
+            }
+            if($uinfo) {
+                $uinfo['superuser'] = (isset($uinfo['user_id']) && in_array($uinfo['user_id'], $super_users)) ? true : false;
+                if ($uinfo['superuser']) {
+                    $isSuperAdmin = true;
+                }
+            }
+        }
+        catch (PasswordValidationException $exception)
+        {
+            $cognitoAuthStatus = true;
+            $uinfo = UserInfo::authenticateUser($dbdata, false);
+            if(!$uinfo)
+            {
+                $status = "incorrect password";
+                $cognitoAuthStatus = false;
+            }
+            if($cognitoAuthStatus) {
+                try {
+                    $cognitoUser = $authService->User($user->getEmail());
+                    $status = "incorrect password";
+                    $cognitoAuthStatus = false;
+                } catch (UserAccountNotExist $exception) {
+                    $authService->SingUp($user->getEmail(), '', true, true);
+                    $authService->ForgotPassword($dbdata['email']);
+                    $cognitoChangePassExceptionPath = true;
+                }
+                catch (Exception | CognitoException $e) {
+                }
+            }
+        }
+        catch (\UserAccountNotExist $exception) {
+            try {
+                $authService->SingUp($user->getEmail(), $user->getPassword(), true, false);
+                $authResponse = $authService->LoginUser($user->getEmail(), $user->getPassword());
+                if (!is_null($authResponse)) {
+                    $uinfo['token']['accessToken'] = $authResponse->getAccessToken();
+                    $uinfo['token']['refreshToken'] = $authResponse->getRefreshToken();
+                    $uinfo['token']['expiresIn'] = $authResponse->getExpiresIn();
+                }
+            }
+            catch (\LoginException | CognitoException | Exception $exception){
+                $status = "incorrect password";
+                $cognitoAuthStatus = false;
+            }
+        }
+        catch (\LoginException | CognitoException | Exception $exception){
+            $status = "incorrect password";
+            $cognitoAuthStatus = false;
+        }
+    }
+    if($cognitoAuthStatus) {
+        $user_id = isset($uinfo['fetp_id']) ? $uinfo['fetp_id'] : $uinfo['user_id'];
+    }
+}
 // make sure it's a valid user id (or fetp id)
 if(is_numeric($user_id) && $user_id > 0) {
     // if it was a mod who successfully logged in, let's now repopulate the fetp table with latest eligible tephinet ids
@@ -76,8 +175,14 @@ if(is_numeric($user_id) && $user_id > 0) {
             $path = "events";
         }
     }
-    $uinfo['superuser'] = (isset($uinfo['user_id']) && in_array($uinfo['user_id'], $super_users)) ? true: false;
-}
 
-print json_encode(array('status' => $status, 'path' => $path, 'uinfo' => $uinfo , 'environment' => $env));
+    if($cognitoChangePassExceptionPath)
+    {
+        $status = "success";
+        $path = 'setpassword';
+    }
+    //$uinfo['superuser'] = (isset($uinfo['user_id']) && in_array($uinfo['user_id'], $super_users)) ? true: false;
+}
+$content = array('status' => $status, 'path' => $path, 'uinfo' => $uinfo , 'environment' => $env);
+print json_encode($content);
 ?>
