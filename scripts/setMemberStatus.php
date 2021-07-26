@@ -38,16 +38,31 @@ if ($approve_id && $approve_status) {
     {
         $maillist = UserInfo::getMaillistDetails($approve_id);
         $authService = new AuthService();
+        $validationService = new ValidationService();
+
+        $user = new User();
+        $user->setEmail($maillist['email']);
 
         try {
+
+            // TODO valid email
+            $validationService->email($user);
+
             // TODO send user to AWS Cognito
-            $authService->singUp($maillist['email']);
+            $authService->singUp($user->getEmail());
         }
         catch (\UserAccountExistException $exception)
         {
-            $status = 'failed';
-            $message = $exception->getMessage();
-            error_log($exception->getMessage());
+            try {
+                // TODO delete user on AWS Cognito
+                $authService->DeleteUser($user->getEmail());
+                // TODO send user to AWS Cognito
+                $authService->singUp($user->getEmail());
+            }catch (Exception $exception){
+                $status = 'failed';
+                $message = $exception->getMessage();
+                error_log($exception->getMessage());
+            }
         }
         catch (\NoEmailProvidedException $exception)
         {

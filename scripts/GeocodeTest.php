@@ -1,12 +1,13 @@
+
 <?php
-require_once 'const.inc.php';
+    
+        //TEST POSTMAN: http://127.0.0.1:8000/scripts/GeocodeTest.php
+        require_once 'const.inc.php';
 
-class Geocode {
-
-
-    static function getLocationDetail($lutype, $lookup)
-    {
-        $geo = 'https://maps.googleapis.com/maps/api/geocode/json?' . $lutype . '=' . urlencode($lookup) . '&key=' . CRYPTOKEY;
+        $geo = 'https://maps.googleapis.com/maps/api/geocode/json?' . 'address' . '=' . urlencode('Jimeta,Adamawa state,NG') . '&key=' . CRYPTOKEY;
+        // echo '*********';
+        // print_r($geo);
+        // echo '*********';
         $json = file_get_contents($geo);
         $results = json_decode($json, true);
         $formatted_address = $results['results'][0]['formatted_address'];
@@ -25,18 +26,16 @@ class Geocode {
                 $city = $ac['long_name'];
             }
         }
+        echo '*********';
+        print_r($lat);
+        print_r($lon);
+        print_r($city);
+        echo '*********';
+        print_r($state);
+        echo '*********';
+        print_r($postal_code); //not required
+        echo '*********';
         return array($lat, $lon, $city, $state, $postal_code);
-    }
-
-    static function signUrl($myUrlToSign, $privateKey)
-    {
-        $url = parse_url($myUrlToSign);
-        $urlPartToSign = $url['path'] . "?" . $url['query'];
-        // Decode the private key into its binary format
-        $decodedKey = base64_decode(str_replace(array('-', '_'), array('+', '/'), $privateKey));
-        // Create a signature using the private key and the URL-encoded string using HMAC SHA1. This signature will be binary.
-        $signature = hash_hmac("sha1", $urlPartToSign, $decodedKey, true);
-        $encodedSignature = str_replace(array('+', '/'), array('-', '_'), base64_encode($signature));
-        return $myUrlToSign . "&signature=" . $encodedSignature;
-    }
-}
+   
+   
+?>

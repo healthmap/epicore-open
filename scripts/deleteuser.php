@@ -15,12 +15,17 @@ if(!$uid) {
 }
 $uinfo = UserInfo::getUserInfo($uid);
 $authService = new AuthService();
+$validationService = new ValidationService();
+
+$user = new User();
+$user->setEmail($uinfo['email']);
 
 try
 {
-    $authService->User($uinfo['email']);
+    $validationService->email($user);
+    $authService->User($user->getEmail());
 }
-catch (\CognitoException | UserAccountNotExist $exception)
+catch (\CognitoException | UserAccountNotExist | EmailValidationException $exception)
 {
     echo json_encode(array('status' => 'failed', 'reason' => $exception->getMessage()));
     exit();
