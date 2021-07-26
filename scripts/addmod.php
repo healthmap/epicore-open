@@ -27,7 +27,7 @@ if ($mod_email && $mod_org_id && $mod_name) {
             $user->setEmail($mod_email);
 
             $validationService->email($user);
-            $authService->SingUp($user->getEmail(), '', false, true);
+            $authService->SingUp($user->getEmail());
 
             $status = 'success';
             $mod_id = $mod_status;
