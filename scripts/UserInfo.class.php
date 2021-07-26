@@ -29,18 +29,24 @@ class UserInfo
     {
         return $this->db->getOne("SELECT organization_id FROM user WHERE user_id = ?", array($this->id));
     }
-
+    //As of V3 changes
+    //email also inserted into user table
     static function addMod($email, $org_id, $mod_name , $role = 1){
         if ($email && is_numeric($org_id)) {
+
             $db1 = getDB();
             $hmu_id = $db1->getOne("SELECT hmu_id from hm_hmu WHERE email = ?", array($email));
+            
             if ($hmu_id) {
                 $db2 = getDB();
                 $max_org_id = 50;
+               
                 if ($org_id >=1 and $org_id <= $max_org_id) {
                     $hid = $db2->getOne("SELECT hmu_id FROM user WHERE hmu_id ='$hmu_id' ");
+
                     if ($hid != $hmu_id) {
-                        $db2->query("INSERT INTO user (organization_id, hmu_id , roleId) VALUES (?,'$hmu_id' , $role)", array($org_id));
+                        // $db2->query("INSERT INTO user (organization_id, hmu_id , roleId) VALUES (?,'$hmu_id' , $role)", array($org_id));
+                        $db2->query("INSERT INTO user (organization_id, email, hmu_id , roleId) VALUES (?, ?, '$hmu_id',$role)", array($org_id, $email));
                         $user_id = $db2->getOne("SELECT LAST_INSERT_ID()");
                         $db2->commit();
                         return $user_id;
@@ -51,8 +57,45 @@ class UserInfo
                 else
                     return "org id out of range";
 
-            } else
-                return "healthmap email address not found";
+            } else {
+                // return "healthmap email address not found";
+                //Epicore-V3 changes
+                //Ideally we should not be using the hm_hmu table as we have merged hm schema to epicore. Due to time and budget constraints we will continue to use the hm_hmu table as its used in all joins of the EventsAPI
+                //and external clients insert tickets using hmu_id.
+                //Future development should make sure to remove hm_hmu table and use the 'user' table as single source for 'requester users and for direct login.
+                
+                //New epicore user added from epicoreUI
+                //insert into hm_hmu 
+                //insert into user with f.k hm_hmu_id
+                $db3 = getDB();
+                $affiliation='BCH-Requester';
+                $curDatetime = date('Y-m-d H:i:s');
+
+                $db3->query("INSERT INTO hm_hmu (email , name, affiliation, date_created) VALUES (? , ?, '$affiliation', '$curDatetime')", array($email, $mod_name));
+                $new_hmu_id = $db3->getOne("SELECT LAST_INSERT_ID()");
+                $db3->commit();
+                
+                if ($new_hmu_id) {
+
+                        $max_org_id = 50;
+                        if ($org_id >=1 and $org_id <= $max_org_id) {
+                            $hid = $db3->getOne("SELECT hmu_id FROM user WHERE hmu_id ='$new_hmu_id' ");
+                            if ($hid != $new_hmu_id) {
+                                $db3->query("INSERT INTO user (organization_id, email, hmu_id , roleId) VALUES (?, ?, '$new_hmu_id',$role)", array($org_id, $email));
+                                $user_id = $db3->getOne("SELECT LAST_INSERT_ID()");
+                                $db3->commit();
+                                return $user_id;
+                            } else {
+                                return "moderator is already in the system";
+                            }
+                        }
+                        else {
+                            return "org id out of range";
+                        }
+                } else {
+                    return "Invalid parameters. Cannot add user.";
+                }
+            }
         } else
             return "invalid parameters";
     }
