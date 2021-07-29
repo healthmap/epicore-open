@@ -822,7 +822,7 @@ class UserInfo
                     $db->commit();
 
                     // geocode fetp
-                  //  UserInfo::geocodeFETP($approve_email);
+                   UserInfo::geocodeFETP($approve_email);
                 }
                 else{
                     $db->query("update fetp set active='N', status='P' where email='$approve_email'");
@@ -846,7 +846,7 @@ class UserInfo
                     $db->commit();
 
                     // geocode fetp
-                   // UserInfo::geocodeFETP($approve_email);
+                   UserInfo::geocodeFETP($approve_email);
                 }
                 else{
                     $db->query("update fetp set active='N', status='A' where email='$approve_email'");
@@ -858,7 +858,8 @@ class UserInfo
                 $db->commit();
                 $fetp_id = UserInfo::getFETPid($approve_email);
                 $status = 'preapproved';
-                sendMail($approve_email, $approve_name, "We heartily welcome our new EpiCore Member!", $status, $fetp_id);
+                //Cognito should send this email
+                //sendMail($approve_email, $approve_name, "We heartily welcome our new EpiCore Member!", $status, $fetp_id);
 
             }
             else if (($status == 'approved') || ($status == 'preapproved')) {
