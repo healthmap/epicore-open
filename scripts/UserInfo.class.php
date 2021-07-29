@@ -70,8 +70,8 @@ class UserInfo
                 $db3 = getDB();
                 $affiliation='BCH-Requester';
                 $curDatetime = date('Y-m-d H:i:s');
-
-                $db3->query("INSERT INTO hm_hmu (email , name, affiliation, date_created) VALUES (? , ?, '$affiliation', '$curDatetime')", array($email, $mod_name));
+                $confirmed = 1;
+                $db3->query("INSERT INTO hm_hmu (email , name, affiliation, confirmed, date_created) VALUES (? , ?, '$affiliation',  '$confirmed', '$curDatetime')", array($email, $mod_name));
                 $new_hmu_id = $db3->getOne("SELECT LAST_INSERT_ID()");
                 $db3->commit();
                 
@@ -255,9 +255,10 @@ class UserInfo
         $email = strip_tags($dbdata['email']);
         // first try the HealthMap database
         $db = getDB();
-
+        
         if($passwordValidIsRequired) {
             $user = $db->getRow("SELECT hmu_id, username, email, pword_hash from hm_hmu WHERE (username = ? OR email = ?) AND confirmed = 1", array($email, $email));
+      
             if(is_a($user, 'DB_Error')) {
                 print_r($user);
                 die('user error!');
@@ -277,6 +278,7 @@ class UserInfo
             } else {
                 // first try the MOD user table.  If none, try the FETP user table.
                 $uinfo = $db->getRow("SELECT user.*, organization.name AS orgname , role.id as roleId , role.name as roleName FROM user INNER JOIN role ON role.id = user.roleId LEFT JOIN organization ON user.organization_id = organization.organization_id WHERE email = ?", array($email));
+     
                 if (!$uinfo['user_id']) {
 
                     $uinfo = $db->getRow("SELECT fetp_id, pword_hash, lat, lon, countrycode, active, email, status, locations ,  role.id as roleId , role.name as roleName FROM fetp 
@@ -287,8 +289,11 @@ class UserInfo
 
                     $resp = validate_password($dbdata['password'], $uinfo['pword_hash']);
                     if ($resp) {
+                        
                         unset($uinfo['pword_hash']);
                         return $uinfo;
+                    } else {
+                        return $uinfo; // new signed up user on cognito. This is req/resp whose pwd in cognito
                     }
                 }
                 return 0;
