@@ -49,7 +49,7 @@ if(isset($formvars->ticket_id) && $formvars->usertype == "fetp") { // ticket sys
             $_isAdmin = false;
             $validationService->email($user);
             $validationService->password($user);
-            $uinfo = UserInfo::authenticateUser($dbdata, false);
+            $uinfo = UserInfo::authenticateUser($dbdata);
             if(!$uinfo){
                 $status = "incorrect password";
                 $cognitoAuthStatus = false;
