@@ -66,7 +66,5 @@ if(!empty($username) && !empty($verifycode))
     }
 
 }
-
-// print json_encode(array('status' => $status, 'uinfo' => $fetpinfo , 'message' => $message));
-   
+  
 print json_encode(array('status' => $status, 'uinfo' => $fetpinfo, 'message' => $message, 'fetpUpdateStatus' => $fetpStatus));
