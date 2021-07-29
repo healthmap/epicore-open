@@ -16,7 +16,7 @@ require_once (dirname(__FILE__) ."/Exception/UserAccountExistException.php");
 $data = json_decode(file_get_contents("php://input"));
 $approve_id = strip_tags((string)$data->maillist_id);
 $approve_status = strip_tags((string)$data->action);
-if ($approve_id && $approve_status) {
+if (!empty($approve_id) && !empty($approve_status)) {
     require_once 'UserInfo.class.php';
     UserInfo::setUserStatus($approve_id, $approve_status);
     $member_status = UserInfo::getMemberStatus($approve_id);
@@ -24,7 +24,6 @@ if ($approve_id && $approve_status) {
         $status = 'failed';
         $message = 'member not found';
     }
-
     $cognitoCommand = false;
     switch ($member_status)
     {
@@ -44,7 +43,6 @@ if ($approve_id && $approve_status) {
         $user->setEmail($maillist['email']);
 
         try {
-
             // TODO valid email
             $validationService->email($user);
 

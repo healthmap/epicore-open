@@ -865,7 +865,7 @@ class UserInfo
                     $db->commit();
 
                     // geocode fetp
-                  //  UserInfo::geocodeFETP($approve_email);
+                   UserInfo::geocodeFETP($approve_email);
                 }
                 else{
                     $db->query("update fetp set active='N', status='P' where email='$approve_email'");
@@ -885,11 +885,11 @@ class UserInfo
                 $fetpemail = $db->getOne("select email from fetp where email='$approve_email'");
                 if (!$fetpemail) {
                     $db->query("INSERT INTO fetp (email, countrycode, active, status, maillist_id , roleId)
-                        VALUES ('$approve_email', '$approve_countrycode', 'N','A', '$approve_id') ," .Role::responder);
+                        VALUES ('$approve_email', '$approve_countrycode', 'N','A', '$approve_id' ," .Role::responder .")");
                     $db->commit();
 
                     // geocode fetp
-                   // UserInfo::geocodeFETP($approve_email);
+                   UserInfo::geocodeFETP($approve_email);
                 }
                 else{
                     $db->query("update fetp set active='N', status='A' where email='$approve_email'");
@@ -901,7 +901,8 @@ class UserInfo
                 $db->commit();
                 $fetp_id = UserInfo::getFETPid($approve_email);
                 $status = 'preapproved';
-              //  sendMail($approve_email, $approve_name, "We heartily welcome our new EpiCore Member!", $status, $fetp_id);
+                //Cognito should send this email
+                //sendMail($approve_email, $approve_name, "We heartily welcome our new EpiCore Member!", $status, $fetp_id);
 
             }
             else if (($status == 'approved') || ($status == 'preapproved')) {
@@ -913,7 +914,7 @@ class UserInfo
 
                 if ($status == 'approved') {
                     $fetp_id = UserInfo::getFETPid($approve_email);
-                    sendMail($approve_email, $approve_name, "Congratulations!", $status, $fetp_id);
+                 //   sendMail($approve_email, $approve_name, "Congratulations!", $status, $fetp_id);
                 }
             }
             else if ($status == 'declined') {
@@ -1127,6 +1128,9 @@ class UserInfo
         } else {
             $mstatus = 'Inactive';
         }
+
+       // var_dump($mstatus);die();
+
         return $mstatus;
     }
 
