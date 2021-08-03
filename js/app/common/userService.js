@@ -4,6 +4,7 @@ const { fetchUrl } = fetchService();
 
 const userService = () => {
   const getUser = () => {
+
     if (Cookies.get('epiUserInfo')) {
       return JSON.parse(Cookies.get('epiUserInfo'));
     }
@@ -25,14 +26,19 @@ const userService = () => {
         method: 'POST',
         cache: false
       };
-      const response = await fetchUrl({url, params, options});
-      if(response) {
+      const response = await fetchUrl({ url, params, options });
+      if (response) {
         return true;
       }
       return false;
     }
-
-    return true;
+    else {
+      //check if user is requester and has a ticketID
+      if (user && user.role['roleName'] === 'requester' && user.ticket_id) {
+        return true;
+      }
+    }
+    return false;
   }
 
   return {
