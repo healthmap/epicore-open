@@ -380,17 +380,42 @@ class UserInfo
 
     static function authenticateMod($ticket_id) 
     {
-        $hmdb = getDB();
-        $hmu_id = $hmdb->getOne("SELECT hmu_id FROM hm_ticket WHERE val = ? AND exp > now()", array($ticket_id));
-        if(!$hmu_id) {
+        $db = getDB();
+ 
+        $user = null;
+        $epicore_info = null;
+        $ticket_info = $db->getRow("SELECT * FROM hm_ticket WHERE val = ? AND exp > now()", array($ticket_id));
+    
+        $hmu_id = $ticket_info['hmu_id'];
+        $user_id = $ticket_info['user_id'];
+
+        if(!$hmu_id && !$user_id) {
             return 0;
         }
-        $user = $hmdb->getRow("SELECT hmu_id, username, email from hm_hmu WHERE hmu_id = ?", array($hmu_id));
-        $db = getDB();
-        $epicore_info = $db->getRow("SELECT user.*, organization.name AS orgname FROM user LEFT JOIN organization ON user.organization_id = organization.organization_id WHERE user.hmu_id = ?", array($hmu_id));
+
+        //if hmu_id found
+        if(!$user_id) {
+            $user = $db->getRow("SELECT hmu_id, username, email from hm_hmu WHERE hmu_id = ?", array($hmu_id));
+            $epicore_info = $db->getRow("SELECT user.*, organization.name AS orgname, role.id as roleId , role.name as roleName FROM user 
+            INNER JOIN role ON role.id = user.roleId
+            LEFT JOIN organization ON user.organization_id = organization.organization_id WHERE user.hmu_id = ?", array($hmu_id));
+        } else {
+            //new epicore users have user_id associated with ticket
+            $user = $db->getRow("SELECT user_id, email, hmu_id from user WHERE user_id = ?", array($user_id));
+            $epicore_info = $db->getRow("SELECT user.*, organization.name AS orgname, role.id as roleId , role.name as roleName FROM user 
+            INNER JOIN role ON role.id = user.roleId
+            LEFT JOIN organization ON user.organization_id = organization.organization_id WHERE user.user_id = ?", array($user_id));
+        }
         $user['user_id'] = $epicore_info['user_id'];
         $user['organization_id'] = $epicore_info['organization_id'];
         $user['orgname'] = $epicore_info['orgname'];
+        $user['ticket_id'] = $ticket_id;
+        if(isset($epicore_info['roleId']) && !empty($epicore_info['roleId'])){
+            $user['roleId'] = $epicore_info['roleId'];
+        }
+        if(isset($epicore_info['roleName']) && !empty($epicore_info['roleName'])){
+            $user['roleName'] = $epicore_info['roleName'];
+        }
         return $user;
     }
 

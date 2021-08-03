@@ -279,7 +279,7 @@ app.config(function ($routeProvider) {
     .when('/fetp/:eid', {
       templateUrl: 'templates/fetp/fetp.html?cb=' + cacheBustSuffix,
     })
-    .when('/mod/:tid/:aid', {
+    .when('/mod/:tid', {
       templateUrl: 'templates/mod/mod.html?cb=' + cacheBustSuffix,
     })
     .when('/application', {
@@ -334,9 +334,9 @@ app.config(function ($routeProvider) {
       templateUrl:
         'templates/resetpassword/resetpassword.html?cb=' + cacheBustSuffix,
     })
-    .when('/confirm' , {
+    .when('/confirm', {
       templateUrl:
-          'templates/confirm/confirm.html?cb=' + cacheBustSuffix,
+        'templates/confirm/confirm.html?cb=' + cacheBustSuffix,
     })
     .when('/home', { templateUrl: home_page + cacheBustSuffix })
     .when('/training', {
@@ -367,6 +367,7 @@ app.config(function ($routeProvider) {
       templateUrl: 'templates/metrics/responders_metrics.html?cb=' + cacheBustSuffix,
       controller: 'metricsController',
     })
+
     .otherwise({ redirectTo: '/home' });
 });
 
