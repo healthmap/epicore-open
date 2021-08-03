@@ -11,7 +11,7 @@ $fetp_id = UserInfo::getFETPid($user_email);
 $userinfo = UserInfo::getUserInfobyEmail($user_email);
 
 // send email to reset password
-if ($fetp_id) {
+if (!is_null($fetp_id) || !is_null($userinfo)) {
     $action = 'resetpassword';
 
     // TODO AuthService
@@ -34,8 +34,7 @@ if ($fetp_id) {
             }
         }
     }
-    catch (\Exception $exception)
-    {
+    catch (\Exception $exception) {
         $status = 'failed';
     }
 }

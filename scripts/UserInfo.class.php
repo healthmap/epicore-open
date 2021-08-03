@@ -315,7 +315,7 @@ class UserInfo
         }
         else
         {
-            $user = $db->getRow("SELECT user.user_id, user.hmu_id, user.organization_id, organization.name AS orgname , role.id as roleId , role.name as roleName FROM user
+            $user = $db->getRow("SELECT user.user_id, user.email, user.hmu_id, user.organization_id, organization.name AS orgname , role.id as roleId , role.name as roleName FROM user
                 INNER JOIN role ON role.id = user.roleId
                 LEFT JOIN epicore.organization ON user.organization_id = organization.organization_id WHERE hmu_id = ?", array($user['hmu_id']));
         }
@@ -363,6 +363,9 @@ class UserInfo
         }
         if(isset($user['organization_id']) && !empty($user['organization_id'])) {
             $uinfo['organization_id'] = $user['organization_id'];
+        }
+        if(isset($user['user_id']) && !empty($user['user_id'])){
+            $uinfo['user_id'] = $user['user_id'];
         }
 
         $uinfo['email'] = $user['email'];
@@ -419,7 +422,13 @@ class UserInfo
     static function authenticateFetpByEmail(string $email)
     {
         $db = getDB();
-        return $db->getRow("SELECT fetp_id FROM epicore.fetp WHERE email = ?", array($email));
+        return $db->getRow("SELECT fetp_id FROM fetp WHERE email = ?", array($email));
+    }
+
+    static function authenticateUserByEmail(string $email)
+    {
+        $db = getDB();
+        return $db->getRow("SELECT user_id FROM user WHERE email = ?", array($email));
     }
 
     static function authenticateFetp($ticket_id)
