@@ -17,9 +17,20 @@ $message = '';
 if(!empty($verifycode))
 {
     $fetchObj = UserInfo::authenticateFetpByEmail($formvars->username);
+    if(is_null($fetchObj)){
+        $fetchObj = UserInfo::authenticateUserByEmail($formvars->username);
+    }
+
     if(!empty($fetchObj))
     {
-        $fetpinfo['username'] = "MEMBER ". $fetchObj['fetp_id'];
+        $userId = 0;
+        if(isset($fetchObj['fetp_id'])){
+            $userId = $fetchObj['fetp_id'];
+        }
+        if(isset($fetchObj['user_id'])){
+            $userId = $fetchObj['user_id'];
+        }
+        $fetpinfo['username'] = "MEMBER ". $userId;
         try
         {
             $validationService = new ValidationService();
@@ -43,14 +54,13 @@ if(!empty($verifycode))
         }
 
         print json_encode(array('status' => $status, 'uinfo' => $fetpinfo , 'message' => $message));
-        die();
     }
     else
     {
         $message = 'Username not found.';
         print json_encode(array('status' => $status, 'uinfo' => null , 'message' => $message));
-        die();
     }
+    die();
 
 }
 
