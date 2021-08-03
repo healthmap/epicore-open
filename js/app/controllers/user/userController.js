@@ -48,7 +48,7 @@ const UserController = (
   $scope.idtype = $routeParams.idtype;
   if ($scope.uid && $scope.action == 'edit') {
     const tokenValidation = hasToken($localStorage.user);
-    if(!tokenValidation) {
+    if (!tokenValidation) {
       $cookieStore.remove('epiUserInfo');
       $window.sessionStorage.clear();
       clearMemPortalCache();
@@ -124,6 +124,13 @@ const UserController = (
 
   /* get user cookie info */
   $scope.userInfo = $rootScope.userInfo = $cookieStore.get('epiUserInfo');
+
+  $scope.isRequester = null;
+  if ($scope.userInfo) {
+    if ($scope.userInfo.role['roleName'] === 'requester' || $scope.userInfo.role['roleName'] === 'admin') {
+      $scope.isRequester = true;
+    }
+  }
 
   /* countries and codes */
   $scope.countries = epicoreCountries;
@@ -376,10 +383,9 @@ const UserController = (
               data['uinfo']['locations'] :
               false;
           let token = null;
-          if(data.uinfo.token != undefined)
-          {
+          if (data.uinfo.token != undefined) {
             let dataToken = data.uinfo.token.accessToken;
-            if(dataToken != ''){
+            if (dataToken != '') {
               token = dataToken;
             }
           }
@@ -398,14 +404,14 @@ const UserController = (
             superuser: data['uinfo']['superuser'],
             locations: memberLocations,
             environment: data['environment'],
-            role : {
-              roleId : data['uinfo']['roleId'],
-              roleName : data['uinfo']['roleName']
+            role: {
+              roleId: data['uinfo']['roleId'],
+              roleName: data['uinfo']['roleName']
             },
-            token : token
+            token: token
           };
 
-          
+
           // save username and password
           $localStorage.username = formData['username'];
           // $localStorage.password = formData['password'];
@@ -417,18 +423,18 @@ const UserController = (
 
           $rootScope.error_message = false;
 
-          if(data['path']!= "setpassword") {
+          if (data['path'] != 'setpassword') {
 
             // FETPs that aren't activated yet don't get review page
             if (data['uinfo']['fetp_id'] && data['uinfo']['active'] == 'N') {
               var redirpath = '/training';
             } else {
               var redirpath =
-                  typeof querystr['redir'] != 'undefined' ?
-                      querystr['redir'] :
-                      '/' + data['path'];
+                typeof querystr['redir'] != 'undefined' ?
+                  querystr['redir'] :
+                  '/' + data['path'];
             }
-          }else{
+          } else {
             var redirpath = '/setpassword';
           }
 
@@ -450,11 +456,11 @@ const UserController = (
   };
 
   /* log out */
-  $scope.userLogout = function() {
+  $scope.userLogout = function () {
 
     let formData = {
-      'username' : $localStorage.user.email
-    }
+      'username': $localStorage.user.email
+    };
 
     http({
       url: urlBase + 'scripts/revoke.php',
@@ -468,7 +474,7 @@ const UserController = (
   };
 
   /* set password */
-  $scope.setPassword = function(formData) {
+  $scope.setPassword = function (formData) {
     $scope.isRouteLoading = true;
     if (typeof querystr['t'] != 'undefined') {
       formData['ticket_id'] = querystr['t'];
@@ -484,18 +490,18 @@ const UserController = (
         data: formData,
       }).then(
         function successCallback(res) {
-            const data = res.data;
-            if (data['status'] === 'success') {
-              $scope.isRouteLoading = false;
-              $rootScope.error_message_pw =
-                  'Please check your address , validate code or password.';
+          const data = res.data;
+          if (data['status'] === 'success') {
+            $scope.isRouteLoading = false;
+            $rootScope.error_message_pw =
+              'Please check your address , validate code or password.';
             $location.path('/login');
-            } else {
-              $scope.isRouteLoading = false;
-              $rootScope.error_message_pw = 'Invalid email address , validate code or password';
-              $route.reload();
-            }
-          },
+          } else {
+            $scope.isRouteLoading = false;
+            $rootScope.error_message_pw = 'Invalid email address , validate code or password';
+            $route.reload();
+          }
+        },
         function errorCallback() {
           $scope.isRouteLoading = false;
         },
@@ -503,7 +509,7 @@ const UserController = (
     }
   };
   /* set resendVerify */
-  $scope.resendVerify = function(formData) {
+  $scope.resendVerify = function (formData) {
     $scope.isRouteLoading = true;
     if (typeof querystr['t'] != 'undefined') {
       formData['ticket_id'] = querystr['t'];
@@ -519,28 +525,28 @@ const UserController = (
         method: 'POST',
         data: formData,
       }).then(
-          function successCallback(res) {
-            const data = res.data;
-            if (data['status'] === 'success') {
-              $scope.isRouteLoading = false;
-              $rootScope.error_message_pw =
-                  'Please check your address.';
-              $location.path('/setpassword');
-            } else {
-              $scope.isRouteLoading = false;
-              $rootScope.error_message_pw = 'Invalid email address';
-              $route.reload();
-            }
-          },
-          function errorCallback() {
+        function successCallback(res) {
+          const data = res.data;
+          if (data['status'] === 'success') {
             $scope.isRouteLoading = false;
-          },
+            $rootScope.error_message_pw =
+              'Please check your address.';
+            $location.path('/setpassword');
+          } else {
+            $scope.isRouteLoading = false;
+            $rootScope.error_message_pw = 'Invalid email address';
+            $route.reload();
+          }
+        },
+        function errorCallback() {
+          $scope.isRouteLoading = false;
+        },
       );
     }
   };
 
   /** Confirm password **/
-  $scope.confirm = function (formData){
+  $scope.confirm = function (formData) {
     if (!$scope.setpwForm.$valid) {
       $scope.isRouteLoading = false;
       $rootScope.error_message_pw = 'Invalid email address';
@@ -551,21 +557,21 @@ const UserController = (
         method: 'POST',
         data: formData,
       }).then(
-          function successCallback(res) {
-            const data = res.data;
-            if (data['status'] === 'success') {
-              $location.path('/login');
-              $route.reload();
-            } else {
-              $scope.isRouteLoading = false;
-              $rootScope.error_message_pw = 'Invalid email address or temporary password';
-              $route.reload();
-            }
-          },
-          function errorCallback() {
-            $rootScope.error_message_pw = 'Invalid email address';
+        function successCallback(res) {
+          const data = res.data;
+          if (data['status'] === 'success') {
+            $location.path('/login');
+            $route.reload();
+          } else {
             $scope.isRouteLoading = false;
-          },
+            $rootScope.error_message_pw = 'Invalid email address or temporary password';
+            $route.reload();
+          }
+        },
+        function errorCallback() {
+          $rootScope.error_message_pw = 'Invalid email address';
+          $scope.isRouteLoading = false;
+        },
       );
     }
   }
