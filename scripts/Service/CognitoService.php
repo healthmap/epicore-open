@@ -66,13 +66,10 @@ class CognitoService
      * @return void
      * @throws \Exception
      */
-    public function singUp(string $username , string $password , string $email , bool $dontSendEmail = false , bool $dontUpdatePassword , string $name = null) : void
+    public function singUp(string $username , string $password , string $email , bool $dontSendEmail = false , bool $dontUpdatePassword) : void
     {
         try
         {
-            if(is_null($name)){
-                $name = $username;
-            }
             $dataContext = [
                 'ClientId' => $this->clientId,
                 'UserPoolId' => $this->userPoolId,
@@ -83,7 +80,7 @@ class CognitoService
                 'UserAttributes' => [
                     [
                         'Name' => 'name',
-                        'Value' => $name
+                        'Value' => $username
                     ],
                     [
                         'Name' => 'email',

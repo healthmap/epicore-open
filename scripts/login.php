@@ -73,52 +73,13 @@ if(isset($formvars->ticket_id) && $formvars->usertype == "fetp") { // ticket sys
         {
             $uinfo = UserInfo::authenticateUser($dbdata);
             if(!$uinfo) {
-                $uinfo = UserInfo::authenticateUser($dbdata, false);
+                $status = "incorrect password";
+                $cognitoAuthStatus = false;
             }
-            if(isset($uinfo['email'])){
-
-                $user = new User();
-                $user->setEmail($uinfo['email']);
-                $user->setPassword($dbdata['password']);
-                try {
-                    $validationService->email($user);
-                    $validationService->password($user);
-
-                    $authService->User($user->getEmail());
-                    $authResponse = $authService->LoginUser($user->getEmail(), $user->getPassword());
-                    if (!is_null($authResponse)) {
-                        $uinfo['token']['accessToken'] = $authResponse->getAccessToken();
-                        $uinfo['token']['refreshToken'] = $authResponse->getRefreshToken();
-                        $uinfo['token']['expiresIn'] = $authResponse->getExpiresIn();
-                        $uinfo['superuser'] = (isset($uinfo['user_id']) && in_array($uinfo['user_id'], $super_users)) ? true : false;
-                        if ($uinfo['superuser']) {
-                            $isSuperAdmin = true;
-                        }
-                    }
-                }
-                catch (EmailValidationException | PasswordValidationException $exception){
-                    $status = "incorrect password";
-                    $cognitoAuthStatus = false;
-                }
-                catch (CognitoException | UserAccountNotExist  $exception){
-
-                    try {
-                        $authService->SingUp($user->getEmail(), $user->getPassword(), true, false);
-                        $authResponse = $authService->LoginUser($user->getEmail(), $user->getPassword());
-                        if (!is_null($authResponse)) {
-                            $uinfo['token']['accessToken'] = $authResponse->getAccessToken();
-                            $uinfo['token']['refreshToken'] = $authResponse->getRefreshToken();
-                            $uinfo['token']['expiresIn'] = $authResponse->getExpiresIn();
-                            $uinfo['superuser'] = (isset($uinfo['user_id']) && in_array($uinfo['user_id'], $super_users)) ? true : false;
-                            if ($uinfo['superuser']) {
-                                $isSuperAdmin = true;
-                            }
-                        }
-                    }
-                    catch (UserAccountExistException | NoEmailProvidedException | LoginException $exception){
-                        $status = "incorrect password";
-                        $cognitoAuthStatus = false;
-                    }
+            if($uinfo) {
+                $uinfo['superuser'] = (isset($uinfo['user_id']) && in_array($uinfo['user_id'], $super_users)) ? true : false;
+                if ($uinfo['superuser']) {
+                    $isSuperAdmin = true;
                 }
             }
         }
