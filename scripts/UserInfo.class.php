@@ -371,6 +371,10 @@ class UserInfo
         }
 
         $uinfo['email'] = $user['email'];
+        if(is_null($uinfo['email']) && isset($user['hm_email']) && !empty($user['hm_email'])){
+            $uinfo['email'] = $user['hm_email'];
+        }
+
         $uinfo['superuser'] = false;
 
         if(is_null( $uinfo['email'] ))
