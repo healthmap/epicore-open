@@ -16,7 +16,7 @@ const userService = () => {
   };
 
   const hasToken = async (user) => {
-    if (user.token != undefined && user.token != null && !user.superuser) {
+    if (user.token != undefined && user.token != null) {
       const url = epicore_config.urlBase + epicore_config.API.AUTH;
       const params = {
         token: user.token,
