@@ -315,7 +315,7 @@ class UserInfo
         }
         else
         {
-            $user = $db->getRow("SELECT user.user_id, user.email, user.hmu_id, user.organization_id, organization.name AS orgname , role.id as roleId , role.name as roleName , hm_hmu.username as username 
+            $user = $db->getRow("SELECT user.user_id, user.email, user.hmu_id, user.organization_id, organization.name AS orgname , role.id as roleId , role.name as roleName , hm_hmu.username as username , hm_hmu.email as hm_email
                 FROM user
                 INNER JOIN role ON role.id = user.roleId
                 LEFT JOIN hm_hmu ON hm_hmu.hmu_id = user.hmu_id 
@@ -369,8 +369,11 @@ class UserInfo
         if(isset($user['user_id']) && !empty($user['user_id'])){
             $uinfo['user_id'] = $user['user_id'];
         }
-
         $uinfo['email'] = $user['email'];
+        if(is_null($uinfo['email']) && isset($user['hm_email']) && !empty($user['hm_email'])){
+            $uinfo['email'] = $user['hm_email'];
+        }
+
         $uinfo['superuser'] = false;
 
         if(is_null( $uinfo['email'] ))
