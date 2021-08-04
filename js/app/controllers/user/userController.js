@@ -369,6 +369,7 @@ const UserController = (
     }).then(
       function successCallback(res) {
         const data = res.data;
+
         if (data['status'] === 'success') {
           // determines if user is an organization or FETP
           $rootScope.isOrganization =
@@ -404,6 +405,7 @@ const UserController = (
             superuser: data['uinfo']['superuser'],
             locations: memberLocations,
             environment: data['environment'],
+            ticket_id: data['uinfo']['ticket_id'] ? data['uinfo']['ticket_id'] : null,
             role: {
               roleId: data['uinfo']['roleId'],
               roleName: data['uinfo']['roleName']
@@ -424,7 +426,6 @@ const UserController = (
           $rootScope.error_message = false;
 
           if (data['path'] != 'setpassword') {
-
             // FETPs that aren't activated yet don't get review page
             if (data['uinfo']['fetp_id'] && data['uinfo']['active'] == 'N') {
               var redirpath = '/training';

@@ -63,13 +63,13 @@ const EventsController2 = (
     i++;
   }
 
-  timeValues.push({name: 'All', value: 'all'});
-  timeValues.push({name: 'Most Recent', value: 'recent'});
+  timeValues.push({ name: 'All', value: 'all' });
+  timeValues.push({ name: 'Most Recent', value: 'recent' });
   $scope.event_months = timeValues.reverse();
   $scope.selected_month = timeValues[0];
 
   // get events for selected month
-  $scope.getEventMonth = function(month) {
+  $scope.getEventMonth = function (month) {
     let start_date = '';
     let end_date = '';
     let num_events = 'all';
@@ -93,12 +93,12 @@ const EventsController2 = (
 
   // upload response files
   $scope.ufiles = [];
-  $scope.uploadFiles = function(files, errFiles) {
+  $scope.uploadFiles = function (files, errFiles) {
     $scope.files = files;
     $scope.errFiles = errFiles;
 
     let i = 1;
-    angular.forEach(files, function(file) {
+    angular.forEach(files, function (file) {
       $scope.isRouteLoading = true;
       file.upload = Upload.upload({
         url: 'scripts/uploadfile.php',
@@ -110,7 +110,7 @@ const EventsController2 = (
       });
 
       file.upload.then(
-        function(response) {
+        function (response) {
           // save uploaded file names
           $scope.ufiles.push({
             filename: response.data.filename,
@@ -121,16 +121,16 @@ const EventsController2 = (
             $scope.isRouteLoading = false;
           }
 
-          $timeout(function() {
+          $timeout(function () {
             file.result = response.data;
           });
         },
-        function(response) {
+        function (response) {
           if (response.status > 0) {
             $scope.errorMsg = response.status + ': ' + response.data;
           }
         },
-        function(evt) {
+        function (evt) {
           file.progress = Math.min(
             100,
             parseInt((100.0 * evt.loaded) / evt.total),
@@ -140,36 +140,36 @@ const EventsController2 = (
     });
   };
 
-  const removeItem = function(file) {
+  const removeItem = function (file) {
     const index = $scope.ufiles
-      .map(function(item) {
+      .map(function (item) {
         return item.savefilename;
       })
       .indexOf(file);
     $scope.ufiles.splice(index, 1);
   };
 
-  $scope.removeFile = function(file) {
+  $scope.removeFile = function (file) {
     http({
       url: urlBase + 'scripts/removefile.php',
       method: 'POST',
-      data: {filename: file},
+      data: { filename: file },
     }).then(function successCallback() {
       removeItem(file);
     });
   };
 
-  $scope.publicEvents = function(event) {
+  $scope.publicEvents = function (event) {
     return (
       event.outcome === 'VP' || event.outcome === 'VN' || event.outcome === 'UP'
     );
   };
 
-  $scope.publicArticle = function(eventID) {
+  $scope.publicArticle = function (eventID) {
     $window.open('#/events_public/articles/' + eventID, '_self');
   };
 
-  $scope.getPublicEventsByID = function() {
+  $scope.getPublicEventsByID = function () {
     $scope.isRouteLoading = true;
     const article_id = localStorage.getItem('articleID');
     eventAPIservice2.getEvents(article_id).then(function successCallback(res) {
@@ -217,7 +217,7 @@ const EventsController2 = (
   };
 
   // get events for public dashboard for Responders view
-  $scope.getEvents2 = function(dbtype) {
+  $scope.getEvents2 = function (dbtype) {
     $scope.isRouteLoading = false;
     $rootScope.dashboardType = dbtype;
     if (dbtype == 'PR' && !$scope.eventsListPublic) {
@@ -230,7 +230,8 @@ const EventsController2 = (
           const response = res.data;
           $scope.isRouteLoading = false;
           $scope.eventsListPublic = response.EventsList;
-          if ($scope.eventsListPublic.purpose) {
+
+          if ($scope.eventsListPublic && $scope.eventsListPublic.purpose) {
             $scope.outcomePublic = {};
             $scope.outcomePublic.phe_purpose = 'N';
             if ($scope.eventsListPublic.purpose.indexOf('Verification') >= 0) {
@@ -245,7 +246,7 @@ const EventsController2 = (
     }
   };
 
-  const getAllEvents = function(start_date, end_date, num_events = 'all') {
+  const getAllEvents = function (start_date, end_date, num_events = 'all') {
     $scope.isRouteLoading = true;
 
     $scope.eventsList = [];
@@ -262,7 +263,7 @@ const EventsController2 = (
             $scope.isAuthorizedToFollowup =
               $scope.userInfo.organization_id ==
                 response.EventsList.org_requester_id ||
-              $scope.userInfo.superuser ?
+                $scope.userInfo.superuser ?
                 true :
                 false;
             $scope.changeStatusText =
@@ -277,7 +278,7 @@ const EventsController2 = (
             if (
               response.EventsList.fetp_ids != null &&
               response.EventsList.fetp_ids.indexOf($scope.userInfo.fetp_id) !=
-                -1
+              -1
             ) {
               $scope.isAuthorizedFETP = true;
             }
@@ -330,7 +331,7 @@ const EventsController2 = (
           if (num_events != 'all') {
             const all_events = response.EventsList.all;
             const public_events = [];
-            all_events.forEach(function(event) {
+            all_events.forEach(function (event) {
               if ($scope.publicEvents(event)) {
                 public_events.push(event);
               }
@@ -431,7 +432,7 @@ const EventsController2 = (
         }
 
         // check unclosed RFIs with no activity in the last two weeks
-        Date.prototype.yyyymmdd = function() {
+        Date.prototype.yyyymmdd = function () {
           const yyyy = this.getFullYear().toString();
           const mm = (this.getMonth() + 1).toString(); // getMonth() is zero-based
           const dd = this.getDate().toString();
@@ -460,13 +461,13 @@ const EventsController2 = (
       });
   };
 
-  $scope.showNotScoredEvents = function() {
+  $scope.showNotScoredEvents = function () {
     if (!$scope.eventsList['all']) {
       return;
     }
     $scope.isShowNotScoredEvents = !$scope.isShowNotScoredEvents;
     if ($scope.isShowNotScoredEvents) {
-      $scope.eventsList['all'] = $scope.eventsList['all'].filter(function(
+      $scope.eventsList['all'] = $scope.eventsList['all'].filter(function (
         event,
       ) {
         return !event.metric_score;
@@ -506,7 +507,7 @@ const EventsController2 = (
   let save_metrics_timeout;
   let prev_metric_data = {};
 
-  $scope.updateRFIMetrics = function(field, event) {
+  $scope.updateRFIMetrics = function (field, event) {
     if (
       field === 'metric_score' &&
       !(event.metric_score || event.metric_score > 2)
@@ -536,7 +537,7 @@ const EventsController2 = (
       $timeout.cancel(save_metrics_timeout);
     }
 
-    save_metrics_timeout = $timeout(function() {
+    save_metrics_timeout = $timeout(function () {
       http({
         url: urlBase + 'scripts/updatemetrics.php',
         method: 'POST',
@@ -552,7 +553,7 @@ const EventsController2 = (
     }, save_metrics_debounce);
   };
 
-  $scope.sendFollowup = function(formData, isValid) {
+  $scope.sendFollowup = function (formData, isValid) {
     if (isValid) {
       $scope.submitDisabled = true;
       formData['event_id'] = $routeParams.id;
@@ -573,7 +574,7 @@ const EventsController2 = (
     }
   };
 
-  $scope.changeRequestStatus = function(formData, thestatus, isValid) {
+  $scope.changeRequestStatus = function (formData, thestatus, isValid) {
     // count responses assessed as useful,used in promed, or not useful when closing an RFI
     // only for responses with content
     const useful_rids = [];
@@ -663,7 +664,7 @@ const EventsController2 = (
     }
   };
 
-  $scope.sendResponse = function(formData, isValid) {
+  $scope.sendResponse = function (formData, isValid) {
     const source_valid = typeof formData.source != 'undefined';
 
     $scope.response_error_message = '';
@@ -701,9 +702,9 @@ const EventsController2 = (
     }
   };
 
-  $scope.deleteEvent = function(eid) {
+  $scope.deleteEvent = function (eid) {
     if (confirm('Are you sure you want to delete this event?')) {
-      const data = {eid: eid};
+      const data = { eid: eid };
       http({
         url: urlBase + 'scripts/deleteEvent2.php',
         method: 'POST',
@@ -723,7 +724,7 @@ const EventsController2 = (
   $scope.showModal = false;
   $scope.modalTitle = '';
   $scope.modalBody = '';
-  $scope.showSummary = function(
+  $scope.showSummary = function (
     summary,
     more_info,
     event_title,

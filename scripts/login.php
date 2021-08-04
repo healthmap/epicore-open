@@ -73,13 +73,52 @@ if(isset($formvars->ticket_id) && $formvars->usertype == "fetp") { // ticket sys
         {
             $uinfo = UserInfo::authenticateUser($dbdata);
             if(!$uinfo) {
-                $status = "incorrect password";
-                $cognitoAuthStatus = false;
+                $uinfo = UserInfo::authenticateUser($dbdata, false);
             }
-            if($uinfo) {
-                $uinfo['superuser'] = (isset($uinfo['user_id']) && in_array($uinfo['user_id'], $super_users)) ? true : false;
-                if ($uinfo['superuser']) {
-                    $isSuperAdmin = true;
+            if(isset($uinfo['email'])){
+
+                $user = new User();
+                $user->setEmail($uinfo['email']);
+                $user->setPassword($dbdata['password']);
+                try {
+                    $validationService->email($user);
+                    $validationService->password($user);
+
+                    $authService->User($user->getEmail());
+                    $authResponse = $authService->LoginUser($user->getEmail(), $user->getPassword());
+                    if (!is_null($authResponse)) {
+                        $uinfo['token']['accessToken'] = $authResponse->getAccessToken();
+                        $uinfo['token']['refreshToken'] = $authResponse->getRefreshToken();
+                        $uinfo['token']['expiresIn'] = $authResponse->getExpiresIn();
+                        $uinfo['superuser'] = (isset($uinfo['user_id']) && in_array($uinfo['user_id'], $super_users)) ? true : false;
+                        if ($uinfo['superuser']) {
+                            $isSuperAdmin = true;
+                        }
+                    }
+                }
+                catch (EmailValidationException | PasswordValidationException $exception){
+                    $status = "incorrect password";
+                    $cognitoAuthStatus = false;
+                }
+                catch (CognitoException | UserAccountNotExist  $exception){
+
+                    try {
+                        $authService->SingUp($user->getEmail(), $user->getPassword(), true, false);
+                        $authResponse = $authService->LoginUser($user->getEmail(), $user->getPassword());
+                        if (!is_null($authResponse)) {
+                            $uinfo['token']['accessToken'] = $authResponse->getAccessToken();
+                            $uinfo['token']['refreshToken'] = $authResponse->getRefreshToken();
+                            $uinfo['token']['expiresIn'] = $authResponse->getExpiresIn();
+                            $uinfo['superuser'] = (isset($uinfo['user_id']) && in_array($uinfo['user_id'], $super_users)) ? true : false;
+                            if ($uinfo['superuser']) {
+                                $isSuperAdmin = true;
+                            }
+                        }
+                    }
+                    catch (UserAccountExistException | NoEmailProvidedException | LoginException $exception){
+                        $status = "incorrect password";
+                        $cognitoAuthStatus = false;
+                    }
                 }
             }
         }
@@ -127,10 +166,9 @@ if(isset($formvars->ticket_id) && $formvars->usertype == "fetp") { // ticket sys
             $cognitoAuthStatus = false;
         }
     }
-    if($cognitoAuthStatus) {
-        $user_id = isset($uinfo['fetp_id']) ? $uinfo['fetp_id'] : $uinfo['user_id'];
-    }
+    $user_id = isset($uinfo['fetp_id']) ? $uinfo['fetp_id'] : $uinfo['user_id'];
 }
+
 // make sure it's a valid user id (or fetp id)
 if(is_numeric($user_id) && $user_id > 0) {
     // if it was a mod who successfully logged in, let's now repopulate the fetp table with latest eligible tephinet ids
@@ -139,10 +177,10 @@ if(is_numeric($user_id) && $user_id > 0) {
     //    $ui->getFETPEligible();
     //}
     $status = "success";
-
-    $mdata = array();
+        $mdata = array();
     // if mobile app, add/update info
     if ($formvars->app == 'mobile'){
+  
         $mdata['reg_id'] = strip_tags($formvars->reg_id);
         $mdata['model'] = strip_tags($formvars->model);
         $mdata['platform'] = strip_tags($formvars->platform);
@@ -183,7 +221,9 @@ if(is_numeric($user_id) && $user_id > 0) {
         $status = "success";
         $path = 'setpassword';
     }
-    //$uinfo['superuser'] = (isset($uinfo['user_id']) && in_array($uinfo['user_id'], $super_users)) ? true: false;
+    $uinfo['superuser'] = (isset($uinfo['user_id']) && in_array($uinfo['user_id'], $super_users)) ? true: false;
+
+
 }
 $content = array('status' => $status, 'path' => $path, 'uinfo' => $uinfo , 'environment' => $env);
 print json_encode($content);

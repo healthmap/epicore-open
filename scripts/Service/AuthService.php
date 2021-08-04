@@ -106,7 +106,7 @@ class AuthService implements IAuthService
      * @throws PasswordValidationException
      * @throws UserAccountExistException
      */
-    public function SingUp(string $username, string $password = '' , bool $dontSendEmail = false , bool $dontUpdatePassword = false)
+    public function SingUp(string $username, string $password = '' , bool $dontSendEmail = false , bool $dontUpdatePassword = false , string $name = null)
     {
         try
         {
@@ -122,7 +122,7 @@ class AuthService implements IAuthService
             $this->validationService->password($user);
 
             //TODO send user to AWS Cognito
-            $this->cognitoService->singUp($username, $password , $username , $dontSendEmail , $dontUpdatePassword);
+            $this->cognitoService->singUp($username, $password , $username , $dontSendEmail , $dontUpdatePassword , $name);
         }
         catch (\Aws\CognitoIdentityProvider\Exception\CognitoIdentityProviderException $exception)
         {
