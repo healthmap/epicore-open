@@ -125,13 +125,6 @@ const UserController = (
   /* get user cookie info */
   $scope.userInfo = $rootScope.userInfo = $cookieStore.get('epiUserInfo');
 
-  $scope.isRequester = null;
-  if ($scope.userInfo) {
-    if ($scope.userInfo.role['roleName'] === 'requester' || $scope.userInfo.role['roleName'] === 'admin') {
-      $scope.isRequester = true;
-    }
-  }
-
   /* countries and codes */
   $scope.countries = epicoreCountries;
 
@@ -425,7 +418,8 @@ const UserController = (
 
           $rootScope.error_message = false;
 
-          if (data['path'] != 'setpassword') {
+          if (data['path'] != "setpassword") {
+
             // FETPs that aren't activated yet don't get review page
             if (data['uinfo']['fetp_id'] && data['uinfo']['active'] == 'N') {
               var redirpath = '/training';
