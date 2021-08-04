@@ -3,15 +3,15 @@ import { eventsService } from '@/common/eventsService';
 import { EVENT_TYPES, EVENT_SOURCE, EVENT_OUTCOME } from '@/constants/eventsConstants';
 import { cacheService } from '@/common/cacheService';
 
-const { getUser , hasToken } = userService();
+const { getUser, hasToken } = userService();
 const { getEvents, getEventSummary, getTimeFilterSelectValues } = eventsService();
 const { clearMemPortalCache } = cacheService();
 
-const EventsController3 = ($scope, $location, epicoreMode, epicoreStartDate , $localStorage , $route , $cookieStore , $window) => {
-  $scope.userInfo  = getUser();
+const EventsController3 = ($scope, $location, epicoreMode, epicoreStartDate, $localStorage, $route, $cookieStore, $window) => {
+  $scope.userInfo = getUser();
   $scope.mobile = epicoreMode == 'mobile' ? true : false;
   $scope.events = [];
-  $scope.isOrganization = $scope.userInfo .fetp_id > 0 ? false : true;
+  $scope.isOrganization = $scope.userInfo.fetp_id > 0 ? false : true;
   $scope.onOpen = $location.path().indexOf('/closed') > 0 ? false : true;
   $scope.changeStatusText = !$scope.onOpen ? 'Re open' : 'Close';
   $scope.changeStatusType = !$scope.onOpen ? 'reopen' : 'close';
@@ -24,7 +24,7 @@ const EventsController3 = ($scope, $location, epicoreMode, epicoreStartDate , $l
   $scope.summaryLoading = null;
   const d = new Date();
   $scope.date = d.setDate(d.getDate() - 14);
- 
+
   const getEventsData = async ({
     start_date = null,
     end_date = null
@@ -33,8 +33,7 @@ const EventsController3 = ($scope, $location, epicoreMode, epicoreStartDate , $l
 
     const tokenValidation = await hasToken($localStorage.user);
 
-    if(!tokenValidation)
-    {
+    if (!tokenValidation) {
       $cookieStore.remove('epiUserInfo');
       $window.sessionStorage.clear();
       clearMemPortalCache();
@@ -90,10 +89,11 @@ const EventsController3 = ($scope, $location, epicoreMode, epicoreStartDate , $l
 
 
   const checkEventsWithNoActivity = async () => {
-    $scope.unclosed = $scope.events.filter(event => {
-      return event.requester_id === $scope.userInfo .uid && parseInt(event.no_active_14_days) > 0;
-    }).length;
-
+    if ($scope.events) {
+      $scope.unclosed = $scope.events.filter(event => {
+        return event.requester_id === $scope.userInfo.uid && parseInt(event.no_active_14_days) > 0;
+      }).length;
+    }
     $scope.$digest();
   };
 
@@ -119,7 +119,7 @@ const EventsController3 = ($scope, $location, epicoreMode, epicoreStartDate , $l
   $scope.showEventSummary = async (event_id) => {
     $scope.summaryLoading = event_id;
     const event = $scope.events.find(event => event.event_id === event_id);
-    
+
     const {
       phe_description: summary,
       title: event_title,
@@ -208,9 +208,9 @@ const EventsController3 = ($scope, $location, epicoreMode, epicoreStartDate , $l
   };
 
   init();
- 
+
 };
 
-EventsController3.$inject = ['$scope', '$location', 'epicoreMode' , 'epicoreStartDate' , '$localStorage' , '$route' , '$cookieStore' , '$window'];
+EventsController3.$inject = ['$scope', '$location', 'epicoreMode', 'epicoreStartDate', '$localStorage', '$route', '$cookieStore', '$window'];
 
 export default EventsController3;
