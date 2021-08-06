@@ -315,9 +315,11 @@ class UserInfo
         }
         else
         {
-            $user = $db->getRow("SELECT user.user_id, user.email, user.hmu_id, user.organization_id, organization.name AS orgname , role.id as roleId , role.name as roleName FROM user
+            $user = $db->getRow("SELECT user.user_id, user.email, user.hmu_id, user.organization_id, organization.name AS orgname , role.id as roleId , role.name as roleName , hm_hmu.username as username , hm_hmu.email as hm_email
+                FROM user
                 INNER JOIN role ON role.id = user.roleId
-                LEFT JOIN epicore.organization ON user.organization_id = organization.organization_id WHERE hmu_id = ?", array($user['hmu_id']));
+                LEFT JOIN hm_hmu ON hm_hmu.hmu_id = user.hmu_id 
+                LEFT JOIN organization ON user.organization_id = organization.organization_id WHERE hm_hmu.hmu_id = ?", array($user['hmu_id']));
         }
         if(isset($user['username']))
         {
@@ -369,6 +371,10 @@ class UserInfo
         }
 
         $uinfo['email'] = $user['email'];
+        if($uinfo['email'] === null && isset($user['hm_email']) && !empty($user['hm_email'])){
+            $uinfo['email'] = $user['hm_email'];
+        }
+
         $uinfo['superuser'] = false;
 
         if(is_null( $uinfo['email'] ))
