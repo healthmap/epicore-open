@@ -78,7 +78,7 @@ function sendMail($email, $name, $subject, $status, $user_id, $event_title = '',
         $db->query("INSERT INTO ticket (fetp_id, val, exp) VALUES (?, ?, ?)", array($fetp_id, $ticket, date('Y-m-d H:i:s', strtotime("+30 days"))));
         $db->commit();
         //get email template and set link
-        $link = EPICORE_URL .'/#/setpassword?t=' . $ticket;
+        $link = EPICORE_URL .'/#/resetpassword?t=' . $ticket;
         $emailtemplate = file_get_contents("../emailtemplates/setpassword_reminder.html");
     }
     else if($status =='training_reminder'){

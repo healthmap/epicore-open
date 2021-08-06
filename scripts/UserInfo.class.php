@@ -405,6 +405,10 @@ class UserInfo
             $epicore_info = $db->getRow("SELECT user.*, organization.name AS orgname, role.id as roleId , role.name as roleName FROM user 
             INNER JOIN role ON role.id = user.roleId
             LEFT JOIN organization ON user.organization_id = organization.organization_id WHERE user.user_id = ?", array($user_id));
+            
+            //Should not be used
+            //Scenario-not old req coming from promed-with user-id in hm_ticket - just a testing scenation
+            
         }
         $user['user_id'] = $epicore_info['user_id'];
         $user['organization_id'] = $epicore_info['organization_id'];
@@ -416,6 +420,7 @@ class UserInfo
         if(isset($epicore_info['roleName']) && !empty($epicore_info['roleName'])){
             $user['roleName'] = $epicore_info['roleName'];
         }
+        // print_r($user);
         return $user;
     }
 
