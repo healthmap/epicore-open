@@ -282,6 +282,9 @@ app.config(function ($routeProvider) {
     .when('/mod/:tid', {
       templateUrl: 'templates/mod/mod.html?cb=' + cacheBustSuffix,
     })
+    .when('/mod/:tid/:aid', {
+      templateUrl: 'templates/mod/mod.html?cb=' + cacheBustSuffix,
+    })
     .when('/application', {
       templateUrl:
         'templates/application/application_new.html?cb=' + cacheBustSuffix,
