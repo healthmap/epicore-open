@@ -600,9 +600,9 @@ const ApprovalController = (
 
       var emailsSentCount = 0;
       var emailsFailedCount = 0;
-
-      for (let j = 0; j < result.length; j++) {
-        if (result[j].fetp_id)
+      let j = 0;
+      for (j = 0; j < result.length; j++) {
+        if (result[j]['status'] == 'success')
           emailsSentCount += 1;
         else
           emailsFailedCount += 1;
@@ -623,21 +623,21 @@ const ApprovalController = (
   };
 
 
-
-  $scope.sendReminder = function (action) {
-    if (confirm('Are you sure you want to send reminder emails?')) {
-      data = { action: action };
-      http({
-        url: urlBase + 'scripts/sendreminder.php',
-        method: 'POST',
-        data: data,
-      }).then(function successCallback(res) {
-        const respdata = res.data;
-        alert(respdata.length + ' emails sent.');
-      });
-    } else {
-    }
-  };
+  //not used
+  // $scope.sendReminder = function (action) {
+  //   if (confirm('Are you sure you want to send reminder emails?')) {
+  //     data = { action: action };
+  //     http({
+  //       url: urlBase + 'scripts/sendreminder.php',
+  //       method: 'POST',
+  //       data: data,
+  //     }).then(function successCallback(res) {
+  //       const respdata = res.data;
+  //       alert(respdata.length + ' emails sent.');
+  //     });
+  //   } else {
+  //   }
+  // };
 
   $scope.editApplicant = function (uid, action) {
     $location.path('/application/' + uid + '/' + action + '/member');
