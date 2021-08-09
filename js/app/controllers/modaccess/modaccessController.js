@@ -2,7 +2,7 @@ const ModaccessController = ($scope, $cookieStore, httpServiceInterceptor, urlBa
   const http = httpServiceInterceptor.http;
   const data = {};
   $scope.showpage = false;
-
+  $scope.isFetchingData = false;
   // only allow superusers
   $scope.userInfo = $cookieStore.get('epiUserInfo');
   $scope.superuser =
@@ -23,11 +23,13 @@ const ModaccessController = ($scope, $cookieStore, httpServiceInterceptor, urlBa
 
   $scope.addMod = function (mod_email, mod_org_id, mod_name) {
     const mod_data = { mod_email: mod_email, mod_org_id: mod_org_id, mod_name: mod_name };
+    $scope.isFetchingData = true;
     http({
       url: urlBase + 'scripts/addmod.php',
       method: 'POST',
       data: mod_data,
     }).then(function successCallback(res) {
+      $scope.isFetchingData = false;
       const respdata = res.data;
       if (respdata['status'] === 'success') {
         $scope.message = 'Successfully added new moderator';
