@@ -42,6 +42,11 @@ const EventsController3 = ($scope, $location, epicoreMode, epicoreStartDate, $lo
       $route.reload();
     }
 
+    console.log('--0:', $scope.eventType);
+    console.log('--1:', EVENT_TYPES.MY_RFIS.CODE);
+    console.log('--2:', EVENT_TYPES.MY_RFIS.CODE ? true : false);
+    console.log('--1:', EVENT_TYPES.MY_ORGANIZATION.CODE);
+
     $scope.events = await getEvents({
       uid: $scope.eventType === EVENT_TYPES.MY_RFIS.CODE ? true : false,
       organization_id: $scope.eventType === EVENT_TYPES.MY_ORGANIZATION.CODE ? true : false,
