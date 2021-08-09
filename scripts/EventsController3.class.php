@@ -59,7 +59,7 @@ class EventsController
             $cookie = json_decode($cookie , true);
             if(isset($cookie['role']['roleId']))
             {
-                if($cookie['role']['roleId'] != Role::admin &&  $cookie['role']['roleId'] != Role::requester)
+                if($cookie['role']['roleId'] == Role::responder)
                 {
                     $role = $cookie['role']['roleId'];
                 }
@@ -136,7 +136,7 @@ class EventsController
             array_push($optionalFields, "purpose.phe_description");
         }
 
-        if(!is_null(self::getRoleIdFromCookie()))
+        if(!is_null(self::getRoleIdFromCookie())) //add only if responder
         {
             $roleId = self::getRoleIdFromCookie();
             array_push($conditions, "fetp.roleId = $roleId");
