@@ -411,6 +411,10 @@ class UserInfo
             $epicore_info = $db->getRow("SELECT user.*, organization.name AS orgname, role.id as roleId , role.name as roleName FROM user 
             INNER JOIN role ON role.id = user.roleId
             LEFT JOIN organization ON user.organization_id = organization.organization_id WHERE user.user_id = ?", array($user_id));
+            
+            //Should not be used
+            //Scenario-not old req coming from promed-with user-id in hm_ticket - just a testing scenation
+            
         }
         $user['user_id'] = $epicore_info['user_id'];
         $user['organization_id'] = $epicore_info['organization_id'];
@@ -422,6 +426,7 @@ class UserInfo
         if(isset($epicore_info['roleName']) && !empty($epicore_info['roleName'])){
             $user['roleName'] = $epicore_info['roleName'];
         }
+        // print_r($user);
         return $user;
     }
 
@@ -921,7 +926,7 @@ class UserInfo
                 $db->query("update maillist set accept_date='$accept_date', approvestatus='Y' where maillist_id=$approve_id");
                 $db->commit();
                 $fetp_id = UserInfo::getFETPid($approve_email);
-               // sendMail($approve_email, $approve_name, "EpiCore Application Decision", $status, $fetp_id);
+                sendMail($approve_email, $approve_name, "EpiCore Application Decision", $status, $fetp_id);
 
             }
             else if ($status == 'pending_preapproved') {
@@ -947,7 +952,7 @@ class UserInfo
                 $fetp_id = UserInfo::getFETPid($approve_email);
                 $status = 'preapproved';
                 //Cognito should send this email
-                //sendMail($approve_email, $approve_name, "We heartily welcome our new EpiCore Member!", $status, $fetp_id);
+                sendMail($approve_email, $approve_name, "We heartily welcome our new EpiCore Member!", $status, $fetp_id);
 
             }
             else if (($status == 'approved') || ($status == 'preapproved')) {
