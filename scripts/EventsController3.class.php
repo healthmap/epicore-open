@@ -87,9 +87,18 @@ class EventsController
         $optionalFields = [];
         $conditions = [];
 
-        if (isset($params["uid"])) {
+
+        if(!is_null(self::getRoleIdFromCookie()))
+        {
+            $roleId = self::getRoleIdFromCookie();
+        }
+       
+       if($roleId && ($roleId == Role::requester) ){
+            $requester_id = userController::getUserData()["uid"];
+        } else if (isset($params["uid"])) {
             $requester_id = userController::getUserData()["uid"];
         }
+
         if(isset(userController::getUserData()["fetp_id"])){
             $fetp_id = userController::getUserData()["fetp_id"];
         }
@@ -248,7 +257,7 @@ class EventsController
             array_push($conditions, "event_notes.status = 'C'");
         }
 
-        if($roleId == Role::requester){
+        if($requester_id && ($roleId == Role::requester) ){
             array_push($conditions, "user.user_id = $requester_id");
         } 
 
