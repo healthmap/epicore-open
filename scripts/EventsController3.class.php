@@ -59,7 +59,7 @@ class EventsController
             $cookie = json_decode($cookie , true);
             if(isset($cookie['role']['roleId']))
             {
-                if($cookie['role']['roleName'] != 'admin')
+                if($cookie['role']['roleId'] != Role::admin &&  $cookie['role']['roleId'] != Role::requester)
                 {
                     $role = $cookie['role']['roleId'];
                 }
@@ -88,14 +88,7 @@ class EventsController
         $conditions = [];
 
 
-        if(!is_null(self::getRoleIdFromCookie()))
-        {
-            $roleId = self::getRoleIdFromCookie();
-        }
-       
-       if($roleId && ($roleId == Role::requester) ){
-            $requester_id = userController::getUserData()["uid"];
-        } else if (isset($params["uid"])) {
+        if (isset($params["uid"])) {
             $requester_id = userController::getUserData()["uid"];
         }
 
@@ -257,13 +250,9 @@ class EventsController
             array_push($conditions, "event_notes.status = 'C'");
         }
 
-        if($requester_id && ($roleId == Role::requester) ){
-            array_push($conditions, "user.user_id = $requester_id");
-        } 
-
         $query = self::addQueryWhereConditions($query, $conditions);
         $query .= " order by event.create_date DESC";
-
+        
         $db = getDB();
         return $db->getAll($query);;
     }
