@@ -2,6 +2,7 @@
 
 require_once "db.function.php";
 require_once  "UserContoller3.class.php";
+require_once (dirname(__FILE__) ."/Model/Role.php");
 
 use UserController as userController;
 class EventsController
@@ -82,6 +83,7 @@ class EventsController
         $is_open = null;
         $organization_id = null;
         $fetp_id = null;
+        $roleId = null;
         $optionalFields = [];
         $conditions = [];
 
@@ -245,6 +247,11 @@ class EventsController
         } else {
             array_push($conditions, "event_notes.status = 'C'");
         }
+
+        if($roleId == Role::requester){
+            array_push($conditions, "user.user_id = $requester_id");
+        } 
+
         $query = self::addQueryWhereConditions($query, $conditions);
         $query .= " order by event.create_date DESC";
 
