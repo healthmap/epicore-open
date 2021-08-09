@@ -2,6 +2,7 @@
 
 require_once "db.function.php";
 require_once  "UserContoller3.class.php";
+require_once (dirname(__FILE__) ."/Model/Role.php");
 
 use UserController as userController;
 class EventsController
@@ -58,7 +59,7 @@ class EventsController
             $cookie = json_decode($cookie , true);
             if(isset($cookie['role']['roleId']))
             {
-                if($cookie['role']['roleName'] != 'admin')
+                if($cookie['role']['roleId'] == Role::responder)
                 {
                     $role = $cookie['role']['roleId'];
                 }
@@ -82,12 +83,15 @@ class EventsController
         $is_open = null;
         $organization_id = null;
         $fetp_id = null;
+        $roleId = null;
         $optionalFields = [];
         $conditions = [];
+
 
         if (isset($params["uid"])) {
             $requester_id = userController::getUserData()["uid"];
         }
+
         if(isset(userController::getUserData()["fetp_id"])){
             $fetp_id = userController::getUserData()["fetp_id"];
         }
@@ -132,7 +136,7 @@ class EventsController
             array_push($optionalFields, "purpose.phe_description");
         }
 
-        if(!is_null(self::getRoleIdFromCookie()))
+        if(!is_null(self::getRoleIdFromCookie())) //add only if responder
         {
             $roleId = self::getRoleIdFromCookie();
             array_push($conditions, "fetp.roleId = $roleId");
@@ -245,9 +249,10 @@ class EventsController
         } else {
             array_push($conditions, "event_notes.status = 'C'");
         }
+
         $query = self::addQueryWhereConditions($query, $conditions);
         $query .= " order by event.create_date DESC";
-
+        
         $db = getDB();
         return $db->getAll($query);;
     }
