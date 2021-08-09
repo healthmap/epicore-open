@@ -436,10 +436,10 @@ class UserInfo
         return $db->getRow("SELECT fetp_id FROM fetp WHERE email = ?", array($email));
     }
 
-    static function authenticateUserByEmail(string $email)
+    static function authenticateUserByEmail(string $email) //requesters
     {
         $db = getDB();
-        return $db->getRow("SELECT user_id FROM user WHERE email = ?", array($email));
+        return $db->getOne("select user.user_id from hm_hmu hm inner join user ON hm.hmu_id = user.hmu_id where hm.email = ?", array($email));
     }
 
     static function authenticateFetp($ticket_id)
