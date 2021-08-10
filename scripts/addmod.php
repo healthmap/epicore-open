@@ -9,6 +9,7 @@ require_once (dirname(__FILE__) ."/Service/ValidationService.php");
 require_once (dirname(__FILE__) ."/Exception/PasswordValidationException.php");
 require_once (dirname(__FILE__) ."/Exception/EmailValidationException.php");
 require_once "send_email.php";
+require_once "const.inc.php";
 
 // get data
 $data = json_decode(file_get_contents("php://input"));
@@ -40,11 +41,11 @@ if (!empty($mod_email) && !empty($mod_org_id) && !empty($mod_name)) {
             $mod_id = $mod_status;
         }
         catch (PasswordValidationException | UserAccountExistException | NoEmailProvidedException | Exception $exception) {
-            $status = 'failed';
+            $status = 'failed: Cannot add new requester at this time.';
             $mod_id = $exception->getMessage();
         }
     } else {
-        $status = 'failed';
+        $status = 'failed: Unable to add new requester at this time.';
         $message = $mod_status;
     }
 } else{
