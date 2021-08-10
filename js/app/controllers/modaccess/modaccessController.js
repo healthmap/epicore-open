@@ -36,6 +36,9 @@ const ModaccessController = ($scope, $cookieStore, httpServiceInterceptor, urlBa
       } else {
         $scope.message = respdata['message'];
       }
+    }, function errorCallback(res) {
+      $scope.isFetchingData = false;
+      $scope.message = 'Unable to add requester.';
     });
   };
 
