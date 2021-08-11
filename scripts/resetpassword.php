@@ -7,11 +7,12 @@ require_once (dirname(__FILE__) ."/Service/AuthService.php");
 
 // get user email
 $user_email = strip_tags($formvars->username);
-$fetp_id = UserInfo::getFETPid($user_email);
-$userinfo = UserInfo::getUserInfobyEmail($user_email);
+$fetp_id = UserInfo::getFETPid($user_email);//checking if reponder
+$user_id = UserInfo::authenticateUserByEmail($user_email); //checking if requester
+$status = null;
 
 // send email to reset password
-if (!is_null($fetp_id) || !is_null($userinfo)) {
+if (!is_null($fetp_id) || !is_null($user_id)) {
     $action = 'resetpassword';
 
     // TODO AuthService
@@ -26,16 +27,19 @@ if (!is_null($fetp_id) || !is_null($userinfo)) {
         if($exception->getMessage() === CognitoErrors::cantResetPassword){
             try
             {
+               
                 $authService->forceResetPassword($user_email);
                 $authService->ForgotPassword($user_email);
+                $status = 'success';
+                
             }
             catch (CognitoException | UserAccountNotExist | Exception $exception){
-                $status = 'failed';
+                $status = 'failed:'.$exception.getMessage();
             }
         }
     }
     catch (\Exception $exception) {
-        $status = 'failed';
+        $status = 'failed:'.$exception.getMessage();
     }
 }
 else{
