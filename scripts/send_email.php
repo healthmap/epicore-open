@@ -43,8 +43,11 @@ function sendMail($email, $name, $subject, $status, $user_id, $event_title = '',
         //get email template and set link
         $link = EPICORE_URL .'/#/login';
         $emailtemplate = file_get_contents("../emailtemplates/approve.html");
-    }
-    else if ($status == 'declined'){
+    } else if ($status == NEW_EPICORE_REQUESTER_STATUS){
+        //get email template and set link
+        $link = EPICORE_URL .'/#/login';
+        $emailtemplate = file_get_contents("../emailtemplates/requester.html");
+    } else if ($status == 'declined'){
         //get email template
         $emailtemplate = file_get_contents("../emailtemplates/decline.html");
     }

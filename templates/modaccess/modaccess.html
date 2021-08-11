@@ -45,11 +45,11 @@
 					</div>
 
 					<div class="form-group">
-						<span ng-show="isRouteLoading">
-							<i class="fa fa-spinner fa-spin"></i> Please wait...
-						</span>
 						<button ng-click="addMod(mod_email,mod_org_id,mod_name)" type="submit" class="submit btn btn-default">Add
 							Requester</button>
+						<span ng-show="isFetchingData">
+							<i class="fa fa-spinner fa-spin"></i> Please wait...
+						</span>
 						<div>
 							<br>
 							<p style="margin:0 0 24px 0;  color:#0197a1;">{{message}}</p>
