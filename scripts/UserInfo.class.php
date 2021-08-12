@@ -300,27 +300,33 @@ class UserInfo
             }
         }
 
-        $user = $db->getRow("SELECT hmu_id, username, email, pword_hash from hm_hmu WHERE (username = ? OR email = ?) AND confirmed = 1", array($email, $email));
-        if(is_null($user))
-        {
-            $user = $db->getRow("SELECT email , fetp_id , role.id as roleId , role.name as roleName , pword_hash , lat , lon , countrycode , active ,
-                    status , locations
-                    from fetp 
-                    INNER JOIN role ON role.id = fetp.roleId
-                    WHERE email = ?", array($dbdata['email']));
-            if (is_a($user, 'DB_Error')) {
-                print_r($user);
-                die('uinfo error!');
-            }
-        }
-        else
-        {
+
+       
+        $userHmu = $db->getRow("SELECT hmu_id, username, email, pword_hash FROM hm_hmu WHERE (username = ? OR email = ?) AND confirmed = 1", array($email, $email));
+        if(!is_null($userHmu)) {
             $user = $db->getRow("SELECT user.user_id, user.email, user.hmu_id, user.organization_id, organization.name AS orgname , role.id as roleId , role.name as roleName , hm_hmu.username as username , hm_hmu.email as hm_email
                 FROM user
                 INNER JOIN role ON role.id = user.roleId
                 LEFT JOIN hm_hmu ON hm_hmu.hmu_id = user.hmu_id 
-                LEFT JOIN organization ON user.organization_id = organization.organization_id WHERE hm_hmu.hmu_id = ?", array($user['hmu_id']));
+                LEFT JOIN organization ON user.organization_id = organization.organization_id WHERE hm_hmu.hmu_id = ?", array($userHmu['hmu_id']));
+
+           if (PEAR::isError($user)) {
+                die($user->getMessage());
+            } 
+        } else { 
+            $user = $db->getRow("SELECT email , fetp_id , role.id as roleId , role.name as roleName , pword_hash , lat , lon , countrycode , active ,
+            status , locations
+            from fetp 
+            INNER JOIN role ON role.id = fetp.roleId
+            WHERE email = ?", array($dbdata['email']));
+            if (PEAR::isError($user)) {
+                die($user->getMessage());
+            } 
+          
         }
+       
+     
+       
         if(isset($user['username']))
         {
             $uinfo['username'] = "Member " . $user['username'];
