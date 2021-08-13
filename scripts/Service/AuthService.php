@@ -115,6 +115,10 @@ class AuthService implements IAuthService
                 $password = $this->generatePassword();
             }
 
+            if(empty($password)){
+                $password = $this->generatePassword();
+            }
+
             // TODO valid password
             $user = new User();
             $user->setPassword($password);
@@ -192,7 +196,7 @@ class AuthService implements IAuthService
                 throw new UserAccountNotExist($code['message']);
             }
             if($code['message'] === "User password cannot be reset in the current state."){
-                throw new CognitoException(CognitoErrors::cantResetPassword);
+                throw new CognitoException($code['message']);
             }
 
             throw new Exception($code['message']);

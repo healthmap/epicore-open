@@ -13,12 +13,12 @@ $status = "incorrect password";
 $path = "home";
 $cognitoChangePassExceptionPath = false;
 $cognitoAuthStatus = true;
+$apiError = '';
 
 $authService = new AuthService();
 $env = ENVIRONMENT;
 
 if(isset($formvars->ticket_id) && $formvars->usertype == "fetp") { // ticket system is for FETPs
-    
     $uinfo = UserInfo::authenticateFetp(strip_tags($formvars->ticket_id));
     $user_id = $uinfo['fetp_id'];
     // for now set the fetp_id as the username
@@ -30,9 +30,9 @@ if(isset($formvars->ticket_id) && $formvars->usertype == "fetp") { // ticket sys
     if(isset($formvars->ticket_id)) { // ticket system for mods coming from dashboard
         $uinfo = UserInfo::authenticateMod($formvars->ticket_id);
     } else { // login system is for mods and fetps
-
         $dbdata['email'] = strip_tags($formvars->username);
         $dbdata['password'] = strip_tags($formvars->password);
+        $test = false;
 
         $passwordWeekProcess = false;
         $passwordValidationProcess = false;
@@ -69,14 +69,15 @@ if(isset($formvars->ticket_id) && $formvars->usertype == "fetp") { // ticket sys
                }
            }
         }
-        catch (EmailValidationException $exception)
+        catch (EmailValidationException $exception) // user email/pwd validation errors thrown by validationService
         {
-            $uinfo = UserInfo::authenticateUser($dbdata);
+            $uinfo = UserInfo::authenticateUser($dbdata); //check user in our system with pwd
+            
             if(!$uinfo) {
                 $uinfo = UserInfo::authenticateUser($dbdata, false);
             }
             if(isset($uinfo['email'])){
-
+            
                 $user = new User();
                 $user->setEmail($uinfo['email']);
                 $user->setPassword($dbdata['password']);
@@ -96,12 +97,45 @@ if(isset($formvars->ticket_id) && $formvars->usertype == "fetp") { // ticket sys
                         }
                     }
                 }
-                catch (EmailValidationException | PasswordValidationException $exception){
-                    $status = "incorrect password";
-                    $cognitoAuthStatus = false;
+                catch (PasswordValidationException $exception){
+                    try {
+                        $authService->User($user->getEmail());
+                    }catch (UserAccountNotExist $exception){
+                        try{
+                            $authService->SingUp($user->getEmail(), '', true, false);
+                            sleep(1);
+                            try {
+                                $authService->ForgotPassword($user->getEmail());
+                                $cognitoChangePassExceptionPath = true;
+                            } catch (\CognitoException $exception){
+                                if($exception->getMessage() === CognitoErrors::cantResetPassword){
+                                    try
+                                    {
+                                        $authService->forceResetPassword($user->getEmail());
+                                        $authService->ForgotPassword($user->getEmail());
+                                        $cognitoChangePassExceptionPath = true;
+                                    }
+                                    catch (CognitoException | UserAccountNotExist | Exception $exception){
+                                        $status = 'failed:'.$exception.getMessage();
+                                    }
+                                }
+                            }
+                        }
+                        catch (CognitoException | UserAccountNotExist | Exception $exception){
+                            $status = "incorrect password";
+                            $cognitoAuthStatus = false;
+                            $uinfo = null;
+                            $apiError = $exception->getMessage();
+                        }
+                    }
+                    catch (CognitoException $exception){
+                        $status = "incorrect password";
+                        $cognitoAuthStatus = false;
+                        $uinfo = null;
+                        $apiError = $exception->getMessage();
+                    }
                 }
                 catch (CognitoException | UserAccountNotExist  $exception){
-
                     try {
                         $authService->SingUp($user->getEmail(), $user->getPassword(), true, false);
                         $authResponse = $authService->LoginUser($user->getEmail(), $user->getPassword());
@@ -115,14 +149,16 @@ if(isset($formvars->ticket_id) && $formvars->usertype == "fetp") { // ticket sys
                             }
                         }
                     }
-                    catch (UserAccountExistException | NoEmailProvidedException | LoginException $exception){
+                    catch (UserAccountExistException | NoEmailProvidedException | LoginException | UserAccountNotExist | EmailValidationException | PasswordValidationException $exception){
                         $status = "incorrect password";
                         $cognitoAuthStatus = false;
+                        $uinfo = null;
+                        $apiError = $exception->getMessage();
                     }
                 }
             }
         }
-        catch (PasswordValidationException $exception)
+        catch (PasswordValidationException $exception) //due to weak passwords
         {
             $cognitoAuthStatus = true;
             $uinfo = UserInfo::authenticateUser($dbdata, false);
@@ -137,11 +173,26 @@ if(isset($formvars->ticket_id) && $formvars->usertype == "fetp") { // ticket sys
                     $status = "incorrect password";
                     $cognitoAuthStatus = false;
                 } catch (UserAccountNotExist $exception) {
-                    $authService->SingUp($user->getEmail(), '', true, true);
-                    $authService->ForgotPassword($dbdata['email']);
-                    $cognitoChangePassExceptionPath = true;
+                    try {
+                        $authService->SingUp($user->getEmail(), '', true, true);
+                        $authService->ForgotPassword($dbdata['email']);
+                        $cognitoChangePassExceptionPath = true;
+                    } catch (\CognitoException $exception){
+                        if($exception->getMessage() === CognitoErrors::cantResetPassword){
+                            try
+                            {
+                                $authService->forceResetPassword($dbdata['email']);
+                                $authService->ForgotPassword($dbdata['email']);
+                                $cognitoChangePassExceptionPath = true;
+                            }
+                            catch (CognitoException | UserAccountNotExist | Exception $exception){
+                                $status = 'failed:'.$exception.getMessage();
+                            }
+                        }
+                    }
                 }
                 catch (Exception | CognitoException $e) {
+                    $apiError = $e->getMessage();
                 }
             }
         }
@@ -158,12 +209,14 @@ if(isset($formvars->ticket_id) && $formvars->usertype == "fetp") { // ticket sys
             catch (\LoginException | CognitoException | Exception $exception){
                 $status = "incorrect password";
                 $cognitoAuthStatus = false;
+                $apiError = $exception->getMessage();
             }
         }
         catch (\LoginException | CognitoException | Exception $exception){
             $uinfo = null;
             $status = "incorrect password";
             $cognitoAuthStatus = false;
+            $apiError = $exception->getMessage();
         }
     }
     $user_id = isset($uinfo['fetp_id']) ? $uinfo['fetp_id'] : $uinfo['user_id'];
@@ -225,6 +278,6 @@ if(is_numeric($user_id) && $user_id > 0) {
 
 
 }
-$content = array('status' => $status, 'path' => $path, 'uinfo' => $uinfo , 'environment' => $env);
+$content = array('status' => $status, 'path' => $path, 'uinfo' => $uinfo , 'environment' => $env , 'api' => $apiError);
 print json_encode($content);
 ?>

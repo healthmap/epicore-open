@@ -274,7 +274,7 @@ class CognitoService
                 'Username' => $username
             ]);
         }
-        catch (Exception $exception)
+        catch (\Aws\CognitoIdentityProvider\Exception\CognitoIdentityProviderException $exception)
         {
             error_log($exception->getMessage());
             throw $exception;

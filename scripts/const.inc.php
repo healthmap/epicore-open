@@ -39,6 +39,8 @@ $aws_epicoreIamRolename = $_ENV['epicore_aws_iam_rolename'];
 
 define('ENVIRONMENT', $environment);
 
+define('NEW_EPICORE_REQUESTER_STATUS', 'NewRequester');
+
 define('AWS_REGION', $aws_region);
 define('AWS_USER_POOL_ID', $aws_userPoolId);
 define('AWS_APP_CLIENT_ID', $aws_appClientId);
