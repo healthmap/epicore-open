@@ -27,7 +27,6 @@ elseif(sizeof($place) == 1){
 
 $health_conditions = (array) $formvars->health_condition;
 
-
 // get duplicates (if any)
 if ($formvars->population_type && $country && $health_conditions) {
     
@@ -37,9 +36,6 @@ if ($formvars->population_type && $country && $health_conditions) {
 
     // get population type
     $population_type = $formvars->population_type;
-
-    // get condition details
-    //$conditions = $formvars->health_condition;
 
     // check for duplicate RFIs
     $events = EventInfo::checkDuplicate($date, $country, $population_type, $health_conditions);
