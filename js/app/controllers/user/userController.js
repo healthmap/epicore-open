@@ -370,7 +370,15 @@ const UserController = (
       function successCallback(res) {
         const data = res.data;
 
-        if (data['status'] === 'success') {
+        let token = null;
+        if (data['uinfo'] && data['uinfo'].token != undefined) {
+          let dataToken = data.uinfo.token.accessToken;
+          if (dataToken != '') {
+            token = dataToken;
+          }
+        }
+
+        if (data['status'] === 'success' && token) {
           // determines if user is an organization or FETP
           $rootScope.isOrganization =
             data['uinfo']['organization_id'] > 0 ? true : false;
@@ -383,13 +391,7 @@ const UserController = (
             typeof data['uinfo']['active'] != 'undefined' ?
               data['uinfo']['locations'] :
               false;
-          let token = null;
-          if (data.uinfo.token != undefined) {
-            let dataToken = data.uinfo.token.accessToken;
-            if (dataToken != '') {
-              token = dataToken;
-            }
-          }
+
 
           const newUserInfo = {
             uid: data['uinfo']['user_id'],
@@ -422,7 +424,7 @@ const UserController = (
 
           // save user in local storage for mobile app
           $localStorage.user = newUserInfo;
-
+          $rootScope.authReasonFailure = '';
           $rootScope.error_message = false;
 
           if (data['path'] != 'setpassword') {
@@ -444,6 +446,9 @@ const UserController = (
           $scope.autologin = false;
           $location.path(redirpath);
         } else {
+          if (token == null || token == undefined) {
+            $rootScope.authReasonFailure = 'Sorry, your username/email and/or password are incorrect. Please try again.';
+          }
           $scope.isRouteLoading = false;
           $rootScope.error_message = true;
           $scope.autologin = false;
