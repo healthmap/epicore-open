@@ -25,9 +25,11 @@ elseif(sizeof($place) == 1){
     $country = false;
 }
 
-// get duplicates (if any)
-if ($formvars->population_type && $country) {
+$health_conditions = (array) $formvars->health_condition;
 
+// get duplicates (if any)
+if ($formvars->population_type && $country && $health_conditions) {
+    
     // now minus seven days
     $one_week_ago = strtotime("-7 day");
     $date = date('Y-m-d', $one_week_ago);
@@ -36,8 +38,8 @@ if ($formvars->population_type && $country) {
     $population_type = $formvars->population_type;
 
     // check for duplicate RFIs
-    //$events = EventInfo::checkDuplicate($date, $country, $population_type, $conditions);
-    $events = EventInfo::checkDuplicate2($date, $country, $population_type);
+    $events = EventInfo::checkDuplicate($date, $country, $population_type, $health_conditions);
+    // $events = EventInfo::checkDuplicate2($date, $country, $population_type);
 
     // get duplicate events if found
     if ($events) {

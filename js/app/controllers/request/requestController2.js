@@ -11,6 +11,7 @@ const RequestController2 = (
   epicoreVersion,
 ) => {
   const http = httpServiceInterceptor.http;
+
   $scope.userInfo = $rootScope.userInfo = $cookieStore.get('epiUserInfo');
 
   $scope.epicore_version = epicoreVersion;
@@ -65,12 +66,12 @@ const RequestController2 = (
     types: ['(regions)'],
   };
 
-  const getPlaceLatLon = function(place) {
+  const getPlaceLatLon = function (place) {
     return place.geometry.location.lat() + ',' + place.geometry.location.lng();
   };
 
   $scope.location_error_message = '';
-  $scope.saveLocation = function(direction) {
+  $scope.saveLocation = function (direction) {
     // jquery hack to get the latlon hidden value and autocomplete for location (angular bug)
     // $scope.rfiData.location.latlon = $("#default_location").val();
     // $scope.rfiData.location.location = $("#searchTextField").val(); // format: "country" or "state, country" or "city, state, country"
@@ -204,8 +205,8 @@ const RequestController2 = (
     );
     $scope.rectangle = {
       bounds: bounds,
-      stroke: {color: '#08B21F', weight: 2, opacity: 1},
-      fill: {color: '#08B21F', opacity: 0.5},
+      stroke: { color: '#08B21F', weight: 2, opacity: 1 },
+      fill: { color: '#08B21F', opacity: 0.5 },
       editable: true,
       visible: true,
     };
@@ -213,10 +214,10 @@ const RequestController2 = (
 
     /* get member markers for the map */
     $scope.map = {
-      center: {latitude: latlonarr[0], longitude: latlonarr[1]},
+      center: { latitude: latlonarr[0], longitude: latlonarr[1] },
       zoom: 5,
     };
-    $scope.options = {scrollwheel: false};
+    $scope.options = { scrollwheel: false };
     /* only show FETPs on a map to super-users */
     const query = {};
     query['centerlat'] = latlonarr[0];
@@ -234,7 +235,7 @@ const RequestController2 = (
 
     /* rectangle change event */
     $scope.eventsRectangle = {
-      bounds_changed: function(rectangle) {
+      bounds_changed: function (rectangle) {
         const filterData = {};
         const southwest = rectangle.bounds.getSouthWest();
         const northeast = rectangle.bounds.getNorthEast();
@@ -265,7 +266,7 @@ const RequestController2 = (
   }
 
   /* get members based on selection type */
-  $scope.recalcUsers = function(whichclicked) {
+  $scope.recalcUsers = function (whichclicked) {
     $scope.saveLocation('next');
 
     $scope.rfiData.members.searchType = whichclicked;
@@ -291,7 +292,7 @@ const RequestController2 = (
   };
 
   /* go next or back */
-  $scope.saveMembers = function(direction) {
+  $scope.saveMembers = function (direction) {
     // next or back
     if (direction === 'next') {
       $location.path('/time');
@@ -306,7 +307,7 @@ const RequestController2 = (
   $scope.isStep1Invalid = false;
 
   /* go next or back */
-  $scope.saveStep1 = function(direction) {
+  $scope.saveStep1 = function (direction) {
     $scope.submitDisabled = false;
     $scope.isStep1Invalid = false;
 
@@ -395,7 +396,7 @@ const RequestController2 = (
   $scope.hc_error_message1 = '';
   $scope.populationAnimalError = '';
   $scope.populationAnimalOtherError = '';
-  $scope.saveStep2 = function(direction) {
+  $scope.saveStep2 = function (direction) {
     $scope.isStep2Invalid = false;
     $scope.populationOtherError = '';
     $scope.affectedPopSelectionError = '';
@@ -478,7 +479,11 @@ const RequestController2 = (
       }
 
       if (!$scope.isStep2Invalid) {
-        $location.path('/rfi_step3');
+
+        // Check for duplicate RFI only for original RFI requester
+        const bypass = $scope.userInfo.superuser && !$scope.isRequester; // bypass for superusers that are not the original requester
+        // bypass = false; // for testing
+        checkDuplicateRFI2(bypass);
       }
     } else if (direction === 'back') {
       $location.path('/rfi_step1');
@@ -494,7 +499,7 @@ const RequestController2 = (
   });
 
   $scope.time_error_message = '';
-  $scope.saveTime = function(direction) {
+  $scope.saveTime = function (direction) {
     // validate and go to next or back path
     if (direction === 'back' || $scope.rfiData.location.event_date) {
       // next or back
@@ -513,7 +518,7 @@ const RequestController2 = (
 
   // ////////////////////////  Affected Population //////////////////////////////
   $scope.pop_error_message = '';
-  $scope.savePopulation = function(direction) {
+  $scope.savePopulation = function (direction) {
     $scope.goback = direction === 'back';
 
     if (direction === 'back') {
@@ -556,7 +561,7 @@ const RequestController2 = (
   // ////////////////////////////////////// Health Condition ////////////////////////////////
   $scope.hc_error_message = '';
   $scope.hc_error_message1 = '';
-  $scope.saveCondition = function(direction) {
+  $scope.saveCondition = function (direction) {
     $scope.goback = direction === 'back';
 
     if (direction === 'back') {
@@ -636,7 +641,7 @@ const RequestController2 = (
   };
 
   // clear health conditions
-  $scope.clearCondition = function() {
+  $scope.clearCondition = function () {
     if ($scope.rfiData.health_condition) {
       $scope.rfiData.health_condition.respiratory = false;
       $scope.rfiData.health_condition.gastrointestinal = false;
@@ -649,7 +654,7 @@ const RequestController2 = (
       $scope.rfiData.health_condition.renal = false;
     }
   };
-  $scope.clearCondition2 = function() {
+  $scope.clearCondition2 = function () {
     if ($scope.rfiData.health_condition) {
       $scope.rfiData.health_condition.respiratory_animal = false;
       $scope.rfiData.health_condition.neurological_animal = false;
@@ -661,10 +666,10 @@ const RequestController2 = (
     }
   };
   // clear error
-  $scope.clearhcError = function() {
+  $scope.clearhcError = function () {
     $scope.hc_error_message2 = '';
   };
-  $scope.clearhcError2 = function() {
+  $scope.clearhcError2 = function () {
     $scope.hc_error_message2 = '';
   };
 
@@ -701,6 +706,7 @@ const RequestController2 = (
         } else if (respdata['status'] == 'notfound') {
           // go to condition page
           $location.path('/condition');
+
         } else {
           alert(respdata['message']);
         }
@@ -708,8 +714,49 @@ const RequestController2 = (
     }
   }
 
+  // check for duplicate RFI
+  function checkDuplicateRFI2(bypass) {
+    $scope.hc_error_message = '';
+    if (bypass) {
+      $location.path('/rfi_step2');
+    } else {
+      const rfi_data = {};
+      rfi_data['population_type'] = $scope.rfiData.population.type;
+      rfi_data['health_condition'] = $scope.rfiData.health_condition;
+      rfi_data['location'] = $scope.rfiData.location.location;
+
+      http({
+        url: urlBase + 'scripts/checkDuplicateRFI2.php',
+        method: 'POST',
+        data: rfi_data,
+      })
+        .then(function successCallback(res) {
+          const respdata = res.data;
+          const dupe_events = respdata['events'];
+
+          if (respdata['status'] === 'success' && dupe_events) {
+            $scope.rfiData.duplicate_rfis = dupe_events;
+            $location.path('/duplicate');
+          } else if (respdata['status'] == 'notfound') {
+            // go to step-3
+            $location.path('/rfi_step3');
+          } else {
+            alert(respdata['message']);
+          }
+        }, function errorCallback(errorMessage) {
+          // called asynchronously if an error occurs
+          // or server returns response with an error status.
+          $scope.hc_error_message = errorMessage;
+          console.error(erroMessage);
+
+        });
+
+    }
+  }
+
+
   // ////////////////////////////////////// Duplicate RFI(s) Action ////////////////////////////////////////
-  $scope.duplicateAction = function() {
+  $scope.duplicateAction = function () {
     if ($scope.rfiData.duplicate_rfi.rfi_same == '1') {
       // same RFI, do not send
 
@@ -731,7 +778,7 @@ const RequestController2 = (
         // var rfi_id = $scope.rfiData.duplicate_rfi.rfi_id;
         const dup_events = $scope.rfiData.duplicate_rfis;
         const event_ids = [];
-        dup_events.forEach(function(event) {
+        dup_events.forEach(function (event) {
           event_ids.push(event.event_id);
         });
 
@@ -740,7 +787,7 @@ const RequestController2 = (
         http({
           url: urlBase + 'scripts/trackDuplicateRFI2.php',
           method: 'POST',
-          data: {event_ids: event_ids, user_id: user_id},
+          data: { event_ids: event_ids, user_id: user_id },
         }).then(function successCallback(res) {
           const respdata = res.data;
           if (respdata['status'] === 'success') {
@@ -763,7 +810,7 @@ const RequestController2 = (
   // //////////////////////////////////////////// Purpose ////////////////////////////////////////
   $scope.purpose_error_message = '';
   $scope.purpose_error_message1 = '';
-  $scope.savePurpose = function(direction) {
+  $scope.savePurpose = function (direction) {
     $scope.goback = direction === 'back';
 
     if (direction === 'back') {
@@ -814,7 +861,7 @@ const RequestController2 = (
   $scope.purpose_error_message = '';
 
   // $scope.saveSource = function (direction) {
-  $scope.saveStep3 = function(direction) {
+  $scope.saveStep3 = function (direction) {
     $scope.purpose_error_message = '';
     $scope.purpose_error_message1 = '';
 
@@ -893,7 +940,7 @@ const RequestController2 = (
       not being executed as they were not scoped in proper format
   */
 
-  $scope.getLocation_2 = function() {
+  $scope.getLocation_2 = function () {
     let subnational = '';
     if ($scope.rfiData.default_city) {
       subnational =
@@ -907,30 +954,30 @@ const RequestController2 = (
     }
     return $scope.rfiData.default_country + subnational;
   };
-  $scope.getPopulation_2 = function() {
+  $scope.getPopulation_2 = function () {
     let population = '';
     switch ($scope.rfiData.population.type) {
-    case 'H':
-      population = 'Human';
-      break;
-    case 'A':
-      population = getAnimal();
-      break;
-    case 'E':
-      population = 'Environmental, ' + $scope.rfiData.population.other;
-      break;
-    case 'U':
-      population = $scope.rfiData.population.other ?
-        $scope.rfiData.population.other :
-        'Unknown';
-      break;
-    case 'O':
-      population = $scope.rfiData.population.other;
-      break;
+      case 'H':
+        population = 'Human';
+        break;
+      case 'A':
+        population = getAnimal();
+        break;
+      case 'E':
+        population = 'Environmental, ' + $scope.rfiData.population.other;
+        break;
+      case 'U':
+        population = $scope.rfiData.population.other ?
+          $scope.rfiData.population.other :
+          'Unknown';
+        break;
+      case 'O':
+        population = $scope.rfiData.population.other;
+        break;
     }
     return population;
   };
-  $scope.getConditions_2 = function() {
+  $scope.getConditions_2 = function () {
     let species = '';
 
     if ($scope.rfiData.population.type == 'H') species = 'human';
@@ -1008,7 +1055,7 @@ const RequestController2 = (
 
     return condition.toString();
   };
-  $scope.getPurpose_2 = function() {
+  $scope.getPurpose_2 = function () {
     const purpose =
       $scope.rfiData.purpose.purpose == 'V' ? 'Verification' : 'Update';
     const type = [];
@@ -1047,7 +1094,7 @@ const RequestController2 = (
 
     return type; // type.toString();
   };
-  $scope.getSource_2 = function() {
+  $scope.getSource_2 = function () {
     if ($scope.rfiData.source.source == 'MR') return 'Media Report';
     else if ($scope.rfiData.source.source == 'OR') return 'Official Report';
     else if ($scope.rfiData.source.source == 'OC') return 'Other Communication';
@@ -1060,7 +1107,7 @@ const RequestController2 = (
 
   // buildEmailText
   $scope.filePreview = $window.sessionStorage.filePreview;
-  const buildEmailText = function() {
+  const buildEmailText = function () {
     const formData = {};
     formData['title'] = $scope.rfiData.event_title;
     // overwrite the old file preview if it exists
@@ -1143,21 +1190,21 @@ const RequestController2 = (
   function getPopulation() {
     let population = '';
     switch ($scope.rfiData.population.type) {
-    case 'H':
-      population = 'Human';
-      break;
-    case 'A':
-      population = getAnimal();
-      break;
-    case 'E':
-      population = 'Environmental, ' + $scope.rfiData.population.other;
-      break;
-    case 'U':
-      population = 'Unknown, ' + $scope.rfiData.population.other;
-      break;
-    case 'O':
-      population = $scope.rfiData.population.other;
-      break;
+      case 'H':
+        population = 'Human';
+        break;
+      case 'A':
+        population = getAnimal();
+        break;
+      case 'E':
+        population = 'Environmental, ' + $scope.rfiData.population.other;
+        break;
+      case 'U':
+        population = 'Unknown, ' + $scope.rfiData.population.other;
+        break;
+      case 'O':
+        population = $scope.rfiData.population.other;
+        break;
     }
     return population;
   }
@@ -1165,29 +1212,29 @@ const RequestController2 = (
   function getAnimal() {
     let animal = '';
     switch ($scope.rfiData.population.animal_type) {
-    case 'B':
-      animal = 'Birds/Poultry';
-      break;
-    case 'P':
-      animal = 'Pigs/Swine';
-      break;
-    case 'C':
-      animal = 'Cattle';
-      break;
-    case 'G':
-      animal = 'Goats/Sheep';
-      break;
-    case 'D':
-      animal = 'Dogs/Cats';
-      break;
-    case 'H':
-      animal = 'Horses/Equines';
-      break;
-    case 'O':
-      animal = $scope.rfiData.population.other_animal;
-      break;
-    default:
-      break;
+      case 'B':
+        animal = 'Birds/Poultry';
+        break;
+      case 'P':
+        animal = 'Pigs/Swine';
+        break;
+      case 'C':
+        animal = 'Cattle';
+        break;
+      case 'G':
+        animal = 'Goats/Sheep';
+        break;
+      case 'D':
+        animal = 'Dogs/Cats';
+        break;
+      case 'H':
+        animal = 'Horses/Equines';
+        break;
+      case 'O':
+        animal = $scope.rfiData.population.other_animal;
+        break;
+      default:
+        break;
     }
     return animal;
   }
@@ -1269,7 +1316,7 @@ const RequestController2 = (
 
   $scope.sendRFIButtonText = 'Send RFI';
   /* Send request */
-  $scope.sendRequest2 = function(direction) {
+  $scope.sendRequest2 = function (direction) {
     if (direction === 'next') {
       $scope.submitDisabled = true;
       $scope.sendRFIButtonText = 'Please wait ....';
@@ -1296,7 +1343,7 @@ const RequestController2 = (
       formData['additionalText'] = $scope.rfiData.additionalText;
       formData['duplicate_rfi_detected'] =
         $scope.rfiData.duplicate_rfi &&
-        $scope.rfiData.duplicate_rfi.rfi_same == '3' ?
+          $scope.rfiData.duplicate_rfi.rfi_same == '3' ?
           1 :
           0; // possibile duplicate RFI
 
@@ -1305,8 +1352,8 @@ const RequestController2 = (
         typeof $scope.rfiData.duplicate_rfis != 'undefined'
       ) {
         const dup_events = [];
-        $scope.rfiData.duplicate_rfis.forEach(function(event) {
-          dup_events.push({id: event.event_id, title: event.title});
+        $scope.rfiData.duplicate_rfis.forEach(function (event) {
+          dup_events.push({ id: event.event_id, title: event.title });
         });
         formData['duplicate_events'] = dup_events;
       }
@@ -1327,7 +1374,7 @@ const RequestController2 = (
   };
 
   /* update request */
-  $scope.updateRequest = function(direction) {
+  $scope.updateRequest = function (direction) {
     if (direction === 'next') {
       $scope.submitDisabled = true;
 
@@ -1346,7 +1393,7 @@ const RequestController2 = (
         method: 'POST',
         data: formData,
       }).then(
-        function(response) {
+        function (response) {
           if (response.data) {
             const respdata = response.data;
             if (respdata['status'] === 'success') {
@@ -1359,7 +1406,7 @@ const RequestController2 = (
           }
           $scope.submitDisabled = false;
         },
-        function(erroMessage) {
+        function (erroMessage) {
           console.error(erroMessage);
         },
       );
@@ -1369,14 +1416,14 @@ const RequestController2 = (
   };
 
   /* Sent request */
-  $scope.sentRFI = function() {
+  $scope.sentRFI = function () {
     // empty out the form values so they aren't pre-filled next time
     $window.sessionStorage.clear();
     rfiForm.clear();
     $location.path('/events2');
   };
 
-  $scope.clearRequest = function() {
+  $scope.clearRequest = function () {
     if (confirm('Are you sure you want to clear this RFI?')) {
       $window.sessionStorage.clear();
       rfiForm.clear();
