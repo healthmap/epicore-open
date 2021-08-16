@@ -16,7 +16,7 @@ $event_id = $formvars->event_id;
 
 if(is_numeric($event_id)) {
     // clean data
-    $dbdata['responder_id'] = isset($formvars->anonymous) ? 0 : (int)$userData->fetp_id;
+    $dbdata['responder_id'] = isset($formvars->anonymous) ? 0 : (int)$userData['fetp_id'];
     $dbdata['response'] = strip_tags($formvars->reply);
     $dbdata['response_permission'] = (int)$formvars->response_permission;
     $response_member = strip_tags($formvars->response_member);
