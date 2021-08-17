@@ -5,10 +5,11 @@
 replicaCount: 1
 
 image:
-  repository: nginx
+  repository: 641466442714.dkr.ecr.us-east-1.amazonaws.com/epicore-app
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: ""
+  tag: "18918f7"
+  containerPort: 80
 
 imagePullSecrets: []
 nameOverride: ""
@@ -37,8 +38,10 @@ securityContext: {}
   # runAsUser: 1000
 
 service:
-  type: ClusterIP
+  type: LoadBalancer
   port: 80
+  sslport: 443
+  acmcert: "arn:aws:acm:us-east-1:641466442714:certificate/cfc8a4de-8683-4376-b7a7-cb0b40b27df4"
 
 ingress:
   enabled: false
@@ -66,11 +69,11 @@ resources: {}
   #   memory: 128Mi
 
 autoscaling:
-  enabled: false
-  minReplicas: 1
-  maxReplicas: 100
-  targetCPUUtilizationPercentage: 80
-  # targetMemoryUtilizationPercentage: 80
+  enabled: true
+  minReplicas: 2
+  maxReplicas: 4
+  targetCPUUtilizationPercentage: 50
+  targetMemoryUtilizationPercentage: 50
 
 nodeSelector: {}
 
