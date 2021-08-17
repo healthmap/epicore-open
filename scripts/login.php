@@ -229,8 +229,7 @@ if(is_numeric($user_id) && $user_id > 0) {
     //    $ui = new UserInfo($user_id);
     //    $ui->getFETPEligible();
     //}
-    $status = "success";
-        $mdata = array();
+    $mdata = array();
     // if mobile app, add/update info
     if ($formvars->app == 'mobile'){
   
@@ -250,26 +249,31 @@ if(is_numeric($user_id) && $user_id > 0) {
 
     }
 
-    // if it was a mobile device with event id, go directly to the "respond" page
-    // if it was a ticket with an event id, go directly to the "respond" page
-    // if it was a ticket with an alert id, go directly to the "request" page (only version 1 for ProMED alerts)
-    if (isset($formvars->epicore_version) && $formvars->epicore_version == '2') {  // app version 2
-        if (isset($formvars->event_id) && is_numeric($formvars->event_id)) {
-            $path = "events2/" . $formvars->event_id;
+    if( $uinfo['token']) {
+    
+        $status = "success";
+        
+        // if it was a mobile device with event id, go directly to the "respond" page
+        // if it was a ticket with an event id, go directly to the "respond" page
+        // if it was a ticket with an alert id, go directly to the "request" page (only version 1 for ProMED alerts)
+        if (isset($formvars->epicore_version) && $formvars->epicore_version == '2') {  // app version 2
+            if (isset($formvars->event_id) && is_numeric($formvars->event_id)) {
+                $path = "events2/" . $formvars->event_id;
+            } else {
+                $path = "events2";
+            }
         } else {
-            $path = "events2";
-        }
-    } else {
-        if (isset($formvars->event_id) && is_numeric($formvars->event_id)) {    // app version 1
-            $path = "events/" . $formvars->event_id;
-        } elseif (isset($formvars->alert_id) && is_numeric($formvars->alert_id)) {
-            $path = "request/" . $formvars->alert_id;
-        } else {
-            $path = "events";
+            if (isset($formvars->event_id) && is_numeric($formvars->event_id)) {    // app version 1
+                $path = "events/" . $formvars->event_id;
+            } elseif (isset($formvars->alert_id) && is_numeric($formvars->alert_id)) {
+                $path = "request/" . $formvars->alert_id;
+            } else {
+                $path = "events";
+            }
         }
     }
 
-    if($cognitoChangePassExceptionPath)
+    if($cognitoChangePassExceptionPath) //this will not have the token
     {
         $status = "success";
         $path = 'setpassword';
@@ -278,6 +282,11 @@ if(is_numeric($user_id) && $user_id > 0) {
 
 
 }
-$content = array('status' => $status, 'path' => $path, 'uinfo' => $uinfo , 'environment' => $env , 'api' => $apiError);
+
+if( $status === "success" ) {
+    $content = array('status' => $status, 'path' => $path, 'uinfo' => $uinfo , 'environment' => $env , 'api' => $apiError);
+} else {
+    $content = array('status' => $status, 'path' => $path, 'uinfo' => array() , 'environment' => $env , 'api' => $apiError);
+}
 print json_encode($content);
 ?>
