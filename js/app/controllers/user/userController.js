@@ -418,7 +418,7 @@ const UserController = (
           $cookieStore.put('epiUserInfo', newUserInfo);
           // save user in local storage for mobile app
           $localStorage.user = newUserInfo;
-
+          $rootScope.error_message = false;
           if (data['path'] != 'setpassword') {
 
             // FETPs that aren't activated yet don't get review page
