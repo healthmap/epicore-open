@@ -2,12 +2,12 @@
 
 ## Development Environment
 
-> Repo Url:https://github.com/healthmap/epicore.git
-> Requires PHP5.5.x or greater
+> Repo Url:https://github.com/healthmap/epicore-ng.git
+> Requires PHP 7.3.11 or greater
 > MySQL 
 
 ## Development package managers
- - npm (for dev only used for php-server)
+ - npm (for dev only used for php-server and some python modules)
  - composer (php modules - check composer.json)
 
 ## Using vlucas/phpdotenv
@@ -33,49 +33,17 @@ Standards compliant PBKDF2 implementation for PHP.
     Clone this repository.
 
     Open Terminal
-    git clone https://github.com/healthmap/epicore.git
-    cd epicore
-    npm install (for npm dependencies)
+    > git clone https://github.com/healthmap/epicore.git
+    > cd epicore
+    > npm install (for npm dependencies)
+    > composer install 
 
-    # Install Composer
+    # Install Composer if (composer not available)
     sudo curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
     # AWS cli - please refer to the software development handbook for recommendations on installation and configuration
 
-    # Installing composer modules (For mail and .env usage)
-        copy composer.json from repo to a dir of choice. For ex: ~/usr/share/php/
-        cd ~/usr/share/php/
-        composer install this will install all php modules referenced(awssdk and the phpdotenv)
-        Note that this will create a vendor folder with modules.
-        Copy the path of the autoload.php. Ex: /usr/share/php/vendor/autoload.php
-        This autoload path is replaced in two files:
-
-        File: AWSMail.class.php
-        Line#: 4 require_once '/usr/share/php/vendor/autoload.php'; (replace path if different)
-
-        File: db.function.php
-        Line#: 14 require_once '/usr/share/php/vendor/autoload.php'; (replace path if different)
-
-     # Without composer modules (No mail and .env - Just application with direct .ini file)
-
-        Note: If both composer modules are not used,  db/conf/da.ini file can be used instead and following lines will need to be commented: 
-
-        In order to run a local set up, we will need to **comment** a few lines of code in the following files:
-        File: AWSMail.class.php
-        Line#: 4 require_once '/usr/share/php/vendor/autoload.php';
-
-        File: EvenInfo.class.php
-        Line#: 813 file_put_contents("../$file_preview", $emailtext);
-
-        File: db.function.php
-        Replace Line#: 15 - 29 with:
-        $opts = parse_ini_file(dirname(__FILE__) . '/conf/da.ini.php', true);
-        $which = $which ? $which : 'epicore_db';
-        //echo 'db name:';
-        //echo $which;
-        //echo '-----db name:';
-        $dsn = $opts[$which];
-
+## Update ,env file using the .env.example file
 
 ## To run locally
 > Open terminal
@@ -170,6 +138,11 @@ To run cypress tests:
 This will bring open the test suite. You can run each file under ~/epicore/cypress/tests/e2e/integration individually or all.
 
 Add additional tests to ~epicore/cypress/tests/e2e/integration
+
+
+##########################################################
+### OLD CONFIGURATION SETUP FOR DEV/PROD EPICORE-V1-V2
+##########################################################
 
 ### Install library for Mobile Push Notifications (optional)
 

@@ -369,8 +369,14 @@ const UserController = (
     }).then(
       function successCallback(res) {
         const data = res.data;
-
-        if (data['status'] === 'success') {
+        let token = null;
+        if (data['uinfo'] && data['uinfo'].token != undefined) {
+          let dataToken = data.uinfo.token.accessToken;
+          if (dataToken != '') {
+            token = dataToken;
+          }
+        }
+        if (data['status'] === 'success' && token) {
           // determines if user is an organization or FETP
           $rootScope.isOrganization =
             data['uinfo']['organization_id'] > 0 ? true : false;
@@ -383,13 +389,6 @@ const UserController = (
             typeof data['uinfo']['active'] != 'undefined' ?
               data['uinfo']['locations'] :
               false;
-          let token = null;
-          if (data.uinfo.token != undefined) {
-            let dataToken = data.uinfo.token.accessToken;
-            if (dataToken != '') {
-              token = dataToken;
-            }
-          }
 
           const newUserInfo = {
             uid: data['uinfo']['user_id'],
@@ -412,19 +411,14 @@ const UserController = (
             },
             token: token
           };
-
-
           // save username and password
           $localStorage.username = formData['username'];
           // $localStorage.password = formData['password'];
           // save user in cookie
           $cookieStore.put('epiUserInfo', newUserInfo);
-
           // save user in local storage for mobile app
           $localStorage.user = newUserInfo;
-
           $rootScope.error_message = false;
-
           if (data['path'] != 'setpassword') {
 
             // FETPs that aren't activated yet don't get review page
@@ -439,27 +433,40 @@ const UserController = (
           } else {
             var redirpath = '/setpassword';
           }
-
           $scope.isRouteLoading = false;
           $scope.autologin = false;
           $location.path(redirpath);
-        } else {
-          $scope.isRouteLoading = false;
-          $rootScope.error_message = true;
-          $scope.autologin = false;
-          $route.reload();
+
+        } else { //when token is null
+          $rootScope.authReasonFailure = '';
+          $rootScope.error_message = false;
+          if (data['path'] === 'setpassword') {
+            var redirpath = '/setpassword';
+            $scope.isRouteLoading = false;
+            $scope.autologin = false;
+            $location.path(redirpath);
+          } else {
+            $rootScope.authReasonFailure = 'Sorry, your username/email and/or password are incorrect. Please try again.';
+            $scope.isRouteLoading = false;
+            $rootScope.error_message = true;
+            $scope.autologin = false;
+            $route.reload();
+          } //end if
         }
-      },
-      function errorCallback() {
+      }, function errorCallback() {
+        $rootScope.authReasonFailure = '';
         $scope.isRouteLoading = false;
         $scope.autologin = false;
+        $rootScope.error_message = true;
+        $route.reload();
       },
     );
   };
 
   /* log out */
   $scope.userLogout = function () {
-
+    $rootScope.authReasonFailure = '';
+    $rootScope.error_message = false;
     let formData = {
       'username': $localStorage.user.email
     };
@@ -469,7 +476,7 @@ const UserController = (
       method: 'POST',
       data: formData,
     });
-
+    $window.localStorage.clear();
     $cookieStore.remove('epiUserInfo');
     $window.sessionStorage.clear();
     clearMemPortalCache();
