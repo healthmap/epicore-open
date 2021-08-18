@@ -2,7 +2,7 @@
 -- updating these users with admin roles
 
 USE epicore;
-
-INSERT INTO epicore.organization (`organization_id`, `name`) VALUES ('8', 'RSOE');
+-- already exists in PROD and others. Need to run Flyway smoothly so comment below line
+-- INSERT INTO epicore.organization (`organization_id`, `name`) VALUES ('8', 'RSOE');
 
 commit;
