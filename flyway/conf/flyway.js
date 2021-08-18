@@ -19,6 +19,7 @@ module.exports = function () {
       sqlMigrationSuffixes: '.sql',
       baselineVersion: '1.0.0',
       baselineOnMigrate: true,
+      ignoreMissingMigrations: true
     }
   };
 };
