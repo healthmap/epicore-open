@@ -479,12 +479,11 @@ const RequestController2 = (
       }
 
       if (!$scope.isStep2Invalid) {
-
-        // Check for duplicate RFI only for original RFI requester
-        const bypass = $scope.userInfo.superuser && !$scope.isRequester; // bypass for superusers that are not the original requester
-        // bypass = false; // for testing
+        //All type of requester submissions must be checked for Dupe RFI
+        const bypass = false;
         checkDuplicateRFI2(bypass);
       }
+
     } else if (direction === 'back') {
       $location.path('/rfi_step1');
     }
