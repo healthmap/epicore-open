@@ -16,10 +16,6 @@ echo "epicore_app_client_id_secret=$epicore_app_client_id_secret" >> .env
 echo "epicore_aws_region=$AWS_REGION" >> .env
 
 
-
-pip3 install -r requirements.txt
-
-
 # run composer to set up dependencies if not already there...
 if ! [ -e vendor/autoload.php ]; then
     

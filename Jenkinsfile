@@ -207,7 +207,7 @@ pipeline {
         success {
 
               script {
-                    sendSlackNotification ("epicore-collaboration","deployed git branch ${BRANCH_NAME} at http://${SERVICE_ELB}/")
+                    sendSlackNotification ("epicore-collaboration","deployed git branch ${BRANCH_NAME} in ${ENV_NAME} at http://${SERVICE_ELB}/")
               }
         }
     
