@@ -98,7 +98,7 @@ class EventsController
 
         if (isset($params["start_date"])) {
             $start_date = $params["start_date"];
-        }
+         }
 
         if (isset($params["end_date"])) {
             $end_date = $params["end_date"];
@@ -156,69 +156,7 @@ class EventsController
                 place.name AS country, 
                 event_notes.status,
                 purpose.phe_description,
-                purpose.phe_additional,            
-                
-                (SELECT 
-                            COUNT(event_fetp.fetp_id) 
-                        FROM 
-                             event_fetp 
-                        WHERE 
-                              event_fetp.event_id = event.event_id
-                ) AS num_members,
-                            
-                (SELECT 
-                            COUNT(*) 
-                        FROM 
-                             response 
-                        WHERE 
-                              event_id = event.event_id
-                ) AS num_responses,
-                
-                (SELECT 
-                            COUNT(response.response_id) 
-                        FROM 
-                             response 
-                        WHERE 
-                              response.event_id = event.event_id 
-                        AND 
-                              response.response_permission > 0 
-                        AND 
-                              response.response_permission < 4
-                ) AS num_responses_content,
-                
-                (SELECT 
-                            COUNT(response.response_id) 
-                        FROM 
-                             response 
-                        WHERE 
-                              event_id = event.event_id 
-                        AND 
-                              response_permission = '4'
-                ) AS num_responses_active,
-                
-                (SELECT 
-                            COUNT(*) 
-                        FROM 
-                             response 
-                        WHERE 
-                            useful IS NULL 
-                        AND 
-                            response_permission <> 0 
-                        AND 
-                            response_permission <> 4 
-                        AND 
-                            event_id = event.event_id
-                ) AS num_notrated_responses,
-                
-                (SELECT 
-                            COUNT(*) 
-                        FROM 
-                             event_fetp 
-                        WHERE 
-                              event_fetp.event_id = event.event_id 
-                        AND 
-                              event_fetp.send_date <= (CURDATE() - INTERVAL 14 DAY)
-                ) AS no_active_14_days
+                purpose.phe_additional
             
             FROM place
                 INNER JOIN event on event.place_id = place.place_id
@@ -254,7 +192,29 @@ class EventsController
         $query .= " order by event.create_date DESC";
         
         $db = getDB();
-        return $db->getAll($query);;
+        $q = $db->query($query);
+
+        // Post processing for all counts
+        $results = array();
+        while($row = $q->fetchRow()) {
+
+            $row['num_members'] = $db->getOne("SELECT COUNT(DISTINCT(fetp_id)) FROM event_fetp WHERE event_id = ?", array($row['event_id']));
+
+            $row['num_responses'] = $db->getOne("SELECT COUNT(*) FROM response WHERE event_id = ?", array($row['event_id']));
+
+            $row['num_responses_content'] = $db->getOne("SELECT COUNT(*) FROM response WHERE event_id = ? AND response_permission > 0 AND  response_permission < 4", array($row['event_id']));
+
+            $row['num_responses_active'] = $db->getOne("SELECT COUNT(*) FROM response WHERE event_id = ?  AND response_permission = 4", array($row['event_id']));
+
+            $row['num_notrated_responses'] = $db->getOne("SELECT COUNT(*) FROM response WHERE useful IS NULL AND response_permission <>0 AND response_permission <>4 and event_id = ?", array($row['event_id']));
+
+            $row['no_active_14_days'] = $db->getOne("SELECT COUNT(*) FROM event_fetp WHERE event_id = ? AND event_fetp.send_date <= (CURDATE() - INTERVAL 14 DAY)", array($row['event_id']));
+
+            $results[] = $row;
+            
+        }
+        return $results;
+
     }
 
     private static function getPublicEvents($params)
