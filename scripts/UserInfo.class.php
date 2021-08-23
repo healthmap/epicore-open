@@ -739,7 +739,7 @@ class UserInfo
         $user_id = $db->getOne("SELECT maillist_id FROM maillist WHERE maillist_id = ?", array($mid));
 
         // update maillist
-        $message = '';
+        $message = 'deletion success';
         $status = 'success';
         if ($user_id) {
             $q = $db->query("DELETE FROM maillist WHERE maillist_id = ?", array($user_id));
@@ -755,16 +755,18 @@ class UserInfo
 
             // delete associated fetp
             $fetp_info = UserInfo::getFETPbyMid($user_id);
-            if($fetp_info && $status == 'success')
+            if($fetp_info && $status == 'success') {
                 $q = $db->query("DELETE FROM fetp WHERE maillist_id=?", array($user_id));
-
-            // check that result is not an error
-            if (PEAR::isError($q)) {
-                //die($res->getMessage());
-                $status = 'failed';
-                $message = 'failed maillist delete';
-            } else {
-                $db->commit();
+                $message = 'deletion of maillist & fetp success.';
+            
+                // check that result is not an error
+                if (PEAR::isError($q)) {
+                    //die($res->getMessage());
+                    $status = 'failed';
+                    $message = 'failed maillist delete';
+                } else {
+                    $db->commit();
+                }
             }
 
         }
