@@ -799,9 +799,7 @@ const RequestController2 = (
       }
     } else if ($scope.rfiData.duplicate_rfi.rfi_same == '3') {
       // different RFI, so go ahead and send a new RFI
-
-      // go to condition
-      $location.path('/condition');
+      $location.path('/rfi_step3');
     } else {
     }
   };
