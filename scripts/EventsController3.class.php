@@ -154,6 +154,7 @@ class EventsController
                 user.user_id, hmutbl.name AS person,
                 organization.name AS organization_name,
                 place.name AS country, 
+                purpose.outcome AS outcome,
                 event_notes.status,
                 purpose.phe_description,
                 purpose.phe_additional
