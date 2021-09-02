@@ -40,7 +40,7 @@ if(is_numeric($formvars->centerlat) && is_numeric($formvars->centerlon)) {
             if($location['fetp_id'] == ($fetp['fetp_id'])) { 
                 if(is_numeric($fetp['animal_health']) == 1) { //animal_health expertise
                     $found = true;
-                    array_push($fetps, array("id" =>$location['location_id'], "icon" => "img/member_animalHealthExp.png.png", "latitude" => $location['lat'], "longitude" => $location['lon'], "show" => true, "title" => "Event Location", "animalExp" => $fetp['animal_health']));
+                    array_push($fetps, array("id" =>$location['location_id'], "icon" => "img/member_animalHealthExp.png", "latitude" => $location['lat'], "longitude" => $location['lon'], "show" => true, "title" => "Event Location", "animalExp" => $fetp['animal_health']));
                     break;
                 }
             }
