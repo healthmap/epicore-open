@@ -50,7 +50,8 @@ pipeline {
     
     agent any 
     parameters {
-     choice(name: 'AppEnv', choices: ['DEV','PROD'], description: 'Choose an Environment to deploy')
+      choice(name: 'AppEnv', choices: ['DEV','PROD'], description: 'Choose an Environment to deploy')
+      choice(name: 'ReleaseType', choices: ['major', 'minor', 'patch'], description: 'Choose the appropriate semantic version')
      }
     options {
         skipStagesAfterUnstable()
@@ -208,6 +209,24 @@ pipeline {
 
               script {
                     sendSlackNotification ("epicore-collaboration","deployed git branch ${BRANCH_NAME} in ${ENV_NAME} at http://${SERVICE_ELB}/")
+
+                    if (env.ENV_NAME == 'prod') {
+                      sshagent (credentials: ['GITHUB_SSH_CRED']) {
+                        sh '''
+                                          
+                            TAGNAME=$(get-release-version $ReleaseType)
+                            git tag $TAGNAME
+                            git push origin $TAGNAME
+                            
+                            git pull
+                            auto-changelog
+                            ls -l CHANGELOG.md
+                            git add -A && git commit -m "update Change Log" && git push
+                            git pull
+                        
+                        '''
+                      }
+                    }
               }
         }
     
