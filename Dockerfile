@@ -1,5 +1,6 @@
 FROM 503172036736.dkr.ecr.us-east-1.amazonaws.com/epicore-base-php:7.2-fpm
 
+
 RUN apt-get install -y libcairo2-dev
 
 # #Move composer.json file so we can run the install cmd
