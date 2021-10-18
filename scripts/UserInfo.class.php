@@ -100,6 +100,71 @@ class UserInfo
             return "invalid parameters";
     }
 
+    //deactivate user only.
+    static function deactivateMod($mod_user_id , $role = 1){
+        if (is_numeric($mod_user_id)) {
+
+            $db1 = getDB();
+            $userId = $db1->getOne("SELECT user_id from user WHERE user_id = ?", array($mod_user_id));
+            
+            if ($userId) {
+                $q = $db1->query("UPDATE user SET active = 0 WHERE user_id = ?", array($userId));
+                // check that result is not an error
+                if (PEAR::isError($q)) {
+                    //die($res->getMessage());
+                    $status = 'failed';
+                    $message = 'Failed to deactivate moderator. Please contact administrator';
+                    return $status;
+                } else {
+                    $status = 'success';
+                    $db1->commit();
+                    return $userId;
+                }
+            } else {
+                return "Invalid parameters. Cannot find user.";
+            }
+           
+        } else {
+            return "invalid parameters";
+        }
+
+    }
+
+    //activate user only.
+    static function activateMod($mod_user_id , $role = 1){
+        if (is_numeric($mod_user_id)) {
+
+            $db1 = getDB();
+            //$userId = $db1->getOne("SELECT user_id from user WHERE user_id = ?", array($mod_user_id));
+            $user = $db1->getRow("SELECT * from user WHERE user_id = ?", array($mod_user_id));
+            $userId = $user['user_id'];
+            $orgId = $user['organization_id'];
+
+            if ($userId) {
+                $q = $db1->query("UPDATE user SET active = 1 WHERE user_id = ?", array($userId));
+                // check that result is not an error
+                if (PEAR::isError($q)) {
+                    //die($res->getMessage());
+                    $status = 'failed';
+                    $message = 'Failed to activate moderator. Please contact administrator';
+                    return $status;
+                } else {
+                    $status = 'success';
+                    $db1->commit();
+                    // return $userId;
+                    return array($userId, $orgId);
+                }
+            } else {
+                return "Invalid parameters. Cannot find user.";
+            }
+            
+        } else {
+            return "invalid parameters";
+        }
+
+    }
+    
+
     static function getMods(){
 
         // get hmu id's from Epicore Moderators
@@ -120,8 +185,11 @@ class UserInfo
             if ($mods) {
                 foreach ($mods as $mod){
                     $hmu_id = $mod['hmu_id'];
-                    $user_id = $db1->getOne("SELECT user_id FROM user WHERE hmu_id = $hmu_id");
+                    $user_hm = $db1->getRow("SELECT user_id, active FROM user WHERE hmu_id = $hmu_id");
+                    $user_id = $user_hm['user_id'];
+                    $active = $user_hm['active'];
                     $mod['user_id'] = $user_id;
+                    $mod['active'] = $active && $active === "1" ? 'Active': 'In Active';
                     $user_org_id = $db1->getOne("SELECT organization_id FROM user WHERE hmu_id = $hmu_id");
                     $mod['org_name'] = $db1->getOne("SELECT name FROM organization WHERE organization_id = ?", array($user_org_id));
                     $mod['rfi_total'] = (int)$db1->getOne("SELECT count(*) from event WHERE requester_id=?", array($user_id));
@@ -150,6 +218,7 @@ class UserInfo
         else
             return false;
     }
+
 
     function getFETPRequests($status, $fetp_id = '', $sdate = '')
     {
@@ -258,7 +327,7 @@ class UserInfo
         
         if($passwordValidIsRequired) {
             $user = $db->getRow("SELECT hmu_id, username, email, pword_hash from hm_hmu WHERE (username = ? OR email = ?) AND confirmed = 1", array($email, $email));
-      
+
             if(is_a($user, 'DB_Error')) {
                 print_r($user);
                 die('user error!');
@@ -267,20 +336,24 @@ class UserInfo
             if ($resp) {
                 $uinfo = $db->getRow("SELECT user.user_id, user.hmu_id, user.organization_id, organization.name AS orgname , role.id as roleId , role.name as roleName FROM user 
                     INNER JOIN role ON role.id = user.roleId
-                    LEFT JOIN epicore.organization ON user.organization_id = organization.organization_id WHERE hmu_id = ?", array($user['hmu_id']));
+                    LEFT JOIN epicore.organization ON user.organization_id = organization.organization_id 
+                    WHERE hmu_id = ? AND active = 1", array($user['hmu_id']));
+
                 if (is_a($uinfo, 'DB_Error')) {
                     print_r($uinfo);
                     die('uinfo error!');
                 }
-                $uinfo['username'] = $user['username'];
-                $uinfo['email'] = $user['email'];
-                return $uinfo;
+                if($uinfo) {
+                    $uinfo['username'] = $user['username'];
+                    $uinfo['email'] = $user['email'];
+                    return $uinfo;
+                }
             } else {
                 // first try the MOD user table.  If none, try the FETP user table.
-                $uinfo = $db->getRow("SELECT user.*, organization.name AS orgname , role.id as roleId , role.name as roleName FROM user INNER JOIN role ON role.id = user.roleId LEFT JOIN organization ON user.organization_id = organization.organization_id WHERE email = ?", array($email));
-     
-                if (!$uinfo['user_id']) {
+                $uinfo = $db->getRow("SELECT user.*, organization.name AS orgname , role.id as roleId , role.name as roleName FROM user INNER JOIN role ON role.id = user.roleId LEFT JOIN organization ON user.organization_id = organization.organization_id WHERE email = ? AND active = 1", array($email));
 
+                if (!$uinfo['user_id']) {
+                    //check if responder    
                     $uinfo = $db->getRow("SELECT fetp_id, pword_hash, lat, lon, countrycode, active, email, status, locations ,  role.id as roleId , role.name as roleName FROM fetp 
                         INNER JOIN role ON role.id = fetp.roleId WHERE email = ?", array($email));
                     $uinfo['username'] = "Member " . $uinfo['fetp_id'];
@@ -308,80 +381,83 @@ class UserInfo
                 FROM user
                 INNER JOIN role ON role.id = user.roleId
                 LEFT JOIN hm_hmu ON hm_hmu.hmu_id = user.hmu_id 
-                LEFT JOIN organization ON user.organization_id = organization.organization_id WHERE hm_hmu.hmu_id = ?", array($userHmu['hmu_id']));
-
-           if (PEAR::isError($user)) {
+                LEFT JOIN organization ON user.organization_id = organization.organization_id WHERE hm_hmu.hmu_id = ?  AND active = 1", array($userHmu['hmu_id']));
+            if (PEAR::isError($user)) {
                 die($user->getMessage());
             } 
         } else { 
+            //check if responder
             $user = $db->getRow("SELECT email , fetp_id , role.id as roleId , role.name as roleName , pword_hash , lat , lon , countrycode , active ,
             status , locations
             from fetp 
             INNER JOIN role ON role.id = fetp.roleId
             WHERE email = ?", array($dbdata['email']));
+            
             if (PEAR::isError($user)) {
                 die($user->getMessage());
             } 
           
         }
        
-     
+        if($user) {
        
-        if(isset($user['username']))
-        {
-            $uinfo['username'] = "Member " . $user['username'];
-        }
-        if(isset($user['hmu_id'])){
-            $uinfo['username'] = $user['username'];
-            $uinfo['hmu_id'] = $user['hmu_id'];
-        }
-        if(isset($user['fetp_id'])){
-            $uinfo['username'] = "Member " . $user['fetp_id'];
-            $uinfo['fetp_id'] = $user['fetp_id'];
-        }
+            if(isset($user['username']))
+            {
+                $uinfo['username'] = "Member " . $user['username'];
+            }
+            if(isset($user['hmu_id'])){
+                $uinfo['username'] = $user['username'];
+                $uinfo['hmu_id'] = $user['hmu_id'];
+            }
+            if(isset($user['fetp_id'])){
+                $uinfo['username'] = "Member " . $user['fetp_id'];
+                $uinfo['fetp_id'] = $user['fetp_id'];
+            }
 
-        if(isset($user['lat']) && !empty($user['lat']))
-        {
-            $uinfo['lat'] = $user['lat'];
-        }
-        if(isset($user['lon']) && !empty($user['lon']))
-        {
-            $uinfo['lon'] = $user['lon'];
-        }
-        if(isset($user['countrycode']) && !empty($user['countrycode']))
-        {
-            $uinfo['countrycode'] = $user['countrycode'];
-        }
-        if(isset($user['active']) && !empty($user['active']))
-        {
-            $uinfo['active'] = $user['active'];
-        }
-        if(isset($user['locations']) && !empty($user['locations']))
-        {
-            $uinfo['locations'] = $user['locations'];
-        }
-        if(isset($user['roleId']) && !empty($user['roleId'])){
-            $uinfo['roleId'] = $user['roleId'];
-        }
-        if(isset($user['roleName']) && !empty($user['roleName'])){
-            $uinfo['roleName'] = $user['roleName'];
-        }
-        if(isset($user['orgname']) && !empty($user['orgname'])){
-            $uinfo['orgname'] = $user['orgname'];
-        }
-        if(isset($user['organization_id']) && !empty($user['organization_id'])) {
-            $uinfo['organization_id'] = $user['organization_id'];
-        }
-        if(isset($user['user_id']) && !empty($user['user_id'])){
-            $uinfo['user_id'] = $user['user_id'];
-        }
+            if(isset($user['lat']) && !empty($user['lat']))
+            {
+                $uinfo['lat'] = $user['lat'];
+            }
+            if(isset($user['lon']) && !empty($user['lon']))
+            {
+                $uinfo['lon'] = $user['lon'];
+            }
+            if(isset($user['countrycode']) && !empty($user['countrycode']))
+            {
+                $uinfo['countrycode'] = $user['countrycode'];
+            }
+            if(isset($user['active']) && !empty($user['active']))
+            {
+                $uinfo['active'] = $user['active'];
+            }
+            if(isset($user['locations']) && !empty($user['locations']))
+            {
+                $uinfo['locations'] = $user['locations'];
+            }
+            if(isset($user['roleId']) && !empty($user['roleId'])){
+                $uinfo['roleId'] = $user['roleId'];
+            }
+            if(isset($user['roleName']) && !empty($user['roleName'])){
+                $uinfo['roleName'] = $user['roleName'];
+            }
+            if(isset($user['orgname']) && !empty($user['orgname'])){
+                $uinfo['orgname'] = $user['orgname'];
+            }
+            if(isset($user['organization_id']) && !empty($user['organization_id'])) {
+                $uinfo['organization_id'] = $user['organization_id'];
+            }
+            if(isset($user['user_id']) && !empty($user['user_id'])){
+                $uinfo['user_id'] = $user['user_id'];
+            }
 
-        $uinfo['email'] = $user['email'];
-        if($uinfo['email'] === null && isset($user['hm_email']) && !empty($user['hm_email'])){
-            $uinfo['email'] = $user['hm_email'];
-        }
+            $uinfo['email'] = $user['email'];
+            if($uinfo['email'] === null && isset($user['hm_email']) && !empty($user['hm_email'])){
+                $uinfo['email'] = $user['hm_email'];
+            }
 
-        $uinfo['superuser'] = false;
+            $uinfo['superuser'] = false;
+
+        }
 
         if(is_null( $uinfo['email'] ))
         {
@@ -408,15 +484,17 @@ class UserInfo
         //if hmu_id found
         if(!$user_id) {
             $user = $db->getRow("SELECT hmu_id, username, email from hm_hmu WHERE hmu_id = ?", array($hmu_id));
-            $epicore_info = $db->getRow("SELECT user.*, organization.name AS orgname, role.id as roleId , role.name as roleName FROM user 
+            $epicore_info = $db->getRow("SELECT user.*, organization.name AS orgname, role.id as roleId , role.name as roleName 
+            FROM user 
             INNER JOIN role ON role.id = user.roleId
-            LEFT JOIN organization ON user.organization_id = organization.organization_id WHERE user.hmu_id = ?", array($hmu_id));
+            LEFT JOIN organization ON user.organization_id = organization.organization_id WHERE user.hmu_id = ? AND active = 1", array($hmu_id));
         } else {
             //new epicore users have user_id associated with ticket
-            $user = $db->getRow("SELECT user_id, email, hmu_id from user WHERE user_id = ?", array($user_id));
-            $epicore_info = $db->getRow("SELECT user.*, organization.name AS orgname, role.id as roleId , role.name as roleName FROM user 
+            $user = $db->getRow("SELECT user_id, email, hmu_id from user WHERE user_id = ? AND active = 1", array($user_id));
+            $epicore_info = $db->getRow("SELECT user.*, organization.name AS orgname, role.id as roleId , role.name as roleName 
+            FROM user 
             INNER JOIN role ON role.id = user.roleId
-            LEFT JOIN organization ON user.organization_id = organization.organization_id WHERE user.user_id = ?", array($user_id));
+            LEFT JOIN organization ON user.organization_id = organization.organization_id WHERE user.user_id = ? AND active = 1", array($user_id));
             
             //Should not be used
             //Scenario-not old req coming from promed-with user-id in hm_ticket - just a testing scenation

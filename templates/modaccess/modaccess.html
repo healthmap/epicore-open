@@ -74,6 +74,11 @@
 									id </a></th>
 							<th style="width:30px;"><a href="" ng-click="predicate = 'org_name'; reverse=!reverse">Organization </a>
 							</th>
+							<th style="width:30px;"><a href="">Status </a>
+							</th>
+							</th>
+							<th style="width:30px;"><a href="">Action </a>
+							</th>
 						</tr>
 						<tr ng-repeat="mod in mods | filter:query | orderBy:predicate:reverse">
 							<td>{{$index+1}}</td>
@@ -81,6 +86,11 @@
 							<td>{{mod.email}}</td>
 							<td>{{mod.user_id}}</td>
 							<td>{{mod.org_name}}</td>
+							<td>{{mod.active}}</td>
+							<td ng-if="mod.active === 'Active' "><a href=""
+									ng-click="inActivateRequester(mod.user_id,mod.email )">Revoke</a></td>
+							<td ng-if="mod.active !== 'Active' "><a href=""
+									ng-click="activateRequester(mod.user_id,mod.email)">Re-Activate</a></td>
 						</tr>
 					</table>
 				</div>

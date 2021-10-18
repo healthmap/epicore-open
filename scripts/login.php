@@ -50,9 +50,8 @@ if(isset($formvars->ticket_id) && $formvars->usertype == "fetp") { // ticket sys
             $validationService->email($user);
             $validationService->password($user);
             $uinfo = UserInfo::authenticateUser($dbdata , false);
-
             if(!$uinfo){
-                $status = "incorrect password";
+                $status = "Permission denied!.Incorrect password.";
                 $cognitoAuthStatus = false;
             }
             if(is_array($uinfo)) {
