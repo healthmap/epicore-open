@@ -1,6 +1,5 @@
 FROM php:7.2-fpm
 
-
 RUN apt-get update -y  \
   && apt-get -y install sudo \
   && apt-get -y install vim \
@@ -40,28 +39,8 @@ RUN sudo curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "aws
   && unzip awscliv2.zip \
   && aws/install
 
+COPY requirements.txt .
 
-#Move composer.json file so we can run the install cmd
-COPY composer.json /usr/share/php/composer.json
+RUN  pip3 install -r requirements.txt
 
-COPY nginx-site.conf /etc/nginx/sites-enabled/default
-
-COPY entrypoint.sh /etc/entrypoint.sh
-
-COPY --chown=www-data:www-data . /var/www/html
-
-COPY . /var/www/html/test.epicore.org
-
-#make sure npm start has been executed to generate the dist folder
-#Copy webpack distfolder
-COPY ./js/dist/* /var/www/html/
-
-#instal python packages
-#RUN sudo pip3 install numpy pandas matplotlib
-RUN sudo pip3 install -r /var/www/html/test.epicore.org/requirements.txt 
-
-WORKDIR /var/www/html/
-
-EXPOSE 80 443
-
-ENTRYPOINT ["/etc/entrypoint.sh"]
+CMD = ["php -v"]
