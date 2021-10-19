@@ -86,7 +86,9 @@
 							<td>{{mod.email}}</td>
 							<td>{{mod.user_id}}</td>
 							<td>{{mod.org_name}}</td>
-							<td>{{mod.active}}</td>
+							<td ng-if="mod.active === 'Active' ">{{mod.active}}</td>
+							<td ng-if="mod.active !== 'Active' " class="selected">{{mod.active}}</td>
+
 							<td ng-if="mod.active === 'Active' "><a href=""
 									ng-click="inActivateRequester(mod.user_id,mod.email )">Revoke</a></td>
 							<td ng-if="mod.active !== 'Active' "><a href=""
