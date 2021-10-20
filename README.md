@@ -273,6 +273,8 @@ Now open file AWSMail.class.php and edit line #4 for the path to the vendor fold
 
 To test locally use: testMail.php
 
+## Updating ECR image for docker please refer to handbook aws-ecr page
+
 <!-- 
 OLD EPICORE VERSION-1-2 Reference docs
 
