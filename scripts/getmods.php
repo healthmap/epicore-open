@@ -1,9 +1,4 @@
 <?php
-/**
- * User: jeffandre
- * Date: 10/28/16
- */
-
 require_once "UserInfo.class.php";
 
 $mods = UserInfo::getMods();

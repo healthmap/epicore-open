@@ -20,6 +20,7 @@ module.exports = function () {
       baselineVersion: '1.0.0',
       baselineOnMigrate: true,
       ignoreMissingMigrations: true
-    }
+    },
+    version: '7.15.0', //community edition support for 5.7
   };
 };
