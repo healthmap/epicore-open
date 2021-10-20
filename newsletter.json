@@ -3,6 +3,10 @@
 		"year": "2021",
 		"qLinks": [
 			{
+				"quarter": "Q3",
+				"weblink": "https://mailchi.mp/endingpandemics/quarterly-newsletter-2021-q3"
+			},
+			{
 				"quarter": "Q2",
 				"weblink": "https://mailchi.mp/epicore/epicore-quarterly-newsletter-2021-q2"
 			},
