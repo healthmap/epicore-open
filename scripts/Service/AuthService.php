@@ -67,6 +67,7 @@ class AuthService implements IAuthService
     {
         try
         {
+            
             $user = new User();
             $user->setPassword($password);
             // TODO valid
@@ -277,18 +278,42 @@ class AuthService implements IAuthService
      * @return bool
      * @throws CognitoException
      */
+
+    // public function DeleteUser(string $username): bool
+    // {
+    //     try{
+    //         $this->cognitoService->deleteUser($username);
+    //         return true;
+    //     }
+    //     catch (\CognitoException $exception)
+    //     {
+    //         throw $exception;
+    //     }
+    // }
     public function DeleteUser(string $username): bool
     {
         try{
-            $this->cognitoService->deleteUser($username);
-            return true;
+
+            //check if username is 
+            $result = $this->cognitoService->adminGetUser($username);
+            if(isset($result['UserStatus']))
+            {
+               $this->cognitoService->deleteUser($username);
+               return true; //'Deleted user on Cognito successfully';
+            } 
         }
-        catch (\CognitoException $exception)
+        catch (Aws\CognitoIdentityProvider\Exception\CognitoIdentityProviderException $exception)
         {
-            throw $exception;
+            $message = $exception->toArray();
+            if($message['message'] === CognitoErrors::accountNotExists)
+            {
+                return true; //'User does not exist in Cognito';
+            }
+
+            throw new \CognitoException($message['message']);
         }
     }
-
+    
     /**
      * @throws CognitoException
      * @throws UserAccountNotExist
