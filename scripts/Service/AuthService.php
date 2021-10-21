@@ -278,19 +278,7 @@ class AuthService implements IAuthService
      * @return bool
      * @throws CognitoException
      */
-
-    // public function DeleteUser(string $username): bool
-    // {
-    //     try{
-    //         $this->cognitoService->deleteUser($username);
-    //         return true;
-    //     }
-    //     catch (\CognitoException $exception)
-    //     {
-    //         throw $exception;
-    //     }
-    // }
-    public function DeleteUser(string $username): bool
+     public function DeleteUser(string $username): bool
     {
         try{
 
