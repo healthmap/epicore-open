@@ -208,13 +208,13 @@ pipeline {
         success {
 
               script {
-                    sendSlackNotification ("epicore-collaboration","deployed git branch ${BRANCH_NAME} in ${ENV_NAME} at http://${SERVICE_ELB}/")
+                    sendSlackNotification ("epicore_internal","deployed git branch ${BRANCH_NAME} in ${ENV_NAME} at http://${SERVICE_ELB}/")
               }
         }
     
         failure {
             script {
-                   slackNotification ("epicore-collaboration", "Build ${BUILD_NUMBER} for  git branch ${BRANCH_NAME} failed ", currentBuild.result)
+                   slackNotification ("epicore_internal", "Build ${BUILD_NUMBER} for  git branch ${BRANCH_NAME} failed ", currentBuild.result)
             }
         }
 
