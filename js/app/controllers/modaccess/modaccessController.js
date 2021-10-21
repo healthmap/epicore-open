@@ -1,4 +1,4 @@
-const ModaccessController = ($scope, $cookieStore, httpServiceInterceptor, urlBase) => {
+const ModaccessController = ($scope, $cookieStore, httpServiceInterceptor, urlBase, $window) => {
   const http = httpServiceInterceptor.http;
   const data = {};
   $scope.showpage = false;
@@ -51,6 +51,7 @@ const ModaccessController = ($scope, $cookieStore, httpServiceInterceptor, urlBa
     let data = {};
     data.userId = mod_user_id;
     data.userEmail = mod_email;
+    $window.scrollTo(0, 0);
     http({
       url: urlBase + 'scripts/deactivateMod.php',
       method: 'POST',
@@ -59,21 +60,24 @@ const ModaccessController = ($scope, $cookieStore, httpServiceInterceptor, urlBa
       const respdata = res.data;
       if (respdata['status'] === 'success') {
         $scope.mods = respdata['mods'];
-        $scope.message = 'Successfully deactivated  moderator.';
-        $scope.isFetchingData = false;
+        $scope.message = 'Successfully deactivated  moderator: ' + mod_email;
+      } else {
+        $scope.message = 'Unable to deactivated requester: ' + mod_email;
       }
+      $scope.isFetchingData = false;
     }, function errorCallback(res) {
       $scope.isFetchingData = false;
       $scope.message = 'Unable to deactivated requester: ' + mod_email;
     });
   };
 
-  $scope.activateRequester = function (mod_user_id, mod_email, mod_org_id) {
+  $scope.activateRequester = function (mod_user_id, mod_email) {
     $scope.message = '';
     $scope.isFetchingData = true;
     let data = {};
     data.userId = mod_user_id;
     data.userEmail = mod_email;
+    $window.scrollTo(0, 0);
     http({
       url: urlBase + 'scripts/activateMod.php',
       method: 'POST',
@@ -82,9 +86,11 @@ const ModaccessController = ($scope, $cookieStore, httpServiceInterceptor, urlBa
       const respdata = res.data;
       if (respdata['status'] === 'success') {
         $scope.mods = respdata['mods'];
-        $scope.message = 'Successfully activated moderator.';
-        $scope.isFetchingData = false;
+        $scope.message = 'Successfully activated moderator: ' + mod_email;
+      } else {
+        $scope.message = 'Unable to deactivated requester: ' + mod_email;
       }
+      $scope.isFetchingData = false;
     }, function errorCallback(res) {
       $scope.isFetchingData = false;
       $scope.message = 'Unable to activate requester: ' + mod_email;
@@ -94,6 +100,7 @@ const ModaccessController = ($scope, $cookieStore, httpServiceInterceptor, urlBa
   $scope.getAllMods = function () {
     $scope.isFetchingData = true;
     $scope.message = '';
+
     http({
       url: urlBase + 'scripts/getmods.php',
       method: 'POST',
@@ -115,6 +122,6 @@ const ModaccessController = ($scope, $cookieStore, httpServiceInterceptor, urlBa
 
 };
 
-ModaccessController.$inject = ['$scope', '$cookieStore', 'httpServiceInterceptor', 'urlBase'];
+ModaccessController.$inject = ['$scope', '$cookieStore', 'httpServiceInterceptor', 'urlBase', '$window'];
 
 export default ModaccessController;
