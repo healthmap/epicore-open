@@ -777,7 +777,7 @@ th {
 }
 .whitespace-summary {
   margin-bottom: 16px;
-  white-space: pre-wrap;
+  white-space: pre-line;
 }
 @media (max-width: 1200px) {
   .nav > li > a,
