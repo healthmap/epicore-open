@@ -1,0 +1,169 @@
+
+<form name="conditionForm">
+    
+    <!-- Checkboxes for Humans -->
+    <div ng-show="rfiData.population.type == 'H'">
+        <div class="form-group">
+            <span style="float: right;"><a href ng-click="clearRequest()" class="btn btn-default">Clear RFI</a></span><br>
+        </div>
+        <h4>Human Health Condition: <span class="error">*</span></h4>
+        <div class="intro">
+            <h5>Details on the health condition may be poor at initial stages. Requesters should try to classify the Public Health Event, if possible, into the syndromes suggested to avoid influencing the verification process.
+            </h5>
+        </div>
+        <div class="form-group">
+            <div class="checkbox">
+                <label data-toggle="tooltip" title=" Cases presenting predominantly fever with respiratory symptoms as cough, respiratory distress, wheeze etc. - example:” 5 cases in young adults presenting respiratory distress and hospitalized” ">
+                    <input type="checkbox" name="respiratory" ng-model="rfiData.health_condition.respiratory" ng-click="rfiData.health_condition.unknown = false; rfiData.health_condition.other = false;clearhcError();" ng-checked="rfiData.health_condition.respiratory"> Acute Respiratory</label>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="checkbox">
+                <label data-toggle="tooltip" title=" Cases presenting predominantly nausea, vomiting, abdominal pain - example: “25 children attending a school with diarrhea and/or vomiting in the last 3 days” ">
+                    <input type="checkbox" name="gastrointestinal" ng-model="rfiData.health_condition.gastrointestinal" ng-click="rfiData.health_condition.unknown = false; rfiData.health_condition.other = false;clearhcError();" ng-checked="rfiData.health_condition.gastrointestinal" > Gastrointestinal</label>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="checkbox">
+                <label data-toggle="tooltip" title=" Cases presenting predominantly fever and skin rash – example: “two 12-year-old girls transferred to a hospital with a 5-day history of fever and skin rash” ">
+                    <input type="checkbox" name="fever_rash" ng-model="rfiData.health_condition.fever_rash" ng-click="rfiData.health_condition.unknown = false; rfiData.health_condition.other = false;clearhcError();" ng-checked="rfiData.health_condition.fever_rash"> Fever & Rash</label>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="checkbox">
+                <label data-toggle="tooltip" title=" Cases with sudden onset of jaundice - example: “44 cases of jaundice syndrome in Darfur” ">
+                    <input type="checkbox" name="jaundice" ng-model="rfiData.health_condition.jaundice" ng-click="rfiData.health_condition.unknown = false; rfiData.health_condition.other = false;clearhcError();" ng-checked="rfiData.health_condition.jaundice"> Acute Jaundice</label>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="checkbox">
+                <label data-toggle="tooltip" title=" Cases with high fever, unspecific symptoms as fatigue, dizziness, weakness, muscle/joint/bone pain AND hemorrhagic signs - example: “5 cases of hemorrhagic fever in Bas-Congo district” ">
+                    <input type="checkbox" name="h_fever" ng-model="rfiData.health_condition.h_fever" ng-click="rfiData.health_condition.unknown = false; rfiData.health_condition.other = false;clearhcError();" ng-checked="rfiData.health_condition.h_fever" > Hemorrhagic fever</label>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="checkbox">
+                <label data-toggle="tooltip" title=" Cases with sudden onset of weakness/paralysis and reduced muscle tone - example: “4 children in Punjab with acute onset fever and paresis left lower leg in the last 7 days” ">
+                    <input type="checkbox" name="paralysis" ng-model="rfiData.health_condition.paralysis" ng-click="rfiData.health_condition.unknown = false; rfiData.health_condition.other = false;clearhcError();" ng-checked="rfiData.health_condition.paralysis" > Acute Flaccid paralysis</label>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="checkbox">
+                <label data-toggle="tooltip" title=" Any other neurological symptomatology as paralysis, meningitis signs, poor coordination, seizures, confusion, altered level of consciousness - example: “two children from same village presenting confusion, headache and still neck 3-year” ">
+                    <input type="checkbox" name="other_neurological" ng-model="rfiData.health_condition.other_neurological" ng-click="rfiData.health_condition.unknown = false; rfiData.health_condition.other = false; clearhcError();" ng-checked="rfiData.health_condition.other_neurological" > Other neurological</label>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="checkbox">
+                <label data-toggle="tooltip" title=" cases presenting fever but despite medical investigation no explanation has been found so far – example: “cluster of cases presenting high fever, no diagnosis made at local level”">
+                    <input type="checkbox" name="fever_unknown" ng-model="rfiData.health_condition.fever_unknown" ng-click="rfiData.health_condition.unknown = false; rfiData.health_condition.other = false;clearhcError();" ng-checked="rfiData.health_condition.fever_unknown" > Fever of unknown origin</label>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="checkbox">
+                <label data-toggle="tooltip" title=" signs of decrease in kidney functioning either described as such or defined further with laboratory evidence cited.">
+                    <input type="checkbox" name="renal" ng-model="rfiData.health_condition.renal" ng-click="rfiData.health_condition.unknown = false; rfiData.health_condition.other = false;clearhcError();" ng-checked="rfiData.health_condition.renal" > Renal failure</label>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="checkbox">
+                <label data-toggle="tooltip" title=" cases with no information about their symptomatology – example: “cluster of sudden deaths in a remote village in South Sudan, no further details available” ">
+                    <input type="checkbox" name="unknown" ng-model="rfiData.health_condition.unknown" ng-click="clearCondition(); rfiData.health_condition.other = false;clearhcError();" ng-checked="rfiData.health_condition.unknown" > Unknown</label>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="checkbox">
+                <label data-toggle="tooltip" title=" example: “suspect autochthonous dengue case” ">
+                    <input type="checkbox" name="other" ng-model="rfiData.health_condition.other" ng-click="clearCondition(); rfiData.health_condition.unknown = false; clearhcError();" ng-checked="rfiData.health_condition.other_description"> Other</label>
+                <input ng-if="rfiData.health_condition.other" type="text" class="form-control" ng-model="rfiData.health_condition.other_description" name="other_description" id="other_description" placeholder='other description...' value="" ng-required="rfiData.health_condition.other" >
+            </div>
+            <span class="error" >{{hc_error_message1}}</span>
+        </div>
+
+    </div>
+
+    <!-- Checkboxes for Animals -->
+    <div ng-show="rfiData.population.type == 'A'">
+        <h4>Animal Health Condition: <span class="error">*</span></h4>
+        <div class="intro">
+            <h5>Details on the health condition may be poor at initial stages. Requesters should try to classify the Public Health Event, if possible, into the syndromes suggested to avoid influencing the verification process.
+            </h5>
+        </div>
+        <div class="form-group">
+            <div class="checkbox">
+                <label data-toggle="tooltip" title=" i.e. coughing, serous nasal and lacrimal discharge, edema cyanosis, dyspnea, respiratory distress, anorexia, depression, weakness” ">
+                    <input type="checkbox" name="respiratory_animal" ng-model="rfiData.health_condition.respiratory_animal" ng-click="rfiData.health_condition.unknown_animal = false; rfiData.health_condition.other_animal = false;clearhcError2();" ng-checked="rfiData.health_condition.respiratory_animal" > Respiratory</label>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="checkbox">
+                <label data-toggle="tooltip" title=" ataxia, incoordination, paralysis, paresis, spasms, bruxism, nystagmus, seizures, convulsions, sudden behavioral changes, altered consciousness,weakness, weight loss” ">
+                    <input type="checkbox" name="neurological_animal" ng-model="rfiData.health_condition.neurological_animal" ng-click="rfiData.health_condition.unknown_animal = false; rfiData.health_condition.other_animal = false;clearhcError2();" ng-checked="rfiData.health_condition.neurological_animal" > Neurological</label>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="checkbox">
+                <label data-toggle="tooltip" title=" i.e. bloody diarrhea, bleeding eyes, haematuria, bloody discharge from nose/mouth, dehydration, swollen conjunctiva, hyperaemia, anaemia” ">
+                    <input type="checkbox" name="hemorrhagic_animal" ng-model="rfiData.health_condition.hemorrhagic_animal" ng-click="rfiData.health_condition.unknown_animal = false; rfiData.health_condition.other_animal = false;clearhcError2();" ng-checked="rfiData.health_condition.hemorrhagic_animal" > Hemorrhagic</label>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="checkbox">
+                <label data-toggle="tooltip" title=" i.e. fever, vesicles progressing to erosions in mouth/nares/muzzle/teats/ feet, salivation, drooling, lameness” ">
+                    <input type="checkbox" name="vesicular_animal" ng-model="rfiData.health_condition.vesicular_animal" ng-click="rfiData.health_condition.unknown_animal = false; rfiData.health_condition.other_animal = false;clearhcError2();" ng-checked="rfiData.health_condition.vesicular_animal"> Vesicular</label>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="checkbox">
+                <label data-toggle="tooltip" title=" i.e. abortions, retained placenta, orchitis, mastitis, pyometra, endometritis, mummified fetus, premature birth” ">
+                    <input type="checkbox" name="reproductive_animal" ng-model="rfiData.health_condition.reproductive_animal" ng-click="rfiData.health_condition.unknown_animal = false; rfiData.health_condition.other_animal = false;clearhcError2();" ng-checked="rfiData.health_condition.reproductive_animal"> Reproductive</label>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="checkbox">
+                <label data-toggle="tooltip" title=" i.e. fever, oral ulcerations, watery/bloody diarrhea,dehydration,weight loss,abdominal pain, vomiting” ">
+                    <input type="checkbox" name="gastrointestinal_animal" ng-model="rfiData.health_condition.gastrointestinal_animal" ng-click="rfiData.health_condition.unknown_animal = false; rfiData.health_condition.other_animal = false;clearhcError2();" ng-checked="rfiData.health_condition.gastrointestinal_animal"> Gastrointestinal</label>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="checkbox">
+                <label data-toggle="tooltip" title=" including diarrhoea, respiratory distress, cyanosis, nervous signs, oral/nasal erosions, abortions, anorexia, apathy, dullness, prostration, nervous signs (convulsion, ataxia, paralysis, opisthotonos, paddling)” ">
+                    <input type="checkbox" name="multisystemic_animal" ng-model="rfiData.health_condition.multisystemic_animal" ng-click="rfiData.health_condition.unknown_animal = false; rfiData.health_condition.other_animal = false; clearhcError2();" ng-checked="rfiData.health_condition.multisystemic_animal"> Multisystemic</label>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="checkbox">
+                <label data-toggle="tooltip" title=" cases with no information about their symptomatology – example: “cluster of sudden deaths in a remote village in South Sudan, no further details available” ">
+                    <input type="checkbox" name="unknown_animal" ng-model="rfiData.health_condition.unknown_animal" ng-click="clearCondition2(); rfiData.health_condition.other_animal = false; clearhcError2();" ng-checked="rfiData.health_condition.unknown_animal"> Unknown</label>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="checkbox">
+                <label>
+                    <input type="checkbox" name="other_animal" ng-model="rfiData.health_condition.other_animal" ng-click="clearCondition2(); rfiData.health_condition.unknown_animal = false; clearhcError();" ng-checked="rfiData.health_condition.other_animal_description"> Other</label>
+                <input ng-if="rfiData.health_condition.other_animal" type="text" class="form-control" ng-model="rfiData.health_condition.other_animal_description" name="other_animal_description" id="other_animal_description" placeholder='other description...' value="" ng-required="rfiData.health_condition.other_animal" >
+            </div>
+            <span class="error" >{{hc_error_message1}}</span>
+        </div>
+    </div>
+
+    <!-- Text input questions -->
+    <div class="form-group">
+        <h4 >Health Condition Details: <span class="error">*</span></h4>
+        <p><b>NOTE:</b> These details appear in the email to the responders, along with the RFI title. This is a critical field.</p>
+        <p>Please include all available details on the event, for example number of cases (suspected, confirmed, fatalities etc) and symptoms</p>
+        <textarea class="form-control" style="height:300px" ng-model="rfiData.health_condition.disease_details" id="disease_details" name="disease_details" placeholder="Available details..." ng-required="!goback"></textarea>
+
+    </div>
+
+    <!-- next/back buttons -->
+    <div class="form-group">
+        <button ng-click="saveCondition('back')" type="submit" class="submit btn btn-primary"><i class="fa fa-arrow-circle-left"></i> Back </button> &nbsp; &nbsp;
+        <button ng-click="saveCondition('next')" type="submit" class="submit btn btn-primary"> Next <i class="fa fa-arrow-circle-right"></i></button>
+    </div><!-- /input-group -->
+    <span class="error">{{hc_error_message}}</span>
+
+</form>
+

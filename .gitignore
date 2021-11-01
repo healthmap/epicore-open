@@ -6,6 +6,20 @@
 /scripts/conf/
 .idea
 /vendor
-composer.*
 /cache
 /responsefiles
+/img/metrics/
+/node_modules
+
+/deploy/cron-jobs/*.yml
+#webpack dist folder
+/js/dist/
+
+# dotenv environment variable files
+.env
+
+# dotenv environment variable files
+nginx-site.conf
+
+*.DS_Store
+

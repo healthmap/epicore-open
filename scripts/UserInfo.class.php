@@ -12,6 +12,9 @@ require_once 'pbkdf2.php';
 require_once "AWSMail.class.php";
 require_once "send_email.php";
 require_once "Geocode.php";
+require_once (dirname(__FILE__) ."/Model/Role.php");
+
+
 
 class UserInfo
 {
@@ -26,19 +29,24 @@ class UserInfo
     {
         return $this->db->getOne("SELECT organization_id FROM user WHERE user_id = ?", array($this->id));
     }
-
-    static function addMod($email, $org_id){
-
+    //As of V3 changes
+    //email also inserted into user table
+    static function addMod($email, $org_id, $mod_name , $role = 1){
         if ($email && is_numeric($org_id)) {
-            $db1 = getDB('hm');
-            $hmu_id = $db1->getOne("SELECT hmu_id FROM hmu WHERE email = ?", array($email));
+
+            $db1 = getDB();
+            $hmu_id = $db1->getOne("SELECT hmu_id from hm_hmu WHERE email = ?", array($email));
+            
             if ($hmu_id) {
                 $db2 = getDB();
                 $max_org_id = 50;
+               
                 if ($org_id >=1 and $org_id <= $max_org_id) {
                     $hid = $db2->getOne("SELECT hmu_id FROM user WHERE hmu_id ='$hmu_id' ");
+
                     if ($hid != $hmu_id) {
-                        $db2->query("INSERT INTO user (organization_id, hmu_id) VALUES (?,'$hmu_id')", array($org_id));
+                        // $db2->query("INSERT INTO user (organization_id, hmu_id , roleId) VALUES (?,'$hmu_id' , $role)", array($org_id));
+                        $db2->query("INSERT INTO user (organization_id, email, hmu_id , roleId) VALUES (?, ?, '$hmu_id',$role)", array($org_id, $email));
                         $user_id = $db2->getOne("SELECT LAST_INSERT_ID()");
                         $db2->commit();
                         return $user_id;
@@ -49,45 +57,170 @@ class UserInfo
                 else
                     return "org id out of range";
 
-            } else
-                return "healthmap email address not found";
+            } else {
+                // return "healthmap email address not found";
+                //Epicore-V3 changes
+                //Ideally we should not be using the hm_hmu table as we have merged hm schema to epicore. Due to time and budget constraints we will continue to use the hm_hmu table as its used in all joins of the EventsAPI
+                //and external clients insert tickets using hmu_id.
+                //Future development should make sure to remove hm_hmu table and use the 'user' table as single source for 'requester users and for direct login.
+                
+                //New epicore user added from epicoreUI
+                //insert into hm_hmu 
+                //insert into user with f.k hm_hmu_id
+                $db3 = getDB();
+                $affiliation='BCH-Requester';
+                $curDatetime = date('Y-m-d H:i:s');
+                $confirmed = 1;
+                $db3->query("INSERT INTO hm_hmu (email , name, affiliation, confirmed, date_created) VALUES (? , ?, '$affiliation',  '$confirmed', '$curDatetime')", array($email, $mod_name));
+                $new_hmu_id = $db3->getOne("SELECT LAST_INSERT_ID()");
+                $db3->commit();
+                
+                if ($new_hmu_id) {
+
+                        $max_org_id = 50;
+                        if ($org_id >=1 and $org_id <= $max_org_id) {
+                            $hid = $db3->getOne("SELECT hmu_id FROM user WHERE hmu_id ='$new_hmu_id' ");
+                            if ($hid != $new_hmu_id) {
+                                $db3->query("INSERT INTO user (organization_id, email, hmu_id , roleId) VALUES (?, ?, '$new_hmu_id',$role)", array($org_id, $email));
+                                $user_id = $db3->getOne("SELECT LAST_INSERT_ID()");
+                                $db3->commit();
+                                return $user_id;
+                            } else {
+                                return "moderator is already in the system";
+                            }
+                        }
+                        else {
+                            return "org id out of range";
+                        }
+                } else {
+                    return "Invalid parameters. Cannot add user.";
+                }
+            }
         } else
             return "invalid parameters";
     }
 
+    //deactivate user only.
+    static function deactivateMod($mod_user_id , $role = 1){
+        if (is_numeric($mod_user_id)) {
+
+            $db1 = getDB();
+            $userId = $db1->getOne("SELECT user_id from user WHERE user_id = ?", array($mod_user_id));
+            
+            if ($userId) {
+                $q = $db1->query("UPDATE user SET active = 0 WHERE user_id = ?", array($userId));
+                // check that result is not an error
+                if (PEAR::isError($q)) {
+                    //die($res->getMessage());
+                    $status = 'failed';
+                    $message = 'Failed to deactivate moderator. Please contact administrator';
+                    return $status;
+                } else {
+                    $status = 'success';
+                    $db1->commit();
+                    return $userId;
+                }
+            } else {
+                return "Invalid parameters. Cannot find user and deactivateMod.";
+            }
+           
+        } else {
+            return "invalid parameters";
+        }
+
+    }
+
+    //activate user only.
+    static function activateMod($mod_user_id , $role = 1){
+        if (is_numeric($mod_user_id)) {
+
+            $db1 = getDB();
+            //$userId = $db1->getOne("SELECT user_id from user WHERE user_id = ?", array($mod_user_id));
+            $user = $db1->getRow("SELECT * from user WHERE user_id = ?", array($mod_user_id));
+            $userId = $user['user_id'];
+            $orgId = $user['organization_id'];
+
+            if ($userId) {
+                $q = $db1->query("UPDATE user SET active = 1 WHERE user_id = ?", array($userId));
+                // check that result is not an error
+                if (PEAR::isError($q)) {
+                    //die($res->getMessage());
+                    $status = 'failed';
+                    $message = 'Failed to activate moderator. Please contact administrator';
+                    return $status;
+                } else {
+                    $status = 'success';
+                    $db1->commit();
+                    // return $userId;
+                    return array($userId, $orgId);
+                }
+            } else {
+                return "Invalid parameters. Cannot find user.";
+            }
+            
+        } else {
+            return "invalid parameters";
+        }
+
+    }
+    
     static function getMods(){
 
         // get hmu id's from Epicore Moderators
         $db1 = getDB('');
-        $users = $db1->getAll("SELECT hmu_id, organization_id  FROM user");
-        $hmuids = array();
-        foreach ($users as $user){
-            array_push($hmuids, $user['hmu_id']);
-        }
-        $hmuid_list = implode(",",array_filter($hmuids));
+        $query = "SELECT u.user_id, u.active, u.organization_id, hmu.hmu_id as hmu_id, hmu.email as email, hmu.name as name
+                    FROM user u
+                    INNER JOIN hm_hmu hmu ON u.hmu_id = hmu.hmu_id
+                    AND u.hmu_id IS NOT NULL";
 
+        $mods = $db1->getAll($query);
+
+        $allOrgs = $db1->getAll("SELECT * FROM organization");
+        
         // get name, email of Epicore mods from healthmap hmu table
-        if ($users){
-            $db2 = getDB('hm');
-            $mods = $db2->getAll("SELECT hmu_id, email, name FROM hmu WHERE hmu_id in ($hmuid_list)");
+        if ($mods){
+            
             $i=0;
-            if ($mods) {
-                foreach ($mods as $mod){
-                    $hmu_id = $mod['hmu_id'];
-                    $user_id = $db1->getOne("SELECT user_id FROM user WHERE hmu_id = $hmu_id");
-                    $mod['user_id'] = $user_id;
-                    $user_org_id = $db1->getOne("SELECT organization_id FROM user WHERE hmu_id = $hmu_id");
-                    $mod['org_name'] = $db1->getOne("SELECT name FROM organization WHERE organization_id = ?", array($user_org_id));
+            $six_months_ago = date("Y-m-d H:i:s", strtotime("-6 months"));
+            
+            foreach ($mods as $mod){
+               
+                $user_id = $mod['user_id'];
+                $active = $mod['active'];
+                $mod['active'] = $active && $active === "1" ? 'Active': 'In Active';
 
-                    $mods[$i++] = $mod;
+                foreach ($allOrgs as $org) { 
+                    if($org['organization_id'] === $mod['organization_id']) {
+                        $mod['org_name'] = $org['name'];
+                        break;
+                    }
                 }
-                return $mods;
+                //removing as not needed on FE
+                // $mod['rfi_total'] = (int)$db1->getOne("SELECT count(*) from event WHERE requester_id=?", array($user_id));
+                // $mod['rfi_6months'] = (int)$db1->getOne("SELECT count(*) from event WHERE requester_id=?  AND create_date > ?", array($user_id, $six_months_ago));
+                // $q_scores = $db1->getAll("SELECT score FROM event, event_metrics 
+                //                                     WHERE requester_id=? AND event.event_id=event_metrics.event_id
+                //                                     ORDER BY event.event_id DESC LIMIT 5", array($user_id));
+                // $scores = array('','','','','');
+                // $n = 0;
+                // foreach($q_scores as $score){
+                //     $scores[$n++] = $score['score'];
+                // }
+                // $mod['rfi_score1'] = $scores[0];
+                // $mod['rfi_score2'] = $scores[1];
+                // $mod['rfi_score3'] = $scores[2];
+                // $mod['rfi_score4'] = $scores[3];
+                // $mod['rfi_score5'] = $scores[4];
+
+                $mods[$i++] = $mod;
             }
-            else
-                return false;
-        }
-        else
+            unset($mods['organization_id']);
+            return $mods;
+           
+           
+        } else {
             return false;
+        }
     }
 
     function getFETPRequests($status, $fetp_id = '', $sdate = '')
@@ -99,6 +232,7 @@ class UserInfo
                                 WHERE fetp_id = ? AND event_fetp.event_id = event.event_id AND event.place_id = place.place_id AND event.create_date > ?
                                 ORDER BY send_date DESC", array($member_id, $start_date));
         $status = $status ? $status : 'O';
+        $requests = array();
         while($row = $q->fetchRow()) {
             // responses are recorded by the FETPs user id, not FETP_id
             // get the current status of event - open or closed
@@ -135,9 +269,9 @@ class UserInfo
                 $requests[$row['event_id']]['event_id'] = $row['event_id'];
                 $requests[$row['event_id']]['event_id_int'] = (int)$row['event_id'];
                 $requests[$row['event_id']]['title'] = $row['title'];
-                $requests[$row['event_id']]['location'] = $row['location'];
-                $requests[$row['event_id']]['country'] = $row['country'];
-                $requests[$row['event_id']]['disease'] = $row['disease'];
+                $requests[$row['event_id']]['location'] = isset($row['location'])  ? $row['location']: '';
+                $requests[$row['event_id']]['country'] = isset($row['country']) ? $row['country']: '';
+                $requests[$row['event_id']]['disease'] = $row['disease']? $row['disease']: '';
                 $requests[$row['event_id']]['iso_create_date'] = $row['create_date'];
                 $requests[$row['event_id']]['create_date'] = date('j-M-Y', strtotime($row['create_date']));
                 $requests[$row['event_id']]['event_date'] = date('j-M-Y', strtotime($row['event_date']));
@@ -188,57 +322,217 @@ class UserInfo
         return array($password, $pword_hash);
     }
 
-    static function authenticateUser($dbdata) 
+    static function authenticateUser($dbdata , $passwordValidIsRequired = true)
     {
         $email = strip_tags($dbdata['email']);
         // first try the HealthMap database
-        $db = getDB('hm');
-        $user = $db->getRow("SELECT hmu_id, username, email, pword_hash FROM hmu WHERE (username = ? OR email = ?) AND confirmed = 1", array($email, $email));
-        $resp = validate_password($dbdata['password'], $user['pword_hash']);
         $db = getDB();
-        if($resp) {
-            $uinfo = $db->getRow("SELECT user.user_id, user.hmu_id, user.organization_id, organization.name AS orgname FROM user LEFT JOIN organization ON user.organization_id = organization.organization_id WHERE hmu_id = ?", array($user['hmu_id']));
-            $uinfo['username'] = $user['username'];
-            $uinfo['email'] = $user['email'];
-            return $uinfo;
-        } else { 
-            // first try the MOD user table.  If none, try the FETP user table.
-            $uinfo = $db->getRow("SELECT user.*, organization.name AS orgname FROM user LEFT JOIN organization ON user.organization_id = organization.organization_id WHERE email = ?", array($email));
-            if(!$uinfo['user_id']) {
-                $uinfo = $db->getRow("SELECT fetp_id, pword_hash, lat, lon, countrycode, active, email, status, locations FROM fetp WHERE email = ?", array($email));
-                $uinfo['username'] = "Member ".$uinfo['fetp_id'];
+        
+        if($passwordValidIsRequired) {
+            $user = $db->getRow("SELECT hmu_id, username, email, pword_hash from hm_hmu WHERE (username = ? OR email = ?) AND confirmed = 1", array($email, $email));
+
+            if(is_a($user, 'DB_Error')) {
+                print_r($user);
+                die('user error!');
             }
-            if($uinfo['user_id'] || $uinfo['fetp_id']) {
-                $resp = validate_password($dbdata['password'], $uinfo['pword_hash']);
-                if($resp) {
-                    unset($uinfo['pword_hash']);
+            $resp = validate_password($dbdata['password'], $user['pword_hash']);
+            if ($resp) {
+                $uinfo = $db->getRow("SELECT user.user_id, user.hmu_id, user.organization_id, organization.name AS orgname , role.id as roleId , role.name as roleName FROM user 
+                    INNER JOIN role ON role.id = user.roleId
+                    LEFT JOIN epicore.organization ON user.organization_id = organization.organization_id 
+                    WHERE hmu_id = ? AND active = 1", array($user['hmu_id']));
+
+                if (is_a($uinfo, 'DB_Error')) {
+                    print_r($uinfo);
+                    die('uinfo error!');
+                }
+                if($uinfo) {
+                    $uinfo['username'] = $user['username'];
+                    $uinfo['email'] = $user['email'];
                     return $uinfo;
                 }
+            } else {
+                // first try the MOD user table.  If none, try the FETP user table.
+                $uinfo = $db->getRow("SELECT user.*, organization.name AS orgname , role.id as roleId , role.name as roleName FROM user INNER JOIN role ON role.id = user.roleId LEFT JOIN organization ON user.organization_id = organization.organization_id WHERE email = ? AND active = 1", array($email));
+
+                if (!$uinfo['user_id']) {
+                    //check if responder    
+                    $uinfo = $db->getRow("SELECT fetp_id, pword_hash, lat, lon, countrycode, active, email, status, locations ,  role.id as roleId , role.name as roleName FROM fetp 
+                        INNER JOIN role ON role.id = fetp.roleId WHERE email = ?", array($email));
+                    $uinfo['username'] = "Member " . $uinfo['fetp_id'];
+                }
+                if ($uinfo['user_id'] || $uinfo['fetp_id']) {
+
+                    $resp = validate_password($dbdata['password'], $uinfo['pword_hash']);
+                    if ($resp) {
+                        
+                        unset($uinfo['pword_hash']);
+                        return $uinfo;
+                    } else {
+                        return $uinfo; // new signed up user on cognito. This is req/resp whose pwd in cognito
+                    }
+                }
+                return 0;
             }
-            return 0;
         }
+
+
+       
+        $userHmu = $db->getRow("SELECT hmu_id, username, email, pword_hash FROM hm_hmu WHERE (username = ? OR email = ?) AND confirmed = 1", array($email, $email));
+        if(!is_null($userHmu)) {
+            $user = $db->getRow("SELECT user.user_id, user.email, user.hmu_id, user.organization_id, organization.name AS orgname , role.id as roleId , role.name as roleName , hm_hmu.username as username , hm_hmu.email as hm_email
+                FROM user
+                INNER JOIN role ON role.id = user.roleId
+                LEFT JOIN hm_hmu ON hm_hmu.hmu_id = user.hmu_id 
+                LEFT JOIN organization ON user.organization_id = organization.organization_id WHERE hm_hmu.hmu_id = ?  AND active = 1", array($userHmu['hmu_id']));
+            if (PEAR::isError($user)) {
+                die($user->getMessage());
+            } 
+        } else { 
+            //check if responder
+            $user = $db->getRow("SELECT email , fetp_id , role.id as roleId , role.name as roleName , pword_hash , lat , lon , countrycode , active ,
+            status , locations
+            from fetp 
+            INNER JOIN role ON role.id = fetp.roleId
+            WHERE email = ?", array($dbdata['email']));
+            
+            if (PEAR::isError($user)) {
+                die($user->getMessage());
+            } 
+          
+        }
+       
+        if($user) {
+       
+            if(isset($user['username']))
+            {
+                $uinfo['username'] = "Member " . $user['username'];
+            }
+            if(isset($user['hmu_id'])){
+                $uinfo['username'] = $user['username'];
+                $uinfo['hmu_id'] = $user['hmu_id'];
+            }
+            if(isset($user['fetp_id'])){
+                $uinfo['username'] = "Member " . $user['fetp_id'];
+                $uinfo['fetp_id'] = $user['fetp_id'];
+            }
+
+            if(isset($user['lat']) && !empty($user['lat']))
+            {
+                $uinfo['lat'] = $user['lat'];
+            }
+            if(isset($user['lon']) && !empty($user['lon']))
+            {
+                $uinfo['lon'] = $user['lon'];
+            }
+            if(isset($user['countrycode']) && !empty($user['countrycode']))
+            {
+                $uinfo['countrycode'] = $user['countrycode'];
+            }
+            if(isset($user['active']) && !empty($user['active']))
+            {
+                $uinfo['active'] = $user['active'];
+            }
+            if(isset($user['locations']) && !empty($user['locations']))
+            {
+                $uinfo['locations'] = $user['locations'];
+            }
+            if(isset($user['roleId']) && !empty($user['roleId'])){
+                $uinfo['roleId'] = $user['roleId'];
+            }
+            if(isset($user['roleName']) && !empty($user['roleName'])){
+                $uinfo['roleName'] = $user['roleName'];
+            }
+            if(isset($user['orgname']) && !empty($user['orgname'])){
+                $uinfo['orgname'] = $user['orgname'];
+            }
+            if(isset($user['organization_id']) && !empty($user['organization_id'])) {
+                $uinfo['organization_id'] = $user['organization_id'];
+            }
+            if(isset($user['user_id']) && !empty($user['user_id'])){
+                $uinfo['user_id'] = $user['user_id'];
+            }
+
+            $uinfo['email'] = $user['email'];
+            if($uinfo['email'] === null && isset($user['hm_email']) && !empty($user['hm_email'])){
+                $uinfo['email'] = $user['hm_email'];
+            }
+
+            $uinfo['superuser'] = false;
+
+        }
+
+        if(is_null( $uinfo['email'] ))
+        {
+            return false;
+        }
+        return $uinfo;
     }
 
     static function authenticateMod($ticket_id) 
     {
-        $hmdb = getDB('hm');
-        $hmu_id = $hmdb->getOne("SELECT hmu_id FROM ticket WHERE val = ? AND exp > now()", array($ticket_id));
-        if(!$hmu_id) {
+        $db = getDB();
+ 
+        $user = null;
+        $epicore_info = null;
+        $ticket_info = $db->getRow("SELECT * FROM hm_ticket WHERE val = ? AND exp > now()", array($ticket_id));
+    
+        $hmu_id = $ticket_info['hmu_id'];
+        $user_id = $ticket_info['user_id'];
+
+        if(!$hmu_id && !$user_id) {
             return 0;
         }
-        $user = $hmdb->getRow("SELECT hmu_id, username, email FROM hmu WHERE hmu_id = ?", array($hmu_id));
-        $db = getDB();
-        $epicore_info = $db->getRow("SELECT user.*, organization.name AS orgname FROM user LEFT JOIN organization ON user.organization_id = organization.organization_id WHERE user.hmu_id = ?", array($hmu_id));
+
+        //if hmu_id found
+        if(!$user_id) {
+            $user = $db->getRow("SELECT hmu_id, username, email from hm_hmu WHERE hmu_id = ?", array($hmu_id));
+            $epicore_info = $db->getRow("SELECT user.*, organization.name AS orgname, role.id as roleId , role.name as roleName 
+            FROM user 
+            INNER JOIN role ON role.id = user.roleId
+            LEFT JOIN organization ON user.organization_id = organization.organization_id WHERE user.hmu_id = ? AND active = 1", array($hmu_id));
+        } else {
+            //new epicore users have user_id associated with ticket
+            $user = $db->getRow("SELECT user_id, email, hmu_id from user WHERE user_id = ? AND active = 1", array($user_id));
+            $epicore_info = $db->getRow("SELECT user.*, organization.name AS orgname, role.id as roleId , role.name as roleName 
+            FROM user 
+            INNER JOIN role ON role.id = user.roleId
+            LEFT JOIN organization ON user.organization_id = organization.organization_id WHERE user.user_id = ? AND active = 1", array($user_id));
+            
+            //Should not be used
+            //Scenario-not old req coming from promed-with user-id in hm_ticket - just a testing scenation
+            
+        }
         $user['user_id'] = $epicore_info['user_id'];
         $user['organization_id'] = $epicore_info['organization_id'];
         $user['orgname'] = $epicore_info['orgname'];
+        $user['ticket_id'] = $ticket_id;
+        if(isset($epicore_info['roleId']) && !empty($epicore_info['roleId'])){
+            $user['roleId'] = $epicore_info['roleId'];
+        }
+        if(isset($epicore_info['roleName']) && !empty($epicore_info['roleName'])){
+            $user['roleName'] = $epicore_info['roleName'];
+        }
+        // print_r($user);
         return $user;
+    }
+
+    static function authenticateFetpByEmail(string $email)
+    {
+        $db = getDB();
+        return $db->getRow("SELECT fetp_id FROM fetp WHERE email = ?", array($email));
+    }
+
+    static function authenticateUserByEmail(string $email) //requesters
+    {
+        $db = getDB();
+        return $db->getOne("select user.user_id from hm_hmu hm inner join user ON hm.hmu_id = user.hmu_id where hm.email = ?", array($email));
     }
 
     static function authenticateFetp($ticket_id)
     {
         $db = getDB();
-        return $db->getRow("SELECT fetp_id FROM ticket WHERE val = ? AND exp > now()", array($ticket_id));
+        return $db->getRow("SELECT fetp_id FROM epicore.ticket WHERE val = ? AND exp > now()", array($ticket_id));
     }
 
     /* filtertype is countries or radius; filterval is either array of country codes or array of bounding box values */
@@ -526,7 +820,7 @@ class UserInfo
         $user_id = $db->getOne("SELECT maillist_id FROM maillist WHERE maillist_id = ?", array($mid));
 
         // update maillist
-        $message = '';
+        $message = 'deletion success';
         $status = 'success';
         if ($user_id) {
             $q = $db->query("DELETE FROM maillist WHERE maillist_id = ?", array($user_id));
@@ -542,16 +836,18 @@ class UserInfo
 
             // delete associated fetp
             $fetp_info = UserInfo::getFETPbyMid($user_id);
-            if($fetp_info && $status == 'success')
+            if($fetp_info && $status == 'success') {
                 $q = $db->query("DELETE FROM fetp WHERE maillist_id=?", array($user_id));
-
-            // check that result is not an error
-            if (PEAR::isError($q)) {
-                //die($res->getMessage());
-                $status = 'failed';
-                $message = 'failed maillist delete';
-            } else {
-                $db->commit();
+                $message = 'deletion of maillist & fetp success.';
+            
+                // check that result is not an error
+                if (PEAR::isError($q)) {
+                    //die($res->getMessage());
+                    $status = 'failed';
+                    $message = 'failed maillist delete';
+                } else {
+                    $db->commit();
+                }
             }
 
         }
@@ -574,6 +870,60 @@ class UserInfo
         else
             return false;
     }
+
+
+    // Creating a Requester login - hm database hmu table
+    // See readMe..for postman to create users
+    static function createHmUser($email, $name, $title, $username, $password, $default_location, $default_locname,$createdate) {
+        
+        //defaults
+        $email_active = 1;
+        $affiliation = 'BCH-Requester';
+        $confirmed = 1;
+        $priv_level = 1;
+        $date_created = date('Y-m-d H:i:s');
+        $default_country = 106; 
+        $default_radius = 50;
+        $html_email = 1;
+        
+        $db = getDB('hm'); //do not remove hm here...default will go to epicore...this is a standalone script
+        $hmuUser = $db->getRow("SELECT * FROM hm_hmu WHERE email='$email'");
+        $messageResp = '';
+        if ($hmuUser) {
+          $messageResp = 'User exists.';
+        } else {
+            
+            //echo 'create one hmuUser';
+            if($password) {
+                //STEP 1: Create user in hmu table in hm database
+                $pword_hash = create_hash($password);
+                    $res = $db->query("INSERT INTO hm_hmu (email, email_active, name, title, affiliation, username, pword_hash, confirmed, priv_level, date_created, default_location, default_locname, default_country,  default_radius, html_email) 
+                                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                                array($email,$email_active,$name,$title,$affiliation,$username,$pword_hash,$confirmed,$priv_level,$date_created,$default_location,$default_locname,$default_country,$default_radius, $html_email));
+                        $db->commit();
+
+                    // check result is not an error
+                    if (PEAR::isError($res)) {
+                        die($res->getMessage());
+                        $status = 'failed to insert event';
+                        $messageResp = 'Unable to create user.';
+                    } else {
+                        
+                        $hmu_id = $db->getOne("SELECT LAST_INSERT_ID()");
+                        $db->commit();
+                        $messageResp = 'Created hmu user successfully with id:' . $hmu_id . '. Add this user through UI as a requester using email address:' .$email;
+                        
+                        return $messageResp;
+                    }
+
+            } else {
+                return 'No password. Check request';
+            }
+
+        } //end if
+
+    }
+
 
     static function getFETPid($email){
         $db = getDB();
@@ -625,7 +975,7 @@ class UserInfo
 
     static function getUserInfo($uid){
         $db = getDB();
-        $userinfo = $db->getRow("SELECT * FROM maillist WHERE maillist_id='$uid'");
+        $userinfo = $db->getRow("SELECT * FROM epicore.maillist WHERE maillist_id='$uid'");
         if ($userinfo)
             return $userinfo;
         else
@@ -649,12 +999,12 @@ class UserInfo
                 // copy maillist to new fetp if it does not exist and set fetp status to 'P'
                 $fetpemail = $db->getOne("select email from fetp where email='$approve_email'");
                 if (!$fetpemail) {
-                    $db->query("INSERT INTO fetp (email, countrycode, active, status, maillist_id)
-                        VALUES ('$approve_email', '$approve_countrycode', 'N','P', '$approve_id')");
+                    $db->query("INSERT INTO fetp (email, countrycode, active, status, maillist_id , roleId)
+                        VALUES ('$approve_email', '$approve_countrycode', 'N','P', '$approve_id' ," .Role::responder .")");
                     $db->commit();
 
                     // geocode fetp
-                    UserInfo::geocodeFETP($approve_email);
+                   UserInfo::geocodeFETP($approve_email);
                 }
                 else{
                     $db->query("update fetp set active='N', status='P' where email='$approve_email'");
@@ -673,12 +1023,12 @@ class UserInfo
                 // copy maillist to new fetp if it does not exist and set to pending_preapproved (active = N, status = A)
                 $fetpemail = $db->getOne("select email from fetp where email='$approve_email'");
                 if (!$fetpemail) {
-                    $db->query("INSERT INTO fetp (email, countrycode, active, status, maillist_id)
-                        VALUES ('$approve_email', '$approve_countrycode', 'N','A', '$approve_id')");
+                    $db->query("INSERT INTO fetp (email, countrycode, active, status, maillist_id , roleId)
+                        VALUES ('$approve_email', '$approve_countrycode', 'N','A', '$approve_id' ," .Role::responder .")");
                     $db->commit();
 
                     // geocode fetp
-                    UserInfo::geocodeFETP($approve_email);
+                   UserInfo::geocodeFETP($approve_email);
                 }
                 else{
                     $db->query("update fetp set active='N', status='A' where email='$approve_email'");
@@ -690,10 +1040,11 @@ class UserInfo
                 $db->commit();
                 $fetp_id = UserInfo::getFETPid($approve_email);
                 $status = 'preapproved';
+                //Cognito should send this email
                 sendMail($approve_email, $approve_name, "We heartily welcome our new EpiCore Member!", $status, $fetp_id);
 
             }
-            else if (($status == 'approved') ||($status == 'preapproved')) {
+            else if (($status == 'approved') || ($status == 'preapproved')) {
                 $db->query("update fetp set active='Y', status='A' where email='$approve_email'");
                 $db->commit();
                 $approve_date = date('Y-m-d H:i:s', strtotime('now'));
@@ -702,7 +1053,7 @@ class UserInfo
 
                 if ($status == 'approved') {
                     $fetp_id = UserInfo::getFETPid($approve_email);
-                    sendMail($approve_email, $approve_name, "Congratulations!", $status, $fetp_id);
+                   sendMail($approve_email, $approve_name, "Congratulations!", $status, $fetp_id);
                 }
             }
             else if ($status == 'declined') {
@@ -760,13 +1111,91 @@ class UserInfo
     }
 
     // get all members info
-    static function getMembers(){
+    static function getMembers($sdate, $edate){
+        
         global $countries;
+        
+        //Improved query performance
+        $start_date = $sdate ? $sdate: V1START_DATE; // V2START_DATE; 
+        $end_date = $edate ? $edate: date("Y-m-d H:i:s");
+
+        //modify date to datetime
+        $start_time = '00:00:00';
+        $end_time = '23:59:59';
+        $sdatetimeStr = $start_date . ' ' . $start_time;
+        $edatetimeStr = $end_date . ' ' . $end_time;
+
+        $db = getDB();
+        
+        // get all applicants and fetps for date range
+        $result = $db->query("SELECT maillist.*, fetp.fetp_id, fetp.active, fetp.status, fetp.pword_hash, fetp.locations
+        FROM epicore.maillist maillist
+        LEFT JOIN epicore.fetp fetp ON maillist.maillist_id = fetp.maillist_id
+        WHERE maillist.apply_date >= ? AND maillist.apply_date <= ?
+        order by maillist.apply_date DESC;", array($sdatetimeStr, $edatetimeStr));
+
+        // set all applicants status based on applicant approvestatus and fetp active/status fields
+        // approvestatus    fetp-active  fetp-status     app-status
+        // 'N'              x               x             Denied          Application denied
+        //  not N           null            null          Inactive        Applied
+        //  Y              'N'              P            Pending         Pending training and needs to set password
+        //  Y               'Y'              A            Approved        Finished training and set password
+        //  Y               'N'              A            Pre-approved    Finished training and needs to set password
+        
+        $applicants = [];
+        while($row = $result->fetchRow()) {       
+           
+            $applicant_row = $row;
+            // echo'******ROW:';
+            // print_r($row['maillist_id']);
+            // echo'******ROW:';
+
+            if ($row['approvestatus'] == 'N'){
+                $row['status'] = 'Denied';
+            }
+            else {
+                //check on fetp-flags
+                if (($row['active'] == 'N') && ($row['status'] == "A")) {
+                    $row['status'] = "Pre-approved";
+                } else if (($row['active'] == 'N') && ($row['status'] == "P")) {
+                    $row['status'] = "Pending";
+                } else if (($row['active'] == 'Y') && ($row['status'] == "A")) {
+                    $row['status'] = "Approved";
+                } else {
+                    //default
+                    $row['status'] = 'Inactive';
+                }
+            }
+            $applicant_row['status'] = $row['status'];
+            $applicant_row['maillist_id'] = $row['maillist_id'];
+            $applicant_row['pword'] = $row['pword_hash'] ? 'Yes' : null;
+            $applicant_row['member_id'] = $row['fetp_id'];
+            $applicant_row['locations'] = $row['locations'];
+            $applicant_row['apply_date_iso'] = $row['apply_date'];
+            $applicant_row['approve_date_iso'] = $row['approve_date'];
+            $applicant_row['accept_date_iso'] = $row['accept_date'];
+            $applicant_row['apply_date'] = date('d-M-Y', strtotime($row['apply_date']));
+            $applicant_row['approve_date'] = $row['approve_date'] ?  date('d-M-Y', strtotime($row['approve_date'])) : $row['approve_date'];
+            $applicant_row['accept_date'] = $row['accept_date'] ?  date('d-M-Y', strtotime($row['accept_date'])) : $row['accept_date'];
+            $applicant_row['country_code'] = $row['country'];
+            $applicant_row['country'] = $countries[$row['country']];
+            
+            //remove FETP data extrafields
+            unset($applicant_row['fetp_id']);
+            unset($applicant_row['locations']);
+            unset($applicant_row['active']);
+            unset($applicant_row['pword_hash']);
+
+            $applicants[] = $applicant_row;
+        }
+
+        /*********************************************orig - do not remove*
 
         // get all applicants and fetps
         $db = getDB();
-        $applicants = $db->getAll("select * from maillist");
-        $fetps = $db->getAll("select * from fetp");
+        // orig
+        $applicants = $db->getAll("select * from epicore.maillist");
+        $fetps = $db->getAll("select * from epicore.fetp");
 
         // set all applicants status based on applicant approvestatus and fetp active/status fields
         // approvestatus    fetp-active  fetp-status     app-status
@@ -809,11 +1238,19 @@ class UserInfo
             $applicants[$n]['country'] = $countries[$applicants[$n]['country']];
             $n++;
         }
+        *********************************************orig */
+
+
 
         return $applicants;
 
     }
-    
+
+    static function getMaillistDetails($id){
+        $db = getDB();
+        return $db->getRow("SELECT email FROM maillist WHERE maillist_id='$id'");
+    }
+
     static function getMemberStatus($member_id){
 
         $db = getDB();
@@ -830,6 +1267,9 @@ class UserInfo
         } else {
             $mstatus = 'Inactive';
         }
+
+       // var_dump($mstatus);die();
+
         return $mstatus;
     }
 
@@ -842,10 +1282,11 @@ class UserInfo
             array($pvals['fetp_id'], $pvals['city'], $pvals['state'], $pvals['countrycode']));
         if(!$location_id) { // insert if not
             //geocode location
-            $address = $pvals['city'] . ', ' . $pvals['state'] . ', ' . $pvals['country'];
-            $position = Geocode::getLocationDetail('address', $address);
-            $pvals['lat'] = $position[0];
-            $pvals['lon'] = $position[1];
+            //Not using this API anymore - as of 2021-02-22
+            // $address = $pvals['city'] . ', ' . $pvals['state'] . ', ' . $pvals['country'];
+            // $position = Geocode::getLocationDetail('address', $address);
+            // $pvals['lat'] = $position[0];
+            // $pvals['lon'] = $position[1];
 
             //insert location
             $key_vals = join(",", array_keys($pvals));
@@ -858,6 +1299,7 @@ class UserInfo
         }
         else
             return false;
+       
     }
 
     // add/update mobile device
@@ -947,7 +1389,7 @@ class UserInfo
                 $status = 'failed';
                 $message = 'failed to delete location';
             } else {
-                $message = 'deleted location';
+                $message = 'Deleted location';
                 $status = 'success';
                 $db->commit();
             }
@@ -989,6 +1431,8 @@ class UserInfo
         // save all member info
         $user = array();
         $all_members = array();
+        // echo '----------------Member count: '.  count($members) . '---------------------'. "\n";
+        $counter =0;
         foreach($members as $applicant) {
 
             $user['Application Date'] = $applicant['apply_date'];
@@ -1001,6 +1445,7 @@ class UserInfo
             $user['City'] = $applicant['city'];
             $user['State/Province'] = $applicant['state'];
             $user['Country'] = $std_countries[$applicant['country_code']];
+            $user['Country Code'] = $applicant['country_code'];
             $user['WHO Region'] = $std_who_map[$applicant['country_code']];
             $user['Job Title'] = $applicant['job_title'];
             $user['Organization'] = $applicant['organization'];
@@ -1047,17 +1492,24 @@ class UserInfo
             $user['Universities'] = $applicant['universities'];
 
             // Universities 1-3
-            $user['University1'] = $applicant['university1'];
-            $user['Country1'] = $std_countries[$applicant['school_country1']];
-            $user['Major1'] = $applicant['major1'];
+
+            $applicant['other_degree1'] = $applicant['other_degree1']? $applicant['other_degree1']: '';
+            $applicant['other_degree2'] = $applicant['other_degree2']? $applicant['other_degree2']: '';
+            $applicant['other_degree3'] = $applicant['other_degree3'] ? $applicant['other_degree3']: '';
+           
+
+            
+            $user['University1'] = $applicant['university1'] ? $applicant['university1']: '';
+            $user['Country1'] = $applicant['school_country1'] ? $std_countries[$applicant['school_country1']]: '';
+            $user['Major1'] = $applicant['major1'] ? $applicant['major1']: '';
             $user['Degree1'] = $applicant['degree1'] ? $applicant['degree1']: $applicant['other_degree1'];
-            $user['University2'] = $applicant['university2'];
-            $user['Country2'] = $std_countries[$applicant['school_country2']];
-            $user['Major2'] = $applicant['major2'];
+            $user['University2'] = $applicant['university2'] ? $applicant['university2']: '';
+            $user['Country2'] = $applicant['school_country2']? $std_countries[$applicant['school_country2']] : '';
+            $user['Major2'] = $applicant['major2'] ? $applicant['major2']: '';
             $user['Degree2'] = $applicant['degree2'] ? $applicant['degree2']: $applicant['other_degree2'];
-            $user['University3'] = $applicant['university3'];
-            $user['Country3'] = $std_countries[$applicant['school_country3']];
-            $user['Major3'] = $applicant['major3'];
+            $user['University3'] = $applicant['university3'] ? $applicant['university3']: '';
+            $user['Country3'] = $applicant['school_country3'] ? $std_countries[$applicant['school_country3']] : '';
+            $user['Major3'] = $applicant['major3'] ? $applicant['major3']: '';
             $user['Degree3'] = $applicant['degree3'] ? $applicant['degree3']: $applicant['other_degree3'];
 
             // Health experience
@@ -1145,37 +1597,53 @@ class UserInfo
             // user set password
             $user['pword'] = $applicant['pword'];
 
-            // get open and closed rfi's
-            $open_rfis = $this->getFETPRequests('O', $applicant['member_id']);
-            $closed_rfis = $this->getFETPRequests('C', $applicant['member_id']);
-
+            if($applicant['member_id']) {
+                // get open and closed rfi's
+                $open_rfis = $this->getFETPRequests('O', $applicant['member_id']);
+                $closed_rfis = $this->getFETPRequests('C', $applicant['member_id']);
+            } 
+            // else {
+            //     echo '----------------ApplicantID missing: '. $applicant['maillist_id'] . '---------------------'. "\n";
+            // }
             // count rfi stats
-            $user['# RFIs'] = count($open_rfis) + count($closed_rfis);
             $user['# Responses'] = 0;
             $user['no contribution'] = 0;
             $user['not helpful'] = 0;
             $user['helpful-no promed'] = 0;
             $user['helpful-promed'] = 0;
-            foreach ($open_rfis as $orfi) {
-                if ($orfi['response_dates']) {
-                    $user['# Responses'] += count($orfi['response_dates']);
-                    $user['no contribution'] += count(array_keys($orfi['response_use'], null));
-                    $user['not helpful'] += count(array_keys($orfi['response_use'], '0'));
-                    $user['helpful-no promed'] += count(array_keys($orfi['response_use'], '1'));
-                    $user['helpful-promed'] += count(array_keys($orfi['response_use'], '2'));
+            $user['# RFIs'] = 0;
+
+           
+            if($open_rfis && $closed_rfis) {
+                $user['# RFIs'] = count($open_rfis) + count($closed_rfis);
+            }
+
+            if($open_rfis) {
+                foreach ($open_rfis as $orfi) {
+                    if ($orfi['response_dates']) {
+                        $user['# Responses'] += count($orfi['response_dates']);
+                        $user['no contribution'] += count(array_keys($orfi['response_use'], null));
+                        $user['not helpful'] += count(array_keys($orfi['response_use'], '0'));
+                        $user['helpful-no promed'] += count(array_keys($orfi['response_use'], '1'));
+                        $user['helpful-promed'] += count(array_keys($orfi['response_use'], '2'));
+                    }
                 }
             }
-            foreach ($closed_rfis as $crfi) {
-                if ($crfi['response_dates'])
-                    $user['# Responses'] += count($crfi['response_dates']);
-                $user['no contribution'] += count(array_keys($crfi['response_use'], null));
-                $user['not helpful'] += count(array_keys($crfi['response_use'], '0'));
-                $user['helpful-no promed'] += count(array_keys($crfi['response_use'], '1'));
-                $user['helpful-promed'] += count(array_keys($crfi['response_use'], '2'));
+            if($closed_rfis) {
+                foreach ($closed_rfis as $crfi) {
+                    if ($crfi['response_dates'])
+                        $user['# Responses'] += count($crfi['response_dates']);
+                    $user['no contribution'] += count(array_keys($crfi['response_use'], null));
+                    $user['not helpful'] += count(array_keys($crfi['response_use'], '0'));
+                    $user['helpful-no promed'] += count(array_keys($crfi['response_use'], '1'));
+                    $user['helpful-promed'] += count(array_keys($crfi['response_use'], '2'));
+                }
             }
             
+            // echo '----------------Processing member '. $counter . ' completed-----------------------'. "\n";
             // save user in the array
             array_push($all_members, $user);
+            $counter++;
 
         }
 

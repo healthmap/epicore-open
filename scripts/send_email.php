@@ -2,7 +2,9 @@
 /**
  * User: jeffandre
  * Date: 10/16/15
- */
+ * Note: Comment out this file if email services need to be disabled
+ */ 
+ 
 require_once "const.inc.php";
 require_once "AWSMail.class.php";
 require_once "db.function.php";
@@ -41,8 +43,11 @@ function sendMail($email, $name, $subject, $status, $user_id, $event_title = '',
         //get email template and set link
         $link = EPICORE_URL .'/#/login';
         $emailtemplate = file_get_contents("../emailtemplates/approve.html");
-    }
-    else if ($status == 'declined'){
+    } else if ($status == NEW_EPICORE_REQUESTER_STATUS){
+        //get email template and set link
+        $link = EPICORE_URL .'/#/login';
+        $emailtemplate = file_get_contents("../emailtemplates/requester.html");
+    } else if ($status == 'declined'){
         //get email template
         $emailtemplate = file_get_contents("../emailtemplates/decline.html");
     }
@@ -129,6 +134,9 @@ function sendMail($email, $name, $subject, $status, $user_id, $event_title = '',
     if ($link)
         $emailtext = str_replace("[LINK]", $link, $emailtext);
     $aws_resp = AWSMail::mailfunc($email, $subject, $emailtext, EMAIL_NOREPLY, $extra_headers);
-
+    
+    // for debugging
+    // print json_encode($aws_resp);
     return true;
+
 }

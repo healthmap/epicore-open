@@ -1,0 +1,70 @@
+<div ng-include src="'templates/header/header_new.html'">
+
+
+</div>
+
+<div class="jumbotron dashboard">
+    <div class="container">
+        <h1>
+            <span>RFI Summary</span>
+        </h1>
+    </div>
+</div>
+
+
+<div class="publicrfi_maindiv" data-ng-init="getPublicEventsByID()">
+    <div class="container">
+        <div class="row" ng-if="!isRouteLoading">
+            <div class="col-xs-12 col-sm-8">
+                <!-- RFI filter -->
+                <div class="mt16 mb24">
+                    <a href="#/events_public" class="backlink">
+                        <i class="fa fa-angle-double-left"></i> View all public RFIs</a>
+                </div>
+                <div>
+                    <h3 class="mb16">
+                        {{eventTitle}}
+                    </h3>
+                    <b>PHE description: </b>
+                    <div class="whitespace-summary">
+                        {{phe_description}}
+                    </div>
+                    <b>Additional information: </b>
+                    <div class="whitespace-summary">
+                        {{phe_additional}}
+                    </div>
+
+                    <div class="mt32 mb72 small-text note note-dark">
+                        <p class="mb16">
+                            <strong>Outcome:</strong> {{event_outcome}}
+                        </p>
+                        <p class="mb16">
+                            <strong>Open Date:</strong> {{openDate}}
+                        </p>
+                        <p class="mb16">
+                            <strong>Closure Date:</strong> {{closureDate}}
+                        </p>
+                        <p class="mb0">
+                            <strong>Source:</strong> {{initialSource}}
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row mt16 mb24" ng-if="isRouteLoading">
+            <span>
+                <i class="fa fa-spinner fa-spin"></i> Please wait...
+            </span>
+        </div>
+    </div>
+</div>
+
+<!--wrapper-->
+<div ng-include src="'disclaimer.html'"></div>
+<div ng-include src="'templates/footer/footer.html'"></div>
+<script type="text/javascript">
+    var uri = window.location.href;
+    var result = uri.substring(window.location.href.lastIndexOf('/') + 1);
+    localStorage.setItem('articleID', result);
+    // console.log("Result Output ==> ", result);
+</script>

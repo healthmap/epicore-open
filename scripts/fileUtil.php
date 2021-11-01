@@ -8,15 +8,21 @@
  */
 
 function saveMembersToCSV(){
+    
+    echo '----------------getMembers()-----------------------'. "\n";
+    echo 'startTime:' . date("Y-m-d H:i:s"). "\n";
     // get all members
     require_once 'UserInfo.class.php';
-    $members = UserInfo::getMembers();
-
-    // save all members in a csv file
+    $members = UserInfo::getMembers(null, null);
+    echo 'endTime:' . date("Y-m-d H:i:s"). "\n";
+    echo '----------------getMembersInfo()-----------------------'. "\n";
+    echo 'startTime:' . date("Y-m-d H:i:s"). "\n";
+    // // save all members in a csv file
     $uinfo = new UserInfo('1', null);
     $membersInfo = $uinfo->getMembersInfo($members);
     $file = "../data/approval.csv";
     saveToCSV($membersInfo, $file);
+    echo 'endTime:' . date("Y-m-d H:i:s"). "\n";
 }
 
 function saveEventStatsToCSV() {
@@ -24,10 +30,14 @@ function saveEventStatsToCSV() {
     require_once 'EventInfo.class.php';
     $filename = '../data/rfistats.csv';
     $uid = '91'; // Jeff, uid doesn't matter, any uid will work
+    echo '----------------getEventStats2 closed()-----------------------'. "\n";
+    echo 'startTime:' . date("Y-m-d H:i:s"). "\n";
     $close_stats = EventInfo::getEventStats2($uid, 'C');
+    echo '----------------getEventStats2 open()-----------------------'. "\n";
     $open_stats = EventInfo::getEventStats2($uid, 'O');
     $stats = array_merge($close_stats, $open_stats);
     saveToCSV($stats, $filename);
+    echo 'endTime:' . date("Y-m-d H:i:s"). "\n";
 
 }
 

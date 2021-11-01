@@ -5,11 +5,16 @@
  */
 require_once "UserInfo.class.php";
 require_once "const.inc.php";
+require_once "UserContoller3.class.php";
+
+use UserController as userController;
+
+$userData = userController::getUserData();
 
 
 // get data
 $data = json_decode(file_get_contents("php://input"));
-$fetp_id = strip_tags((string)$data->fetp_id);
+$fetp_id = isset($userData['fetp_id']) ? $userData['fetp_id'] : null;
 
 if ($fetp_id) {
     $locations = UserInfo::getLocations($fetp_id);

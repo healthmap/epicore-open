@@ -1,0 +1,53 @@
+<div ng-include src="'templates/header/header.html'"></div>
+<div class="jumbotron dashboard">
+    <div class="container">
+        <h1>Warning: Duplicate RFI Detected</h1>
+    </div>
+</div>
+
+<div class="wrapper dashboard">
+<div class="container">
+    <div class="row">
+        <div id="form-duplicate-rfi" class="col-xs-12 col-md-8">
+            <div class="intro">
+                <span>Some of the RFI details you have entered match that of another RFI sent by the EpiCore system in the past week.</span>
+
+                <ul>
+                    <li>Open the RFI in a new window to review: <a href="#/events2/{{rfiData.duplicate_rfi.rfi_id}}" target="_blank">Click Here</a></li>
+                </ul>
+            </div>
+            <br>
+            <form name="conditionForm">
+                <div class="form-group">
+                    <h5>Is this RFI the same as the one you were going to send?</h5>
+                    <div class="radio">
+                        <label class="radio" >
+                            <input type="radio" ng-model="rfiData.duplicate_rfi.rfi_same" value="1" ng-required="!rfiData.duplicate_rfi.rfi_same"> Yes, they are the same. <b>I will not send an RFI.</b> </label>
+                    </div>
+                    <div class="radio" ng-if="rfiData.duplicate_rfi.rfi_status == 'O'">
+                        <label class="radio" data-toggle="tooltip" title="Track an RFI means that you will receive all emails and notifications regarding that RFI, as if you were the requester who sent it, but will not be able to follow-up, reply, or close the RFI.">
+                            <input type="radio" ng-model="rfiData.duplicate_rfi.rfi_same" value="2" ng-required="!rfiData.duplicate_rfi.rfi_same"> Yes, they are the same. <b>I want to TRACK the existing RFI.
+                        </b> </label>
+                    </div>
+                    <div class="radio">
+                        <label class="radio" >
+                            <input type="radio" ng-model="rfiData.duplicate_rfi.rfi_same" value="3" ng-required="!rfiData.duplicate_rfi.rfi_same"> No, they are definitely different. <b>I want to send ANOTHER RFI.</b> </label>
+                    </div>
+
+                </div>
+
+                <!-- submit -->
+                <div class="form-group">
+                    <button ng-click="duplicateAction();s" type="submit" class="submit btn btn-primary"> Submit </button> &nbsp; &nbsp;
+                </div>
+
+            </form>
+        </div>
+    </div><!--row-->
+</div><!--container-->
+</div><!--wrapper-->
+<script>
+
+    // TOOLTIP
+    $('[data-toggle="tooltip"]').tooltip( {html: true,trigger:'hover'});
+</script>
