@@ -1,0 +1,51 @@
+<div ng-include src="'templates/header/header.html'"></div>
+<div class="jumbotron dashboard">
+    <div class="container">
+        <h1>Close RFI</h1>
+    </div>
+</div>
+
+<div class="wrapper dashboard">
+<div class="container">
+    <div class="row">
+        <div id="form-container" class="col-xs-12 mb24">
+            <p>
+            <strong>Title:</strong> {{eventsList.title}}<br>
+            <strong>Date:</strong> {{eventsList.create_date}}
+            </p>
+            <p><strong>NOTE: All Members originally contacted for this RFI will be notified.</strong></p>
+
+        <!-- CHANGE STATUS FORM (for owner of event) -->
+        <form name="changeStatusForm">
+            <div class="form-group">
+            <!--<p>Reason for closing request:<br>
+              <input type="radio" name="reason" ng-model="formData.reason" value="1" required> Outbreak has been confirmed from other sources<br>
+              <input type="radio" name="reason" ng-model="formData.reason" value="2" required> Sufficient Member responses<br>
+              <input type="radio" name="reason" ng-model="formData.reason" value="3" required> Insufficient Member responses
+            </p>-->
+            <label class="" for="reply">Notes (optional)</label>
+            <textarea ng-model="formData.notes" style="height:100px" class="form-control" name="reply" id="notesfield" placeholder=""></textarea>
+            </div>
+
+            <div ng-if="validResponses > 0">
+                <b>Please assess all member responses in the message history below before closing this RFI.</b><br>
+                <span>Note: all ratings and feedback on this page are internal, are not shared with the members, and are for moderator and administrative use only.</span><br>
+                <span><i class="fa fa-thumbs-o-down"></i> The response was not helpful</span><br>
+                <span><i class="fa fa-thumbs-o-up green"></i> The response was helpful but I did not use it in a ProMED post</span> <br>
+                <span><i class="fa fa-thumbs-o-up blue">+ProMED</i> The response was helpful and I have used it or plan to use it in a ProMED post</span><br><br>
+
+                <div ng-include="'templates/messagehistory/messagehistory.html'" ng-init="closerfi='1'" ></div><br>
+            </div>
+
+            <div class="form-group" ng-init>
+                <button ng-click="changeRequestStatus(formData, 'Close', changeStatusForm.$valid)" ng-disabled="submitDisabled" type="submit" class="submit btn btn-primary">Close RFI</button>
+            </div><!-- /input-group -->
+        </form>
+
+            <div ng-if="close_message">
+                <p class="intro error red" name="close_message" ><strong ng-bind-html="close_message"></strong></p>
+            </div>
+        </div>
+    </div><!--row-->
+</div><!--container main-->
+</div><!--wrapper-->

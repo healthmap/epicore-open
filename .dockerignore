@@ -1,0 +1,10 @@
+#
+/test
+/data
+#/scripts/conf/ (uncomment once dotenv is completed)
+.idea
+/cache
+/responsefiles
+/img/metrics/
+/node_modules
+Jenkinsfile

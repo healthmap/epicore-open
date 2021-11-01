@@ -1,4 +1,5 @@
 <?php
+<<<<<<< HEAD
 // get config file
 $conf = parse_ini_file(dirname(__FILE__) . '/conf/da.ini.php', true);
 
@@ -28,16 +29,107 @@ define('TEPHINET_CONSUMER_SECRET', $conf['tephinet']['consumersecret']);
 define('EMAIL_PROIN', $conf['promed_info']['emailproin']);
 define('PROMED_ID', 4);
 
+=======
+
+require_once '/usr/share/php/vendor/autoload.php';
+
+$dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '../../');
+
+$dotenv->load();
+$environment = $_ENV['environment'];
+$approval_username = $_ENV['approval_username'];
+$$approval_username = $_ENV['approval_password'];
+$key = $_ENV['googleapi_key'];
+$clientid =  $_ENV['googleapi_clientid'];
+$fcm_server_key = $_ENV['fcm_server_key'];
+$fcm_send_url = $_ENV['fcm_send_url'];
+
+$tephinet_baseurl = $_ENV['tephinet_baseurl'];
+$consumerkey = $_ENV['tephinet_consumerkey'];
+$consumersecret = $_ENV['tephinet_consumersecret'];
+
+$userids = $_ENV['superusers_userids'];
+
+#$epicore_info_baseurl = $_ENV['epicore_info_baseurl'];
+$emailnoreply = $_ENV['emailnoreply'];
+$emailinfo = $_ENV['emailinfo'];
+$emailadmin = $_ENV['emailadmin'];
+#$promed_info = $_ENV['promed_info'];
+$emailproin = $_ENV['emailproin'];
+
+$aws_region = $_ENV['epicore_aws_region'];
+$aws_userPoolId = $_ENV['epicore_user_pool_id'];
+$aws_appClientId = $_ENV['epicore_app_client_id'];
+$aws_appClientIdSecret = $_ENV['epicore_app_client_id_secret'];
+$aws_epicoreArn = $_ENV['epicore_aws_arn'];
+$aws_epicoreIamRolename = $_ENV['epicore_aws_iam_rolename'];
+
+// echo '>>>>';
+// echo $environment;
+// echo '<<<<:';
+
+define('ENVIRONMENT', $environment);
+
+define('NEW_EPICORE_REQUESTER_STATUS', 'NewRequester');
+
+define('AWS_REGION', $aws_region);
+define('AWS_USER_POOL_ID', $aws_userPoolId);
+define('AWS_APP_CLIENT_ID', $aws_appClientId);
+define('AWS_APP_CLIENT_ID_SECRET', $aws_appClientIdSecret);
+define('AWS_EPICORE_ARN', $aws_epicoreArn);
+define('AWS_EPICORE_IAM_ROLENAME', $aws_epicoreIamRolename);
+
+
+// approval username and password
+define('APPROVAL_USERNAME', $approval_username);
+define('APPROVAL_PASSWORD', $approval_username);
+
+// google api
+define('CRYPTOKEY', $key );
+define('CLIENTID', $clientid);
+define('FCM_SERVER_KEY', $fcm_server_key);
+define('FCM_SEND_URL', $fcm_send_url);
+
+// Epicore
+define('EPICORE_URL', $epicore_info_baseurl);
+define('EMAIL_NOREPLY', $emailnoreply);
+define('EMAIL_INFO_EPICORE', $emailinfo);
+define('EMAIL_EPICORE_ADMIN', $emailadmin);
+
+// Tephinet
+define('TEPHINET_BASE', $tephinet_baseurl);
+define('TEPHINET_CONSUMER_KEY', $consumerkey);
+define('TEPHINET_CONSUMER_SECRET', $consumersecret);
+
+// ProMed
+define('EMAIL_PROIN', $emailproin);
+
+//su
+$super_users = explode(',', $userids);
+
+define('EPICORE_ID', 0);
+define('PROMED_ID', 4);
+>>>>>>> epicore-ng/main
 define('LAT_LON_PRECISION', 2);
 define('DEFAULT_RADIUS', 400); // in km
 define('EMAILPREVIEWS', 'emailtemplates/temp/');
 define('V2START_DATE', '2017-10-30');
+<<<<<<< HEAD
+=======
+define('V1START_DATE', '2015-01-01'); //Year epicore starte with V1
+>>>>>>> epicore-ng/main
 
 define('RESPONSEFILE_DIR', 'responsefiles/');
 
 $status_lu = array('O' => 're-opened', 'C' => 'closed');
 
+<<<<<<< HEAD
 $super_users = explode(',', $conf['superusers']['userids']);
+=======
+
+
+
+>>>>>>> epicore-ng/main
 
 // old permission text
 /*$response_permission_lu = array(
@@ -575,4 +667,9 @@ $check_conditions = array("respiratory","gastrointestinal","other_neurological",
                         "fever_unknown", "renal", "respiratory_animal", "neurological_animal", "hemorrhagic_animal", "vesicular_animal",
                         "reproductive_animal", "gastrointestinal_animal", "multisystemic_animal");
 define('CHECK_CONDITIONS', serialize($check_conditions));
+<<<<<<< HEAD
 ?>
+=======
+
+?>
+>>>>>>> epicore-ng/main

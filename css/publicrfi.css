@@ -1,0 +1,68 @@
+.backlink {
+	height: 24px;
+	width: 139px;
+	color: #3FC8C8;
+	font-family: Lato;
+	font-size: 16px;
+	font-weight: bold;
+	line-height: 24px;
+}
+
+.chevron-double-left {
+	height: 24px;
+	width: 14px;
+	color: #3FC8C8;
+	font-family: "Font Awesome 5 Pro";
+	font-size: 16px;
+	line-height: 24px;
+}
+
+.title-style {
+	height: 36px;
+	width: 684px;
+	color: #195B72;
+	font-family: Lato;
+	font-size: 24px;
+	line-height: 36px;
+}
+
+.summary-style {
+	height: 368px;
+	width: 750px;
+	color: #2E3335;
+	font-family: Lato;
+	font-size: 16px;
+	line-height: 24px;
+}
+
+.rectangle {
+	height: 200px;
+	width: 750px;
+	background-color: #D5D7D8;
+}
+
+.rfi-outcome-verifie {
+	height: 24px;
+	width: 198px;
+	color: #2E3335;
+	font-family: Lato;
+	font-size: 14px;
+	line-height: 24px;
+}
+
+.initial-source-offi {
+	height: 72px;
+	width: 702px;
+	color: #2E3335;
+	font-family: Lato;
+	font-size: 14px;
+	line-height: 24px;
+}
+.the-information-incl {
+	height: 168px;
+	width: 750px;
+	color: #2E3335;
+	font-family: Lato;
+	font-size: 14px;
+	line-height: 24px;
+}

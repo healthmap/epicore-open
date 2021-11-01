@@ -2,7 +2,71 @@
 /* takes input from the Epicore set password form, authenticates user, and sets password */
 $formvars = json_decode(file_get_contents("php://input"));
 require_once "UserInfo.class.php";
+<<<<<<< HEAD
 $status = 'failed';
+=======
+require_once (dirname(__FILE__) ."/Service/AuthService.php");
+require_once (dirname(__FILE__) ."/Exception/InvalidCodeException.php");
+require_once (dirname(__FILE__) ."/Model/UserCognitoType.php");
+require_once (dirname(__FILE__) ."/Model/ApiResponseStatus.php");
+$status = ApiResponseStatus::failed;
+
+// get username/email and password
+$username = strip_tags($formvars->username);
+$password = strip_tags($formvars->password);
+$verifycode = strip_tags($formvars->verifycode);
+$message = '';
+
+if(!empty($verifycode))
+{
+    $fetchObj = UserInfo::authenticateFetpByEmail($formvars->username);
+    if(is_null($fetchObj)){
+        $fetchObj = UserInfo::authenticateUserByEmail($formvars->username);
+    }
+
+    if(!empty($fetchObj))
+    {
+        $userId = 0;
+        if(isset($fetchObj['fetp_id'])){
+            $userId = $fetchObj['fetp_id'];
+        }
+        if(isset($fetchObj['user_id'])){
+            $userId = $fetchObj['user_id'];
+        }
+        $fetpinfo['username'] = "MEMBER ". $userId;
+        try
+        {
+            $validationService = new ValidationService();
+
+            $user = new User();
+            $user->setEmail($username);
+            $user->setPassword($password);
+
+            $validationService->email($user);
+            $validationService->password($user);
+
+            $authService = new AuthService();
+            $authService->UpdatePassword($username, $password, $verifycode);
+            $status = ApiResponseStatus::success;
+        }
+        catch (PasswordValidationException | InvalidCodeException | Exception $exception)
+        {
+            error_log($exception->getMessage());
+            $message = $exception->getMessage();
+            $status = ApiResponseStatus::failed;
+        }
+
+        print json_encode(array('status' => $status, 'uinfo' => $fetpinfo , 'message' => $message));
+    }
+    else
+    {
+        $message = 'Username not found.';
+        print json_encode(array('status' => $status, 'uinfo' => null , 'message' => $message));
+    }
+    die();
+
+}
+>>>>>>> epicore-ng/main
 
 // authenticate fetp and get info
 $ticket = strip_tags($formvars->ticket_id);
@@ -10,9 +74,12 @@ $authfetp = UserInfo::authenticateFetp($ticket);
 $fetpinfo = UserInfo::getFETP($authfetp['fetp_id']);
 $fetpinfo['username'] = "MEMBER ". $authfetp['fetp_id'];
 
+<<<<<<< HEAD
 // get username/email and password
 $username = strip_tags($formvars->username);
 $password = strip_tags($formvars->password);
+=======
+>>>>>>> epicore-ng/main
 
 // set password if username matches authenticated email
 $emailmatch = (strcasecmp($fetpinfo['email'], $username) == 0) ? true: false;

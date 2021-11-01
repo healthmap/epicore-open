@@ -21,7 +21,11 @@ if($formvars->filtertype == "country") {
     if(!isset($formvars->bbox)) {
         // get FETP info: first get the bounding box from lat/lon
         require_once "PlaceInfo.class.php";
+<<<<<<< HEAD
         list($lat,$lon) = split(",", (string)$formvars->latlon);
+=======
+        list($lat,$lon) = explode(",", (string)$formvars->latlon);
+>>>>>>> epicore-ng/main
         $radius = (int)$formvars->radius ? (int)$formvars->radius : DEFAULT_RADIUS;
         $bbox = PlaceInfo::getBoundingBox($lat, $lon, $radius);
     } else {

@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,400italic' rel='stylesheet' type='text/css'>
+  <link href='https://fonts.googleapis.com/css?family=Pinyon+Script' rel='stylesheet' type='text/css'>
+  <link rel="stylesheet" href="../css/styles.css">
+
+  <style>
+  em {
+    font-family: 'Lato',sans-serif;
+    font-weight: 400;
+    font-style: italic;
+    }
+    body {
+      font-family: 'Lato',sans-serif;
+      font-weight: 400;
+      font-size: 1em;
+      line-height: 1.5;
+      color: #195b72;
+      background: #f1f2f3;
+      }
+      .cursive {
+        font-family: 'Pinyon Script', cursive;
+      }
+      .green {
+        color: #3fc8c8;
+      }
+      .certificate {
+        background: url('img/bg-cert.png') no-repeat !important;
+        margin: 0px auto;
+        width: 900px;
+        height: 693px;
+        position: relative;
+      }
+      .certificate-inner {
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 0;
+        bottom: 0;
+        margin: 40px;
+        padding: 72px 24px 24px 24px;
+        background: #fff;
+      }
+      h1 {
+        font-size: 70px;
+        font-weight: normal;
+        margin: 24px 0;
+        line-height: 1.07865;
+      }
+      .date-heading {
+         width: 200px;
+         border-top: 1px solid;
+         font-size: 12px;
+         padding: 2px 0;
+         margin: 0 auto 24px auto;
+      }  
+      .date {
+        margin: 0;
+      }
+      p {
+        margin: 0;
+      }
+      .center {
+        text-align: center;
+      }
+      .text-block {
+        max-width: 550px;
+        margin: 24px auto;
+      }
+      h2.text-block {
+        margin-top:12px;
+        border-bottom: 1px solid #3fc8c8;
+        font-weight: 400;
+        font-size: 30px;
+      }
+      .cap {
+        text-transform: uppercase;
+      }
+      .ls {
+        letter-spacing: .04em;
+      }
+      .right {
+        position: absolute;
+        right: 24px;
+        bottom: 24px;
+      }
+      @media print {
+        @page {
+          size: landscape;
+          margin: 0px;
+        }
+        body {
+        -webkit-print-color-adjust: exact;
+      }
+      .btn { display: none; }
+      }
+
+      .back-btn {
+        text-decoration: none;
+        /* background-color: #fff;
+        border-radius: 20px; */
+      }
+  </style>
+</head>
+  
+<body>
+<br>
+<a class="back-btn btn-primary btn" href="#/trainingvideos.html">Go back</a>
+  <div class="certificate center" id="printableArea">
+    <div class="certificate-inner">
+      <img class="logo" src="img/logos/epicore.png" height="" alt="logo">
+      <h1 class="cursive green">Certificate of Recognition</h1>
+      <p class="cap">This is to certify that:</p>
+      <h2 class="ls cap text-block">{{member_name}}</h2>
+      <p class="text-block">Having satisfied the requirement for membership is now a<br><em>Certified EpiCore Member</em> and is accorded all the privileges pertaining thereto</p>
+      <p class="date">{{approve_date}}</p>
+      <p class="green date-heading">Date</p>
+      <img src="img/seal-lg.png" alt="seal" class="right">
+    </div>
+  </div>
+
+<br><br><br><br><br><br>
+  <div class="center">
+    <input id="printBtn" type="button" ng-click="printPage('printableArea')" value="Print or Save Certificate" />
+  </div>
+
+</body>
+</html>

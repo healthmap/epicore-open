@@ -8,9 +8,22 @@ require_once "const.inc.php";
 require_once "EventInfo.class.php";
 require_once "UserInfo.class.php";
 require_once 'ePush.class.php';
+<<<<<<< HEAD
 
 $event_id = $formvars->event_id;
 $requester_id = $formvars->uid;
+=======
+require_once "UserContoller3.class.php";
+
+use UserController as userController;
+
+$userData = userController::getUserData();
+
+$event_id = $formvars->event_id;
+$requester_id = $userData["uid"];
+$superuser = (int)$userData["superuser"];
+
+>>>>>>> epicore-ng/main
 if(!is_numeric($event_id) || !is_numeric($requester_id)) {
     print json_encode(array('status' => 'failed', 'reason' => 'invalid event id or requester id'));
     exit;
@@ -20,6 +33,7 @@ $ei = new EventInfo($event_id);
 $event_info = $ei->getInfo();
 
 // make sure the person trying to send the email was the originator of the request
+<<<<<<< HEAD
 // or from the same organization
 $roid =0 ;
 if($requester_id != $event_info['requester_id']) {
@@ -29,6 +43,40 @@ if($requester_id != $event_info['requester_id']) {
         print json_encode(array('status' => 'failed', 'reason' => 'unauthorized', 'requester' => $requester_id, 'owner' => $event_info['requester_id']));
         exit;
     }
+=======
+// or from the same organization or is a superuser
+$roid =0 ;
+//if($requester_id != $event_info['requester_id']) {
+  //  $rui = new UserInfo($requester_id,null);
+   // $roid = $rui->getOrganizationId();
+   // if(($event_info['org_requester_id'] != $roid) || $superuser == 1) {
+    //    print json_encode(array('status' => 'failed', 'reason' => 'unauthorized', 'requester' => $requester_id, 'owner' => $event_info['requester_id']));
+     //   exit;
+  //  }
+//}
+
+/* ****************************************************************
+   
+   Following is added by Sam, CH157135.
+   Above condition is checking to see if the email is being sent
+   by originator, same organization. But, check for superuser is 
+   implemented differently. 
+
+    // make sure the person trying to send the email was the originator of the request
+    // or from the same organization or is a superuser
+
+*****************************************************************/
+
+if($superuser != 1) {
+if($requester_id != $event_info['requester_id']) {
+    $rui = new UserInfo($requester_id,null);
+    $roid = $rui->getOrganizationId();
+    if(($event_info['org_requester_id'] != $roid)) {
+        print json_encode(array('status' => 'failed', 'reason' => 'unauthorized', 'requester' => $requester_id, 'owner' => $event_info['requester_id']));
+        exit;
+    }
+  }
+>>>>>>> epicore-ng/main
 }
 
 // start building the email text
@@ -69,10 +117,17 @@ $followup_id = EventInfo::insertFollowup($followup_info);
 $tokens = $ei->insertFetpsReceivingEmail($fetp_ids, $followup_id);
 
 // set up push notification
+<<<<<<< HEAD
 $push = new ePush();
 $pushevent['id'] = $event_id;
 $pushevent['title'] = $event_info['title'];
 $pushevent['type'] = 'FOLLOWUP';
+=======
+// $push = new ePush();
+// $pushevent['id'] = $event_id;
+// $pushevent['title'] = $event_info['title'];
+// $pushevent['type'] = 'FOLLOWUP';
+>>>>>>> epicore-ng/main
 
 // now send it to each FETP individually as they each need unique login token id
 require_once "AWSMail.class.php";
@@ -86,10 +141,19 @@ foreach($fetp_emails as $fetp_id => $recipient) {
     $history = $ei->getEventHistoryFETP($fetp_id, $event_id);
     $emailtext = trim(str_replace("[EVENT_HISTORY]", $history, $followupText));
     $emailtext = trim(str_replace("[TOKEN]", $tokens[$fetp_id], $emailtext));
+<<<<<<< HEAD
     $retval = AWSMail::mailfunc($recipient, $subject, $emailtext, EMAIL_NOREPLY, $extra_headers);
 
     // send push notification
     $push->sendPush($pushevent, $fetp_id);
+=======
+    try {
+        $retval = AWSMail::mailfunc($recipient, $subject, $emailtext, EMAIL_NOREPLY, $extra_headers);
+    } catch (Exception $e) {}
+
+    // send push notification
+    //$push->sendPush($pushevent, $fetp_id);
+>>>>>>> epicore-ng/main
 
 }
 
@@ -132,9 +196,17 @@ array_push($idlist, EPICORE_ID);
 
 // send copy to mods following the Event
 $followers = EventInfo::getFollowers($event_id);
+<<<<<<< HEAD
 foreach ($followers as $follower){
     array_push($tolist, $follower['email']);
     array_push($idlist, $follower['user_id']);
+=======
+if (is_array($followers) || is_object($followers)) {
+    foreach ($followers as $follower){
+        array_push($tolist, $follower['email']);
+        array_push($idlist, $follower['user_id']);
+    }
+>>>>>>> epicore-ng/main
 }
 
 // send email
@@ -146,7 +218,13 @@ if (!empty($tolist)) {
     $proin_emailtext = trim(str_replace("[EVENT_HISTORY]", $history, $followupText_proin));
     $custom_emailtext_proin = trim(str_replace("[PRO_IN]", $modfetp, $proin_emailtext));
     $extra_headers['user_ids'] = $idlist;
+<<<<<<< HEAD
     $retval = AWSMail::mailfunc($tolist, $subject, $custom_emailtext_proin, EMAIL_NOREPLY, $extra_headers);
+=======
+    try {
+        $retval = AWSMail::mailfunc($tolist, $subject, $custom_emailtext_proin, EMAIL_NOREPLY, $extra_headers);
+    } catch (Exception $e) {}
+>>>>>>> epicore-ng/main
 }
 
 print json_encode(array('status' => 'success', 'fetps' => $fetp_ids));

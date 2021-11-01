@@ -17,6 +17,7 @@ if(isset($formvars->event_id) && is_numeric($formvars->event_id)) {
     $ei = new EventInfo($formvars->event_id);
     $event_info = $ei->getEvent2();
     if (!$event_info){
+<<<<<<< HEAD
         print json_encode(array('status' => 'failed', 'reason' => 'invalid event id'));
         exit;
     }
@@ -27,6 +28,17 @@ if(isset($formvars->event_id) && is_numeric($formvars->event_id)) {
 
 header('content-type: application/json; charset=utf-8');
 print json_encode($event_info);
+=======
+        echo json_encode(array('status' => 'failed', 'reason' => 'invalid event id'));
+        exit;
+    }
+} else {
+    echo json_encode(array('status' => 'failed', 'reason' => 'missing required fields'));
+    exit;
+}
+
+echo json_encode($event_info);
+>>>>>>> epicore-ng/main
 exit;
 
 ?>

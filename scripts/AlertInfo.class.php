@@ -14,7 +14,11 @@ class AlertInfo
     function __construct($id)
     {
         $this->id = $id;
+<<<<<<< HEAD
         $this->db =& getDB('hm');
+=======
+        $this->db =& getDB();
+>>>>>>> epicore-ng/main
     }
 
     function getInfo() {

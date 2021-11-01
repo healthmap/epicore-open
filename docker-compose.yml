@@ -1,0 +1,18 @@
+version: '3.3'
+networks:
+  epicore-net:
+    external: true
+services:
+  nginx-webserver:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: epicore_nginx
+    environment:
+      AWS_PROFILE: "EPICORE-NONPROD"
+    ports:
+      - "8088:80"
+    volumes:
+      - ./:/var/www/html
+      - ~/.aws:/root/.aws
+     

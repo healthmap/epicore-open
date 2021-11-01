@@ -1,0 +1,14 @@
+<div ng-include src="'templates/header/header.html'"></div>
+<div class="jumbotron dashboard">
+    <div class="container">
+        <h1>Thank you!</h1>
+    </div>
+</div>
+
+<div class="wrapper dashboard">
+    <div class="container">
+        <p ng-if="eid && epicore_version !='2'"><a href="#/events/{{eid}}" class="btn btn-default"><i class="fa fa-arrow-circle-left"></i> Back to RFI</a></p>
+        <p ng-if="eid && epicore_version =='2'"><a href="#/events2/{{eid}}" class="btn btn-default"><i class="fa fa-arrow-circle-left"></i> Back to RFI</a></p>
+        <p>{{messageResponse.text}}</p>
+    </div>
+</div>

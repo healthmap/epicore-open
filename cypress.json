@@ -1,0 +1,10 @@
+{
+    "baseUrl": "http://localhost:8000/#/",
+    "chromeWebSecurity": false,
+    "integrationFolder": "cypress/tests/e2e/integration",
+    "env": {
+      "username": "johndoe",
+      "password": "",
+      "passwordIncorrect": "secret"
+    }
+}

@@ -1,0 +1,143 @@
+<h4>RFI Message History</h4>
+
+<div>
+<p>
+<strong>Permissions:</strong><br>
+<span><i class="fa fa-circle perm0"></i> No contribution</span><br>
+<span><i class="fa fa-circle perm1"></i> Paraphrase / do not use direct quotes from this response, mask any identifying information referenced in the response text and do not provide any details on the identity of the responding member</span><br>
+<span><i class="fa fa-circle perm2"></i> Quote this response but mask any identifying information referenced in the response text and do not provide any details on the identity of the responding member</span><br>
+<span><i class="fa fa-circle perm3"></i> Quote this response and attribute it to the responding member</span>
+</p>
+</div>
+
+<div class="event-item" ng-repeat="history_item in eventsList.history">
+
+    <!-- Followup messages from Moderator to FETP -->
+    <div ng-if="history_item.type == 'Moderator Response'">
+        <div ng-if="history_item.fetp_count > 1">
+            <!-- Followup messages for all FETPs in same organization (Moderator only)-->
+            <div class="show-message-mod" ng-if="(history_item.person_id == userInfo.uid) || (history_item.organization_id == userInfo.organization_id)">
+                <a class="inherit" href="" ng-click="isCollapsed = !isCollapsed"><i class="fa fa-plus"></i></a>
+                {{history_item.person}} sent followup to all Members, {{history_item.date}}
+                <div class="show-response" ng-show="isCollapsed">
+                    <p ng-bind-html="history_item.text | to_trusted"></p>
+                </div>
+            </div>
+
+            <!-- Followup messages for all FETPs not in same organization (Moderator or FETP) -->
+            <div class="show-message-mod" ng-if="(history_item.organization_id != userInfo.organization_id)">
+                <a href="" class="inherit" ng-click="isCollapsed = !isCollapsed"><i class="fa fa-plus"></i></a>
+                followup sent to all Members, {{history_item.date}}
+                <div class="show-response" ng-show="isCollapsed">
+                    <p ng-bind-html="history_item.text | to_trusted"></p>
+                </div>
+            </div>
+        </div>
+
+        <div ng-if="history_item.fetp_count == 1">
+            <!-- Followup messages for one FETP in same organization (Moderator only)-->
+            <div  class="show-message-mod" ng-if="(history_item.person_id == userInfo.uid) || (history_item.organization_id == userInfo.organization_id)">
+                <a href="" class="inherit" ng-click="isCollapsed = !isCollapsed"><i class="fa fa-plus"></i></a>
+                {{history_item.person}} sent followup to Member {{history_item.fetp_id}}, {{history_item.date}}
+                <div class="show-response" ng-show="isCollapsed">
+                    <p ng-bind-html="history_item.text | to_trusted"></p>
+                </div>
+            </div>
+
+            <!-- Followup messages for one FETP not in same organization (Moderator only)-->
+            <div  class="show-message-mod" ng-if="(history_item.organization_id != userInfo.organization_id) && userInfo.uid">
+                <a href="" class="inherit" ng-click="isCollapsed = !isCollapsed"><i class="fa fa-plus"></i></a>
+                followup sent to Member, {{history_item.date}}
+                <div class="show-response" ng-show="isCollapsed">
+                    <p ng-bind-html="history_item.text | to_trusted"></p>
+                </div>
+            </div>
+            <!-- Followup messages for one FETP (FETP only)-->
+            <div  class="show-message-mod" ng-if="(history_item.fetp_id == userInfo.fetp_id)">
+                <a href="" class="inherit" ng-click="isCollapsed = !isCollapsed"><i class="fa fa-plus"></i></a>
+                followup sent to you, {{history_item.date}}
+                <div class="show-response" ng-show="isCollapsed">
+                    <p ng-bind-html="history_item.text | to_trusted"></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- FETP Response Messages (Moderator or FETP)-->
+    <div  class="show-message-fetp" ng-if="(history_item.type == 'Member Response') && (userInfo.uid || (history_item.fetp_id == userInfo.fetp_id)) && !(closerfi && (history_item.permission == 0))">
+        <a href="" class="inherit" ng-click="isCollapsed = !isCollapsed"><span ng-if="history_item.permission != 0"><i class="fa fa-plus"></i></span></a>
+                    <span ng-if="userInfo.uid">
+                        Member {{history_item.fetp_id}} Response,
+                        {{history_item.country}},
+                                    <span ng-if="history_item.permission == 0"><i class="fa fa-circle perm0"></i> no contribution</span>
+                                    <span ng-if="history_item.permission == 1"><i class="fa fa-circle perm1"></i> paraphrase / don't attribute</span>
+                                    <span ng-if="history_item.permission == 2"><i class="fa fa-circle perm2"></i> quote / don't attribute</span>
+                                    <span ng-if="history_item.permission == 3"><i class="fa fa-circle perm3"></i> quote / attribute</span>,
+                        {{history_item.date}}
+                    </span>
+                    <span ng-if="userInfo.fetp_id">
+                        your response,
+                        <span ng-if="history_item.permission == 0"><i class="fa fa-circle perm0"></i> no contribution</span>
+                        <span ng-if="history_item.permission == 1"><i class="fa fa-circle perm1"></i> paraphrase / don't attribute</span>
+                        <span ng-if="history_item.permission == 2"><i class="fa fa-circle perm2"></i> quote / don't attribute</span>
+                        <span ng-if="history_item.permission == 3"><i class="fa fa-circle perm3"></i> quote / attribute</span>,
+                        {{history_item.date}}
+                    </span>
+        <!-- show reply button -->
+        <a ng-if="!closerfi && (history_item.organization_id == userInfo.organization_id) " class="pull-right btn btn-default btn-sm" href="#/followup/{{id}}/{{history_item.response_id}}">Reply</a>
+        <!-- show ratings for closed event -->
+        <span ng-if=" userInfo.uid && ((history_item.permission != 0) && ((closerfi && (history_item.organization_id == userInfo.organization_id)) || (changeStatusText != 'Close')))" >
+            &nbsp;&nbsp;<label><input type="radio" ng-model="history_item.useful" value="0" ng-disabled="history_item.useful && !isRequester"> <i class="fa fa-thumbs-o-down black"></i></label>&nbsp;&nbsp;
+            <label><input type="radio" ng-model="history_item.useful" value="1" ng-disabled="history_item.useful && !isRequester" > <i class="fa fa-thumbs-o-up green"></i></label>&nbsp;&nbsp;
+            <label><input type="radio" ng-model="history_item.useful" value="2" ng-disabled="history_item.useful && !isRequester" > <i class="fa fa-thumbs-o-up blue">+ProMED </i></label>
+
+        </span>
+        <div class="show-response" ng-show="isCollapsed">
+            <p ng-bind-html="history_item.text | to_trusted"></p>
+        </div>
+    </div>
+
+
+    <!-- Original Event Request Message in same organization (Moderator or FETP)-->
+    <div  class="show-message-mod" ng-if="(history_item.type == 'Event Request') && (history_item.organization_id == userInfo.organization_id)">
+        <a href="" class="inherit" ng-click="isCollapsed = !isCollapsed"><i class="fa fa-plus"></i></a>
+        {{history_item.person}} sent original RFI, {{history_item.date}}
+        <div class="show-response" ng-show="isCollapsed">
+            <p><strong>Title:</strong> {{history_item.title}}<br>
+                <strong>Location:</strong> {{history_item.location}}</p>
+            <p ng-bind-html="history_item.personalized_text | to_trusted"></p>
+            <p ng-bind-html="history_item.text | to_trusted"></p>
+        </div>
+    </div>
+
+    <!-- Original Event Request Message not in same organization (Moderator)-->
+    <div  class="show-message-mod" ng-if="(history_item.type == 'Event Request') && (history_item.organization_id != userInfo.organization_id)">
+        <a href="" class="inherit" ng-click="isCollapsed = !isCollapsed"><i class="fa fa-plus"></i></a>
+        original RFI sent, {{history_item.date}}
+        <div class="show-response" ng-show="isCollapsed">
+            <p><strong>Title:</strong> {{history_item.title}}<br>
+                <strong>Location:</strong> {{history_item.location}}</p>
+            <p ng-bind-html="history_item.personalized_text | to_trusted"></p>
+            <p ng-bind-html="history_item.text | to_trusted"></p>
+        </div>
+    </div>
+
+    <!-- Event open/closed status message in same organization message (Moderator) -->
+    <div  class="show-message-mod" ng-if="(history_item.type == 'Event Notes') && (history_item.organization_id == userInfo.organization_id)">
+        <a href="" class="inherit" ng-click="isCollapsed = !isCollapsed"><i class="fa fa-plus"></i></a>
+        {{history_item.person}} {{history_item.status}} RFI, {{history_item.date}}
+        <div class="show-response" ng-show="isCollapsed">
+            <p ng-bind-html="history_item.text | to_trusted"></p>
+        </div>
+    </div>
+
+    <!-- Event open/closed status message not in same organization message (Moderator or FETP)-->
+    <div  class="show-message-mod" ng-if="(history_item.type == 'Event Notes') && (history_item.organization_id != userInfo.organization_id)">
+        <a href="" class="inherit" ng-click="isCollapsed = !isCollapsed"><i class="fa fa-plus"></i></a>
+        {{history_item.status}} RFI, {{history_item.date}}
+        <div class="show-response" ng-show="isCollapsed">
+            <p ng-bind-html="history_item.text | to_trusted"></p>
+        </div>
+    </div>
+
+</div><!--event-item-->

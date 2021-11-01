@@ -5,6 +5,15 @@ required param: auth
 optional param: event_id, from (responses, followup, events), detail (closed)
 */
 
+<<<<<<< HEAD
+=======
+require_once "UserContoller3.class.php";
+
+use UserController as userController;
+
+$userData = userController::getUserData();
+
+>>>>>>> epicore-ng/main
 // check for authoriziation token in query string
 if(!$_GET['auth']) {
     print "Sorry you are not authorized to use this service.";
@@ -21,6 +30,12 @@ foreach($_GET as $key => $val) {
     $rvars[$key] = $val;
 }
 
+<<<<<<< HEAD
+=======
+$rvars["uid"] = $userData["uid"];
+$rvars["fetp_id"] = $userData["fetp_id"];
+
+>>>>>>> epicore-ng/main
 require_once "db.function.php";
 $db = getDB();
 

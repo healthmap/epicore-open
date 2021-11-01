@@ -1,0 +1,72 @@
+<div ng-include src="'templates/header/header.html'"></div>
+<div class="jumbotron dashboard">
+    <div class="container">
+        <h1>RFI - Source</h1>
+    </div>
+</div>
+
+<div class="wrapper dashboard">
+<div class="container">
+    <div class="row">
+        <div id="form-container" class="col-xs-12 col-md-8">
+            <form name="requestForm">
+
+                <div class="form-group">
+                    <span style="float: right;"><a href ng-click="clearRequest()" class="btn btn-default">Clear RFI</a></span><br>
+                </div>
+
+                <div class="intro">
+                    <h3>Information Source  <span class="error">*</span></h3>
+                    <h5>RFI requesters need to be specific if the original source of information about the PHE is a web-report or not,
+                        and in case it is it should be clarified if the information is a media report or an official document online.
+                        In case of multiple web-items available the Requester should include recent information of as much as possible reliable sources.
+                        If the source of information used is a personal communication to Requesters (from EPICORE responders or not),
+                        Requesters should try to search actively for information on the web before sending out the RFI:
+                    </h5>
+                </div>
+
+                <div class="form-group">
+
+                    <div class="form-group">
+
+                        <div class="radio">
+                            <label class="radio" data-toggle="tooltip" title="The RFI is based on media information. In case of web-based media items at least one link should be included; if there is no media report available online, then any other detail about the original source should be included (e.g. “link removed”, “only paper version available”, “name of original newspaper”, “early warning system reporting”) ">
+                                <input type="radio" ng-model="rfiData.source.source" value="MR" ng-required="!rfiData.source.source"> <b>Media report</b> </label>
+                        </div>
+                        <div class="radio">
+                            <label class="radio" data-toggle="tooltip" title="The RFI is based on an official report (this can happen if more details are needed). In case of an official document available online, at least one link should be included; if there is no official document available online, then any other detail about the original source should be included (e.g. WHO information, reported by local health authorities from X)">
+                                <input type="radio" ng-model="rfiData.source.source" value="OR" ng-required="!rfiData.source.source"> <b>Official report</b> </label>
+                        </div>
+                        <div class="radio">
+                            <label class="radio" data-toggle="tooltip" title="The RFI is based on a direct communication from an EPICORE member or an external that has not provided any further documentation (no personal details should be included). Before choosing this option, RFI Requesters should actively search for any online report about the mentioned event on the web: in case information about the PHE is identified, the information source should be classified as media/official (i.e. options 1 or 2), with the inclusion of at least one link. ">
+                                <input type="radio" ng-model="rfiData.source.source" value="OC" ng-required="!rfiData.source.source"> <b>Other communication</b> </label>
+                        </div>
+
+                    </div>
+
+                    <div class="form-group" ng-if="rfiData.source.source">
+                        <label class="" for="details">Source details  <span class="error">*</span></label>
+                        <input type="text" class="form-control" ng-model="rfiData.source.details" name="details" id="details" placeholder='details...' value=""  required>
+                    </div>
+
+
+                    <div class="form-group">
+                        <button ng-click="saveSource('back')" type="submit" class="submit btn btn-primary"><i class="fa fa-arrow-circle-left"></i> Back </button> &nbsp; &nbsp;
+                        <button ng-click="saveSource('next')" type="submit" class="submit btn btn-primary"> Next <span ng-if="!rfiData.event_id">- Review & Send</span><i class="fa fa-arrow-circle-right"></i></button>
+                    </div>
+                    <span class="error">{{source_error_message}}</span>
+
+
+                </div>
+
+            </form>
+
+        </div><!--col-->
+    </div><!--row-->
+</div><!--container-->
+</div><!--wrapper-->
+<script>
+
+    // TOOLTIP
+    $('[data-toggle="tooltip"]').tooltip( {html: true,trigger:'hover'});
+</script>

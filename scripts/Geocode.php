@@ -6,7 +6,11 @@ class Geocode {
 
     static function getLocationDetail($lutype, $lookup)
     {
+<<<<<<< HEAD
         $geo = self::signUrl('http://maps.googleapis.com/maps/api/geocode/json?sensor=false&client='.CLIENTID. '&' . $lutype . '=' . urlencode($lookup), CRYPTOKEY);
+=======
+        $geo = 'https://maps.googleapis.com/maps/api/geocode/json?' . $lutype . '=' . urlencode($lookup) . '&key=' . CRYPTOKEY;
+>>>>>>> epicore-ng/main
         $json = file_get_contents($geo);
         $results = json_decode($json, true);
         $formatted_address = $results['results'][0]['formatted_address'];
