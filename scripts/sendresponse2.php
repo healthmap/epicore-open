@@ -4,14 +4,11 @@ $formvars = json_decode(file_get_contents("php://input"));
 require_once "EventInfo.class.php";
 require_once "const.inc.php";
 require_once "UserInfo.class.php";
-<<<<<<< HEAD
-=======
 require_once "UserContoller3.class.php";
 
 use UserController as userController;
 
 $userData = userController::getUserData();
->>>>>>> epicore-ng/main
 
 $status = "error";
 
@@ -19,11 +16,7 @@ $event_id = $formvars->event_id;
 
 if(is_numeric($event_id)) {
     // clean data
-<<<<<<< HEAD
-    $dbdata['responder_id'] = isset($formvars->anonymous) ? 0 : (int)$formvars->fetp_id;
-=======
     $dbdata['responder_id'] = isset($formvars->anonymous) ? 0 : (int)$userData['fetp_id'];
->>>>>>> epicore-ng/main
     $dbdata['response'] = strip_tags($formvars->reply);
     $dbdata['response_permission'] = (int)$formvars->response_permission;
     $response_member = strip_tags($formvars->response_member);
@@ -69,19 +62,12 @@ if(is_numeric($event_id)) {
         $tolist[0] = $initiator['email'];
         $idlist[0] = $initiator['user_id'];
         $i = 1;
-<<<<<<< HEAD
-        foreach ($moderators as $moderator) {
-            if ($moderator['email'] != $initiator['email']) {
-                $tolist[$i] = $moderator['email'];
-                $idlist[$i++] = $moderator['user_id'];
-=======
         if (is_array($moderators) || is_object($moderators)) {
             foreach ($moderators as $moderator) {
                 if ($moderator['email'] != $initiator['email']) {
                     $tolist[$i] = $moderator['email'];
                     $idlist[$i++] = $moderator['user_id'];
                 }
->>>>>>> epicore-ng/main
             }
         }
 
@@ -102,15 +88,6 @@ if(is_numeric($event_id)) {
 
         // send copy to mods following the Event
         $followers = EventInfo::getFollowers($event_id);
-<<<<<<< HEAD
-        foreach ($followers as $follower){
-            array_push($tolist, $follower['email']);
-            array_push($idlist, $follower['user_id']);
-        }
-
-        $extra_headers['user_ids'] = $idlist;
-        AWSMail::mailfunc($tolist, $subject, $emailtext, EMAIL_NOREPLY, $extra_headers);
-=======
         if (is_array($followers) || is_object($followers)) {
             foreach ($followers as $follower){
                 array_push($tolist, $follower['email']);
@@ -122,7 +99,6 @@ if(is_numeric($event_id)) {
         try {
             AWSMail::mailfunc($tolist, $subject, $emailtext, EMAIL_NOREPLY, $extra_headers);
         } catch (Exception $e) {}
->>>>>>> epicore-ng/main
     }
 
     $status = "success";
@@ -130,14 +106,10 @@ if(is_numeric($event_id)) {
 }
 
 
-<<<<<<< HEAD
-print json_encode(array('status' => $status, 'dbdata' => $dbdata));
-=======
 print json_encode(array(
     'status' => $status,
     'dbdata' => $dbdata,
     'response_id' => $response_id
 ));
->>>>>>> epicore-ng/main
 
 ?>

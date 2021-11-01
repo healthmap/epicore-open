@@ -2,9 +2,6 @@
 /* takes input from the Epicore set password form, authenticates user, and sets password */
 $formvars = json_decode(file_get_contents("php://input"));
 require_once "UserInfo.class.php";
-<<<<<<< HEAD
-$status = 'failed';
-=======
 require_once (dirname(__FILE__) ."/Service/AuthService.php");
 require_once (dirname(__FILE__) ."/Exception/InvalidCodeException.php");
 require_once (dirname(__FILE__) ."/Model/UserCognitoType.php");
@@ -66,7 +63,6 @@ if(!empty($verifycode))
     die();
 
 }
->>>>>>> epicore-ng/main
 
 // authenticate fetp and get info
 $ticket = strip_tags($formvars->ticket_id);
@@ -74,12 +70,6 @@ $authfetp = UserInfo::authenticateFetp($ticket);
 $fetpinfo = UserInfo::getFETP($authfetp['fetp_id']);
 $fetpinfo['username'] = "MEMBER ". $authfetp['fetp_id'];
 
-<<<<<<< HEAD
-// get username/email and password
-$username = strip_tags($formvars->username);
-$password = strip_tags($formvars->password);
-=======
->>>>>>> epicore-ng/main
 
 // set password if username matches authenticated email
 $emailmatch = (strcasecmp($fetpinfo['email'], $username) == 0) ? true: false;

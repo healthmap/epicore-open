@@ -3,19 +3,6 @@
 $formvars = json_decode(file_get_contents("php://input"));
 require_once "UserInfo.class.php";
 require_once "send_email.php";
-<<<<<<< HEAD
-
-// get user email
-$user_email = strip_tags($formvars->username);
-$fetp_id = UserInfo::getFETPid($user_email);
-$userinfo = UserInfo::getUserInfobyEmail($user_email);
-
-// send email to reset password
-if ($fetp_id) {
-    $action = 'resetpassword';
-    sendMail($user_email, $userinfo['firstname'], "EpiCore Reset Password", $action, $fetp_id);
-    $status = 'success';
-=======
 require_once (dirname(__FILE__) ."/Service/AuthService.php");
 
 // get user email
@@ -54,7 +41,6 @@ if (!is_null($fetp_id) || !is_null($user_id)) {
     catch (\Exception $exception) {
         $status = 'failed:'.$exception.getMessage();
     }
->>>>>>> epicore-ng/main
 }
 else{
     $status = 'failed';

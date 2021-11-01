@@ -2,19 +2,6 @@
 /* 
 get lat/lons of FETPs to show on a map - only allow this for superusers
 */
-<<<<<<< HEAD
-
-$formvars = json_decode(file_get_contents("php://input"));
-
-require_once "const.inc.php";
-require_once 'db.function.php';
-
-$fetps = array();
-
-$db = getDB();
-$all_fetps = $db->getAll("select * from fetp where active='Y' and status='A'");
-$all_locations = $db->getAll("SELECT * FROM member_location");
-=======
 $formvars = json_decode(file_get_contents("php://input"));
 require_once "const.inc.php";
 require_once 'db.function.php';
@@ -30,19 +17,10 @@ $all_locations = $db->getAll("SELECT ml.maillist_id, ml.animal_health, ml.human_
 							FROM member_location m
 							JOIN fetp f ON f.fetp_id = m.fetp_id
 							JOIN maillist ml ON ml.maillist_id = f.maillist_id");
->>>>>>> epicore-ng/main
 
 // push the centerlat and centerlon onto fetp array for the center marker
 // and add all fetps to array
 if(is_numeric($formvars->centerlat) && is_numeric($formvars->centerlon)) {
-<<<<<<< HEAD
-    array_push($fetps, array("id" => 0, "icon" => "img/you.png", "latitude" => $formvars->centerlat, "longitude" => $formvars->centerlon, "show" => true, "title" => "Event Location"));
-    foreach($all_fetps as $fetp){
-        array_push($fetps, array("id" =>$fetp['fetp_id'], "icon" => "img/member.png", "latitude" => $fetp['lat'], "longitude" => $fetp['lon'], "show" => true, "title" => "Event Location"));
-    }
-    foreach($all_locations as $location){
-        array_push($fetps, array("id" =>$location['location_id'], "icon" => "img/member.png", "latitude" => $location['lat'], "longitude" => $location['lon'], "show" => true, "title" => "Event Location"));
-=======
     array_push($fetps, array("id" => 0, "icon" => "img/you.png", "latitude" => $formvars->centerlat, "longitude" => $formvars->centerlon, "show" => true, "title" => "Event Location", "animalExp" => "UNK"));
     foreach($all_fetps as $fetp){
         if(is_numeric($fetp['animal_health']) == 1) { //animal_health expertise
@@ -67,23 +45,14 @@ if(is_numeric($formvars->centerlat) && is_numeric($formvars->centerlon)) {
         if(!$found) {
             array_push($fetps, array("id" =>$location['location_id'], "icon" => "img/member.png", "latitude" => $location['lat'], "longitude" => $location['lon'], "show" => true, "title" => "Event Location", "animalExp" => "0"));
         }
->>>>>>> epicore-ng/main
     }
     print json_encode(array('status' => 'success', 'markers' => $fetps));
     exit;
 }
-<<<<<<< HEAD
-
-=======
->>>>>>> epicore-ng/main
 if(empty($fetps)) {
     print json_encode(array('status' => 'error', 'reason' => 'permission denied, and no center specified'));
 } else {
     print json_encode(array('status' => 'success', 'markers' => $fetps));
 }
 exit;
-<<<<<<< HEAD
 ?>
-=======
-?>
->>>>>>> epicore-ng/main

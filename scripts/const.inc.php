@@ -1,35 +1,4 @@
 <?php
-<<<<<<< HEAD
-// get config file
-$conf = parse_ini_file(dirname(__FILE__) . '/conf/da.ini.php', true);
-
-// approval username and password
-define('APPROVAL_USERNAME', $conf['approval']['username']);
-define('APPROVAL_PASSWORD', $conf['approval']['password']);
-
-// google api
-define('CRYPTOKEY', $conf['googleapi']['key']);
-define('CLIENTID', $conf['googleapi']['clientid']);
-define('FCM_SERVER_KEY', $conf['googleapi']['fcm_server_key']);
-define('FCM_SEND_URL', $conf['googleapi']['fcm_send_url']);
-
-// Epicore
-define('EPICORE_URL', $conf['epicore_info']['baseurl']);
-define('EMAIL_NOREPLY', $conf['epicore_info']['emailnoreply']);
-define('EMAIL_INFO_EPICORE', $conf['epicore_info']['emailinfo']);
-define('EPICORE_ID', 0);
-define('EMAIL_EPICORE_ADMIN', $conf['epicore_info']['emailadmin']);
-
-// Tephinet
-define('TEPHINET_BASE', $conf['tephinet']['baseurl']);
-define('TEPHINET_CONSUMER_KEY', $conf['tephinet']['consumerkey']);
-define('TEPHINET_CONSUMER_SECRET', $conf['tephinet']['consumersecret']);
-
-// ProMed
-define('EMAIL_PROIN', $conf['promed_info']['emailproin']);
-define('PROMED_ID', 4);
-
-=======
 
 require_once '/usr/share/php/vendor/autoload.php';
 
@@ -109,27 +78,19 @@ $super_users = explode(',', $userids);
 
 define('EPICORE_ID', 0);
 define('PROMED_ID', 4);
->>>>>>> epicore-ng/main
 define('LAT_LON_PRECISION', 2);
 define('DEFAULT_RADIUS', 400); // in km
 define('EMAILPREVIEWS', 'emailtemplates/temp/');
 define('V2START_DATE', '2017-10-30');
-<<<<<<< HEAD
-=======
 define('V1START_DATE', '2015-01-01'); //Year epicore starte with V1
->>>>>>> epicore-ng/main
 
 define('RESPONSEFILE_DIR', 'responsefiles/');
 
 $status_lu = array('O' => 're-opened', 'C' => 'closed');
 
-<<<<<<< HEAD
-$super_users = explode(',', $conf['superusers']['userids']);
-=======
 
 
 
->>>>>>> epicore-ng/main
 
 // old permission text
 /*$response_permission_lu = array(
@@ -667,9 +628,5 @@ $check_conditions = array("respiratory","gastrointestinal","other_neurological",
                         "fever_unknown", "renal", "respiratory_animal", "neurological_animal", "hemorrhagic_animal", "vesicular_animal",
                         "reproductive_animal", "gastrointestinal_animal", "multisystemic_animal");
 define('CHECK_CONDITIONS', serialize($check_conditions));
-<<<<<<< HEAD
-?>
-=======
 
 ?>
->>>>>>> epicore-ng/main

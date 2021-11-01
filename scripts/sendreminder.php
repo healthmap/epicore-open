@@ -6,27 +6,19 @@
 require_once "send_email.php";
 require_once 'UserInfo.class.php';
 require_once "db.function.php";
-<<<<<<< HEAD
-=======
 require_once (dirname(__FILE__) ."/Service/AuthService.php");
 require_once (dirname(__FILE__) ."/Model/CognitoErrors.php");
->>>>>>> epicore-ng/main
 
 $db = getDB();
 
 $data = json_decode(file_get_contents("php://input"));
 $action = (string)$data->action;
-<<<<<<< HEAD
-
-$maillist = '';
-=======
 $memberid = (int)$data->memberid;
 
 $maillist = '';
 $message = '';
 $status = 'success';
 
->>>>>>> epicore-ng/main
 // unsubscribed/pre-approved members with no password and accepted at least one week ago
 if ($action == 'preapprove_reminder') {
     $maillist = $db->getAll("select fetp_id, f.email,firstname from fetp as f, maillist as m  where f.email=m.email 
@@ -37,8 +29,6 @@ if ($action == 'preapprove_reminder') {
     sendMail('info@epicore.org', 'Info', "Reminder | You're almost there!", $action, '0');
 }
 
-<<<<<<< HEAD
-=======
 if ($action == 'applicant_setpassword_reminder') {
     $applicant_info = $db->getRow("select fetp_id, f.email,firstname from epicore.fetp as f, epicore.maillist as m  where f.maillist_id=m.maillist_id  AND m.maillist_id='$memberid'");
 
@@ -99,15 +89,11 @@ if ($action == 'applicant_finishtraining_reminder') {
     // sendMail('info@epicore.org', 'Info', "Reminder | You're almost there!", $action, '0');
 }
 
->>>>>>> epicore-ng/main
 // get accepted members with no password and accepted at least one week ago
 if ($action == 'setpassword_reminder') {
     $maillist = $db->getAll("select fetp_id, f.email,firstname from fetp as f, maillist as m  where f.email=m.email and active='N'
                             and status='P' and pword_hash is null AND accept_date <= NOW() - INTERVAL 1 WEEK");
-<<<<<<< HEAD
-=======
     
->>>>>>> epicore-ng/main
     foreach ($maillist as $member) {
         sendMail($member['email'], $member['firstname'], "Reminder | You're almost there!", $action, $member['fetp_id']);
     }

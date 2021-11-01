@@ -1,12 +1,4 @@
 <?php
-<<<<<<< HEAD
-/**
- * User: jeffandre
- * Date: 10/28/16
- */
-
-=======
->>>>>>> epicore-ng/main
 require_once "UserInfo.class.php";
 
 $mods = UserInfo::getMods();

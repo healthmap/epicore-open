@@ -52,12 +52,9 @@ class EventInfo
         // phe additional info
         $event_info['phe_additional'] = $this->db->getOne("SELECT phe_additional FROM purpose WHERE event_id = ?", array($this->id));
 
-<<<<<<< HEAD
-=======
         //echo '*****eventInfo:';
         //print_r($event_info);
         //echo '*****eventInfo:';
->>>>>>> epicore-ng/main
         return $event_info;
     }
 
@@ -66,20 +63,13 @@ class EventInfo
     // returns false if no duplicates found
     static function checkDuplicate($date, $country, $population_type, $health_condition){
 
-<<<<<<< HEAD
-        if ($population_type == 'H' || $population_type = 'A') {
-=======
         if ($population_type == 'H' || $population_type == 'A') {
->>>>>>> epicore-ng/main
             $db = getDB();
             $check_conditions = unserialize(CHECK_CONDITIONS);
 
             // SQL for matching place ids
-<<<<<<< HEAD
-=======
             // remove white space
             $country = preg_replace('/\s+/', '', $country);
->>>>>>> epicore-ng/main
             $match_country = "SELECT place_id FROM place WHERE name LIKE '%$country%' ";
 
             // SQL for event ids from matching population
@@ -121,8 +111,6 @@ class EventInfo
 
     }
 
-<<<<<<< HEAD
-=======
     // returns duplicate event ids after a given date, with matching country and population
     // returns false if no duplicates found
     static function checkDuplicate2($date, $country, $population_type){
@@ -158,7 +146,6 @@ class EventInfo
 
     }
 
->>>>>>> epicore-ng/main
     // Follow an event for a given event id and user id
     // Returns true if following or false if already following or insert error
     static function followEvent($event_id, $user_id){
@@ -196,21 +183,13 @@ class EventInfo
         if ($users) {
 
             // get email for user from hm database
-<<<<<<< HEAD
-            $hmdb = getDB('hm');
-=======
             $hmdb = getDB();
->>>>>>> epicore-ng/main
 
             $followers = array();
             foreach ($users as $user){
                 $hmuid = $user['hmu_id'];
                 $userid = $user['user_id'];
-<<<<<<< HEAD
-                $email = $hmdb->getOne("SELECT email FROM hmu WHERE hmu_id = '$hmuid'");
-=======
                 $email = $hmdb->getOne("SELECT email from hm_hmu WHERE hmu_id = '$hmuid'");
->>>>>>> epicore-ng/main
                 if ($email) {
                     $followers[] = ['email' => $email, 'user_id' =>$userid, 'hmu_id' =>$hmuid];
                 }
@@ -431,12 +410,9 @@ class EventInfo
         $ei = new EventInfo($this->id);
         $event_info = $ei->getInfo();
 
-<<<<<<< HEAD
-=======
         if(!$messages) {
             $messages = [];
         }
->>>>>>> epicore-ng/main
         // add event request to messages
         $size = count($messages);
         $messages[$size]['date'] = date('j-M-Y H:i', strtotime($event_info['create_date']));
@@ -469,13 +445,8 @@ class EventInfo
         if($user_info['email']) {
             $initiator['email'] = $user_info['email'];
         } else { // get it from the healthmap db
-<<<<<<< HEAD
-             $hmdb = getDB('hm');
-             $initiator['email'] = $hmdb->getOne("SELECT email FROM hmu WHERE hmu_id = ?", array($user_info['hmu_id']));
-=======
              $hmdb = getDB();
              $initiator['email'] = $hmdb->getOne("SELECT email from hm_hmu WHERE hmu_id = ?", array($user_info['hmu_id']));
->>>>>>> epicore-ng/main
         }
         return $initiator;
     }
@@ -494,15 +465,9 @@ class EventInfo
                 $to[$i++]['organization_id']= $moderator['organization_id'];
             }
             else{// get it from the healthmap db
-<<<<<<< HEAD
-                $hmdb = getDB('hm');
-                $to[$i]['email'] = $hmdb->getOne("SELECT email FROM hmu WHERE hmu_id = ?", array($moderator['hmu_id']));
-                $to[$i]['name'] = $hmdb->getOne("SELECT name FROM hmu WHERE hmu_id = ?", array($moderator['hmu_id']));
-=======
                 $hmdb = getDB();
                 $to[$i]['email'] = $hmdb->getOne("SELECT email from hm_hmu WHERE hmu_id = ?", array($moderator['hmu_id']));
                 $to[$i]['name'] = $hmdb->getOne("SELECT name from hm_hmu WHERE hmu_id = ?", array($moderator['hmu_id']));
->>>>>>> epicore-ng/main
                 $to[$i++]['organization_id'] = 1;
             }
         }
@@ -721,16 +686,11 @@ class EventInfo
             return 'invalid requester id or invalid event_id';
         }
 
-<<<<<<< HEAD
-        $db = getDB();
-        $eid = $db->getOne("SELECT event_id FROM event WHERE event_id = ? ", array($darr['event_id']));
-=======
 
         $db = getDB();
         $eid = $db->getOne("SELECT event_id FROM event WHERE event_id = ? ", array($darr['event_id']));
 
 
->>>>>>> epicore-ng/main
         if ($eid) {
 
             // update location
@@ -751,16 +711,6 @@ class EventInfo
                 $db->commit();
             }
 
-<<<<<<< HEAD
-            // update related event tables
-            $status = 'failed event table';
-            foreach ($event_table as $table_name => $table) {
-                $table_id = EventInfo::replaceEventTable($table_name, $table);
-                if (is_numeric($table_id)) {
-                    $status = $eid;     // success
-                } else {
-                    $status = 'failed to insert event table: ' . $table_name . ', error message: ' .$table_id;
-=======
             
             // update related event tables
             $status = 'failed event table';
@@ -772,7 +722,6 @@ class EventInfo
                     $status = $eid;     // success
                 } else {
                     $status = 'Failed within updateEvent2 function - failed to insert event table: ' . $table_name . ', error message: ' .$table_id;
->>>>>>> epicore-ng/main
                     break;
                 }
             }
@@ -829,23 +778,6 @@ class EventInfo
         $emailtext = str_replace("[EPICORE_URL]", EPICORE_URL, $emailtext);
 
         // custom var substitutions 
-<<<<<<< HEAD
-        foreach($custom_vars as $varname => $varval) {
-            if (($varname == 'RESPONSE_TEXT') || ($varname == 'NOTES'))
-                $varval = nl2br($varval); //"<pre>$varval</pre>";
-            if ($varname == 'RESPONSE_PERMISSION'){ // add traffic light to permissions
-                if($varval == $response_permission_lu[1]){
-                    $varval = $permission_img[1] . $varval;
-                }
-                else if($varval == $response_permission_lu[2]){
-                    $varval = $permission_img[2] . $varval;
-                }
-                if($varval == $response_permission_lu[3]){
-                    $varval = $permission_img[3] . $varval;
-                }
-            }
-            $emailtext = str_replace("[$varname]", $varval, $emailtext);
-=======
         if($custom_vars) {
             foreach($custom_vars as $varname => $varval) {
                 if (($varname == 'RESPONSE_TEXT') || ($varname == 'NOTES'))
@@ -863,7 +795,6 @@ class EventInfo
                 }
                 $emailtext = str_replace("[$varname]", $varval, $emailtext);
             }
->>>>>>> epicore-ng/main
         }
 
         if(isset($this)) {
@@ -875,11 +806,6 @@ class EventInfo
         } else {
             // save the email contents in the temp directory for reference- if one is passed in, overwrite it
             $filename = isset($this) ? $this->id : date('YmdHis');
-<<<<<<< HEAD
-            $file_preview = EMAILPREVIEWS . "$type/$filename" . ".html";
-            file_put_contents("../$file_preview", $emailtext);
-            return $file_preview;
-=======
             $file_preview = "../" .EMAILPREVIEWS . "$type/$filename" . ".html";
             // //echo '----filepreview:';
             // //print_r($file_preview);
@@ -888,7 +814,6 @@ class EventInfo
                 file_put_contents("$file_preview", $emailtext);
                 return $file_preview;
             }
->>>>>>> epicore-ng/main
         }
     }
     function nl2p($text){
@@ -954,28 +879,11 @@ class EventInfo
 
     }
 
-<<<<<<< HEAD
-    static function getAllEvents($uid = '', $status = '', $sdate = '')
-=======
     static function getAllEvents($uid = '', $status = '', $sdate = '', $edate = '')
->>>>>>> epicore-ng/main
     {
         if(!is_numeric($uid)) {
             return 0;
         }
-<<<<<<< HEAD
-
-        $start_date = $sdate ? $sdate: '2000-01-01';
-        $db = getDB();
-        $oid = $db->getOne("SELECT organization_id FROM user WHERE user_id = ?", array($uid));
-        $status = $status ? $status : 'O'; // if status is not passed in, get open events
-        // join on the event_fetp table b/c if there is no row in there, the request was never sent (may have been started, but didn't get sent
-        $q = $db->query("SELECT DISTINCT(event.event_id), event.*, place.name AS location, place.location_details FROM place, event, event_fetp 
-                          WHERE event.place_id = place.place_id AND event.event_id = event_fetp.event_id AND event.create_date > ?
-                          ORDER BY event.create_date DESC", array($start_date));
-
-        while($row = $q->fetchRow()) {
-=======
         $start_date = $sdate ? $sdate: V2START_DATE;
         $end_date = $edate ? $edate: date("Y-m-d H:i:s");
         //modify date to datetime
@@ -997,18 +905,13 @@ class EventInfo
         $counter = 0;
         while($row = $q->fetchRow()) {
             $counter++;
->>>>>>> epicore-ng/main
             // get the current status - open or closed
             $dbstatus = $db->getOne("SELECT status FROM event_notes WHERE event_id = ? ORDER BY action_date DESC LIMIT 1", array($row['event_id']));
             $dbstatus = $dbstatus ? $dbstatus : 'O'; // if no value for status, it's open
             if($status != $dbstatus) {
                 continue;
             }
-<<<<<<< HEAD
-
-=======
             
->>>>>>> epicore-ng/main
             // get fetp (member) ids
             $q1 = $db->query("SELECT DISTINCT(fetp_id) FROM event_fetp WHERE event_id = ?", array($row['event_id']));
             $fetp_ids = array();
@@ -1017,11 +920,7 @@ class EventInfo
             }
             $row['member_ids'] = implode(',', $fetp_ids);
             $row['num_members'] = count($fetp_ids);
-<<<<<<< HEAD
-
-=======
             
->>>>>>> epicore-ng/main
             // get date of first response
             $row['first_response_date'] = $db->getOne("SELECT MIN(response_date) FROM response WHERE event_id = ?", array($row['event_id']));
             // get notes
@@ -1030,10 +929,6 @@ class EventInfo
             $row['reason'] = $db->getOne("SELECT reason FROM event_notes WHERE event_id = ? ORDER BY action_date DESC LIMIT 1", array($row['event_id']));
             // get action date
             $row['action_date'] = $db->getOne("SELECT action_date FROM event_notes WHERE event_id = ? ORDER BY action_date DESC LIMIT 1", array($row['event_id']));
-<<<<<<< HEAD
-            $row['action_date'] = date('j-M-Y', strtotime($row['action_date']));
-=======
->>>>>>> epicore-ng/main
 
             // get organization id for the event
             $row['organization_id'] = $db->getOne("SELECT organization_id FROM user WHERE user.user_id = ?", array($row['requester_id']));
@@ -1055,10 +950,6 @@ class EventInfo
             // get source details
             $row['source_details'] = $db->getOne("SELECT details FROM source WHERE event_id = ?", array($row['event_id']));
 
-<<<<<<< HEAD
-
-            // get population, health conditions, source and purpose
-=======
             // get metrics
             $event_metrics = $db->getAll("SELECT * FROM event_metrics WHERE event_id = ? ORDER BY event_metrics_id DESC", array($row['event_id']));
             if(isset($event_metrics)) {
@@ -1073,7 +964,6 @@ class EventInfo
             //echo '****eventID:';
             //print_r($row['event_id']);
             //echo '****eventID:';
->>>>>>> epicore-ng/main
             $ei = new EventInfo($row['event_id']);
             $event_info = $ei->getInfo();
             $row['affected_population'] = $event_info['population'];
@@ -1083,24 +973,15 @@ class EventInfo
             $row['health_condition_details'] = $event_info['hc_details'];
             $row['other_relevant_ph_details'] = $event_info['condition_details'];
             $purpose = $event_info['purpose'];
-<<<<<<< HEAD
-            $row['verfication_or_update'] = $purpose[0];
-            $row['rfi_purpose'] = implode(',',$purpose);
-=======
             $row['verfication_or_update'] = $purpose[0] ? $purpose[0]: '';
             $row['rfi_purpose'] = $purpose ? implode(',',$purpose): '';
->>>>>>> epicore-ng/main
             $row['personalized_message'] = $event_info['personalized_text'];
             $row['rfi_source'] = $event_info['source'];
             $row['rfi_source_details'] = $event_info['source_details'];
 
             // get responses
             $row['event_responses'] = EventInfo::getResponsesforEvent($row['event_id']);
-<<<<<<< HEAD
-
-=======
             
->>>>>>> epicore-ng/main
             // get the number of requests sent for that event
             $row['num_responses'] = $db->getOne("SELECT count(*) FROM response WHERE event_id = ?", array($row['event_id']));
             $row['num_responses_content'] = $db->getOne("SELECT count(*) FROM response WHERE event_id = ? AND response_permission > 0 AND  response_permission < 4", array($row['event_id']));
@@ -1124,18 +1005,6 @@ class EventInfo
                 $send_date = date('j-M-Y H:i', strtotime($gfrow['send_date']));  // Day Month Year
                 $num_followups[$gfrow['followup_id']][] = $send_date;
             }
-<<<<<<< HEAD
-
-            foreach($num_followups as $followupnum => $datearr) {
-                $newdate = date_create_from_format('j-M-Y H:i', $datearr[0]);
-                $newdate = date_format($newdate, 'Y-m-d');
-                $row['num_followups'][] = array('date' => $datearr[0], 'num' => count($datearr), 'text' => $text[$followupnum], 'iso_date' => $newdate);
-            }
-            $row['iso_create_date'] = $row['create_date'];
-            $row['event_id_int'] = (int)$row['event_id'];
-            $row['create_date'] = date('j-M-Y', strtotime($row['create_date']));
-            $row['event_date'] = date('j-M-Y', strtotime($row['event_date']));
-=======
             if($num_followups) {
                 foreach($num_followups as $followupnum => $datearr) {
                     if(isset($datearr)) {
@@ -1158,7 +1027,6 @@ class EventInfo
             //$row['reaction_time'] = $reaction_time->format('%a days, %H:%I'); // days, hh:mm
             $minutes =  $reaction_time->days*24*60 + $reaction_time->h*60 + $reaction_time->i;
             $row['reaction_time'] = $minutes; // total minutes
->>>>>>> epicore-ng/main
 
             //$row['title'] = iconv("UTF-8", "ISO-8859-1//IGNORE", $row['title']);
 
@@ -1175,13 +1043,8 @@ class EventInfo
                 $row['country'] = $place[0];
             }
 
-<<<<<<< HEAD
-
-            if($uid == $row['requester_id']) {
-=======
             if($uid == $row['requester_id']) {
                 // echo 'uid same as of requester';
->>>>>>> epicore-ng/main
                 $events['yours'][] = $row;
                 $events['yourorg_you'][] = $row;
                 $events['all'][] = $row;
@@ -1189,22 +1052,11 @@ class EventInfo
                 // get the organization of the user and that of the initiator of the request
                 $oid_of_requester = $db->getOne("SELECT organization_id FROM user WHERE user_id = ?", array($row['requester_id']));
                 if($oid && $oid == $oid_of_requester) {
-<<<<<<< HEAD
-=======
                     // echo 'oid same as of requester';
->>>>>>> epicore-ng/main
                     $events['yourorg'][] = $row;
                     $events['yourorg_you'][] = $row;
                     $events['all'][] = $row;
                 } else {
-<<<<<<< HEAD
-                    $events['other'][] = $row;
-                    $events['all'][] = $row;
-                }
-            }
-        }
-
-=======
                     //public events dashboard
                     if(is_numeric($uid) && $uid == '0') { //no-login user...but uid hard-coded for '0' in previous step-   
                         //fetch only public view fields
@@ -1229,7 +1081,6 @@ class EventInfo
             }
             // echo '----------------Total #events processed:'. $counter . '-----------------------'. "\n";
         }
->>>>>>> epicore-ng/main
         return $events;
     }
 
@@ -1240,14 +1091,6 @@ class EventInfo
         // generate cache file name
         $cachekey = md5('events'. $user_id . $status);
         $events_file = "../cache/epicore" . $cachekey. ".json";
-<<<<<<< HEAD
-
-        if (file_exists($events_file) && ($source == 'cache')) { // from cache
-            $events = json_decode(file_get_contents($events_file));
-        } else { // from database
-            $events = EventInfo::getAllEvents($user_id, $status, $start_date);
-            file_put_contents("$events_file", json_encode($events));
-=======
         if (file_exists($events_file)) {
             if ($source == 'cache') { // from cache
                 $events = json_decode(file_get_contents($events_file));
@@ -1255,7 +1098,6 @@ class EventInfo
                 $events = EventInfo::getAllEvents($user_id, $status, $start_date);
                 file_put_contents("$events_file", json_encode($events));
             }
->>>>>>> epicore-ng/main
         }
         return $events;
     }
@@ -1270,23 +1112,13 @@ class EventInfo
         $db = getDB();
         $q = $db->query("SELECT * FROM event where requester_id = ? AND create_date > ?", array($uid, $start_date));
         $num_notrated_responses = 0;
-<<<<<<< HEAD
-=======
         $listofEventIds = [];
         
->>>>>>> epicore-ng/main
         while($row = $q->fetchRow()) {
             // get the current status - open or closed
             $status = $db->getOne("SELECT status FROM event_notes WHERE event_id = ? ORDER BY action_date DESC LIMIT 1", array($row['event_id']));
             $status = $status ? $status : 'O'; // if no value for status, it's open
             if ($status == 'C') {
-<<<<<<< HEAD
-                $num_notrated_responses += $db->getOne("SELECT count(*) FROM response WHERE useful IS NULL AND response_permission <>0 AND response_permission <>4 AND event_id = ?", array($row['event_id']));
-            }
-
-        }
-        return $num_notrated_responses;
-=======
                 // $num_notrated_responses += $db->getOne("SELECT count(*) FROM response WHERE useful IS NULL AND response_permission <>0 AND response_permission <>4 AND event_id = ?", array($row['event_id']));
                 $sample = $db->getOne("SELECT count(*) FROM response WHERE useful IS NULL AND response_permission <>0 AND response_permission <>4 AND event_id = ?", array($row['event_id']));
                 $num_notrated_responses += $sample;
@@ -1297,7 +1129,6 @@ class EventInfo
             }
         }
         return array($num_notrated_responses,$listofEventIds);
->>>>>>> epicore-ng/main
     }
 
     // Returns inactive open events for a Mod:
@@ -1507,10 +1338,6 @@ class EventInfo
 
         // insert into the event table
         $create_date = $darr['create_date'] ? $darr['create_date'] : date('Y-m-d H:i:s');
-<<<<<<< HEAD
-        $res = $db->query("INSERT INTO event (place_id, title, personalized_text, create_date, requester_id, search_box, search_countries, event_date, event_date_details) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
-                    array($place_id, $darr['title'], $darr['personalized_text'], $create_date, $darr['requester_id'], $darr['search_box'], $darr['search_countries'], $darr['event_date'], $darr['event_date_details']));
-=======
         $res = $db->query("INSERT INTO event
         (place_id,
         title,
@@ -1530,7 +1357,6 @@ class EventInfo
         $darr['search_countries'],
         $darr['event_date'],
         $darr['event_date_details']));
->>>>>>> epicore-ng/main
 
         // check result is not an error
         if (PEAR::isError($res)) {
@@ -1543,11 +1369,8 @@ class EventInfo
             $status = 'success';
         }
 
-<<<<<<< HEAD
-=======
 
 
->>>>>>> epicore-ng/main
         // insert related event tables
         if ($event_id) {
             foreach ($event_table as $table_name => $table) {
@@ -1555,19 +1378,11 @@ class EventInfo
                 if (is_numeric($table_id)) {
                     $status = 'success';
                 } else {
-<<<<<<< HEAD
-                    $status = 'failed to insert event table: ' . $table_name . ', error message: ' .$table_id;
-=======
                     $status = 'Failed within insertEvent2 -- failed to insert event table: ' . $table_name . ', error message: ' .$table_id;
->>>>>>> epicore-ng/main
                     break;
                 }
             }
         }
-<<<<<<< HEAD
-
-=======
->>>>>>> epicore-ng/main
         return array('status'=>$status, 'event_id' =>$event_id);
 
     }
@@ -1576,15 +1391,11 @@ class EventInfo
     static function insertEventTable($table_name,$table, $event_id)
     {
         // check valid table name
-<<<<<<< HEAD
-        $valid_table = ($table_name == 'population' || $table_name == 'health_condition' || $table_name == 'purpose' || $table_name == 'source');
-=======
         $valid_table = ($table_name == 'population' ||
             $table_name == 'health_condition' ||
             $table_name == 'purpose' ||
             $table_name == 'source' ||
             $table_name == 'event_notes');
->>>>>>> epicore-ng/main
         if (!$valid_table) {
             return 'invalid table name.';
         }
@@ -1623,14 +1434,9 @@ class EventInfo
     // returns table id if replaced, or an error message if there is an replace error.
     static function replaceEventTable($table_name,$table)
     {
-<<<<<<< HEAD
-        // check valid table name
-        $valid_table = ($table_name == 'population' || $table_name == 'health_condition' || $table_name == 'purpose' || $table_name == 'source');
-=======
        
         // check valid table name
         $valid_table = ($table_name == 'population' || $table_name == 'health_condition' || $table_name == 'purpose' || $table_name == 'source' || $table_name == 'event_metrics');
->>>>>>> epicore-ng/main
         if (!$valid_table) {
             return 'invalid table name.';
         }
@@ -1640,20 +1446,12 @@ class EventInfo
         foreach($table as $key => $val) {
             $pvals[$key] = strip_tags($val);
         }
-<<<<<<< HEAD
-
-=======
         
->>>>>>> epicore-ng/main
         // replace row
         $db = getDB();
         $key_vals = join(",", array_keys($pvals));
         $qmarks = join(",", array_fill(0, count($pvals), '?'));
         $qvals = array_values($pvals);
-<<<<<<< HEAD
-        $q2 = "REPLACE INTO {$table_name} ({$key_vals}) VALUES ({$qmarks})";
-        $res = $db->query($q2, $qvals);
-=======
 
         if($table_name == 'event_metrics') {
             $exisiting_table_id = $db->getAll("SELECT event_metrics_id FROM event_metrics WHERE event_id = ? ORDER BY event_metrics_id DESC" , array($pvals['event_id']));
@@ -1670,24 +1468,18 @@ class EventInfo
 
         }
         
->>>>>>> epicore-ng/main
         // check that result is not an error
         if (PEAR::isError($res)) {
             //die($res->getMessage());
             return 'database replace error.';
         } else {
             $table_id = $db->getOne("SELECT LAST_INSERT_ID()");
-<<<<<<< HEAD
-=======
             // //print_r($table_id);
->>>>>>> epicore-ng/main
             $db->commit();
             return $table_id;
         }
     }
 
-<<<<<<< HEAD
-=======
     // update event metrics
     static function updateEventMetrics($table_data){
         $table_name = 'event_metrics';
@@ -1703,7 +1495,6 @@ class EventInfo
         return $status;
     }
 
->>>>>>> epicore-ng/main
     // updates purpose, returns true if updated or error message.
     static function updatePurpose($data_arr)
     {
@@ -1996,14 +1787,11 @@ class EventInfo
         // get info of person for the event
         $event_person = $this->getEventPerson($event_id);
 
-<<<<<<< HEAD
-=======
         // get event info
         $ei = new EventInfo($event_id);
         $event_info = $ei->getInfo();
 
 
->>>>>>> epicore-ng/main
         // save all followups, responses, and event notes in a message array
         $i = 0;
         foreach ($followups as $followup ){
@@ -2034,10 +1822,7 @@ class EventInfo
             $messages[$i]['useful'] = $response['useful'];
             $messages[$i]['person_id'] = $event_person['user_id'];
             $messages[$i]['organization_id'] = $event_person['organization_id'];
-<<<<<<< HEAD
-=======
             $messages[$i]['event_location'] = $event_info['location'];
->>>>>>> epicore-ng/main
             $messages[$i++]['date'] = date('j-M-Y H:i', strtotime($response['response_date']));
         }
         foreach ($enotes as $enote){
@@ -2053,18 +1838,11 @@ class EventInfo
         }
 
         // sort messages by date
-<<<<<<< HEAD
-       usort($messages, function($a, $b) {
-            return strtotime($b['date']) - strtotime($a['date']);
-        });
-
-=======
         if($messages) {
             usort($messages, function($a, $b) {
                 return strtotime($b['date']) - strtotime($a['date']);
             });
         } 
->>>>>>> epicore-ng/main
         return $messages;
     }
 
@@ -2104,26 +1882,6 @@ class EventInfo
         $history = '';
         // style message history for email
         $counter =0;
-<<<<<<< HEAD
-        foreach ($messages as $message) {
-            if ($counter > 0) {  // skip first (current ) message
-                $mtype = $message['type'];
-                if ($message['type'] == 'Event Notes')
-                    $mtype = $message['person'] . " ". $message['status'] . " event request";
-                if ($message['type'] == 'Moderator Response'){
-                    if ($message['fetp_count'] > 1)
-                        $mtype = $message['person'] . " sent followup to all Members";
-                    else
-                        $mtype = $message['person'] . " sent followup to 1 Member";
-                }
-                $mtext = $message['text'];
-                //$mdatetime = $message['date'];
-                $mdatetime = date('j-M-Y H:i', strtotime($message['date']));
-                $history .= "<div style='background-color: #fff;padding:24px;color:#666;border: 1px solid #B4FEF7;'>";
-                $history .= "<p style='margin:12px 0;'>$mtype,  $mdatetime <br></p>$mtext</div><br>";
-            }
-            $counter++;
-=======
         if (is_array($messages) || is_object($messages)) {
             foreach ($messages as $message) {
                 if ($counter > 0) {  // skip first (current ) message
@@ -2144,13 +1902,10 @@ class EventInfo
                 }
                 $counter++;
             }
->>>>>>> epicore-ng/main
         }
         return $history;
     }
 
-<<<<<<< HEAD
-=======
     function fetchPublicDashboardValuesOnly($alldataRow) {
         // echo 'fetchPublicDashboardValuesOnly';
         $temp = array();
@@ -2187,7 +1942,6 @@ class EventInfo
 
     }
 
->>>>>>> epicore-ng/main
     // get name, hmu_id, user_id, and org id of person who generated the event
     function getEventPerson($event_id){
 
@@ -2196,15 +1950,9 @@ class EventInfo
         $row = $db->getRow("select hmu_id, user_id, organization_id, email from event, user where requester_id=user_id and (event_id=?)", array($event_id));
         $hmu_id = $row['hmu_id'];
 
-<<<<<<< HEAD
-        // get user from hmu_id in hm database
-        $db = getDB('hm');
-        $user = $db->getRow(" select name, username, email from hmu where hmu_id='$hmu_id'");
-=======
         // get user from hm_hmu_id in hm database
         $db = getDB();
         $user = $db->getRow(" select name, username, email from hm_hmu where hmu_id='$hmu_id'");
->>>>>>> epicore-ng/main
         $user['user_id'] = $row['user_id'];
         $user['organization_id'] = $row['organization_id'];
         if ($row['email']) {
@@ -2222,15 +1970,9 @@ class EventInfo
                             and event_id=? and requester_id= ?", array($event_id, $requester_id));
         $hmu_id = $row['hmu_id'];
 
-<<<<<<< HEAD
-        // get user from hmu_id in hm database
-        $db = getDB('hm');
-        $user = $db->getRow(" select name, username, email from hmu where hmu_id='$hmu_id'");
-=======
         // get user from hm_hmu_id in hm database
         $db = getDB();
         $user = $db->getRow(" select name, username, email from hm_hmu where hmu_id='$hmu_id'");
->>>>>>> epicore-ng/main
         $user['user_id'] = $row['user_id'];
         $user['organization_id'] = $row['organization_id'];
         if ($row['email']) {
@@ -2248,15 +1990,9 @@ class EventInfo
                             and event_id=? and requester_id= ?", array($event_id, $requester_id));
         $hmu_id = $row['hmu_id'];
 
-<<<<<<< HEAD
-        // get user from hmu_id in hm database
-        $db = getDB('hm');
-        $user = $db->getRow(" select name, username, email from hmu where hmu_id='$hmu_id'");
-=======
         // get user from hm_hmu_id in hm database
         $db = getDB();
         $user = $db->getRow(" select name, username, email from hm_hmu where hmu_id='$hmu_id'");
->>>>>>> epicore-ng/main
         $user['user_id'] = $row['user_id'];
         $user['organization_id'] = $row['organization_id'];
         if ($row['email']) {
@@ -2281,16 +2017,10 @@ class EventInfo
 
     // get ALL event stats for all types: yours, yourorg, and other for the csv
     static function getEventStats2($uid, $status) {
-<<<<<<< HEAD
-        // get event info
-        $events = EventInfo::getAllEvents($uid, $status, V2START_DATE);
-
-=======
         // echo '----------------getAllEvents()-----------------------'. "\n";
         // get event info
         $events = EventInfo::getAllEvents($uid, $status, V2START_DATE);
         // echo '----------------getAllEvents count:'. count($events) .'----------------------'. "\n";
->>>>>>> epicore-ng/main
         // get stats for each type
         $yours = EventInfo::getStats2($events['yours'], $status);
         $yourorg = EventInfo::getStats2($events['yourorg'], $status);
@@ -2372,110 +2102,6 @@ class EventInfo
 
         $event_stats = array();
         $stats = array();
-<<<<<<< HEAD
-
-        foreach ($events as $event) {
-
-            // basic stats
-            $event_stats['status'] = $status;
-            $event_stats['notes'] = $event['notes'];
-            $event_stats['person'] = $event['person'];
-            $event_stats['organization_id'] = $event['organization_id'];
-            $event_stats['requester_id'] = $event['requester_id'];
-            $event_stats['country'] = $event['country'];
-            $event_stats['event_id'] = $event['event_id'];
-            $event_stats['title'] = $event['title'];
-            $event_stats['create_date'] = $event['create_date'];
-            $event_stats['event_date'] = $event['event_date'];  // new
-            $event_stats['location'] = $event['location'];
-            $event_stats['location_details'] = $event['location_details'];  // new
-            $event_stats['affected_population'] = $event['affected_population'];  // new
-            $event_stats['affected_population_details'] = $event['affected_population_details'];  // new
-            $event_stats['human_health_condition'] = $event['human_health_condition'];  // new
-            $event_stats['animal_health_condition'] = $event['animal_health_condition'];  // new
-            $event_stats['health_condition_details'] = $event['health_condition_details'];  // new
-            $event_stats['other_relavant_public_health_details'] = $event['other_relevant_ph_details'];  // new
-            $event_stats['verification_or_update'] = $event['verfication_or_update'];  // new
-            $event_stats['rfi_purpose'] = $event['rfi_purpose'];  // new
-            $event_stats['personalized_message'] = $event['personalized_message'];  // new
-            $event_stats['rfi_source'] = $event['rfi_source'];  // new
-            $event_stats['rfi_source_details'] = $event['rfi_source_details'];  // new
-
-
-            if ($event['outcome'] == 'VP')
-                $event_stats['outcome'] = 'Verified (+)';
-            else if ($event['outcome'] == 'VN')
-                $event_stats['outcome'] = 'Verified (-)';
-            else if ($event['outcome'] == 'UV')
-                $event_stats['outcome'] = 'Unverified';
-            else if ($event['outcome'] == 'UP')
-                $event_stats['outcome'] = 'Updated (+)';
-            else if ($event['outcome'] == 'NU')
-                $event_stats['outcome'] = 'Updated (-)';
-            else
-                $event_stats['outcome'] = 'Pending';  // new
-
-            //$event_stats['description'] = $event['description'];
-            //$event_stats['personalized_text'] = $event['personalized_text'];
-            $event_stats['num_responses'] = $event['num_responses'];
-            $event_stats['num_responses_content'] = $event['num_responses_content'];
-            $event_stats['num_responses_nocontent'] = $event['num_responses_nocontent'];
-            $event_stats['num_notuseful_responses'] = $event['num_notuseful_responses'];
-            $event_stats['num_useful_responses'] = $event['num_useful_responses'];
-            $event_stats['num_useful_promed_responses'] = $event['num_useful_promed_responses'];
-            $event_stats['member_ids'] = '"' . $event["member_ids"] . '"';
-            $event_stats['first_response_date'] = $event["first_response_date"];
-
-            // not useful responses
-            $notuseful = $event['notuseful_responses'];
-            $event_stats['notuseful_ids'] = '';
-            foreach ($notuseful as $nu) {
-                $event_stats['notuseful_ids'] .= ($event_stats['notuseful_ids'] == '') ? $nu['responder_id'] : ',' . $nu['responder_id'];
-            }
-            $event_stats['notuseful_ids'] = '"' . $event_stats['notuseful_ids'] . '"';
-
-            // useful responses
-            $useful = $event['useful_responses'];
-            $event_stats['useful_ids'] = '';
-            foreach ($useful as $u) {
-                $event_stats['useful_ids'] .= ($event_stats['useful_ids'] == '') ? $u['responder_id'] : ',' . $u['responder_id'];
-            }
-            $event_stats['useful_ids'] = '"'. $event_stats['useful_ids'] . '"';
-
-
-            $event_stats['phe_summary_description'] = $event['phe_description'];  // new
-            $event_stats['phe_summary_additional_information'] = $event['phe_additional'];  // new
-
-
-            // useful promed responses
-            $promed = $event['useful_promed_responses'];
-            $event_stats['promed_ids'] = '';
-            foreach ($promed as $p) {
-                $event_stats['promed_ids'] .= ($event_stats['promed_ids'] == '') ? $p['responder_id'] : ',' . $p['responder_id'];
-            }
-            $event_stats['promed_ids'] = '"' . $event_stats['promed_ids'] . '"';
-
-            // followups
-            $followups = $event['num_followups'];
-            $first_request = end($followups);
-            $event_stats['num_members'] = $first_request['num'];    //number of members on initial RFI
-
-            // get event responses
-            $event_responses = $event['event_responses'];
-            $max_responses = 100;
-            for ($i= 0; $i < $max_responses; $i++){
-                $response_n = 'response_'. (string)($i+1);
-                if ($event_responses && $event_responses[$i])
-                    $event_stats[$response_n] = $event_responses[$i];
-                else
-                    $event_stats[$response_n] = '';
-            }
-
-            // push event stats
-            array_push($stats, $event_stats);
-        }
-
-=======
         if($events) {
             foreach ($events as $event) {
 
@@ -2581,7 +2207,6 @@ class EventInfo
                 array_push($stats, $event_stats);
             }
         }
->>>>>>> epicore-ng/main
         return $stats;
     }
 

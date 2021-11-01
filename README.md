@@ -1,16 +1,3 @@
-<<<<<<< HEAD
-# This repo is archived
-
-# Epicore
-
-This project was devolped in PHP 5.5.9 & MySQL for the backend, and AngularJS v1.2.9 for the front end.
-
-### Clone Epicore repository
-
-### set permissions on data files
-
-```sh
-=======
 # Epicore
 
 ## Development Environment
@@ -315,16 +302,11 @@ git clone https://github.com/healthmap/epicore.git
 ```sh
 sudo cp -R /var/www/html/dev.epicore.org/data/ /home/username/public_html/epicore/.
 
->>>>>>> epicore-ng/main
 cd epicore_root/data
 
 sudo chown www-data:sudo *.csv
 ```
 
-<<<<<<< HEAD
-
-=======
->>>>>>> epicore-ng/main
 ### Create temp directory in emailtemplates
 
 ```sh
@@ -351,19 +333,10 @@ cd epicore_root/scripts
 mkdir conf
 
 cp da.ini.php epicore_root/scripts/conf/.
-<<<<<<< HEAD
-
-```
-
-### Set app version and mode
-
-Edit epicoreConfig.js
-=======
 cp push-epicore.pem epicore_root/scripts/conf/.
 
 ```
 *Contact Epicore admin for a copy of the config files.
 These files are in the staging and production directories on the server. -->
 
->>>>>>> epicore-ng/main
 

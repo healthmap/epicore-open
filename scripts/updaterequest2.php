@@ -8,24 +8,17 @@ require_once "const.inc.php";
 require_once "EventInfo.class.php";
 require_once "UserInfo.class.php";
 require_once "AWSMail.class.php";
-<<<<<<< HEAD
-=======
 require_once "UserContoller3.class.php";
 
 use UserController as userController;
 
 $userData = userController::getUserData();
->>>>>>> epicore-ng/main
 
 $formvars = json_decode(file_get_contents("php://input"));
 
 //event info
 $event_info['event_id'] = (int)$formvars->event_id;
-<<<<<<< HEAD
-$event_info['requester_id'] = (int)$formvars->uid;
-=======
 $event_info['requester_id'] = (int)$userData["uid"];
->>>>>>> epicore-ng/main
 $event_info['latlon'] = (string)$formvars->location->latlon;
 $event_info['location'] = (string)$formvars->location->location;
 $event_info['location_details'] = (string)$formvars->location->location_details;
@@ -42,13 +35,6 @@ $event_table['source'] = $formvars->source;
 
 $event_id = EventInfo::updateEvent2($event_info, $event_table);
 
-<<<<<<< HEAD
-if ($event_id == $event_info['event_id'])
-    print json_encode(array('status' => 'success'));
-else
-    print json_encode(array('status' => 'failed', 'reason' => $event_id));
-
-=======
 $status = "success";
 
 if ($event_id == $event_info['event_id'])
@@ -58,5 +44,4 @@ else
 
 // print json_encode(array('status' => $status));
 
->>>>>>> epicore-ng/main
 ?>

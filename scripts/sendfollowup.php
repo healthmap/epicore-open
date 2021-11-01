@@ -69,17 +69,10 @@ $followup_id = EventInfo::insertFollowup($followup_info);
 $tokens = $ei->insertFetpsReceivingEmail($fetp_ids, $followup_id);
 
 // set up push notification
-<<<<<<< HEAD
-$push = new ePush();
-$pushevent['id'] = $event_id;
-$pushevent['title'] = $event_info['title'];
-$pushevent['type'] = 'FOLLOWUP';
-=======
 // $push = new ePush();
 // $pushevent['id'] = $event_id;
 // $pushevent['title'] = $event_info['title'];
 // $pushevent['type'] = 'FOLLOWUP';
->>>>>>> epicore-ng/main
 
 // now send it to each FETP individually as they each need unique login token id
 require_once "AWSMail.class.php";
@@ -96,11 +89,7 @@ foreach($fetp_emails as $fetp_id => $recipient) {
     $retval = AWSMail::mailfunc($recipient, $subject, $emailtext, EMAIL_NOREPLY, $extra_headers);
 
     // send push notification
-<<<<<<< HEAD
-    $push->sendPush($pushevent, $fetp_id);
-=======
     //$push->sendPush($pushevent, $fetp_id);
->>>>>>> epicore-ng/main
 
 }
 

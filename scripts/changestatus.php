@@ -5,11 +5,6 @@ require_once "EventInfo.class.php";
 require_once "UserInfo.class.php";
 require_once "const.inc.php";
 require_once 'ePush.class.php';
-<<<<<<< HEAD
-
-$event_id = $formvars->event_id;
-$user_id = $formvars->uid;
-=======
 require_once "UserContoller3.class.php";
 
 use UserController as userController;
@@ -18,7 +13,6 @@ $userData = userController::getUserData();
 
 $event_id = $formvars->event_id;
 $user_id = $userData["uid"];
->>>>>>> epicore-ng/main
 $useful_rids = $formvars->useful_rids;
 $usefulpromed_rids = $formvars->usefulpromed_rids;
 $notuseful_rids = $formvars->notuseful_rids;
@@ -78,17 +72,10 @@ if(is_numeric($event_id) && is_numeric($user_id)) {
         $subject = "Epicore RFI #". $event_id . " - " . $status_type . ": " . $event_info['disease'] . ", " . $event_info['location'];
 
         // set up push notification
-<<<<<<< HEAD
-        $push = new ePush();
-        $pushevent['id'] = $event_id;
-        $pushevent['title'] = $event_info['title'];
-        $pushevent['type'] = $formvars->thestatus == "Reopen" ? 'REOPENED' : 'CLOSED';
-=======
         // $push = new ePush();
         // $pushevent['id'] = $event_id;
         // $pushevent['title'] = $event_info['title'];
         // $pushevent['type'] = $formvars->thestatus == "Reopen" ? 'REOPENED' : 'CLOSED';
->>>>>>> epicore-ng/main
 
 
         foreach($fetp_emails as $fetp_id => $recipient) {
@@ -102,11 +89,7 @@ if(is_numeric($event_id) && is_numeric($user_id)) {
             AWSMail::mailfunc($recipient, $subject, $custom_emailtext, EMAIL_NOREPLY, $extra_headers);
 
             // send push notification
-<<<<<<< HEAD
-            $push->sendPush($pushevent, $fetp_id);
-=======
             //$push->sendPush($pushevent, $fetp_id);
->>>>>>> epicore-ng/main
 
         }
 

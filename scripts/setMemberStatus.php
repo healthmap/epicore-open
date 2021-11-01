@@ -9,21 +9,14 @@
 $status = 'success';
 $message = '';
 $member_status = '';
-<<<<<<< HEAD
-=======
 require_once (dirname(__FILE__) ."/Service/AuthService.php");
 require_once (dirname(__FILE__) ."/Exception/UserAccountExistException.php");
->>>>>>> epicore-ng/main
 
 // set member status
 $data = json_decode(file_get_contents("php://input"));
 $approve_id = strip_tags((string)$data->maillist_id);
 $approve_status = strip_tags((string)$data->action);
-<<<<<<< HEAD
-if ($approve_id && $approve_status) {
-=======
 if (!empty($approve_id) && !empty($approve_status)) {
->>>>>>> epicore-ng/main
     require_once 'UserInfo.class.php';
     UserInfo::setUserStatus($approve_id, $approve_status);
     $member_status = UserInfo::getMemberStatus($approve_id);
@@ -31,8 +24,6 @@ if (!empty($approve_id) && !empty($approve_status)) {
         $status = 'failed';
         $message = 'member not found';
     }
-<<<<<<< HEAD
-=======
     $cognitoCommand = false;
     switch ($member_status)
     {
@@ -85,7 +76,6 @@ if (!empty($approve_id) && !empty($approve_status)) {
         }
     }
 
->>>>>>> epicore-ng/main
 } else{
     $status = 'failed';
     $message = 'invalid paramters';

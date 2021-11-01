@@ -10,35 +10,23 @@ require_once "const.inc.php";
 require_once "EventInfo.class.php";
 require_once "UserInfo.class.php";
 require_once "AWSMail.class.php";
-<<<<<<< HEAD
-require_once 'ePush.class.php';
-=======
 // require_once 'ePush.class.php';
 require_once "UserContoller3.class.php";
 
 use UserController as userController;
 
 $userData = userController::getUserData();
->>>>>>> epicore-ng/main
 
 $formvars = json_decode(file_get_contents("php://input"));
 
 // Save RFI in database and send to selected members
-<<<<<<< HEAD
-if ($formvars->uid && $formvars->fetp_ids && $formvars->population && $formvars->health_condition && $formvars->location && $formvars->purpose && $formvars->source) {
-=======
 if ($formvars->fetp_ids && $formvars->population && $formvars->health_condition && $formvars->location && $formvars->purpose && $formvars->source) {
->>>>>>> epicore-ng/main
 
     // event info
     $event_info['latlon'] = (string)$formvars->location->latlon;
     $event_info['location'] = (string)$formvars->location->location;
     $event_info['location_details'] = (string)$formvars->location->location_details;
-<<<<<<< HEAD
-    $event_info['requester_id'] = (int)$formvars->uid;
-=======
     $event_info['requester_id'] = (int)$userData["uid"];
->>>>>>> epicore-ng/main
     $event_info['search_countries'] = $formvars->search_countries ? $formvars->search_countries : '';
     $event_info['search_box'] = $formvars->search_box ? $formvars->search_box : '';
     $event_info['create_date'] = date('Y-m-d H:i:s');
@@ -48,12 +36,8 @@ if ($formvars->fetp_ids && $formvars->population && $formvars->health_condition 
     $event_info['title'] = (string)$formvars->title;
     $fetp_ids = $formvars->fetp_ids;
     $duplicate_rfi_detected = (int)$formvars->duplicate_rfi_detected == 1;
-<<<<<<< HEAD
-    $duplicate_rfi_id = (int)$formvars->duplicate_rfi_id;
-=======
     $duplicate_events = $formvars->duplicate_events ? $formvars->duplicate_events : false; // array of objects
 
->>>>>>> epicore-ng/main
 
     // related tables
     $event_table['health_condition'] = $formvars->health_condition;
@@ -79,17 +63,10 @@ if ($formvars->fetp_ids && $formvars->population && $formvars->health_condition 
         $emailtext = $ei->buildEmailForEvent($event_info, 'rfi2', $custom_vars, 'text');
 
         // set up push notification
-<<<<<<< HEAD
-        $push = new ePush();
-        $pushevent['id'] = $event_id;
-        $pushevent['title'] = $event_info['title'];
-        $pushevent['type'] = 'RFI';
-=======
         // $push = new ePush();
         // $pushevent['id'] = $event_id;
         // $pushevent['title'] = $event_info['title'];
         // $pushevent['type'] = 'RFI';
->>>>>>> epicore-ng/main
 
         foreach ($fetp_emails as $fetp_id => $recipient) {
             // send email
@@ -97,19 +74,12 @@ if ($formvars->fetp_ids && $formvars->population && $formvars->health_condition 
             $extra_headers['user_ids'] = $idlist;
             $recipient = trim($recipient);
             $custom_emailtext = trim(str_replace("[TOKEN]", $tokens[$fetp_id], $emailtext));
-<<<<<<< HEAD
-            $aws_resp = AWSMail::mailfunc($recipient, $subject, $custom_emailtext, EMAIL_NOREPLY, $extra_headers);
-
-            // send push notification
-            $push->sendPush($pushevent, $fetp_id);
-=======
             try {
                 $aws_resp = AWSMail::mailfunc($recipient, $subject, $custom_emailtext, EMAIL_NOREPLY, $extra_headers);
             } catch (Exception $e) {}
 
             // send push notification
             //$push->sendPush($pushevent, $fetp_id);
->>>>>>> epicore-ng/main
 
         }
 
@@ -118,11 +88,7 @@ if ($formvars->fetp_ids && $formvars->population && $formvars->health_condition 
         $moderator = $ei->getEventPerson($event_id); // get event moderator name
         $name = $moderator['name'];
         $email = $moderator['email'];
-<<<<<<< HEAD
-        $modfetp = "Requester: $name sent the following RFI";
-=======
         $modfetp = "EpiCore asks for your assistance on the following RFI"; //"Requester: $name sent the following RFI";
->>>>>>> epicore-ng/main
         $custom_emailtext_proin = trim(str_replace("[PRO_IN]", $modfetp, $proin_emailtext));
 
 
@@ -130,31 +96,14 @@ if ($formvars->fetp_ids && $formvars->population && $formvars->health_condition 
         if ($moderator['organization_id'] == PROMED_ID) {
             $idlist[0] = PROMED_ID;
             $extra_headers['user_ids'] = $idlist;
-<<<<<<< HEAD
-            $aws_resp = AWSMail::mailfunc(EMAIL_PROIN, $subject, $custom_emailtext_proin, EMAIL_NOREPLY, $extra_headers);
-=======
             try {
                 $aws_resp = AWSMail::mailfunc(EMAIL_PROIN, $subject, $custom_emailtext_proin, EMAIL_NOREPLY, $extra_headers);
             } catch (Exception $e) {}
->>>>>>> epicore-ng/main
         }
 
         // send copy to epicore info
         $idlist[0] = EPICORE_ID;
         $extra_headers['user_ids'] = $idlist;
-<<<<<<< HEAD
-        $aws_resp = AWSMail::mailfunc(EMAIL_INFO_EPICORE, $subject, $custom_emailtext_proin, EMAIL_NOREPLY, $extra_headers);
-
-        // send copy to Epicore Admin if duplicate RFI detected
-        if ($duplicate_rfi_detected) {
-            $subject2 = "EPICORE: DUPLICATE ALERT - RFI #" . $event_id . " : " . $event_info['title'];
-            $admin_emailtext = $ei->buildEmailForEvent($event_info, 'rfi_admin', $custom_vars, 'text');
-            $admin_message = "Possible duplicate of RFI ID: $duplicate_rfi_id.  Requester: $name sent the following RFI.";
-            $custom_emailtext_admin = trim(str_replace("[PRO_IN]", $admin_message, $admin_emailtext));
-            $idlist[0] = EPICORE_ID;
-            $extra_headers['user_ids'] = $idlist;
-            $aws_resp = AWSMail::mailfunc(EMAIL_EPICORE_ADMIN, $subject2, $custom_emailtext_admin, EMAIL_NOREPLY, $extra_headers);
-=======
 
         try {
             $aws_resp = AWSMail::mailfunc(EMAIL_INFO_EPICORE, $subject, $custom_emailtext_proin, EMAIL_NOREPLY, $extra_headers);
@@ -186,7 +135,6 @@ if ($formvars->fetp_ids && $formvars->population && $formvars->health_condition 
             try {
                 $aws_resp = AWSMail::mailfunc(EMAIL_EPICORE_ADMIN, $subject2, $custom_emailtext_last, EMAIL_NOREPLY, $extra_headers);
             } catch (Exception $e) {}
->>>>>>> epicore-ng/main
         }
 
         $status = 'success';
@@ -200,14 +148,10 @@ if ($formvars->fetp_ids && $formvars->population && $formvars->health_condition 
     $fetp_ids = false;
 }
 
-<<<<<<< HEAD
-print json_encode(array('status' => $status, 'fetps' => $fetp_ids));
-=======
 print json_encode(array(
     'status' => $status,
     'fetps' => $fetp_ids,
     'event_id' => $event_id
 ));
->>>>>>> epicore-ng/main
 
 ?>

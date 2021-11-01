@@ -1,11 +1,8 @@
 <?php
 require_once "UserInfo.class.php";
 require_once "send_email.php";
-<<<<<<< HEAD
-=======
 require_once (dirname(__FILE__) ."/Service/AuthService.php");
 require_once (dirname(__FILE__) ."/Model/CognitoErrors.php");
->>>>>>> epicore-ng/main
 
 // clean variables
 $formvars = json_decode(file_get_contents("php://input"));
@@ -16,13 +13,6 @@ if(!$uid) {
     print json_encode(array('status' => 'failed', 'reason' => 'missing required parameters uid:' . $uid));
     exit;
 }
-<<<<<<< HEAD
-
-require_once "UserInfo.class.php";
-$uinfo = UserInfo::getUserInfo($uid);
-$action = 'delete';
-sendMail($uinfo['email'], $uinfo['firstname'], "EpiCore Unsubscription Notification", $action, $uinfo['maillist_id']);
-=======
 $uinfo = UserInfo::getUserInfo($uid);
 $authService = new AuthService();
 $validationService = new ValidationService();
@@ -42,16 +32,12 @@ catch (EmailValidationException $exception) // user email/pwd validation errors 
 
 
 $action = 'delete';
->>>>>>> epicore-ng/main
 
 $result = UserInfo::deleteMaillist($uid);
 $status = $result[0];
 $message = $result[1];
 
 if($status == 'success') {
-<<<<<<< HEAD
-    print json_encode(array('status' => 'success'));
-=======
 
     sendMail($uinfo['email'], $uinfo['firstname'], "EpiCore Unsubscription Notification", $action, $uinfo['maillist_id']);
     //delete on Cognito
@@ -69,7 +55,6 @@ if($status == 'success') {
         exit();
     }
 
->>>>>>> epicore-ng/main
 } else {
     print json_encode(array('status' => 'failed', 'reason' => $message));
 }
