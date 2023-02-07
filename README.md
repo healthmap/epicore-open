@@ -249,7 +249,7 @@ params:
 @superuser
 
 SampleURL:
-http://127.0.0.1:8000/scripts/createRequester.php?auth=true&callback=angular.callbacks._0&email=lakshmi.yajurvedi@chboston.org&name=Lakshmi Yajurvedi&title=Epicore User&username=lyajurvedi&password=HealthMap0002&default_location=44.276332228 ,-105.503164654&default_locname=Gillete, WY 82717, USA&createdate=2021-02-16&superuser=true
+http://127.0.0.1:8000/scripts/createRequester.php?auth=true&callback=angular.callbacks._0&email=test@test.corg&name=Test Test&title=Epicore User&username=test&password=test&default_location=44.276332228 ,-105.503164654&default_locname=Gillete, WY 82717, USA&createdate=2021-02-16&superuser=true
 
 Step2: Using the above users email address, add this user as a Requester into Epicore, using the member portal
 Login to epicore as a superuser
