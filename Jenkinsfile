@@ -214,6 +214,7 @@ pipeline {
     
         failure {
             script {
+                   slackNotification ("devops", "Build ${BUILD_NUMBER} for  git branch ${BRANCH_NAME} failed ", currentBuild.result)
                    slackNotification ("epicore_internal", "Build ${BUILD_NUMBER} for  git branch ${BRANCH_NAME} failed ", currentBuild.result)
             }
         }
